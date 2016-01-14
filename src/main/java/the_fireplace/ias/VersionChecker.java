@@ -1,4 +1,4 @@
-package the_fireplace.ias.version;
+package the_fireplace.ias;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
@@ -9,6 +9,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatStyle;
 import net.minecraft.util.EnumChatFormatting;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.ConfigElement;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
@@ -16,7 +17,6 @@ import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.client.IModGuiFactory;
 import net.minecraftforge.fml.client.config.GuiConfig;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
@@ -27,6 +27,8 @@ import net.minecraftforge.fml.common.event.FMLServerStartedEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent.ClientConnectedToServerEvent;
 import net.minecraftforge.fml.relauncher.FMLInjectionData;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import the_fireplace.ias.tools.Reference;
 
 import java.io.*;
@@ -36,20 +38,19 @@ import java.util.Calendar;
 import java.util.Set;
 
 /**
- * This is the embeddable version checker I made. Designed for convenience, all you have to do is paste this class, change the HostMORNAME, HostMODID, HostVERSION, and how it retrieves the latest version and link to the download page.
- * Now uses Curse to find out the latest version. File name must be "HostMODNAME w.x.y.z.jar" or it will probably crash.
+ * This is the embeddable version checker I made. Designed for convenience, all you have to do is paste this class, change the HostMORNAME, HostMODID, HostVERSION, and Curse Code.
+ * Now uses Curse to find out the latest version. File name must be "HostMODNAME(nospaces)-w.x.y.z.jar" or it will either crah or not work.
  *  @author The_Fireplace
  */
-@Mod(modid=VersionChecker.MODID, name=VersionChecker.MODNAME, version=VersionChecker.VERSION, guiFactory = "the_fireplace.ias.version.VersionChecker")
-public class VersionChecker implements IModGuiFactory {
-	private static final String HostMODID= Reference.MODID;
+@Mod(modid=VersionChecker.MODID, name=VersionChecker.MODNAME, version=VersionChecker.VERSION, guiFactory = "the_fireplace.ias.VersionChecker$VCGui")
+public class VersionChecker {
+	static final String HostMODID=Reference.MODID;
 	private static final String HostMODNAME=Reference.MODNAME;
-	private static final String HostVERSION=Reference.VERSION;
+	private static String HostVERSION;
 	static final String MODID=HostMODID+"vc";
 	static final String MODNAME=HostMODNAME+" Version Checker";
-	static final String VERSION="1.2";
-	private final String curseCode;
-	private String latest="0.0.0.0";
+	static final String VERSION="1.5";
+	private String curseCode, latest="0.0.0.0";
 
 	private static Configuration config;
 	private static Property FREQUENCY_PROPERTY;
@@ -115,7 +116,7 @@ public class VersionChecker implements IModGuiFactory {
 		config.load();
 		FREQUENCY_PROPERTY = config.get(Configuration.CATEGORY_GENERAL, "Frequency", "Always");
 		FREQUENCY_PROPERTY.setValidValues(new String[]{"Always","Daily","Weekly"});
-		LASTCHECKED_PROPERTY = config.get("hidden", "Last Checked", "00.00.0000");
+		LASTCHECKED_PROPERTY = config.get("hidden", "Last Checked", "0.0.0");
 		syncConfig();
 		cacheJson();
 		latest=getVersionFromJson();
@@ -128,8 +129,10 @@ public class VersionChecker implements IModGuiFactory {
 	}
 	@EventHandler
 	public void init(FMLInitializationEvent event){
+		HostVERSION=Reference.VERSION;
 		tryNotifyDynious();
-		FMLCommonHandler.instance().bus().register(this);
+		if(event.getSide().isClient())
+			MinecraftForge.EVENT_BUS.register(this);
 	}
 
 	@EventHandler
@@ -138,6 +141,7 @@ public class VersionChecker implements IModGuiFactory {
 			tryNotifyServer();
 	}
 
+	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
 	public void onPlayerJoinClient(final ClientConnectedToServerEvent event){
 		(new Thread(){
@@ -154,9 +158,10 @@ public class VersionChecker implements IModGuiFactory {
 		}).start();
 	}
 
+	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
 	public void configChanged(ConfigChangedEvent.OnConfigChangedEvent event){
-		if(event.modID == MODID)
+		if(event.modID.equals(MODID))
 			syncConfig();
 	}
 
@@ -186,13 +191,13 @@ public class VersionChecker implements IModGuiFactory {
 	private boolean isNotToday(int[] date){
 		final int[] _current = splitVersion(lc);
 
-		for(int i = 0; i<Math.max(_current.length, date.length); i++){
+		for(int i=0;i<Math.max(_current.length, date.length);i++){
 			int curv=0;
 			if(i < _current.length)
 				curv = _current[i];
 			int newv=0;
-			if(i< date.length)
-				newv= date[i];
+			if(i<date.length)
+				newv=date[i];
 			if(newv>curv)
 				return true;
 			else if(curv>newv)
@@ -232,19 +237,20 @@ public class VersionChecker implements IModGuiFactory {
 			File file = new File(cachedir, curseCode+".json");
 			if(file.exists()) {
 				BufferedReader in = new BufferedReader(new FileReader(file));
-				String contents = in.readLine().toLowerCase();
-				int jarindex = contents.indexOf(HostMODNAME.toLowerCase()+" ");
-				int versionindex = jarindex + HostMODNAME.length()+1;
-				int dotjarindex = contents.indexOf(".jar");
+				String contents = in.readLine();
+				int jarindex = contents.indexOf(HostMODNAME.replace(" ", "")+"-");
+				int versionindex = jarindex + HostMODNAME.replace(" ", "").length()+1;
+				int dotjarindex = contents.indexOf(".jar", versionindex);
 				String versionnumber = contents.substring(versionindex, dotjarindex);
 				in.close();
-				return versionnumber;
+				if(jarindex != -1)
+					return versionnumber;
 			}
 		}catch(IOException e){}
 		return "0.0.0.0";
 	}
 
-	private final File cachedir = new File(((File)FMLInjectionData.data()[6]).getAbsolutePath().substring(0,((File)FMLInjectionData.data()[6]).getAbsolutePath().length()-2), "cachedjsons/");
+	private File cachedir = new File(((File)FMLInjectionData.data()[6]).getAbsolutePath().substring(0,((File)FMLInjectionData.data()[6]).getAbsolutePath().length()-2), "cachedjsons/");
 	private void cacheJson(){
 		File file = new File(cachedir, curseCode+".json");
 		try{
@@ -270,28 +276,34 @@ public class VersionChecker implements IModGuiFactory {
 			e.printStackTrace();
 		}
 	}
-	@Override
-	public void initialize(Minecraft minecraftInstance) {}
 
-	@Override
-	public Class<? extends GuiScreen> mainConfigGuiClass() {
-		return VCCG.class;
-	}
+	@SideOnly(Side.CLIENT)
+	public static class VCGui implements IModGuiFactory {
+		@Override
+		public void initialize(Minecraft minecraftInstance) {
+		}
 
-	@Override
-	public Set<IModGuiFactory.RuntimeOptionCategoryElement> runtimeGuiCategories() {
-		return null;
-	}
+		@Override
+		public Class<? extends GuiScreen> mainConfigGuiClass() {
+			return VCCG.class;
+		}
 
-	@Override
-	public IModGuiFactory.RuntimeOptionGuiHandler getHandlerFor(
-			IModGuiFactory.RuntimeOptionCategoryElement element) {
-		return null;
-	}
-	public static class VCCG extends GuiConfig {
-		public VCCG(GuiScreen parentScreen) {
-			super(parentScreen, new ConfigElement(config.getCategory(Configuration.CATEGORY_GENERAL)).getChildElements(), MODID, false,
-					false, GuiConfig.getAbridgedConfigPath(config.toString()));
+		@Override
+		public Set<IModGuiFactory.RuntimeOptionCategoryElement> runtimeGuiCategories() {
+			return null;
+		}
+
+		@Override
+		public IModGuiFactory.RuntimeOptionGuiHandler getHandlerFor(
+				IModGuiFactory.RuntimeOptionCategoryElement element) {
+			return null;
+		}
+
+		public static class VCCG extends GuiConfig {
+			public VCCG(GuiScreen parentScreen) {
+				super(parentScreen, new ConfigElement(config.getCategory(Configuration.CATEGORY_GENERAL)).getChildElements(), MODID, false,
+						false, GuiConfig.getAbridgedConfigPath(config.toString()));
+			}
 		}
 	}
 }
