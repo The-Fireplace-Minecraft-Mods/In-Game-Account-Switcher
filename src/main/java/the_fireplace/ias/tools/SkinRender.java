@@ -6,7 +6,6 @@ import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
-import the_fireplace.ias.tools.Reference;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -52,7 +51,7 @@ public class SkinRender
 		if(previewTexture == null) {
 			boolean successful = loadPreview();
 			if(!successful){
-				System.out.println("Failure");
+				System.out.println("Failure to load preview.");
 				return;
 			}
 		}
@@ -60,11 +59,11 @@ public class SkinRender
 		Tessellator tessellator = Tessellator.getInstance();
 		WorldRenderer rend = tessellator.getWorldRenderer();
 		textureManager.bindTexture(resourceLocation);
-		rend.func_181668_a(7, DefaultVertexFormats.field_181709_i);
-		rend.func_181662_b(xPos, yPos+height, 0).func_181673_a(0.0D, 1.0D).func_181669_b(255, 255, 255, 255).func_181675_d();
-		rend.func_181662_b(xPos+width, yPos+height, 0).func_181673_a(1.0D, 1.0D).func_181669_b(255, 255, 255, 255).func_181675_d();
-		rend.func_181662_b(xPos+width, yPos, 0).func_181673_a(1.0D, 0.0D).func_181669_b(255, 255, 255, 255).func_181675_d();
-		rend.func_181662_b(xPos, yPos, 0).func_181673_a(0.0D, 0.0D).func_181669_b(255, 255, 255, 255).func_181675_d();
+		rend.begin(7, DefaultVertexFormats.POSITION_TEX);
+		rend.normal(xPos, yPos+height, 0).tex(0.0D, 1.0D).color(255, 255, 255, 255).endVertex();
+		rend.normal(xPos+width, yPos+height, 0).tex(1.0D, 1.0D).color(255, 255, 255, 255).endVertex();
+		rend.normal(xPos+width, yPos, 0).tex(1.0D, 0.0D).color(255, 255, 255, 255).endVertex();
+		rend.normal(xPos, yPos, 0).tex(0.0D, 0.0D).color(255, 255, 255, 255).endVertex();
 		tessellator.draw();
 	}
 }
