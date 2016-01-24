@@ -37,6 +37,12 @@ public class IAS {
 
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
+		String[] version = event.getModMetadata().version.split("\\.");
+		if(version[3].equals("BUILDNUMBER"))//Dev environment
+			Reference.VERSION = event.getModMetadata().version.replace("BUILDNUMBER", "9001");
+		else//Released build
+			Reference.VERSION = event.getModMetadata().version;
+
 		config = new Configuration(event.getSuggestedConfigurationFile());
 		config.load();
 		CASESENSITIVE_PROPERTY = config.get(Configuration.CATEGORY_GENERAL, ConfigValues.CASESENSITIVE_NAME, ConfigValues.CASESENSITIVE_DEFAULT, StatCollector.translateToLocal(ConfigValues.CASESENSITIVE_NAME+".tooltip"));

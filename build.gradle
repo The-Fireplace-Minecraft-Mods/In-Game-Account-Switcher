@@ -21,7 +21,7 @@ curseforge {
   project {
     id = '232676'
     changelog = file('changelog.txt')
-    releaseType = 'beta'
+    releaseType = 'release'
 	addGameVersion '1.8.9'
     mainArtifact(jar){
     relations {
