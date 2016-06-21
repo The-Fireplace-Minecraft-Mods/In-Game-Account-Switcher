@@ -15,10 +15,6 @@ import the_fireplace.ias.events.ClientEvents;
 import the_fireplace.ias.tools.Reference;
 import the_fireplace.ias.tools.SkinTools;
 import the_fireplace.iasencrypt.Standards;
-
-import java.io.IOException;
-import java.nio.file.FileAlreadyExistsException;
-import java.nio.file.Files;
 /**
  * @author The_Fireplace
  */
@@ -52,13 +48,9 @@ public class IAS {
 	}
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent event){
-		try {
-			Files.createDirectory(SkinTools.cachedir.toPath());
-		}catch (FileAlreadyExistsException e){
-			System.out.println("Skin cache found.");
-		}catch (IOException e) {
-			e.printStackTrace();
-		}
+		if(!SkinTools.cachedir.exists())
+			if(!SkinTools.cachedir.mkdirs())
+				System.out.println("Skin cache directory creation failed.");
 		SkinTools.cacheSkins();
 	}
 }

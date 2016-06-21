@@ -3,7 +3,6 @@ package the_fireplace.ias.tools;
 import com.github.mrebhan.ingameaccountswitcher.tools.alt.AccountData;
 import com.github.mrebhan.ingameaccountswitcher.tools.alt.AltDatabase;
 import net.minecraft.client.Minecraft;
-import net.minecraftforge.fml.relauncher.FMLInjectionData;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -17,7 +16,7 @@ import java.net.URL;
  */
 @SideOnly(Side.CLIENT)
 public class SkinTools {
-	public static final File cachedir = new File((File)FMLInjectionData.data()[6], "cachedImages/skins/");
+	public static final File cachedir = new File(Minecraft.getMinecraft().mcDataDir, "cachedImages/skins/");
 	private static final File skinOut = new File(cachedir, "temp.png");
 
 	public static void buildSkin(String name){
