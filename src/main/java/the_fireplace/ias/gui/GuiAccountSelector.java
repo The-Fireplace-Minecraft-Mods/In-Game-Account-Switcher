@@ -9,7 +9,7 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiSlot;
 import net.minecraft.client.gui.GuiTextField;
-import net.minecraft.util.text.translation.I18n;
+import net.minecraft.client.resources.I18n;
 import org.apache.commons.lang3.StringUtils;
 import org.lwjgl.input.Keyboard;
 import the_fireplace.ias.account.AlreadyLoggedInException;
@@ -47,16 +47,16 @@ public class GuiAccountSelector extends GuiScreen {
 		Keyboard.enableRepeatEvents(true);
 		accountsgui = new GuiAccountSelector.List(this.mc);
 		accountsgui.registerScrollButtons(5, 6);
-		query = I18n.translateToLocal("ias.search");
+		query = I18n.format("ias.search");
 		this.buttonList.clear();
 		//Top Row
-		this.buttonList.add(new GuiButton(0, this.width / 2 + 4 + 40, this.height - 52, 120, 20, I18n.translateToLocal("ias.addaccount")));
-		this.buttonList.add(login = new GuiButton(1, this.width / 2 - 154 - 10, this.height - 52, 120, 20, I18n.translateToLocal("ias.login")));
-		this.buttonList.add(edit = new GuiButton(7, this.width / 2 - 40, this.height - 52, 80, 20, I18n.translateToLocal("ias.edit")));
+		this.buttonList.add(new GuiButton(0, this.width / 2 + 4 + 40, this.height - 52, 120, 20, I18n.format("ias.addaccount")));
+		this.buttonList.add(login = new GuiButton(1, this.width / 2 - 154 - 10, this.height - 52, 120, 20, I18n.format("ias.login")));
+		this.buttonList.add(edit = new GuiButton(7, this.width / 2 - 40, this.height - 52, 80, 20, I18n.format("ias.edit")));
 		//Bottom Row
-		this.buttonList.add(loginoffline = new GuiButton(2, this.width / 2 - 154 - 10, this.height - 28, 110, 20, I18n.translateToLocal("ias.login")+" "+I18n.translateToLocal("ias.offline")));
-		this.buttonList.add(new GuiButton(3, this.width / 2 + 4 + 50, this.height - 28, 110, 20, I18n.translateToLocal("gui.cancel")));
-		this.buttonList.add(delete = new GuiButton(4, this.width / 2 - 50, this.height - 28, 100, 20, I18n.translateToLocal("ias.delete")));
+		this.buttonList.add(loginoffline = new GuiButton(2, this.width / 2 - 154 - 10, this.height - 28, 110, 20, I18n.format("ias.login")+" "+I18n.format("ias.offline")));
+		this.buttonList.add(new GuiButton(3, this.width / 2 + 4 + 50, this.height - 28, 110, 20, I18n.format("gui.cancel")));
+		this.buttonList.add(delete = new GuiButton(4, this.width / 2 - 50, this.height - 28, 100, 20, I18n.format("ias.delete")));
 		search  = new GuiTextField(8, this.fontRendererObj, this.width / 2 - 80, 14, 160, 16);
 		search.setText(query);
 		updateButtons();
@@ -108,7 +108,7 @@ public class GuiAccountSelector extends GuiScreen {
 	@Override
 	public void drawScreen(int par1, int par2, float par3) {
 		accountsgui.drawScreen(par1, par2, par3);
-		this.drawCenteredString(fontRendererObj, I18n.translateToLocal("ias.selectaccount"), this.width / 2, 4, -1);
+		this.drawCenteredString(fontRendererObj, I18n.format("ias.selectaccount"), this.width / 2, 4, -1);
 		if (loginfailed != null) {
 			this.drawCenteredString(fontRendererObj, loginfailed.getLocalizedMessage(), this.width / 2, this.height - 62, 16737380);
 		}
@@ -118,13 +118,13 @@ public class GuiAccountSelector extends GuiScreen {
 			SkinTools.javDrawSkin(8, height/2-64-16, 64, 128);
 			Tools.drawBorderedRect(width-8-64, height/2-64-16, width-8, height/2+64-16, 2, -5855578, -13421773);
 			if(queriedaccounts.get(selectedAccountIndex).premium == EnumBool.TRUE)
-				this.drawString(fontRendererObj, I18n.translateToLocal("ias.premium"), width-8-61, height/2-64-13, 6618980);
+				this.drawString(fontRendererObj, I18n.format("ias.premium"), width-8-61, height/2-64-13, 6618980);
 			else if(queriedaccounts.get(selectedAccountIndex).premium == EnumBool.FALSE)
-				this.drawString(fontRendererObj, I18n.translateToLocal("ias.notpremium"), width-8-61, height/2-64-13, 16737380);
-			this.drawString(fontRendererObj, I18n.translateToLocal("ias.timesused"), width-8-61, height/2-64-15+12, -1);
+				this.drawString(fontRendererObj, I18n.format("ias.notpremium"), width-8-61, height/2-64-13, 16737380);
+			this.drawString(fontRendererObj, I18n.format("ias.timesused"), width-8-61, height/2-64-15+12, -1);
 			this.drawString(fontRendererObj, String.valueOf(queriedaccounts.get(selectedAccountIndex).useCount), width-8-61, height/2-64-15+21, -1);
 			if(queriedaccounts.get(selectedAccountIndex).useCount > 0){
-				this.drawString(fontRendererObj, I18n.translateToLocal("ias.lastused"), width-8-61, height/2-64-15+30, -1);
+				this.drawString(fontRendererObj, I18n.format("ias.lastused"), width-8-61, height/2-64-15+30, -1);
 				this.drawString(fontRendererObj, JavaTools.getJavaCompat().getFormattedDate(), width-8-61, height/2-64-15+39, -1);
 			}
 		}
@@ -217,7 +217,7 @@ public class GuiAccountSelector extends GuiScreen {
 
 	private void updateQueried(){
 		queriedaccounts = convertData();
-		if(!query.equals(I18n.translateToLocal("ias.search")) && !query.equals("")){
+		if(!query.equals(I18n.format("ias.search")) && !query.equals("")){
 			for(int i=0;i<queriedaccounts.size();i++){
 				if(!queriedaccounts.get(i).alias.contains(query) && ConfigValues.CASESENSITIVE){
 					queriedaccounts.remove(i);
@@ -363,7 +363,7 @@ public class GuiAccountSelector extends GuiScreen {
 			String s = GuiAccountSelector.this.queriedaccounts.get(entryID).alias;
 			if (StringUtils.isEmpty(s))
 			{
-				s = I18n.translateToLocal("ias.alt") + " " + (entryID + 1);
+				s = I18n.format("ias.alt") + " " + (entryID + 1);
 			}
 
 			GuiAccountSelector.this.drawString(GuiAccountSelector.this.fontRendererObj, s, p_180791_2_ + 2, p_180791_3_ + 1, 16777215);

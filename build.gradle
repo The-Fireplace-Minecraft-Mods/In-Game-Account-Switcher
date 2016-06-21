@@ -7,7 +7,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:2.1-SNAPSHOT'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.2-SNAPSHOT'
     }
 }
 
@@ -27,7 +27,7 @@ curseforge {
     id = '232676'
     changelog = file('changelog.txt')
     releaseType = 'release'
-	addGameVersion '1.9'
+	addGameVersion '1.9.4'
 	addGameVersion 'Java 8'
     mainArtifact jar
   }
@@ -38,9 +38,9 @@ group= "the_fireplace.ias"
 archivesBaseName = "InGameAccountSwitcher"
 
 minecraft {
-    version = "1.9-12.16.0.1811-1.9"
+    version = "1.9.4-12.17.0.1909-1.9.4"
     runDir = "run"
-    mappings = "snapshot_20160312"
+    mappings = "snapshot_20160518"
 }
 
 dependencies {}

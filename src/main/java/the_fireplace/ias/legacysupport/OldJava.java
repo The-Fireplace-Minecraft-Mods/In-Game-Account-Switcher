@@ -1,6 +1,6 @@
 package the_fireplace.ias.legacysupport;
 
-import net.minecraft.util.text.translation.I18n;
+import net.minecraft.client.resources.I18n;
 
 public class OldJava implements ILegacyCompat {
 	@Override
@@ -14,7 +14,7 @@ public class OldJava implements ILegacyCompat {
 
 	@Override
 	public String getFormattedDate() {
-		return I18n.translateToLocal("ias.updatejava");
+		return I18n.format("ias.updatejava");
 	}
 
 }

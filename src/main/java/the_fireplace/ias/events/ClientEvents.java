@@ -5,7 +5,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.gui.GuiMultiplayer;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.util.text.translation.I18n;
+import net.minecraft.client.resources.I18n;
 import net.minecraftforge.client.event.GuiScreenEvent.ActionPerformedEvent;
 import net.minecraftforge.client.event.GuiScreenEvent.InitGuiEvent;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
@@ -46,10 +46,10 @@ public class ClientEvents {
 	public void onTick(TickEvent.RenderTickEvent t) {
 		GuiScreen screen = Minecraft.getMinecraft().currentScreen;
 		if (screen instanceof GuiMainMenu) {
-			screen.drawCenteredString(Minecraft.getMinecraft().fontRendererObj, I18n.translateToLocal("ias.loggedinas") + Minecraft.getMinecraft().getSession().getUsername()+".", screen.width / 2, screen.height / 4 + 48 + 72 + 12 + 22, 0xFFCC8888);
+			screen.drawCenteredString(Minecraft.getMinecraft().fontRendererObj, I18n.format("ias.loggedinas") + Minecraft.getMinecraft().getSession().getUsername()+".", screen.width / 2, screen.height / 4 + 48 + 72 + 12 + 22, 0xFFCC8888);
 		}else if(screen instanceof GuiMultiplayer){
 			if (Minecraft.getMinecraft().getSession().getToken().equals("0")) {
-				screen.drawCenteredString(Minecraft.getMinecraft().fontRendererObj, I18n.translateToLocal("ias.offlinemode"), screen.width / 2, 10, 16737380);
+				screen.drawCenteredString(Minecraft.getMinecraft().fontRendererObj, I18n.format("ias.offlinemode"), screen.width / 2, 10, 16737380);
 			}
 		}
 	}
