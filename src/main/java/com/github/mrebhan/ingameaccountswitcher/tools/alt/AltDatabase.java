@@ -1,8 +1,6 @@
 package com.github.mrebhan.ingameaccountswitcher.tools.alt;
 
 import com.github.mrebhan.ingameaccountswitcher.tools.Config;
-import com.github.mrebhan.ingameaccountswitcher.tools.queuing.CallQueue;
-import com.github.mrebhan.ingameaccountswitcher.tools.queuing.QueueElement;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -40,13 +38,6 @@ public class AltDatabase implements Serializable {
 	}
 
 	public ArrayList<AccountData> getAlts() {
-		CallQueue.addToQueue(new QueueElement(1) {
-
-			@Override
-			public void onCall() {
-				AltDatabase.saveToConfig();
-			}
-		});
 		return this.altList;
 	}
 }

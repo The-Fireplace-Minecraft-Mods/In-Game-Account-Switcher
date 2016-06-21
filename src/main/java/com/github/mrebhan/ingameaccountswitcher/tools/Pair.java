@@ -4,7 +4,8 @@ import java.io.Serializable;
 
 /**
  * Simple Pair system with 2 variables.
- * @author mr
+ * @author MRebhan
+ * @author The_Fireplace
  * 
  * @param <V1> First variable (mostly {@link String})
  * @param <V2> Second variable
@@ -25,14 +26,6 @@ public class Pair<V1, V2> implements Serializable {
 
 	public V2 getValue2() {
 		return this.obj2;
-	}
-
-	public void setValue1(V1 value) {
-		this.obj1 = value;
-	}
-
-	public void setValue2(V2 value) {
-		this.obj2 = value;
 	}
 
 	@Override public String toString() { 

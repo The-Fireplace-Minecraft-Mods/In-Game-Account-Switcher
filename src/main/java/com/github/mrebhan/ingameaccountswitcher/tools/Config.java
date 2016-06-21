@@ -42,10 +42,6 @@ public class Config implements Serializable {
 		this.setKey(new Pair<String, Object>(key, value));
 	}
 
-	public void clear() {
-		this.field_218893_c = new ArrayList<Pair<String, Object>>();
-	}
-
 	public Object getKey(String key) {
 		if(field_218893_c == null){
 			System.out.println("Error: Config failed to load during PreInitialization. Loading now.");
@@ -104,12 +100,14 @@ public class Config implements Serializable {
 			if(attr.isHidden())
 				view.setHidden(false);
 		}catch(Exception e){
+			e.printStackTrace();
 		}
 		try {
 			ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(new File(Standards.IASFOLDER, configFileName)));
 			out.writeObject(instance);
 			out.close();
 		} catch (IOException e) {
+			e.printStackTrace();
 		}
 		try{
 			Path file = new File(Standards.IASFOLDER, configFileName).toPath();

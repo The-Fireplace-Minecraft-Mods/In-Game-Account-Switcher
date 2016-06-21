@@ -9,17 +9,17 @@ import com.mojang.util.UUIDTypeAdapter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.Session;
 import the_fireplace.ias.account.AlreadyLoggedInException;
+import the_fireplace.ias.config.ConfigValues;
 import the_fireplace.iasencrypt.EncryptionTools;
 
 import java.util.UUID;
 /**
- * @author mrebhan
+ * @author MRebhan
+ * @author The_Fireplace
  */
 public class AltManager {
 	private static AltManager manager = null;
 	private final UserAuthentication auth;
-	//private String currentUser;
-	//private String currentPass;
 
 	private AltManager() {
 		UUID uuid = UUID.randomUUID();
@@ -38,7 +38,7 @@ public class AltManager {
 
 	public Throwable setUser(String username, String password) {
 		Throwable throwable = null;
-		if(Minecraft.getMinecraft().getSession().getUsername() != EncryptionTools.decode(username) || Minecraft.getMinecraft().getSession().getToken().equals("0")){
+		if(!Minecraft.getMinecraft().getSession().getUsername().equals(EncryptionTools.decode(username)) || Minecraft.getMinecraft().getSession().getToken().equals("0")){
 			for (AccountData data : AltDatabase.getInstance().getAlts()) {
 				if (data.alias.equals(Minecraft.getMinecraft().getSession().getUsername()) && data.user.equals(username)) {
 					throwable = new AlreadyLoggedInException();
