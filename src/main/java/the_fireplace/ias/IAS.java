@@ -28,9 +28,11 @@ public class IAS {
 
 	public static Configuration config;
 	private static Property CASESENSITIVE_PROPERTY;
+	private static Property ENABLERELOG_PROPERTY;
 
 	public static void syncConfig(){
 		ConfigValues.CASESENSITIVE = CASESENSITIVE_PROPERTY.getBoolean();
+		ConfigValues.ENABLERELOG = ENABLERELOG_PROPERTY.getBoolean();
 		if(config.hasChanged())
 			config.save();
 	}
@@ -45,7 +47,8 @@ public class IAS {
 
 		config = new Configuration(event.getSuggestedConfigurationFile());
 		config.load();
-		CASESENSITIVE_PROPERTY = config.get(Configuration.CATEGORY_GENERAL, ConfigValues.CASESENSITIVE_NAME, ConfigValues.CASESENSITIVE_DEFAULT, StatCollector.translateToLocal(ConfigValues.CASESENSITIVE_NAME+".tooltip"));
+		CASESENSITIVE_PROPERTY = config.get(Configuration.CATEGORY_GENERAL, ConfigValues.CASESENSITIVE_NAME, ConfigValues.CASESENSITIVE_DEFAULT, I18n.translateToLocal(ConfigValues.CASESENSITIVE_NAME+".tooltip"));
+		ENABLERELOG_PROPERTY = config.get(Configuration.CATEGORY_GENERAL, ConfigValues.ENABLERELOG_NAME, ConfigValues.ENABLERELOG_DEFAULT, I18n.translateToLocal(ConfigValues.ENABLERELOG_NAME+".tooltip"));
 		syncConfig();
 	}
 	@EventHandler
