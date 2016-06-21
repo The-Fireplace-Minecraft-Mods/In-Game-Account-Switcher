@@ -17,7 +17,7 @@ import java.net.URL;
  */
 @SideOnly(Side.CLIENT)
 public class SkinTools {
-	public static final File cachedir = new File((File)FMLInjectionData.data()[6], "cachedskins/");
+	public static final File cachedir = new File((File)FMLInjectionData.data()[6], "cachedImages/skins/");
 	private static final File skinOut = new File(cachedir, "temp.png");
 
 	public static void buildSkin(String name){

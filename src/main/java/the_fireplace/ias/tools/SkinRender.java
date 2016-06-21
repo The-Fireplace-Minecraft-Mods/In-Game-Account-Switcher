@@ -1,10 +1,8 @@
 package the_fireplace.ias.tools;
 
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
 
 import javax.imageio.ImageIO;
@@ -56,14 +54,8 @@ public class SkinRender
 			}
 		}
 		previewTexture.updateDynamicTexture();
-		Tessellator tessellator = Tessellator.getInstance();
-		WorldRenderer rend = tessellator.getWorldRenderer();
+
 		textureManager.bindTexture(resourceLocation);
-		rend.begin(7, DefaultVertexFormats.POSITION_TEX);
-		rend.normal(xPos, yPos+height, 0).tex(0.0D, 1.0D).color(255, 255, 255, 255).endVertex();
-		rend.normal(xPos+width, yPos+height, 0).tex(1.0D, 1.0D).color(255, 255, 255, 255).endVertex();
-		rend.normal(xPos+width, yPos, 0).tex(1.0D, 0.0D).color(255, 255, 255, 255).endVertex();
-		rend.normal(xPos, yPos, 0).tex(0.0D, 0.0D).color(255, 255, 255, 255).endVertex();
-		tessellator.draw();
+		Gui.drawModalRectWithCustomSizedTexture(xPos, yPos, 0, 0, width, height, 16*4, 32*4);
 	}
 }

@@ -1,12 +1,11 @@
 package the_fireplace.ias.events;
 
 import com.github.mrebhan.ingameaccountswitcher.tools.Config;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.gui.GuiMultiplayer;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.util.StatCollector;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraftforge.client.event.GuiScreenEvent.ActionPerformedEvent;
 import net.minecraftforge.client.event.GuiScreenEvent.InitGuiEvent;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
@@ -20,28 +19,25 @@ import the_fireplace.ias.tools.Reference;
 /**
  * @author The_Fireplace
  */
-public class ForgeEvents {
+public class ClientEvents {
 	@SubscribeEvent
 	public void preGui(InitGuiEvent.Pre event){
-		if(event.gui instanceof GuiMainMenu){
+		if(event.getGui() instanceof GuiMainMenu){
 			Config.save();
 		}
 	}
 	@SubscribeEvent
 	public void guiEvent(InitGuiEvent.Post event){
-		GuiScreen gui = event.gui;
+		GuiScreen gui = event.getGui();
 		if(gui instanceof GuiMainMenu){
-			event.buttonList.add(new GuiButtonWithImage(20, gui.width / 2 + 104, (gui.height / 4 + 48) + 72 + 12, 20, 20, ""));
+			event.getButtonList().add(new GuiButtonWithImage(20, gui.width / 2 + 104, (gui.height / 4 + 48) + 72 + 12, 20, 20, ""));
 		}
 	}
 	@SubscribeEvent
 	public void onClick(ActionPerformedEvent event){
-		if(event.gui instanceof GuiMainMenu && event.button.id == 20){
+		if(event.getGui() instanceof GuiMainMenu && event.getButton().id == 20){
 			if(Config.getInstance() == null){
 				Config.load();
-			}
-			if(Minecraft.getMinecraft() == null){
-				System.out.println("Error: Server call");
 			}
 			Minecraft.getMinecraft().displayGuiScreen(new GuiAccountSelector());
 		}
@@ -50,16 +46,16 @@ public class ForgeEvents {
 	public void onTick(TickEvent.RenderTickEvent t) {
 		GuiScreen screen = Minecraft.getMinecraft().currentScreen;
 		if (screen instanceof GuiMainMenu) {
-			screen.drawCenteredString(Minecraft.getMinecraft().fontRendererObj, StatCollector.translateToLocal("ias.loggedinas") + Minecraft.getMinecraft().getSession().getUsername()+".", screen.width / 2, screen.height / 4 + 48 + 72 + 12 + 22, 0xFFCC8888);
+			screen.drawCenteredString(Minecraft.getMinecraft().fontRendererObj, I18n.translateToLocal("ias.loggedinas") + Minecraft.getMinecraft().getSession().getUsername()+".", screen.width / 2, screen.height / 4 + 48 + 72 + 12 + 22, 0xFFCC8888);
 		}else if(screen instanceof GuiMultiplayer){
 			if (Minecraft.getMinecraft().getSession().getToken().equals("0")) {
-				screen.drawCenteredString(Minecraft.getMinecraft().fontRendererObj, StatCollector.translateToLocal("ias.offlinemode"), screen.width / 2, 10, 16737380);
+				screen.drawCenteredString(Minecraft.getMinecraft().fontRendererObj, I18n.translateToLocal("ias.offlinemode"), screen.width / 2, 10, 16737380);
 			}
 		}
 	}
 	@SubscribeEvent
 	public void configChanged(ConfigChangedEvent event){
-		if(event.modID.equals(Reference.MODID)){
+		if(event.getModID().equals(Reference.MODID)){
 			IAS.syncConfig();
 		}
 	}

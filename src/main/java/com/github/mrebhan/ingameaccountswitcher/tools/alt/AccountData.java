@@ -19,17 +19,17 @@ public class AccountData implements Serializable {
 		this.alias = alias;
 	}
 
-//	public boolean equalsBasic(Object obj){
-//		if (this == obj) {
-//			return true;
-//		}
-//		if (obj == null) {
-//			return false;
-//		}
-//		if (getClass() != obj.getClass()) {
-//			return false;
-//		}
-//		AccountData other = (AccountData) obj;
-//		return user.equals(other.user);
-//	}
+	public boolean equalsBasic(Object obj){
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		AccountData other = (AccountData) obj;
+		return user.equals(other.user);
+	}
 }
