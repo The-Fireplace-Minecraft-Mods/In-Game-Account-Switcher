@@ -17,8 +17,8 @@ plugins {
 apply plugin: 'net.minecraftforge.gradle.forge'
 
 allprojects {
-    sourceCompatibility = 1.7
-    targetCompatibility = 1.7
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
 }
 
 curseforge {
@@ -27,6 +27,7 @@ curseforge {
     id = '232676'
     changelog = file('changelog.txt')
     releaseType = 'release'
+	addGameVersion '1.10'
 	addGameVersion '1.9.4'
 	addGameVersion 'Java 8'
     mainArtifact jar
@@ -38,7 +39,7 @@ group= "the_fireplace.ias"
 archivesBaseName = "InGameAccountSwitcher"
 
 minecraft {
-    version = "1.9.4-12.17.0.1909-1.9.4"
+    version = "1.10-12.18.0.1983-1.10.0"
     runDir = "run"
     mappings = "snapshot_20160518"
 }
