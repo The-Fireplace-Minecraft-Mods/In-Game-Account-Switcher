@@ -9,7 +9,7 @@
   "updateUrl": "http://mods.curse.com/mc-mods/minecraft/232676-in-game-account-switcher",
   "authorList": ["The_Fireplace"],
   "credits": "deFENCE_(aka MRebhan), Elvm",
-  "logoFile": "",
+  "logoFile": "iaslogo.png",
   "screenshots": [],
   "dependencies": [],
   "requiredMods": ["Forge@[12.17.0.1909,)"],
