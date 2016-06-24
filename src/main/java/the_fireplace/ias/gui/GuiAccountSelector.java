@@ -12,16 +12,13 @@ import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.resources.I18n;
 import org.apache.commons.lang3.StringUtils;
 import org.lwjgl.input.Keyboard;
-import the_fireplace.ias.account.AlreadyLoggedInException;
 import the_fireplace.ias.account.ExtendedAccountData;
-import the_fireplace.ias.config.ConfigValues;
 import the_fireplace.ias.enums.EnumBool;
 import the_fireplace.ias.tools.HttpTools;
 import the_fireplace.ias.tools.JavaTools;
 import the_fireplace.ias.tools.SkinTools;
 import the_fireplace.iasencrypt.EncryptionTools;
 
-import java.io.IOException;
 import java.util.ArrayList;
 /**
  * The GUI where you can log in to, add, and remove accounts
@@ -64,7 +61,7 @@ public class GuiAccountSelector extends GuiScreen {
 		SkinTools.buildSkin(queriedaccounts.get(selectedAccountIndex).alias);
 	}
 	@Override
-	public void handleMouseInput() throws IOException
+	public void handleMouseInput()
 	{
 		super.handleMouseInput();
 		this.accountsgui.handleMouseInput();
@@ -83,7 +80,7 @@ public class GuiAccountSelector extends GuiScreen {
 	}
 
 	@Override
-	protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException
+	protected void mouseClicked(int mouseX, int mouseY, int mouseButton)
 	{
 		super.mouseClicked(mouseX, mouseY, mouseButton);
 		boolean flag = search.isFocused();
@@ -202,8 +199,6 @@ public class GuiAccountSelector extends GuiScreen {
 			current.premium=EnumBool.TRUE;
 			current.useCount++;
 			current.lastused=JavaTools.getJavaCompat().getDate();
-		}else if(loginfailed instanceof AlreadyLoggedInException){
-			getCurrentAsEditable().lastused=JavaTools.getJavaCompat().getDate();
 		}else if(HttpTools.ping("http://minecraft.net")){
 			getCurrentAsEditable().premium=EnumBool.FALSE;
 		}
@@ -219,10 +214,7 @@ public class GuiAccountSelector extends GuiScreen {
 		queriedaccounts = convertData();
 		if(!query.equals(I18n.format("ias.search")) && !query.equals("")){
 			for(int i=0;i<queriedaccounts.size();i++){
-				if(!queriedaccounts.get(i).alias.contains(query) && ConfigValues.CASESENSITIVE){
-					queriedaccounts.remove(i);
-					i--;
-				}else if(!queriedaccounts.get(i).alias.toLowerCase().contains(query.toLowerCase()) && !ConfigValues.CASESENSITIVE){
+				if(!queriedaccounts.get(i).alias.toLowerCase().contains(query.toLowerCase())){
 					queriedaccounts.remove(i);
 					i--;
 				}

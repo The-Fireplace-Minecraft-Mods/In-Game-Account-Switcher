@@ -8,8 +8,6 @@ import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
 import com.mojang.util.UUIDTypeAdapter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.Session;
-import the_fireplace.ias.account.AlreadyLoggedInException;
-import the_fireplace.ias.config.ConfigValues;
 import the_fireplace.iasencrypt.EncryptionTools;
 
 import java.util.UUID;
@@ -39,12 +37,6 @@ public class AltManager {
 	public Throwable setUser(String username, String password) {
 		Throwable throwable = null;
 		if(!Minecraft.getMinecraft().getSession().getUsername().equals(EncryptionTools.decode(username)) || Minecraft.getMinecraft().getSession().getToken().equals("0")){
-			for (AccountData data : AltDatabase.getInstance().getAlts()) {
-				if (data.alias.equals(Minecraft.getMinecraft().getSession().getUsername()) && data.user.equals(username)) {
-					throwable = new AlreadyLoggedInException();
-					return throwable;
-				}
-			}
 			this.auth.logOut();
 			this.auth.setUsername(EncryptionTools.decode(username));
 			this.auth.setPassword(EncryptionTools.decode(password));
@@ -61,9 +53,6 @@ public class AltManager {
 			} catch (Exception e) {
 				throwable = e;
 			}
-		}else{
-			if(!ConfigValues.ENABLERELOG)
-				throwable = new AlreadyLoggedInException();
 		}
 		return throwable;
 	}

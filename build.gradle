@@ -1,20 +1,6 @@
-buildscript {
-    repositories {
-        jcenter()
-        maven {
-            name = "forge"
-            url = "http://files.minecraftforge.net/maven"
-        }
-    }
-    dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:2.2-SNAPSHOT'
-    }
-}
-
 plugins {
     id "com.matthewprenger.cursegradle" version "1.0.4"
 }
-apply plugin: 'net.minecraftforge.gradle.forge'
 
 allprojects {
     sourceCompatibility = 1.8
@@ -36,13 +22,7 @@ curseforge {
 
 version = "!!VERSION!!"
 group= "the_fireplace.ias"
-archivesBaseName = "InGameAccountSwitcher"
-
-minecraft {
-    version = "1.10-12.18.0.1983-1.10.0"
-    runDir = "run"
-    mappings = "snapshot_20160518"
-}
+archivesBaseName = "InGameAccountSwitcher-OML"
 
 dependencies {}
 

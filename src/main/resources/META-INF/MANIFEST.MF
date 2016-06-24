@@ -1,0 +1,9 @@
+Mod-Class: the_fireplace.ias.IAS
+ID: IngameAccountSwitcher
+Name: In-Game Account Switcher
+Major: 1
+Minor: 0
+Patch: 0
+Description: Allows you to change which account you are signed in to in-game without restarting Minecraft.
+UpdateURL: http://mods.curse.com/mc-mods/minecraft/232676-in-game-account-switcher
+Logo: iaslogo.png

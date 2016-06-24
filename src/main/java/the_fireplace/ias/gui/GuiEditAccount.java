@@ -159,7 +159,7 @@ class GuiEditAccount extends GuiScreen {
 	}
 
 	@Override
-	protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException
+	protected void mouseClicked(int mouseX, int mouseY, int mouseButton)
 	{
 		super.mouseClicked(mouseX, mouseY, mouseButton);
 		username.mouseClicked(mouseX, mouseY, mouseButton);

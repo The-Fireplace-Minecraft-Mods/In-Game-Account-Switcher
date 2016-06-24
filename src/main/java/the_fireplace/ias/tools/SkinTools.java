@@ -3,8 +3,6 @@ package the_fireplace.ias.tools;
 import com.github.mrebhan.ingameaccountswitcher.tools.alt.AccountData;
 import com.github.mrebhan.ingameaccountswitcher.tools.alt.AltDatabase;
 import net.minecraft.client.Minecraft;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -14,7 +12,6 @@ import java.net.URL;
  * Tools that have to do with Skins
  * @author The_Fireplace
  */
-@SideOnly(Side.CLIENT)
 public class SkinTools {
 	public static final File cachedir = new File(Minecraft.getMinecraft().mcDataDir, "cachedImages/skins/");
 	private static final File skinOut = new File(cachedir, "temp.png");

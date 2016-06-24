@@ -34,11 +34,7 @@ public class GuiButtonWithImage extends GuiButton {
 			this.mouseDragged(mc, mouseX, mouseY);
 			int l = 14737632;
 
-			if (packedFGColour != 0)
-			{
-				l = packedFGColour;
-			}
-			else if (!this.enabled)
+			if (!this.enabled)
 			{
 				l = 10526880;
 			}
