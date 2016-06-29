@@ -24,6 +24,11 @@ version = "!!VERSION!!"
 group= "the_fireplace.ias"
 archivesBaseName = "InGameAccountSwitcher-OML"
 
+minecraft{
+	version = "1.10.2"
+    mappings = "snapshot_20160604"
+}
+
 dependencies {}
 
 processResources
