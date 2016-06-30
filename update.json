@@ -1,6 +1,8 @@
 {
 	"homepage": "http://mods.curse.com/mc-mods/minecraft/232676-in-game-account-switcher",
 	"promos": {
+		"1.10.2-latest": "!!VERSION!!",
+		"1.10.2-recommended": "!!VERSION!!",
 		"1.10-latest": "!!VERSION!!",
 		"1.10-recommended": "!!VERSION!!",
 		"1.9.4-latest": "!!VERSION!!",

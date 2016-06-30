@@ -5,9 +5,14 @@ buildscript {
             name = "forge"
             url = "http://files.minecraftforge.net/maven"
         }
+        maven {
+            name = "Modmuss50"
+            url = "http://maven.modmuss50.me/"
+        }
     }
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:2.2-SNAPSHOT'
+        classpath 'ModsIOUpload:ModsIOUpload:+'
     }
 }
 
@@ -15,6 +20,7 @@ plugins {
     id "com.matthewprenger.cursegradle" version "1.0.4"
 }
 apply plugin: 'net.minecraftforge.gradle.forge'
+apply plugin: 'net.cazzar.gradle.modsio'
 
 allprojects {
     sourceCompatibility = 1.8
@@ -27,6 +33,7 @@ curseforge {
     id = '232676'
     changelog = file('changelog.txt')
     releaseType = 'release'
+    addGameVersion '1.10.2'
 	addGameVersion '1.10'
 	addGameVersion '1.9.4'
 	addGameVersion 'Java 8'
@@ -36,10 +43,22 @@ curseforge {
 
 version = "!!VERSION!!"
 group= "the_fireplace.ias"
-archivesBaseName = "InGameAccountSwitcher"
+archivesBaseName = "InGameAccountSwitcher-Forge"
+
+modsIO {
+    key = project.modsioApiKey
+    project{
+		artifact = new File(jar.destinationDir, archivesBaseName+"-"+version+".jar")
+		modid = "1221"
+		minecraft = "1.10.2"
+		try{changelog = file('changelog.txt').text}catch(Exception e){changelog=""}
+		tag = ""
+		current = true
+    }
+}
 
 minecraft {
-    version = "1.10-12.18.0.1983-1.10.0"
+    version = "1.10.2-12.18.0.2004-1.10.0"
     runDir = "run"
     mappings = "snapshot_20160518"
 }
