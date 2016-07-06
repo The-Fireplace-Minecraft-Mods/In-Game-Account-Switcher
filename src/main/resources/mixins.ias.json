@@ -1,0 +1,12 @@
+{
+  "required": true,
+  "minVersion": "0.5.3",
+  "package": "the_fireplace.ias.mixin",
+  "refmap": "mixins.ias.refmap.json",
+  "mixins": [
+    "MixinGuiMainMenu"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

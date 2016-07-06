@@ -8,7 +8,7 @@ import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
 import com.mojang.util.UUIDTypeAdapter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.Session;
-import the_fireplace.ias.IAS;
+import the_fireplace.ias.LiteModIAS;
 import the_fireplace.ias.account.AlreadyLoggedInException;
 import the_fireplace.iasencrypt.EncryptionTools;
 
@@ -62,7 +62,7 @@ public class AltManager {
 				throwable = e;
 			}
 		}else{
-			if(!IAS.instance.ENABLERELOG)
+			if(!LiteModIAS.instance.ENABLERELOG)
 				throwable = new AlreadyLoggedInException();
 		}
 		return throwable;
