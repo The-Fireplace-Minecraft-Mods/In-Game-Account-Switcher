@@ -1,10 +1,11 @@
 package the_fireplace.ias;
 
 import com.github.mrebhan.ingameaccountswitcher.MR;
+import com.github.mrebhan.ingameaccountswitcher.tools.Config;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-import com.mumfrey.liteloader.InitCompleteListener;
-import com.mumfrey.liteloader.core.LiteLoader;
+import com.mumfrey.liteloader.ShutdownListener;
+import com.mumfrey.liteloader.Tickable;
 import com.mumfrey.liteloader.modconfig.ConfigStrategy;
 import com.mumfrey.liteloader.modconfig.ExposableOptions;
 import net.minecraft.client.Minecraft;
@@ -22,7 +23,7 @@ import java.io.File;
  * @author The_Fireplace
  */
 @ExposableOptions(strategy = ConfigStrategy.Unversioned, filename="ias.json")
-public class LiteModIAS implements InitCompleteListener {
+public class LiteModIAS implements Tickable, ShutdownListener {
 	public static LiteModIAS instance;
 	@Expose
 	@SerializedName("case_sensitive")
@@ -58,6 +59,14 @@ public class LiteModIAS implements InitCompleteListener {
 	public void init(File configPath) {
 		//PreInit
 		Standards.updateFolder();
+		//Init
+		MR.init();
+		Standards.importAccounts();
+		//PostInit
+		if(!SkinTools.cachedir.exists())
+			if(!SkinTools.cachedir.mkdirs())
+				System.out.println("Skin cache directory creation failed.");
+		SkinTools.cacheSkins();
 	}
 
 	@Override
@@ -71,14 +80,7 @@ public class LiteModIAS implements InitCompleteListener {
 	}
 
 	@Override
-	public void onInitCompleted(Minecraft minecraft, LiteLoader loader) {
-		//Init
-		MR.init();
-		Standards.importAccounts();
-		//PostInit
-		if(!SkinTools.cachedir.exists())
-			if(!SkinTools.cachedir.mkdirs())
-				System.out.println("Skin cache directory creation failed.");
-		SkinTools.cacheSkins();
+	public void onShutDown() {
+		Config.save();
 	}
 }

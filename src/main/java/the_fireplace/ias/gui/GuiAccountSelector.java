@@ -1,5 +1,6 @@
 package the_fireplace.ias.gui;
 
+import com.github.mrebhan.ingameaccountswitcher.tools.Config;
 import com.github.mrebhan.ingameaccountswitcher.tools.Tools;
 import com.github.mrebhan.ingameaccountswitcher.tools.alt.AccountData;
 import com.github.mrebhan.ingameaccountswitcher.tools.alt.AltDatabase;
@@ -102,6 +103,7 @@ public class GuiAccountSelector extends GuiScreen {
 	@Override
 	public void onGuiClosed()
 	{
+		Config.save();
 		Keyboard.enableRepeatEvents(false);
 	}
 
@@ -156,6 +158,7 @@ public class GuiAccountSelector extends GuiScreen {
 	 * Leave the gui
 	 */
 	private void escape(){
+		Config.save();
 		mc.displayGuiScreen(null);
 	}
 	/**

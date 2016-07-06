@@ -18,8 +18,8 @@ public abstract class MixinGuiMainMenu extends GuiScreen {
     @Inject(method = "initGui()V", at = @At("HEAD"))
     private void onInit(CallbackInfo ci)
     {
-        Config.save();
         this.buttonList.add(new GuiButtonWithImage(20, this.width / 2 + 104, (this.height / 4 + 48) + 72 + 12, 20, 20, ""));
+        Config.save();
     }
 
     @Inject(method = "actionPerformed", at = @At("HEAD"))
