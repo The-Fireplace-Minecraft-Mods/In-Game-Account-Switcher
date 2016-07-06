@@ -1,56 +1,68 @@
 package the_fireplace.ias;
 
 import com.github.mrebhan.ingameaccountswitcher.MR;
-import net.minecraft.client.resources.I18n;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.config.Configuration;
-import net.minecraftforge.common.config.Property;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.Mod.EventHandler;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import the_fireplace.ias.config.ConfigValues;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+import com.mumfrey.liteloader.Tickable;
+import com.mumfrey.liteloader.modconfig.ConfigStrategy;
+import com.mumfrey.liteloader.modconfig.ExposableOptions;
+import net.minecraft.client.Minecraft;
 import the_fireplace.ias.events.ClientEvents;
 import the_fireplace.ias.tools.Reference;
 import the_fireplace.ias.tools.SkinTools;
 import the_fireplace.iasencrypt.Standards;
+
+import java.io.File;
+
 /**
  * @author The_Fireplace
  */
-@Mod(modid=Reference.MODID, name=Reference.MODNAME, clientSideOnly=true, guiFactory="the_fireplace.ias.config.IASGuiFactory", updateJSON = "http://caterpillar.bitnamiapp.com/jsons/ias.json", acceptedMinecraftVersions = "[1.9.4,1.10)")
-public class IAS {
-	public static Configuration config;
-	private static Property CASESENSITIVE_PROPERTY;
-	private static Property ENABLERELOG_PROPERTY;
+@ExposableOptions(strategy = ConfigStrategy.Unversioned, filename="ias.json")
+public class IAS implements Tickable {
+	public static IAS instance;
+	@Expose
+	@SerializedName("case_sensitive")
+	public boolean CASESENSITIVE = false;
+	@Expose
+	@SerializedName("enable_relog")
+	public boolean ENABLERELOG = true;
 
-	public static void syncConfig(){
-		ConfigValues.CASESENSITIVE = CASESENSITIVE_PROPERTY.getBoolean();
-		ConfigValues.ENABLERELOG = ENABLERELOG_PROPERTY.getBoolean();
-		if(config.hasChanged())
-			config.save();
+	public IAS(){
+		instance = this;
 	}
 
-	@EventHandler
-	public void preInit(FMLPreInitializationEvent event) {
-		config = new Configuration(event.getSuggestedConfigurationFile());
-		config.load();
-		CASESENSITIVE_PROPERTY = config.get(Configuration.CATEGORY_GENERAL, ConfigValues.CASESENSITIVE_NAME, ConfigValues.CASESENSITIVE_DEFAULT, I18n.format(ConfigValues.CASESENSITIVE_NAME+".tooltip"));
-		ENABLERELOG_PROPERTY = config.get(Configuration.CATEGORY_GENERAL, ConfigValues.ENABLERELOG_NAME, ConfigValues.ENABLERELOG_DEFAULT, I18n.format(ConfigValues.ENABLERELOG_NAME+".tooltip"));
-		syncConfig();
+	@Override
+	public void onTick(Minecraft minecraft, float partialTicks, boolean inGame, boolean clock) {
+		if(!inGame)
+			ClientEvents.onTick(minecraft);
+	}
+
+	@Override
+	public String getVersion() {
+		return Reference.VERSION;
+	}
+
+	@Override
+	public void init(File configPath) {
+		//PreInit
 		Standards.updateFolder();
-	}
-	@EventHandler
-	public void init(FMLInitializationEvent event){
+		//Init
 		MR.init();
-		MinecraftForge.EVENT_BUS.register(new ClientEvents());
 		Standards.importAccounts();
-	}
-	@EventHandler
-	public void postInit(FMLPostInitializationEvent event){
+		//PostInit
 		if(!SkinTools.cachedir.exists())
 			if(!SkinTools.cachedir.mkdirs())
 				System.out.println("Skin cache directory creation failed.");
 		SkinTools.cacheSkins();
+	}
+
+	@Override
+	public void upgradeSettings(String version, File configPath, File oldConfigPath) {
+
+	}
+
+	@Override
+	public String getName() {
+		return Reference.MODNAME;
 	}
 }

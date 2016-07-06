@@ -12,9 +12,9 @@ import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.resources.I18n;
 import org.apache.commons.lang3.StringUtils;
 import org.lwjgl.input.Keyboard;
+import the_fireplace.ias.IAS;
 import the_fireplace.ias.account.AlreadyLoggedInException;
 import the_fireplace.ias.account.ExtendedAccountData;
-import the_fireplace.ias.config.ConfigValues;
 import the_fireplace.ias.enums.EnumBool;
 import the_fireplace.ias.tools.HttpTools;
 import the_fireplace.ias.tools.JavaTools;
@@ -219,10 +219,10 @@ public class GuiAccountSelector extends GuiScreen {
 		queriedaccounts = convertData();
 		if(!query.equals(I18n.format("ias.search")) && !query.equals("")){
 			for(int i=0;i<queriedaccounts.size();i++){
-				if(!queriedaccounts.get(i).alias.contains(query) && ConfigValues.CASESENSITIVE){
+				if(!queriedaccounts.get(i).alias.contains(query) && IAS.instance.CASESENSITIVE){
 					queriedaccounts.remove(i);
 					i--;
-				}else if(!queriedaccounts.get(i).alias.toLowerCase().contains(query.toLowerCase()) && !ConfigValues.CASESENSITIVE){
+				}else if(!queriedaccounts.get(i).alias.toLowerCase().contains(query.toLowerCase()) && !IAS.instance.CASESENSITIVE){
 					queriedaccounts.remove(i);
 					i--;
 				}

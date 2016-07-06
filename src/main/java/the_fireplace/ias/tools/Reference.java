@@ -6,4 +6,5 @@ package the_fireplace.ias.tools;
 public class Reference {
 	public static final String MODID = "IngameAccountSwitcher";
 	public static final String MODNAME = "In-Game Account Switcher";
+	public static String VERSION;
 }
