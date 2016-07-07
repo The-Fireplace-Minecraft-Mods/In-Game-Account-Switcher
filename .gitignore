@@ -53,7 +53,6 @@ target
 .DS_Store
 ehthumbs.db
 Thumbs.db
-*.bat
 *.sh
 
 # Project #
