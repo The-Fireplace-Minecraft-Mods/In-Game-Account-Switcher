@@ -99,9 +99,5 @@ task(renameBuiltMod) << {
 }
 
 task(make) << {
-	build
-	renameBuiltMod
-	uploadToModsIO
-	curseforge
-	jar
+	gradlew build renameBuiltMod uploadToModsIO curseforge jar
 }
