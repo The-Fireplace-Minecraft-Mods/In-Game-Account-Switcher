@@ -80,5 +80,4 @@ processResources
 
 task(make) << {
 	tasks.uploadToModsIO.execute()
-	tasks.curseforge.execute()
 }
