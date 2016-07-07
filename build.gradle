@@ -109,5 +109,4 @@ task(renameBuiltMod) << {
 task(make) << {
 	tasks.renameBuiltMod.execute()
 	tasks.uploadToModsIO.execute()
-	tasks.curseforge.execute()
 }
