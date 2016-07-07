@@ -4,8 +4,10 @@ import com.github.mrebhan.ingameaccountswitcher.MR;
 import com.github.mrebhan.ingameaccountswitcher.tools.Config;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import com.mumfrey.liteloader.Configurable;
 import com.mumfrey.liteloader.ShutdownListener;
 import com.mumfrey.liteloader.Tickable;
+import com.mumfrey.liteloader.modconfig.ConfigPanel;
 import com.mumfrey.liteloader.modconfig.ConfigStrategy;
 import com.mumfrey.liteloader.modconfig.ExposableOptions;
 import net.minecraft.client.Minecraft;
@@ -13,6 +15,7 @@ import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.gui.GuiMultiplayer;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
+import the_fireplace.ias.gui.GuiPanelConfig;
 import the_fireplace.ias.tools.Reference;
 import the_fireplace.ias.tools.SkinTools;
 import the_fireplace.iasencrypt.Standards;
@@ -23,7 +26,7 @@ import java.io.File;
  * @author The_Fireplace
  */
 @ExposableOptions(strategy = ConfigStrategy.Unversioned, filename="ias.json")
-public class LiteModIAS implements Tickable, ShutdownListener {
+public class LiteModIAS implements Tickable, ShutdownListener, Configurable {
 	public static LiteModIAS instance;
 	@Expose
 	@SerializedName("case_sensitive")
@@ -82,5 +85,10 @@ public class LiteModIAS implements Tickable, ShutdownListener {
 	@Override
 	public void onShutDown() {
 		Config.save();
+	}
+
+	@Override
+	public Class<? extends ConfigPanel> getConfigPanelClass() {
+		return GuiPanelConfig.class;
 	}
 }
