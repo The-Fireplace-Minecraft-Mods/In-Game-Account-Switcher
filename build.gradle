@@ -97,3 +97,11 @@ task(renameBuiltMod) << {
 	else
 		System.out.println(file)
 }
+
+task(make) << {
+	build
+	renameBuiltMod
+	uploadToModsIO
+	curseforge
+	jar
+}
