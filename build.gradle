@@ -38,7 +38,7 @@ curseforge {
   project {
     id = '232676'
     changelog = file('changelog.txt')
-    releaseType = 'alpha'
+    releaseType = 'beta'
 	addGameVersion '1.9'
 	addGameVersion 'Java 8'
     mainArtifact new File(jar.destinationDir, archivesBaseName+"-"+version+".litemod")
@@ -56,7 +56,7 @@ modsIO {
 		modid = "1221"
 		minecraft = "1.9"
 		try{changelog = file('changelog.txt').text}catch(Exception e){changelog=""}
-		tag = ""
+		tag = "beta"
 		current = true
     }
 }
