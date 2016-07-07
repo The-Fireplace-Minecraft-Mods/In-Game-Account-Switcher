@@ -77,3 +77,8 @@ processResources
         exclude 'mcmod.info'
     }
 }
+
+task(make) << {
+	tasks.uploadToModsIO.execute()
+	tasks.curseforge.execute()
+}
