@@ -55,7 +55,7 @@ public class LiteModIAS implements Tickable, ShutdownListener, Configurable {
 
 	@Override
 	public String getVersion() {
-		return Reference.VERSION;
+		return null;
 	}
 
 	@Override

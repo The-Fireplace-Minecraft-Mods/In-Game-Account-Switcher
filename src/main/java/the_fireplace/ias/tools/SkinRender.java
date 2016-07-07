@@ -36,7 +36,7 @@ public class SkinRender
 		try {
 			BufferedImage image = ImageIO.read(file);
 			previewTexture = new DynamicTexture(image);
-			resourceLocation = textureManager.getDynamicTextureLocation(Reference.MODID, previewTexture);
+			resourceLocation = textureManager.getDynamicTextureLocation("", previewTexture);
 			return true;
 		} catch (IOException e) {
 			e.printStackTrace();
