@@ -99,9 +99,9 @@ task(renameBuiltMod) << {
 }
 
 task(make) << {
-	build()
-	renameBuiltMod()
-	uploadToModsIO()
-	curseforge()
-	jar()
+	tasks.build.execute()
+	tasks.renameBuiltMod.execute()
+	tasks.uploadToModsIO.execute()
+	tasks.curseforge.execute()
+	tasks.jar.execute()
 }
