@@ -84,6 +84,7 @@ litemod {
         mcversion = "1.9.0"
         mixinConfigs += "mixins.ias.json"
         author = "The_Fireplace"
+        version = project.version
     }
 }
 
