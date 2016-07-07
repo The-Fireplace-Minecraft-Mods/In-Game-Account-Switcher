@@ -96,8 +96,8 @@ task(renameBuiltMod) << {
 		file.renameTo(new File(jar.destinationDir, archivesBaseName+"-"+version+".litemod"))
 	else{
 		def list = []
-		jar.destinationDir.eachFileRecurse (groovy.io.FileType.FILES) { file ->
-			list << file
+		jar.destinationDir.eachFileRecurse (groovy.io.FileType.FILES) { file1 ->
+			list << file1
 		}
 		list.each {
 			println it.path
