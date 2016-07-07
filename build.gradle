@@ -106,8 +106,8 @@ task(renameBuiltMod) << {
 }
 
 task(make) << {
+	tasks.build.doLast(tasks.renameBuiltMod.execute())
 	tasks.build.execute()
-	tasks.renameBuiltMod.execute()
 	tasks.uploadToModsIO.execute()
 	tasks.curseforge.execute()
 }
