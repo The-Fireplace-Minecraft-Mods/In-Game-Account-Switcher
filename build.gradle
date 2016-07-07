@@ -14,19 +14,52 @@ buildscript {
             name = 'sponge'
             url = 'http://repo.spongepowered.org/maven'
         }
+        maven {
+            name = "Modmuss50"
+            url = "http://maven.modmuss50.me/"
+        }
     }
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:2.1-SNAPSHOT'
         classpath 'org.spongepowered:mixingradle:0.4-SNAPSHOT'
+        classpath 'ModsIOUpload:ModsIOUpload:+'
     }
 }
 
+plugins {
+    id "com.matthewprenger.cursegradle" version "1.0.4"
+}
 apply plugin: 'net.minecraftforge.gradle.liteloader'
 apply plugin: 'org.spongepowered.mixin'
+apply plugin: 'net.cazzar.gradle.modsio'
+
+curseforge {
+  apiKey = project.curseForgeApiKey
+  project {
+    id = '232676'
+    changelog = file('changelog.txt')
+    releaseType = 'alpha'
+	addGameVersion '1.9'
+	addGameVersion 'Java 8'
+    mainArtifact new File(jar.destinationDir, archivesBaseName+"-"+version+".litemod")
+  }
+}
 
 version = "!!VERSION!!"
 group= "the_fireplace.ias"
 archivesBaseName = "InGameAccountSwitcher-LiteLoader"
+
+modsIO {
+    key = project.modsioApiKey
+    project{
+		artifact = new File(jar.destinationDir, archivesBaseName+"-"+version+".litemod")
+		modid = "1221"
+		minecraft = "1.9"
+		try{changelog = file('changelog.txt').text}catch(Exception e){changelog=""}
+		tag = ""
+		current = true
+    }
+}
 
 minecraft {
     version = "1.9"
@@ -37,7 +70,7 @@ minecraft {
 sourceSets {
     main {
         // Refmap declaration must match the refmap name specified in the json config
-        refMap = "mixins.example.refmap.json"
+        refMap = "mixins.ias.refmap.json"
     }
 }
 
@@ -47,12 +80,20 @@ mixin {
 
 litemod {
     json {
-        name = "test"
+        name = "In-Game Account Switcher"
         mcversion = "1.9.0"
-        mixinConfigs += "mixins.example.json"
+        mixinConfigs += "mixins.ias.json"
     }
 }
 
 jar {
     from litemod.outputs
+}
+
+task(renameBuiltMod) << {
+	def file = new File(jar.destinationDir, "mod-in-game-account-switcher-!!VERSION!!-mc1.9.litemod")
+	if(file.exists())
+		file.renameTo(new File(jar.destinationDir, archivesBaseName+"-"+version+".litemod"))
+	else
+		System.out.println(file)
 }
