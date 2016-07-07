@@ -33,6 +33,10 @@ apply plugin: 'net.minecraftforge.gradle.liteloader'
 apply plugin: 'org.spongepowered.mixin'
 apply plugin: 'net.cazzar.gradle.modsio'
 
+version = "!!VERSION!!"
+group= "the_fireplace.ias"
+archivesBaseName = "InGameAccountSwitcher-LiteLoader"
+
 curseforge {
   apiKey = project.curseForgeApiKey
   project {
@@ -44,10 +48,6 @@ curseforge {
     mainArtifact new File(jar.destinationDir, archivesBaseName+"-"+version+".litemod")
   }
 }
-
-version = "!!VERSION!!"
-group= "the_fireplace.ias"
-archivesBaseName = "InGameAccountSwitcher-LiteLoader"
 
 modsIO {
     key = project.modsioApiKey
