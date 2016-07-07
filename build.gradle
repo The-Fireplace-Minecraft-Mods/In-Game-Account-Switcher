@@ -94,8 +94,15 @@ task(renameBuiltMod) << {
 	def file = new File(jar.destinationDir, "mod-in-game-account-switcher-!!VERSION!!-mc1.9.litemod")
 	if(file.exists())
 		file.renameTo(new File(jar.destinationDir, archivesBaseName+"-"+version+".litemod"))
-	else
-		System.out.println(file)
+	else{
+		def list = []
+		jar.destinationDir.eachFileRecurse (groovy.io.FileType.FILES) { file ->
+			list << file
+		}
+		list.each {
+			println it.path
+		}
+	}
 }
 
 task(make) << {
