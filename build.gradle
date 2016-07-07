@@ -91,7 +91,7 @@ jar {
 }
 
 task(renameBuiltMod) << {
-	def file = new File(jar.destinationDir, "mod-in-game-account-switcher-!!VERSION!!-mc1.9.litemod")
+	def file = new File(jar.destinationDir, "mod-workspace-!!VERSION!!-mc1.9.litemod")
 	if(file.exists())
 		file.renameTo(new File(jar.destinationDir, archivesBaseName+"-"+version+".litemod"))
 	else{
