@@ -1,6 +1,6 @@
 ias.loggedinas=You are currently logged in as 
 ias.selectaccount=Select an account
-ias.offlinemode=You are currently in offline mode. You won't be able to join online mode servers.
+ias.offlinemode=You are currently in offline mode. You can only join offline mode servers.
 ias.addaccount=Add Account
 ias.login=Login
 ias.offline=(Offline Mode)
