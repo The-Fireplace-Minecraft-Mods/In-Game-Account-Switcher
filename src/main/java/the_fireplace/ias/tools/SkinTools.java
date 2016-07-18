@@ -104,6 +104,9 @@ public class SkinTools {
 	}
 
 	public static void cacheSkins(){
+		if(!cachedir.exists())
+			if(!cachedir.mkdirs())
+				System.out.println("Skin cache directory creation failed.");
 		for(AccountData data : AltDatabase.getInstance().getAlts()){
 			File file = new File(cachedir, data.alias+".png");
 				try{

@@ -48,9 +48,6 @@ public class IAS {
 	}
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent event){
-		if(!SkinTools.cachedir.exists())
-			if(!SkinTools.cachedir.mkdirs())
-				System.out.println("Skin cache directory creation failed.");
 		SkinTools.cacheSkins();
 	}
 }
