@@ -45,7 +45,7 @@ curseforge {
     releaseType = 'beta'
 	addGameVersion '1.9'
 	addGameVersion 'Java 8'
-    mainArtifact new File(jar.destinationDir, archivesBaseName+"-"+version+".litemod")
+    mainArtifact(new File(jar.destinationDir, archivesBaseName+"-"+version+".litemod"))
   }
 }
 
