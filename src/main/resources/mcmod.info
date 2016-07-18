@@ -3,7 +3,7 @@
   "modid": "IngameAccountSwitcher",
   "name": "In-Game Account Switcher",
   "description": "Allows you to change which account you are signed in to in-game without restarting Minecraft.",
-  "version": "6.0.3.BUILDNUMBER",
+  "version": "6.1.1.BUILDNUMBER",
   "mcversion": "",
   "url": "http://mods.curse.com/mc-mods/minecraft/232676-in-game-account-switcher",
   "updateUrl": "http://mods.curse.com/mc-mods/minecraft/232676-in-game-account-switcher",
@@ -11,7 +11,7 @@
   "credits": "deFENCE_(aka MRebhan), Elvm",
   "logoFile": "iaslogo.png",
   "screenshots": [],
-  "dependencies": [],
+  "dependencies": ["CustomMainMenu"],
   "requiredMods": ["Forge@[12.17.0.1909,)"],
   "useDependencyInformation": true
 }

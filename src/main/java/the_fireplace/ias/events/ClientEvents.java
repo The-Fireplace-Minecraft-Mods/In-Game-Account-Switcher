@@ -21,12 +21,6 @@ import the_fireplace.ias.tools.Reference;
  */
 public class ClientEvents {
 	@SubscribeEvent
-	public void preGui(InitGuiEvent.Pre event){
-		if(event.getGui() instanceof GuiMainMenu){
-			Config.save();
-		}
-	}
-	@SubscribeEvent
 	public void guiEvent(InitGuiEvent.Post event){
 		GuiScreen gui = event.getGui();
 		if(gui instanceof GuiMainMenu){
