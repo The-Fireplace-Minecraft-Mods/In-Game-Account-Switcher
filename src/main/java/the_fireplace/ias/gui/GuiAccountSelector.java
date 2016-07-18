@@ -51,6 +51,8 @@ public class GuiAccountSelector extends GuiScreen {
 		accountsgui.registerScrollButtons(5, 6);
 		query = I18n.format("ias.search");
 		this.buttonList.clear();
+		//Above Top Row
+		this.buttonList.add(reloadskins = new GuiButton(8, this.width / 2 - 154 - 10, this.height - 76 - 8, 120, 20, I18n.format("ias.reloadskins")));
 		//Top Row
 		this.buttonList.add(new GuiButton(0, this.width / 2 + 4 + 40, this.height - 52, 120, 20, I18n.format("ias.addaccount")));
 		this.buttonList.add(login = new GuiButton(1, this.width / 2 - 154 - 10, this.height - 52, 120, 20, I18n.format("ias.login")));
@@ -149,10 +151,20 @@ public class GuiAccountSelector extends GuiScreen {
 				logino(selectedAccountIndex);
 			}else if(button.id == 7){
 				edit();
+			}else if(button.id == 8){
+				reloadSkins();
 			}else{
 				accountsgui.actionPerformed(button);
 			}
 		}
+	}
+
+	/**
+	 * Reload Skins
+	 */
+	private void reloadSkins(){
+		Config.save();
+		SkinTools.cacheSkins();
 	}
 
 	/**
@@ -256,6 +268,8 @@ public class GuiAccountSelector extends GuiScreen {
 			add();
 		} else if(character == '/' && edit.enabled){
 			edit();
+		} else if(!search.isFocused() && keyIndex == Keyboard.KEY_R) {
+			reloadSkins();
 		} else if(keyIndex == Keyboard.KEY_RETURN && !search.isFocused() && (login.enabled || loginoffline.enabled)){
 			if((Keyboard.isKeyDown(Keyboard.KEY_RSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) && loginoffline.enabled){
 				logino(selectedAccountIndex);
@@ -316,6 +330,7 @@ public class GuiAccountSelector extends GuiScreen {
 		loginoffline.enabled = !queriedaccounts.isEmpty();
 		delete.enabled = !queriedaccounts.isEmpty();
 		edit.enabled = !queriedaccounts.isEmpty();
+		reloadskins.enabled = !AltDatabase.getInstance().getAlts().isEmpty();
 	}
 	class List extends GuiSlot
 	{

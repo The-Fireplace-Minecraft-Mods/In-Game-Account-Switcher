@@ -66,9 +66,6 @@ public class LiteModIAS implements Tickable, ShutdownListener, Configurable {
 		MR.init();
 		Standards.importAccounts();
 		//PostInit
-		if(!SkinTools.cachedir.exists())
-			if(!SkinTools.cachedir.mkdirs())
-				System.out.println("Skin cache directory creation failed.");
 		SkinTools.cacheSkins();
 	}
 
