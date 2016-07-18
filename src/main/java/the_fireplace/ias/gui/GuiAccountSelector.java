@@ -39,6 +39,7 @@ public class GuiAccountSelector extends GuiScreen {
 	private GuiButton loginoffline;
 	private GuiButton delete;
 	private GuiButton edit;
+	private GuiButton reloadskins;
 	//Search
 	private String query;
 	private GuiTextField search;
@@ -103,8 +104,8 @@ public class GuiAccountSelector extends GuiScreen {
 	@Override
 	public void onGuiClosed()
 	{
-		Config.save();
 		Keyboard.enableRepeatEvents(false);
+		Config.save();
 	}
 
 	@Override
@@ -158,7 +159,6 @@ public class GuiAccountSelector extends GuiScreen {
 	 * Leave the gui
 	 */
 	private void escape(){
-		Config.save();
 		mc.displayGuiScreen(null);
 	}
 	/**
