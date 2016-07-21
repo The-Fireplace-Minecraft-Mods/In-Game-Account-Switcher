@@ -27,7 +27,7 @@ buildscript {
 }
 
 plugins {
-    id "com.matthewprenger.cursegradle" version "1.0.4"
+    id "com.matthewprenger.cursegradle" version "1.0.7"
 }
 apply plugin: 'net.minecraftforge.gradle.liteloader'
 apply plugin: 'org.spongepowered.mixin'
@@ -45,7 +45,7 @@ curseforge {
     releaseType = 'beta'
 	addGameVersion '1.9'
 	addGameVersion 'Java 8'
-    mainArtifact(file(new File(jar.destinationDir, archivesBaseName+"-"+version+".litemod").absolutePath))
+    mainArtifact(new File(jar.destinationDir, archivesBaseName+"-"+version+".litemod"))
   }
 }
 
