@@ -43,7 +43,8 @@ curseforge {
     id = '232676'
     changelog = file('changelog.txt')
     releaseType = 'beta'
-	addGameVersion '1.9.4'
+	addGameVersion '1.10.2'
+	addGameVersion '1.10'
 	addGameVersion 'Java 8'
     mainArtifact(new File(jar.destinationDir, archivesBaseName+"-"+version+".litemod"))
   }
@@ -54,7 +55,7 @@ modsIO {
     project{
 		artifact = new File(jar.destinationDir, archivesBaseName+"-"+version+".litemod")
 		modid = "1221"
-		minecraft = "1.9.4"
+		minecraft = "1.10.2"
 		try{changelog = file('changelog.txt').text}catch(Exception e){changelog=""}
 		tag = "LiteLoader"
 		current = true
@@ -62,7 +63,7 @@ modsIO {
 }
 
 minecraft {
-    version = "1.9.4"
+    version = "1.10.2"
     mappings = "snapshot_20160518"
     runDir = "run"
 }
@@ -81,7 +82,7 @@ mixin {
 litemod {
     json {
         name = "In-Game Account Switcher"
-        mcversion = "1.9.4"
+        mcversion = "1.10.r1"
         mixinConfigs += "mixins.ias.json"
         author = "The_Fireplace"
         version = project.version
@@ -93,7 +94,7 @@ jar {
 }
 
 task(renameBuiltMod) << {
-	def file = new File(jar.destinationDir, "mod-workspace-"+version+"-mc1.9.4.litemod")
+	def file = new File(jar.destinationDir, "mod-workspace-"+version+"-mc1.10.2.litemod")
 	if(file.exists())
 		file.renameTo(new File(jar.destinationDir, archivesBaseName+"-"+version+".litemod"))
 	else{
