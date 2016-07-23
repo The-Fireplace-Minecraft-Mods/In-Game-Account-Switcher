@@ -20,7 +20,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:2.1-SNAPSHOT'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.2-SNAPSHOT'
         classpath 'org.spongepowered:mixingradle:0.4-SNAPSHOT'
         classpath 'ModsIOUpload:ModsIOUpload:+'
     }
@@ -43,7 +43,7 @@ curseforge {
     id = '232676'
     changelog = file('changelog.txt')
     releaseType = 'beta'
-	addGameVersion '1.9'
+	addGameVersion '1.9.4'
 	addGameVersion 'Java 8'
     mainArtifact(new File(jar.destinationDir, archivesBaseName+"-"+version+".litemod"))
   }
@@ -54,7 +54,7 @@ modsIO {
     project{
 		artifact = new File(jar.destinationDir, archivesBaseName+"-"+version+".litemod")
 		modid = "1221"
-		minecraft = "1.9"
+		minecraft = "1.9.4"
 		try{changelog = file('changelog.txt').text}catch(Exception e){changelog=""}
 		tag = "LiteLoader"
 		current = true
@@ -62,8 +62,8 @@ modsIO {
 }
 
 minecraft {
-    version = "1.9"
-    mappings = "snapshot_20160410"
+    version = "1.9.4"
+    mappings = "snapshot_20160518"
     runDir = "run"
 }
 
@@ -81,7 +81,7 @@ mixin {
 litemod {
     json {
         name = "In-Game Account Switcher"
-        mcversion = "1.9.0"
+        mcversion = "1.9.4"
         mixinConfigs += "mixins.ias.json"
         author = "The_Fireplace"
         version = project.version
@@ -93,7 +93,7 @@ jar {
 }
 
 task(renameBuiltMod) << {
-	def file = new File(jar.destinationDir, "mod-workspace-"+version+"-mc1.9.litemod")
+	def file = new File(jar.destinationDir, "mod-workspace-"+version+"-mc1.9.4.litemod")
 	if(file.exists())
 		file.renameTo(new File(jar.destinationDir, archivesBaseName+"-"+version+".litemod"))
 	else{
