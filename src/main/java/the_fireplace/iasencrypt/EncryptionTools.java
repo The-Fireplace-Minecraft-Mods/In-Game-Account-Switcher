@@ -22,7 +22,7 @@ public final class EncryptionTools {
 	private static BASE64Decoder dec = new BASE64Decoder();
 	private static MessageDigest sha512 = getSha512Hasher();
 	private static KeyGenerator keyGen = getAESGenerator();
-	private static String secretSalt = "{$secret_salt}";
+	private static String secretSalt = "${secretSalt}";
 
 	public static String decodeOld(String text) {
 		try {
@@ -36,11 +36,13 @@ public final class EncryptionTools {
 		try {
 			byte[] data = text.getBytes(DEFAULT_ENCODING);
 			Cipher cipher = Cipher.getInstance("AES");
-			cipher.init(Cipher.ENCRYPT_MODE, getSecretKey(Standards.getPassword()));
+			cipher.init(Cipher.ENCRYPT_MODE, getSecretKey());
 
 			return enc.encode(cipher.doFinal(data));
-		} catch (BadPaddingException | IllegalBlockSizeException | InvalidKeyException | IOException
-				| NoSuchAlgorithmException | NoSuchPaddingException e) {
+		} catch (BadPaddingException e) {
+			throw new RuntimeException("The password does not match", e);
+		} catch (IllegalBlockSizeException | InvalidKeyException | IOException | NoSuchAlgorithmException
+				| NoSuchPaddingException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -49,17 +51,19 @@ public final class EncryptionTools {
 		try {
 			byte[] data = dec.decodeBuffer(text);
 			Cipher cipher = Cipher.getInstance("AES");
-			cipher.init(Cipher.DECRYPT_MODE, getSecretKey(Standards.getPassword()));
+			cipher.init(Cipher.DECRYPT_MODE, getSecretKey());
 
 			return new String(cipher.doFinal(data), DEFAULT_ENCODING);
-		} catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchPaddingException | IOException
-				| IllegalBlockSizeException | BadPaddingException e) {
+		} catch (BadPaddingException e) {
+			throw new RuntimeException("The password does not match", e);
+		} catch (IllegalBlockSizeException | InvalidKeyException | IOException | NoSuchAlgorithmException
+				| NoSuchPaddingException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
 	public static String generatePassword() {
-		keyGen.init(512);
+		keyGen.init(256);
 		return enc.encode(keyGen.generateKey().getEncoded());
 	}
 
@@ -79,9 +83,9 @@ public final class EncryptionTools {
 		}
 	}
 
-	private static SecretKeySpec getSecretKey(String password) {
+	private static SecretKeySpec getSecretKey() {
 		try {
-			password = secretSalt + password + secretSalt;
+			String password = secretSalt + Standards.getPassword() + secretSalt;
 			byte[] key = Arrays.copyOf(sha512.digest(password.getBytes(DEFAULT_ENCODING)), 16);
 
 			return new SecretKeySpec(key, "AES");

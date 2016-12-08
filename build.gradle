@@ -37,6 +37,7 @@ minecraft {
     version = "1.10.2-12.18.2.2171"
     runDir = "run"
     replace '${version}', project.version
+    replace '${secretSalt}', project.hasProperty("secretSalt")? project.secretSalt : ""
     mappings = "stable_29"
 }
 
