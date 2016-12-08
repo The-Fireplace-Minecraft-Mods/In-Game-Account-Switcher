@@ -15,7 +15,7 @@ public class EncryptionTools {
 	static BASE64Encoder enc=new BASE64Encoder();
 	static BASE64Decoder dec=new BASE64Decoder();
 
-	public static String encode(String text){
+	public static String encode(String text, String password){
 		try {
 			String rez = enc.encode( text.getBytes( DEFAULT_ENCODING ) );
 			return rez;         
@@ -25,7 +25,7 @@ public class EncryptionTools {
 		}
 	}
 
-	public static String decode(String text){
+	public static String decode(String text, String password){
 
 		try {
 			return new String(dec.decodeBuffer( text ),DEFAULT_ENCODING);
@@ -34,5 +34,9 @@ public class EncryptionTools {
 			return null;
 		}
 
+	}
+	
+	public static String generatePassword() {
+		return "superSecureAndRandomPassword!!!";
 	}
 }
