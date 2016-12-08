@@ -36,15 +36,6 @@ public class Standards {
 			return pass;
 		}else{
 			String newPass = EncryptionTools.generatePassword();
-			try{
-				Path file = passwordFile.toPath();
-				DosFileAttributes attr = Files.readAttributes(file, DosFileAttributes.class);
-				DosFileAttributeView view = Files.getFileAttributeView(file, DosFileAttributeView.class);
-				if(attr.isHidden())
-					view.setHidden(false);
-			}catch(Exception e){
-				e.printStackTrace();
-			}
 			try {
 				ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(passwordFile));
 				out.writeObject(newPass);
