@@ -31,8 +31,7 @@ public class Standards {
 				pass = (String) stream.readObject();
 				stream.close();
 			} catch (IOException | ClassNotFoundException e) {
-				e.printStackTrace();
-				throw new RuntimeException();
+				throw new RuntimeException(e);
 			}
 			return pass;
 		}else{
@@ -51,8 +50,7 @@ public class Standards {
 				out.writeObject(newPass);
 				out.close();
 			} catch (IOException e) {
-				e.printStackTrace();
-				throw new RuntimeException();
+				throw new RuntimeException(e);
 			}
 			try{
 				Path file = passwordFile.toPath();
