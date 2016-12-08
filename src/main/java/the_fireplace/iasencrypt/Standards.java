@@ -17,7 +17,7 @@ import java.io.ObjectInputStream;
  */
 public class Standards {
 	public static File IASFOLDER = Minecraft.getMinecraft().mcDataDir;
-	public static final String cfgn = ".ias";
+	public static final String cfgn = ".iasx";
 
 	public static void updateFolder(){
 		String dir;
