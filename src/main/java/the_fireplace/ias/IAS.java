@@ -18,7 +18,7 @@ import the_fireplace.iasencrypt.Standards;
 /**
  * @author The_Fireplace
  */
-@Mod(modid=Reference.MODID, name=Reference.MODNAME, clientSideOnly=true, guiFactory="the_fireplace.ias.config.IASGuiFactory", updateJSON = "http://caterpillar.bitnamiapp.com/jsons/ias.json", acceptedMinecraftVersions = "[1.9.4,1.10.2]")
+@Mod(modid=Reference.MODID, name=Reference.MODNAME, clientSideOnly=true, guiFactory="the_fireplace.ias.config.IASGuiFactory", updateJSON = "http://thefireplace.bitnamiapp.com/jsons/ias.json")
 public class IAS {
 	public static Configuration config;
 	private static Property CASESENSITIVE_PROPERTY;
