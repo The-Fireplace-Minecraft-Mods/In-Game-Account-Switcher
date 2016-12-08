@@ -38,8 +38,7 @@ public class AltManager {
 
 	public Throwable setUser(String username, String password) {
 		Throwable throwable = null;
-		// TODO
-		if(!Minecraft.getMinecraft().getSession().getUsername().equals(EncryptionTools.decode(username, null)) || Minecraft.getMinecraft().getSession().getToken().equals("0")){
+		if(!Minecraft.getMinecraft().getSession().getUsername().equals(EncryptionTools.decode(username)) || Minecraft.getMinecraft().getSession().getToken().equals("0")){
 			for (AccountData data : AltDatabase.getInstance().getAlts()) {
 				if (data.alias.equals(Minecraft.getMinecraft().getSession().getUsername()) && data.user.equals(username)) {
 					throwable = new AlreadyLoggedInException();
@@ -47,9 +46,8 @@ public class AltManager {
 				}
 			}
 			this.auth.logOut();
-			// TODO
-			this.auth.setUsername(EncryptionTools.decode(username, null));
-			this.auth.setPassword(EncryptionTools.decode(password, null));
+			this.auth.setUsername(EncryptionTools.decode(username));
+			this.auth.setPassword(EncryptionTools.decode(password));
 			try {
 				this.auth.logIn();
 				Session session = new Session(this.auth.getSelectedProfile().getName(), UUIDTypeAdapter.fromUUID(auth.getSelectedProfile().getId()), this.auth.getAuthenticatedToken(), this.auth.getUserType().getName());

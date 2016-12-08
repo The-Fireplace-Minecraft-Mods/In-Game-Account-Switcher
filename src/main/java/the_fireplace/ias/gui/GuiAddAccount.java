@@ -173,8 +173,7 @@ public class GuiAddAccount extends GuiScreen {
 
 	private boolean accountNotInList(){
 		for(AccountData data : AltDatabase.getInstance().getAlts()){
-			// TODO
-			if(EncryptionTools.decode(data.user, null).equals(user) && EncryptionTools.decode(data.pass, null).equals(pass)){
+			if(EncryptionTools.decode(data.user).equals(user) && EncryptionTools.decode(data.pass).equals(pass)){
 				return false;
 			}
 		}

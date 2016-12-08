@@ -305,9 +305,8 @@ public class GuiAccountSelector extends GuiScreen {
 			if(data instanceof ExtendedAccountData){
 				converted.add((ExtendedAccountData) data);
 			}else{
-				// TODO
-				converted.add(new ExtendedAccountData(EncryptionTools.decode(data.user, null), EncryptionTools.decode(data.pass, null), data.alias));
-				AltDatabase.getInstance().getAlts().set(index, new ExtendedAccountData(EncryptionTools.decode(data.user, null), EncryptionTools.decode(data.pass, null), data.alias));
+				converted.add(new ExtendedAccountData(EncryptionTools.decode(data.user), EncryptionTools.decode(data.pass), data.alias));
+				AltDatabase.getInstance().getAlts().set(index, new ExtendedAccountData(EncryptionTools.decode(data.user), EncryptionTools.decode(data.pass), data.alias));
 			}
 			index++;
 		}
@@ -327,8 +326,7 @@ public class GuiAccountSelector extends GuiScreen {
 		return null;
 	}
 	private void updateButtons(){
-		// TODO
-		login.enabled = !queriedaccounts.isEmpty() && !EncryptionTools.decode(queriedaccounts.get(selectedAccountIndex).pass, null).equals("");
+		login.enabled = !queriedaccounts.isEmpty() && !EncryptionTools.decode(queriedaccounts.get(selectedAccountIndex).pass).equals("");
 		loginoffline.enabled = !queriedaccounts.isEmpty();
 		delete.enabled = !queriedaccounts.isEmpty();
 		edit.enabled = !queriedaccounts.isEmpty();

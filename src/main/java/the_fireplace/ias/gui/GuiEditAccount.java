@@ -33,9 +33,8 @@ class GuiEditAccount extends GuiScreen {
 
 	public GuiEditAccount(int index){
 		this.selectedIndex=index;
-		// TODO
-		this.user=EncryptionTools.decode(AltDatabase.getInstance().getAlts().get(index).user, null);
-		this.pass=EncryptionTools.decode(AltDatabase.getInstance().getAlts().get(index).pass, null);
+		this.user=EncryptionTools.decode(AltDatabase.getInstance().getAlts().get(index).user);
+		this.pass=EncryptionTools.decode(AltDatabase.getInstance().getAlts().get(index).pass);
 		for(int i=0;i<pass.length();i++){
 			cover += '*';
 		}
@@ -198,8 +197,7 @@ class GuiEditAccount extends GuiScreen {
 
 	private boolean accountNotInList(){
 		for(AccountData data : AltDatabase.getInstance().getAlts()){
-			// TODO
-			if(EncryptionTools.decode(data.user, null).equals(user) && EncryptionTools.decode(data.pass, null).equals(pass)){
+			if(EncryptionTools.decode(data.user).equals(user) && EncryptionTools.decode(data.pass).equals(pass)){
 				return false;
 			}
 		}
