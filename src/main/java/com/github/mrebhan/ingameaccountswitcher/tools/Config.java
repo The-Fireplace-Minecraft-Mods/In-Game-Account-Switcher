@@ -5,6 +5,7 @@ import the_fireplace.iasencrypt.Standards;
 
 import java.io.*;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.attribute.DosFileAttributeView;
 import java.nio.file.attribute.DosFileAttributes;
@@ -99,6 +100,8 @@ public class Config implements Serializable {
 			DosFileAttributeView view = Files.getFileAttributeView(file, DosFileAttributeView.class);
 			if(attr.isHidden())
 				view.setHidden(false);
+		}catch(NoSuchFileException e) {
+
 		}catch(Exception e){
 			e.printStackTrace();
 		}

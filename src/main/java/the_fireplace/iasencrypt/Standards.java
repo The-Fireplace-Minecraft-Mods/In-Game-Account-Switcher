@@ -73,7 +73,7 @@ public class Standards {
 	public static void importAccounts(){
 		processData(getConfigV3());
 		processData(getConfigV2());
-		processData(getConfigV1());
+		processData(getConfigV1(), false);
 	}
 
 	private static boolean hasData(AccountData data){
@@ -86,20 +86,31 @@ public class Standards {
 	}
 
 	private static void processData(Config olddata){
+		processData(olddata, true);
+	}
+
+	private static void processData(Config olddata, boolean decrypt){
 		if(olddata != null){
 			for(AccountData data:((AltDatabase) olddata.getKey("altaccounts")).getAlts()){
-				AccountData data2 = convertData(data);
+				AccountData data2 = convertData(data, decrypt);
 				if(!hasData(data2))
 					AltDatabase.getInstance().getAlts().add(data2);
 			}
 		}
 	}
 
-	private static ExtendedAccountData convertData(AccountData oldData){
-		if(oldData instanceof ExtendedAccountData)
-			return new ExtendedAccountData(EncryptionTools.decodeOld(oldData.user), EncryptionTools.decodeOld(oldData.pass), oldData.alias, ((ExtendedAccountData) oldData).useCount, ((ExtendedAccountData) oldData).lastused, ((ExtendedAccountData) oldData).premium);
-		else
-			return new ExtendedAccountData(EncryptionTools.decodeOld(oldData.user), EncryptionTools.decodeOld(oldData.pass), oldData.alias);
+	private static ExtendedAccountData convertData(AccountData oldData, boolean decrypt){
+		if(decrypt){
+			if(oldData instanceof ExtendedAccountData)
+				return new ExtendedAccountData(EncryptionTools.decodeOld(oldData.user), EncryptionTools.decodeOld(oldData.pass), oldData.alias, ((ExtendedAccountData) oldData).useCount, ((ExtendedAccountData) oldData).lastused, ((ExtendedAccountData) oldData).premium);
+			else
+				return new ExtendedAccountData(EncryptionTools.decodeOld(oldData.user), EncryptionTools.decodeOld(oldData.pass), oldData.alias);
+		}else{
+			if(oldData instanceof ExtendedAccountData)
+				return new ExtendedAccountData(oldData.user, oldData.pass, oldData.alias, ((ExtendedAccountData) oldData).useCount, ((ExtendedAccountData) oldData).lastused, ((ExtendedAccountData) oldData).premium);
+			else
+				return new ExtendedAccountData(oldData.user, oldData.pass, oldData.alias);
+		}
 	}
 
 	private static Config getConfigV3() {
