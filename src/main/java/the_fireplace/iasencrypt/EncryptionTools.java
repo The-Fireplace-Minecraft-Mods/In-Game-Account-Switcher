@@ -1,10 +1,10 @@
 package the_fireplace.iasencrypt;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
+
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 
 /**
  * @author The_Fireplace
@@ -33,7 +33,15 @@ public class EncryptionTools {
 		catch ( IOException e ) {
 			return null;
 		}
+	}
 
+	public static String decodeOld(String text){
+		try {
+			return new String(dec.decodeBuffer( text ),DEFAULT_ENCODING);
+		}
+		catch ( IOException e ) {
+			return null;
+		}
 	}
 	
 	public static String generatePassword() {

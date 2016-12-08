@@ -4,6 +4,7 @@ import com.github.mrebhan.ingameaccountswitcher.tools.Config;
 import com.github.mrebhan.ingameaccountswitcher.tools.alt.AccountData;
 import com.github.mrebhan.ingameaccountswitcher.tools.alt.AltDatabase;
 import net.minecraft.client.Minecraft;
+import the_fireplace.ias.account.ExtendedAccountData;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -34,21 +35,9 @@ public class Standards {
 	}
 
 	public static void importAccounts(){
-		Config olddata;
-		olddata=readFromOldFile();
-		if(olddata != null){
-			for(AccountData data:((AltDatabase) olddata.getKey("altaccounts")).getAlts()){
-				if(!hasData(data))
-					AltDatabase.getInstance().getAlts().add(data);
-			}
-		}
-		olddata=getAncientConfig();
-		if(olddata != null){
-			for(AccountData data:((AltDatabase) olddata.getKey("altaccounts")).getAlts()){
-				if(!hasData(data))
-					AltDatabase.getInstance().getAlts().add(data);
-			}
-		}
+		processData(getConfigV3());
+		processData(getConfigV2());
+		processData(getConfigV1());
 	}
 
 	private static boolean hasData(AccountData data){
@@ -60,7 +49,42 @@ public class Standards {
 		return false;
 	}
 
-	private static Config readFromOldFile() {
+	private static void processData(Config olddata){
+		if(olddata != null){
+			for(AccountData data:((AltDatabase) olddata.getKey("altaccounts")).getAlts()){
+				AccountData data2 = convertData(data);
+				if(!hasData(data2))
+					AltDatabase.getInstance().getAlts().add(data2);
+			}
+		}
+	}
+
+	private static ExtendedAccountData convertData(AccountData oldData){
+		if(oldData instanceof ExtendedAccountData)
+			return new ExtendedAccountData(EncryptionTools.decodeOld(oldData.user), EncryptionTools.decodeOld(oldData.pass), oldData.alias, ((ExtendedAccountData) oldData).useCount, ((ExtendedAccountData) oldData).lastused, ((ExtendedAccountData) oldData).premium);
+		else
+			return new ExtendedAccountData(EncryptionTools.decodeOld(oldData.user), EncryptionTools.decodeOld(oldData.pass), oldData.alias);
+	}
+
+	private static Config getConfigV3() {
+		File f = new File(IASFOLDER, ".ias");
+		Config cfg = null;
+		if (f.exists()) {
+			try {
+				ObjectInputStream stream = new ObjectInputStream(new FileInputStream(f));
+				cfg = (Config) stream.readObject();
+				stream.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			}
+			f.delete();
+		}
+		return cfg;
+	}
+
+	private static Config getConfigV2() {
 		File f = new File(Minecraft.getMinecraft().mcDataDir, ".ias");
 		Config cfg = null;
 		if (f.exists()) {
@@ -78,7 +102,7 @@ public class Standards {
 		return cfg;
 	}
 
-	private static Config getAncientConfig(){
+	private static Config getConfigV1(){
 		File f = new File(Minecraft.getMinecraft().mcDataDir, "user.cfg");
 		Config cfg = null;
 		if (f.exists()) {
