@@ -31,6 +31,14 @@ public final class EncryptionTools {
 	private static KeyGenerator keyGen = getAESGenerator();
 	private static String secretSalt = "{$secret_salt}";
 
+	public static String decodeOld(String text) {
+		try {
+			return new String(dec.decodeBuffer(text), DEFAULT_ENCODING);
+		} catch (IOException e) {
+			return null;
+		}
+	}
+
 	public static String encode(String text, String password) {
 		try {
 			byte[] data = text.getBytes(DEFAULT_ENCODING);
