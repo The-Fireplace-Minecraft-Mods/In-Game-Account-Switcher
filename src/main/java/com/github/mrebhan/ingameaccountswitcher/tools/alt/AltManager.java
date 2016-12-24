@@ -39,10 +39,15 @@ public class AltManager {
 	public Throwable setUser(String username, String password) {
 		Throwable throwable = null;
 		if(!Minecraft.getMinecraft().getSession().getUsername().equals(EncryptionTools.decode(username)) || Minecraft.getMinecraft().getSession().getToken().equals("0")){
-			for (AccountData data : AltDatabase.getInstance().getAlts()) {
-				if (data.alias.equals(Minecraft.getMinecraft().getSession().getUsername()) && data.user.equals(username)) {
-					throwable = new AlreadyLoggedInException();
-					return throwable;
+			if (!Minecraft.getMinecraft().getSession().getToken().equals("0"))
+			{
+				for (AccountData data : AltDatabase.getInstance().getAlts())
+				{
+					if (data.alias.equals(Minecraft.getMinecraft().getSession().getUsername()) && data.user.equals(username))
+					{
+						throwable = new AlreadyLoggedInException();
+						return throwable;
+					}
 				}
 			}
 			this.auth.logOut();
