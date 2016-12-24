@@ -13,6 +13,7 @@ import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.resources.I18n;
 import org.apache.commons.lang3.StringUtils;
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.util.Color;
 import the_fireplace.ias.account.AlreadyLoggedInException;
 import the_fireplace.ias.account.ExtendedAccountData;
 import the_fireplace.ias.config.ConfigValues;
@@ -378,13 +379,18 @@ public class GuiAccountSelector extends GuiScreen {
 		@Override
 		protected void drawSlot(int entryID, int p_180791_2_, int p_180791_3_, int p_180791_4_, int p_180791_5_, int p_180791_6_)
 		{
-			String s = GuiAccountSelector.this.queriedaccounts.get(entryID).alias;
+			ExtendedAccountData data = queriedaccounts.get(entryID);
+			String s = data.alias;
 			if (StringUtils.isEmpty(s))
 			{
 				s = I18n.format("ias.alt") + " " + (entryID + 1);
 			}
-
-			GuiAccountSelector.this.drawString(GuiAccountSelector.this.fontRendererObj, s, p_180791_2_ + 2, p_180791_3_ + 1, 16777215);
+			int color = 16777215;
+			if (Minecraft.getMinecraft().getSession().getUsername().equals(data.alias))
+			{
+				color = 0x00FF00;
+			}
+			GuiAccountSelector.this.drawString(GuiAccountSelector.this.fontRendererObj, s, p_180791_2_ + 2, p_180791_3_ + 1, color);
 		}
 	}
 }
