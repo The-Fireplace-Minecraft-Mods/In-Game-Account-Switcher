@@ -2,23 +2,14 @@ package the_fireplace.ias.gui;
 
 import com.github.mrebhan.ingameaccountswitcher.tools.alt.AccountData;
 import com.github.mrebhan.ingameaccountswitcher.tools.alt.AltDatabase;
-import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.gui.GuiTextField;
-import net.minecraft.client.resources.I18n;
-import org.lwjgl.input.Keyboard;
 import the_fireplace.ias.account.ExtendedAccountData;
 import the_fireplace.ias.enums.EnumBool;
 import the_fireplace.ias.tools.JavaTools;
 import the_fireplace.iasencrypt.EncryptionTools;
-
-import java.awt.*;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.UnsupportedFlavorException;
-import java.io.IOException;
 /**
  * The GUI where the alt is added
  * @author The_Fireplace
+ * @author evilmidget38
  */
 class GuiEditAccount extends AbstractAccountGui {
 	private final ExtendedAccountData data;
@@ -32,7 +23,7 @@ class GuiEditAccount extends AbstractAccountGui {
 		if(data instanceof ExtendedAccountData){
 			this.data = (ExtendedAccountData) data;
 		}else{
-			this.data = new ExtendedAccountData(data.user, data.pass, data.user, 0, JavaTools.getJavaCompat().getDate(), EnumBool.UNKNOWN);
+			this.data = new ExtendedAccountData(data.user, data.pass, data.alias, 0, JavaTools.getJavaCompat().getDate(), EnumBool.UNKNOWN);
 		}
 	}
 
@@ -46,7 +37,7 @@ class GuiEditAccount extends AbstractAccountGui {
 	@Override
 	public void complete()
 	{
-		AltDatabase.getInstance().getAlts().set(selectedIndex, new ExtendedAccountData(getUsername(), getPassword(), getUsername(), data.useCount, data.lastused, data.premium));
+		AltDatabase.getInstance().getAlts().set(selectedIndex, new ExtendedAccountData(getUsername(), getPassword(), hasUserChanged ? getUsername() : data.alias, data.useCount, data.lastused, data.premium));
 	}
 
 }

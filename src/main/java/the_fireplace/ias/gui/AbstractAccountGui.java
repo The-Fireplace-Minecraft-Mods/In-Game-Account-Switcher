@@ -11,12 +11,17 @@ import the_fireplace.iasencrypt.EncryptionTools;
 
 import java.io.IOException;
 
+/**
+ * @author evilmidget38
+ * @author The_Fireplace
+ */
 public abstract class AbstractAccountGui extends GuiScreen
 {
 	private final String actionString;
 	private GuiTextField username;
 	private GuiTextField password;
 	private GuiButton complete;
+	protected boolean hasUserChanged = false;
 
 	public AbstractAccountGui(String actionString)
 	{
@@ -67,6 +72,8 @@ public abstract class AbstractAccountGui extends GuiScreen
 			// GuiTextField checks if it's focused before doing anything
 			username.textboxKeyTyped(character, keyIndex);
 			password.textboxKeyTyped(character, keyIndex);
+			if(username.isFocused())
+				hasUserChanged = true;
 		}
 	}
 
@@ -132,17 +139,15 @@ public abstract class AbstractAccountGui extends GuiScreen
 	}
 
 	protected boolean accountNotInList(){
-		for(AccountData data : AltDatabase.getInstance().getAlts()){
-			if(EncryptionTools.decode(data.user).equals(getUsername()) && EncryptionTools.decode(data.pass).equals(getPassword())){
+		for(AccountData data : AltDatabase.getInstance().getAlts())
+			if(EncryptionTools.decode(data.user).equals(getUsername()))
 				return false;
-			}
-		}
 		return true;
 	}
 
 	public boolean canComplete()
 	{
-		return getUsername().length() > 0 && getPassword().length() > 0 && accountNotInList();
+		return getUsername().length() > 0 && accountNotInList();
 	}
 
 	public abstract void complete();

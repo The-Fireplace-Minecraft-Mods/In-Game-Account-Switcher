@@ -6,6 +6,7 @@ import the_fireplace.ias.account.ExtendedAccountData;
 /**
  * The GUI where the alt is added
  * @author The_Fireplace
+ * @author evilmidget38
  */
 public class GuiAddAccount extends AbstractAccountGui {
 
