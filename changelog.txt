@@ -1,1 +1,6 @@
-Greatly improved security
+Developers will no longer have crashes when going to the dev environment after using a released build, or vise versa.
+evilmidget38:
+-All text field operations now work on the username and password fields, with the exception of copying from the password field. This means you can now copy+paste, move the cursor with the arrow keys, select multiple characters with shift, and more.
+-The character limit on usernames and passwords was increased from 32 to 64.
+-You can now switch to online from offline mode without having to switch accounts.
+-The account currently in use now appears green on the account selection screen.
