@@ -288,6 +288,8 @@ public class GuiAccountSelector extends GuiScreen {
 				updateText();
 				updateQueried();
 			}
+		} else if (keyIndex == Keyboard.KEY_F5) {
+			reloadSkins();
 		} else if (character != 0) {
 			if (search.isFocused()) {
 				if(keyIndex == Keyboard.KEY_RETURN){
