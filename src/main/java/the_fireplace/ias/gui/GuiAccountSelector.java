@@ -13,7 +13,6 @@ import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.resources.I18n;
 import org.apache.commons.lang3.StringUtils;
 import org.lwjgl.input.Keyboard;
-import org.lwjgl.util.Color;
 import the_fireplace.ias.account.AlreadyLoggedInException;
 import the_fireplace.ias.account.ExtendedAccountData;
 import the_fireplace.ias.config.ConfigValues;
@@ -81,10 +80,14 @@ public class GuiAccountSelector extends GuiScreen {
 		updateText();
 		updateButtons();
 		if(!(prevIndex == selectedAccountIndex)) {
-			if (!queriedaccounts.isEmpty())
-				SkinTools.buildSkin(queriedaccounts.get(selectedAccountIndex).alias);
+			updateShownSkin();
 			prevIndex = selectedAccountIndex;
 		}
+	}
+
+	private void updateShownSkin(){
+		if (!queriedaccounts.isEmpty())
+			SkinTools.buildSkin(queriedaccounts.get(selectedAccountIndex).alias);
 	}
 
 	@Override
@@ -166,6 +169,7 @@ public class GuiAccountSelector extends GuiScreen {
 	private void reloadSkins(){
 		Config.save();
 		SkinTools.cacheSkins();
+		updateShownSkin();
 	}
 
 	/**
