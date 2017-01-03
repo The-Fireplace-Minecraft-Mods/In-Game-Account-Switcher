@@ -2,8 +2,8 @@ variables:
   CACHE_DIR: "$CI_PROJECT_DIR/build"
   CACHE_DIR2: "$CI_PROJECT_DIR/.gradle"
   
-  ORIG_ARTIFACTS: "$CI_PROJECT_DIR/build/libs/InGameAccountSwitcher-Forge-1.8.9-*.jar"
-  ARTIFACTS: "$CI_PROJECT_DIR/InGameAccountSwitcher-Forge-1.8.9-*.jar"
+  ORIG_ARTIFACTS: "$CI_PROJECT_DIR/build/libs/InGameAccountSwitcher-Forge-1.7.10-*.jar"
+  ARTIFACTS: "$CI_PROJECT_DIR/InGameAccountSwitcher-Forge-1.7.10-*.jar"
 
 cache:
  paths:
@@ -18,10 +18,10 @@ stages:
 deploy:
   stage: deploy
   script:
-  - ./gradlew clean build uploadArchives curseforge uploadToModsIO -PsecretSalt=$secretSalt -PcurseForgeApiKey=$curseForgeApiKey -PmodsioApiKey=$modsioApiKey
+  - ./gradlew --refresh-dependencies clean build curseforge uploadToModsIO -PsecretSalt=$secretSalt -PcurseForgeApiKey=$curseForgeApiKey -PmodsioApiKey=$modsioApiKey
   - cp $ORIG_ARTIFACTS .
   when: manual
   artifacts:
-    name: "InGameAccountSwitcher-Forge-1.8.9-$(cat $CACHE_DIR/.version)"
+    name: "InGameAccountSwitcher-Forge-1.7.10-$(cat $CACHE_DIR/.version)"
     paths:
     - $ARTIFACTS

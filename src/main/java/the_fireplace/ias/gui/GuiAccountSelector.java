@@ -10,6 +10,7 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiSlot;
 import net.minecraft.client.gui.GuiTextField;
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.resources.I18n;
 import org.apache.commons.lang3.StringUtils;
 import org.lwjgl.input.Keyboard;
@@ -22,7 +23,6 @@ import the_fireplace.ias.tools.JavaTools;
 import the_fireplace.ias.tools.SkinTools;
 import the_fireplace.iasencrypt.EncryptionTools;
 
-import java.io.IOException;
 import java.util.ArrayList;
 /**
  * The GUI where you can log in to, add, and remove accounts
@@ -61,18 +61,18 @@ public class GuiAccountSelector extends GuiScreen {
 		this.buttonList.add(loginoffline = new GuiButton(2, this.width / 2 - 154 - 10, this.height - 28, 110, 20, I18n.format("ias.login")+" "+I18n.format("ias.offline")));
 		this.buttonList.add(new GuiButton(3, this.width / 2 + 4 + 50, this.height - 28, 110, 20, I18n.format("gui.cancel")));
 		this.buttonList.add(delete = new GuiButton(4, this.width / 2 - 50, this.height - 28, 100, 20, I18n.format("ias.delete")));
-		search  = new GuiTextField(8, this.fontRendererObj, this.width / 2 - 80, 14, 160, 16);
+		search  = new GuiTextField(this.fontRendererObj, this.width / 2 - 80, 14, 160, 16);
 		search.setText(query);
 		updateButtons();
 		if(!queriedaccounts.isEmpty())
 		SkinTools.buildSkin(queriedaccounts.get(selectedAccountIndex).alias);
-	}
+	}/*
 	@Override
-	public void handleMouseInput() throws IOException
+	public void handleMouseInput()
 	{
 		super.handleMouseInput();
 		this.accountsgui.handleMouseInput();
-	}
+	}*/
 
 	@Override
 	public void updateScreen(){
@@ -91,7 +91,7 @@ public class GuiAccountSelector extends GuiScreen {
 	}
 
 	@Override
-	protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException
+	protected void mouseClicked(int mouseX, int mouseY, int mouseButton)
 	{
 		super.mouseClicked(mouseX, mouseY, mouseButton);
 		boolean flag = search.isFocused();
@@ -383,7 +383,7 @@ public class GuiAccountSelector extends GuiScreen {
 		}
 
 		@Override
-		protected void drawSlot(int entryID, int p_180791_2_, int p_180791_3_, int p_180791_4_, int p_180791_5_, int p_180791_6_)
+		protected void drawSlot(int entryID, int p_180791_2_, int p_180791_3_, int p_180791_4_, Tessellator tess, int p_180791_5_, int p_180791_6_)
 		{
 			ExtendedAccountData data = queriedaccounts.get(entryID);
 			String s = data.alias;

@@ -11,7 +11,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:2.2-SNAPSHOT'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
         classpath 'ModsIOUpload:ModsIOUpload:+'
     }
 }
@@ -19,10 +19,8 @@ buildscript {
 plugins {
     id "com.matthewprenger.cursegradle" version "1.0.8"
 }
-apply plugin: 'net.minecraftforge.gradle.forge'
+apply plugin: 'forge'
 apply plugin: 'net.cazzar.gradle.modsio'
-apply plugin: 'maven'
-apply plugin: 'maven-publish'
 
 allprojects {
     sourceCompatibility = 1.8
@@ -31,14 +29,14 @@ allprojects {
 
 version = "7.0.1"
 group= "the_fireplace.ias"
-archivesBaseName = "InGameAccountSwitcher-Forge-1.8.9"
+archivesBaseName = "InGameAccountSwitcher-Forge-1.7.10"
 
 minecraft {
-    version = "1.8.9-11.15.1.1902-1.8.9"
+    version = "1.7.10-10.13.4.1614-1.7.10"
     runDir = "run"
     replace '${version}', project.version
     replace '${secretSalt}', project.hasProperty("secretSalt")? project.secretSalt : ""
-    mappings = "stable_22"
+    mappings = "stable_12"
 }
 
 dependencies {}
@@ -56,55 +54,16 @@ processResources
     }
 }
 
-task showVersion {
-    description "Displays the current version"
-    group "help"
-    
-    compileJava.dependsOn showVersion
-    deobfCompileDummyTask.dependsOn showVersion
-    extractMcpMappings.dependsOn showVersion
-  
-    doLast {
-        def versionFile = new File(buildDir, '.version');
-    
-        versionFile.getParentFile().mkdirs();
-        versionFile.text = version;
-    }
-    
-    outputs.upToDateWhen { false }
-}
-
-task deobfJar(type: Jar) {
-    from sourceSets.main.output
-    classifier = 'deobf'
-}
-
-artifacts {
-    archives jar
-    archives deobfJar
-    archives sourceJar
-}
-
 curseforge {
   apiKey = project.hasProperty("curseForgeApiKey")? project.curseForgeApiKey : "empty"
   project {
     id = '232676'
     changelog = file('changelog.txt')
     releaseType = 'release'
-    addGameVersion '1.8.9'
-    addGameVersion '1.8.8'
-    addGameVersion '1.8'
+    addGameVersion '1.7.10'
 	addGameVersion 'Java 8'
     mainArtifact(jar) {
         displayName = jar.archiveName.replace(".jar", "")
-    }
-    addArtifact(sourceJar) {
-        displayName = sourceJar.archiveName.replace(".jar", "")
-        changelog = "*This is a file for mod developers. If you don't know what to do with it, don't use it!*"
-    }
-    addArtifact(deobfJar) {
-        displayName = deobfJar.archiveName.replace(".jar", "")
-        changelog = "*This is a file for mod developers. If you don't know what to do with it, don't use it!*"
     }
   }
 }
@@ -114,58 +73,9 @@ modsIO {
     project{
 		artifact = new File(jar.destinationDir, archivesBaseName+"-"+version+".jar")
 		modid = "1221"
-		minecraft = "1.8.9"
+		minecraft = "1.7.10"
 		try{changelog = file('changelog.txt').text}catch(Exception e){changelog=""}
 		tag = ""
 		current = false
-    }
-}
-
-uploadArchives {
-    repositories {
-        mavenDeployer {
-            if (project.hasProperty("local_maven")) {
-                repository(url: "file://${local_maven}")
-                pom {
-                    groupId = project.group
-                    version = project.version
-                    artifactId = project.archivesBaseName
-                    project {
-                        name project.archivesBaseName
-                        packaging "jar"
-                        description "In-Game Account Switcher"
-                        url "https://github.com/The-Fireplace/In-Game-Account-Switcher"
-                        issueManagement {
-                            system "github"
-                            url "https://github.com/The-Fireplace/In-Game-Account-Switcher/issues"
-                        }
-                        licenses {
-                            license {
-                                name "License"
-                                url "https://github.com/The-Fireplace/In-Game-Account-Switcher/blob/master/LICENSE"
-                                distribution "repo"
-                            }
-                        }
-                        developers {
-                            developer {
-                                id "fireplace"
-                                name "The_Fireplace"
-                                roles {
-                                    role "owner"
-                                    role "developer"
-                                }
-                            }
-                            developer {
-                                id "brainstone"
-                                name "The_BrainStone"
-                                roles {
-                                    role "developer"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
     }
 }

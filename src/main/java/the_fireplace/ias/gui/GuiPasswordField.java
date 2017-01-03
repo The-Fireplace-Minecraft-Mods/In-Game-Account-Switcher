@@ -8,9 +8,9 @@ import org.lwjgl.input.Keyboard;
 
 public class GuiPasswordField extends GuiTextField
 {
-	public GuiPasswordField(int componentId, FontRenderer fontrendererObj, int x, int y, int par5Width, int par6Height)
+	public GuiPasswordField(FontRenderer fontrendererObj, int x, int y, int par5Width, int par6Height)
 	{
-		super(componentId, fontrendererObj, x, y, par5Width, par6Height);
+		super(fontrendererObj, x, y, par5Width, par6Height);
 	}
 
 	@Override
@@ -26,7 +26,7 @@ public class GuiPasswordField extends GuiTextField
 	public boolean textboxKeyTyped(char typedChar, int keyCode)
 	{
 		// Ignore ctrl+c and ctrl+x to prevent copying the contents of the field
-		return  !GuiScreen.isKeyComboCtrlC(keyCode) && !GuiScreen.isKeyComboCtrlX(keyCode) && super.textboxKeyTyped(typedChar, keyCode);
+		return  !(GuiScreen.isCtrlKeyDown() && (keyCode == Keyboard.KEY_C || keyCode == Keyboard.KEY_X)) && super.textboxKeyTyped(typedChar, keyCode);
 	}
 
 	@Override

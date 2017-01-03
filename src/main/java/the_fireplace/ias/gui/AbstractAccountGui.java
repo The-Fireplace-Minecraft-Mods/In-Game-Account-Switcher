@@ -9,8 +9,6 @@ import net.minecraft.client.resources.I18n;
 import org.lwjgl.input.Keyboard;
 import the_fireplace.iasencrypt.EncryptionTools;
 
-import java.io.IOException;
-
 /**
  * @author evilmidget38
  * @author The_Fireplace
@@ -34,10 +32,10 @@ public abstract class AbstractAccountGui extends GuiScreen
 		this.buttonList.clear();
 		this.buttonList.add(complete = new GuiButton(2, this.width / 2 - 152, this.height - 28, 150, 20, I18n.format(this.actionString)));
 		this.buttonList.add(new GuiButton(3, this.width / 2 + 2, this.height - 28, 150, 20, I18n.format("gui.cancel")));
-		username = new GuiTextField(0, this.fontRendererObj, this.width / 2 - 100, 60, 200, 20);
+		username = new GuiTextField(this.fontRendererObj, this.width / 2 - 100, 60, 200, 20);
 		username.setFocused(true);
 		username.setMaxStringLength(64);
-		password = new GuiPasswordField(1, this.fontRendererObj, this.width / 2 - 100, 90, 200, 20);
+		password = new GuiPasswordField(this.fontRendererObj, this.width / 2 - 100, 90, 200, 20);
 		password.setMaxStringLength(64);
 		complete.enabled = false;
 	}
@@ -99,7 +97,7 @@ public abstract class AbstractAccountGui extends GuiScreen
 	}
 
 	@Override
-	protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+	protected void mouseClicked(int mouseX, int mouseY, int mouseButton) {
 		super.mouseClicked(mouseX, mouseY, mouseButton);
 		username.mouseClicked(mouseX, mouseY, mouseButton);
 		password.mouseClicked(mouseX, mouseY, mouseButton);
