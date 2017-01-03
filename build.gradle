@@ -31,14 +31,14 @@ allprojects {
 
 version = "7.0.1"
 group= "the_fireplace.ias"
-archivesBaseName = "InGameAccountSwitcher-Forge-1.10.2"
+archivesBaseName = "InGameAccountSwitcher-Forge-1.9.4"
 
 minecraft {
-    version = "1.10.2-12.18.2.2171"
+    version = "1.9.4-12.17.0.2051"
     runDir = "run"
     replace '${version}', project.version
     replace '${secretSalt}', project.hasProperty("secretSalt")? project.secretSalt : ""
-    mappings = "stable_29"
+    mappings = "stable_26"
 }
 
 dependencies {}
@@ -91,7 +91,7 @@ curseforge {
     id = '232676'
     changelog = file('changelog.txt')
     releaseType = 'release'
-    addGameVersion '1.10.2'
+    addGameVersion '1.9.4'
 	addGameVersion 'Java 8'
     mainArtifact(jar) {
         displayName = jar.archiveName.replace(".jar", "")
@@ -112,7 +112,7 @@ modsIO {
     project{
 		artifact = new File(jar.destinationDir, archivesBaseName+"-"+version+".jar")
 		modid = "1221"
-		minecraft = "1.10.2"
+		minecraft = "1.9.4"
 		try{changelog = file('changelog.txt').text}catch(Exception e){changelog=""}
 		tag = ""
 		current = true
