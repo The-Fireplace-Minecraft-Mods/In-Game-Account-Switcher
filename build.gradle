@@ -115,7 +115,7 @@ modsIO {
 		minecraft = "1.9.4"
 		try{changelog = file('changelog.txt').text}catch(Exception e){changelog=""}
 		tag = ""
-		current = true
+		current = false
     }
 }
 
