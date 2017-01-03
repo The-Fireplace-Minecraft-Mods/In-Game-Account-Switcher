@@ -22,14 +22,14 @@ import the_fireplace.ias.tools.Reference;
 public class ClientEvents {
 	@SubscribeEvent
 	public void guiEvent(InitGuiEvent.Post event){
-		GuiScreen gui = event.getGui();
+		GuiScreen gui = event.gui;
 		if(gui instanceof GuiMainMenu){
-			event.getButtonList().add(new GuiButtonWithImage(20, gui.width / 2 + 104, (gui.height / 4 + 48) + 72 + 12, 20, 20, ""));
+			event.buttonList.add(new GuiButtonWithImage(20, gui.width / 2 + 104, (gui.height / 4 + 48) + 72 + 12, 20, 20, ""));
 		}
 	}
 	@SubscribeEvent
 	public void onClick(ActionPerformedEvent event){
-		if(event.getGui() instanceof GuiMainMenu && event.getButton().id == 20){
+		if(event.gui instanceof GuiMainMenu && event.button.id == 20){
 			if(Config.getInstance() == null){
 				Config.load();
 			}
@@ -49,7 +49,7 @@ public class ClientEvents {
 	}
 	@SubscribeEvent
 	public void configChanged(ConfigChangedEvent event){
-		if(event.getModID().equals(Reference.MODID)){
+		if(event.modID.equals(Reference.MODID)){
 			IAS.syncConfig();
 		}
 	}

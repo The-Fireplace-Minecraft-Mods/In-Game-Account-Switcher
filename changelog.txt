@@ -1,7 +1,8 @@
+Change offline mode message to make a little more sense to the average user
+Added "Reload Skins" button to the Account Selector
+Pressing F5 now reloads skins
+Added Custom Main Menu support
 Greatly improved security
-Developers will no longer have crashes when going to the dev environment after using a released build, or vise versa.
-The "Reload Skins" button now reloads the current skin without you having to switch away and back.
-Pressing F5 now reloads skins.
 evilmidget38:
 -All text field operations now work on the username and password fields, with the exception of copying from the password field. This means you can now copy+paste, move the cursor with the arrow keys, select multiple characters with shift, and more.
 -The character limit on usernames and passwords was increased from 32 to 64.
