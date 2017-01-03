@@ -34,7 +34,7 @@ group= "the_fireplace.ias"
 archivesBaseName = "InGameAccountSwitcher-Forge-1.10.2"
 
 minecraft {
-    version = "1.10.2-12.18.2.2171"
+    version = "1.10.2-12.18.3.2185"
     runDir = "run"
     replace '${version}', project.version
     replace '${secretSalt}', project.hasProperty("secretSalt")? project.secretSalt : ""
@@ -115,7 +115,7 @@ modsIO {
 		minecraft = "1.10.2"
 		try{changelog = file('changelog.txt').text}catch(Exception e){changelog=""}
 		tag = ""
-		current = true
+		current = false
     }
 }
 
