@@ -1,1 +1,1 @@
-Updated to 1.11.X
+Mod now actually accepts 1.11
