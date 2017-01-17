@@ -40,6 +40,8 @@ public class IAS {
 		syncConfig();
 		if(!event.getModMetadata().version.equals("${version}"))//Dev environment needs to use a local list, to avoid issues
 			Standards.updateFolder();
+		else
+			System.out.println("Dev environment detected!");
 	}
 	@EventHandler
 	public void init(FMLInitializationEvent event){

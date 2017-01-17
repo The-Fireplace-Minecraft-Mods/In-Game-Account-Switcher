@@ -13,11 +13,9 @@ import java.nio.file.attribute.DosFileAttributeView;
 import java.nio.file.attribute.DosFileAttributes;
 
 /**
- *
  * @author The_Fireplace
- *
  */
-public class Standards {
+public final class Standards {
 	public static File IASFOLDER = Minecraft.getMinecraft().mcDataDir;
 	public static final String cfgn = ".iasx";
 	public static final String pwdn = ".iasp";
@@ -67,7 +65,7 @@ public class Standards {
 				dir+="/Library/Application Support";
 		}
 
-		Standards.IASFOLDER = new File(dir);
+		IASFOLDER = new File(dir);
 	}
 
 	public static void importAccounts(){
