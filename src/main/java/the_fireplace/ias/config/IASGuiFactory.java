@@ -15,7 +15,17 @@ public class IASGuiFactory implements IModGuiFactory {
 	@Override
 	public void initialize(Minecraft minecraftInstance) {}
 
-	@Override
+  @Override
+  public boolean hasConfigGui() {
+    return true;
+  }
+
+  @Override
+  public GuiScreen createConfigGui(GuiScreen parentScreen) {
+    return new IASConfigGui(parentScreen);
+  }
+
+  @Override
 	public Class<? extends GuiScreen> mainConfigGuiClass() {
 		return IASConfigGui.class;
 	}
