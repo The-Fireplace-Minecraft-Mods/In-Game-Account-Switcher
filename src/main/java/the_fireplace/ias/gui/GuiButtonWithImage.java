@@ -16,8 +16,9 @@ public class GuiButtonWithImage extends GuiButton {
 			int heightIn, String buttonText) {
 		super(buttonId, x, y, widthIn, heightIn, buttonText);
 	}
+
 	@Override
-	public void drawButton(Minecraft mc, int mouseX, int mouseY)
+	public void drawButton(Minecraft mc, int mouseX, int mouseY, float partialTicks)
 	{
 		if (this.visible)
 		{

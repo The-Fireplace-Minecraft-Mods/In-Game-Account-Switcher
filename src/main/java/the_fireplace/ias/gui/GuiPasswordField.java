@@ -30,14 +30,14 @@ public class GuiPasswordField extends GuiTextField
 	}
 
 	@Override
-	public void mouseClicked(int mouseX, int mouseY, int mouseButton)
+	public boolean mouseClicked(int mouseX, int mouseY, int mouseButton)
 	{
 		// Minecraft has variable-width fonts, so replace the text with asterisks so that the correct cursor position is calculated
 		String password = getText();
 		replaceText(Strings.repeat('*', getText().length()));
 		super.mouseClicked(mouseX, mouseY, mouseButton);
 		replaceText(password);
-
+    return true;
 	}
 
 	/**
