@@ -34,11 +34,11 @@ group= "the_fireplace.ias"
 archivesBaseName = "InGameAccountSwitcher-Forge-1.12"
 
 minecraft {
-    version = "1.12-14.21.0.2322"
+    version = "1.12-14.21.1.2387"
     runDir = "run"
     replace '${version}', project.version
     replace '${secretSalt}', project.hasProperty("secretSalt")? project.secretSalt : ""
-    mappings = "snapshot_20170613"
+    mappings = "snapshot_20170720"
 }
 
 dependencies {}
