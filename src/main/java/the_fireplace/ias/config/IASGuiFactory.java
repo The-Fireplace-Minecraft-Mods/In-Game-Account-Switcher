@@ -25,19 +25,8 @@ public class IASGuiFactory implements IModGuiFactory {
     return new IASConfigGui(parentScreen);
   }
 
-  @Override
-	public Class<? extends GuiScreen> mainConfigGuiClass() {
-		return IASConfigGui.class;
-	}
-
 	@Override
 	public Set<RuntimeOptionCategoryElement> runtimeGuiCategories() {
 		return null;
 	}
-
-	@Override
-	public RuntimeOptionGuiHandler getHandlerFor(RuntimeOptionCategoryElement element) {
-		return null;
-	}
-
 }

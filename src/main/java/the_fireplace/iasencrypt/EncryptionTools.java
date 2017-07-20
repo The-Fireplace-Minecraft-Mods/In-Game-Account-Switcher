@@ -1,7 +1,6 @@
 package the_fireplace.iasencrypt;
 
-import sun.misc.BASE64Decoder;
-import sun.misc.BASE64Encoder;
+import java.util.Base64;
 
 import javax.crypto.*;
 import javax.crypto.spec.SecretKeySpec;
@@ -18,15 +17,15 @@ import java.util.Arrays;
  */
 public final class EncryptionTools {
 	public static final String DEFAULT_ENCODING = "UTF-8";
-	private static BASE64Encoder enc = new BASE64Encoder();
-	private static BASE64Decoder dec = new BASE64Decoder();
+	private static Base64.Encoder encoder = Base64.getEncoder();
+	private static Base64.Decoder decoder = Base64.getDecoder();
 	private static MessageDigest sha512 = getSha512Hasher();
 	private static KeyGenerator keyGen = getAESGenerator();
 	private static String secretSalt = "${secretSalt}";
 
 	public static String decodeOld(String text) {
 		try {
-			return new String(dec.decodeBuffer(text), DEFAULT_ENCODING);
+			return new String(decoder.decode(text), DEFAULT_ENCODING);
 		} catch (IOException e) {
 			return null;
 		}
@@ -38,7 +37,7 @@ public final class EncryptionTools {
 			Cipher cipher = Cipher.getInstance("AES");
 			cipher.init(Cipher.ENCRYPT_MODE, getSecretKey());
 
-			return enc.encode(cipher.doFinal(data));
+			return new String(encoder.encode(cipher.doFinal(data)));
 		} catch (BadPaddingException e) {
 			throw new RuntimeException("The password does not match", e);
 		} catch (IllegalBlockSizeException | InvalidKeyException | IOException | NoSuchAlgorithmException
@@ -49,7 +48,7 @@ public final class EncryptionTools {
 
 	public static String decode(String text) {
 		try {
-			byte[] data = dec.decodeBuffer(text);
+			byte[] data = decoder.decode(text);
 			Cipher cipher = Cipher.getInstance("AES");
 			cipher.init(Cipher.DECRYPT_MODE, getSecretKey());
 
@@ -64,7 +63,7 @@ public final class EncryptionTools {
 
 	public static String generatePassword() {
 		keyGen.init(256);
-		return enc.encode(keyGen.generateKey().getEncoded());
+		return new String(encoder.encode(keyGen.generateKey().getEncoded()));
 	}
 
 	private static MessageDigest getSha512Hasher() {

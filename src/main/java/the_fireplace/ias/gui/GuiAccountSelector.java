@@ -61,7 +61,7 @@ public class GuiAccountSelector extends GuiScreen {
     this.buttonList.add(loginoffline = new GuiButton(2, this.width / 2 - 154 - 10, this.height - 28, 110, 20, I18n.format("ias.login") + " " + I18n.format("ias.offline")));
     this.buttonList.add(new GuiButton(3, this.width / 2 + 4 + 50, this.height - 28, 110, 20, I18n.format("gui.cancel")));
     this.buttonList.add(delete = new GuiButton(4, this.width / 2 - 50, this.height - 28, 100, 20, I18n.format("ias.delete")));
-    search = new GuiTextField(8, this.fontRendererObj, this.width / 2 - 80, 14, 160, 16);
+    search = new GuiTextField(8, this.fontRenderer, this.width / 2 - 80, 14, 160, 16);
     search.setText(query);
     updateButtons();
     if (!queriedaccounts.isEmpty())
@@ -115,9 +115,9 @@ public class GuiAccountSelector extends GuiScreen {
   @Override
   public void drawScreen(int par1, int par2, float par3) {
     accountsgui.drawScreen(par1, par2, par3);
-    this.drawCenteredString(fontRendererObj, I18n.format("ias.selectaccount"), this.width / 2, 4, -1);
+    this.drawCenteredString(fontRenderer, I18n.format("ias.selectaccount"), this.width / 2, 4, -1);
     if (loginfailed != null) {
-      this.drawCenteredString(fontRendererObj, loginfailed.getLocalizedMessage(), this.width / 2, this.height - 62, 16737380);
+      this.drawCenteredString(fontRenderer, loginfailed.getLocalizedMessage(), this.width / 2, this.height - 62, 16737380);
     }
     search.drawTextBox();
     super.drawScreen(par1, par2, par3);
@@ -125,14 +125,14 @@ public class GuiAccountSelector extends GuiScreen {
       SkinTools.javDrawSkin(8, height / 2 - 64 - 16, 64, 128);
       Tools.drawBorderedRect(width - 8 - 64, height / 2 - 64 - 16, width - 8, height / 2 + 64 - 16, 2, -5855578, -13421773);
       if (queriedaccounts.get(selectedAccountIndex).premium == EnumBool.TRUE)
-        this.drawString(fontRendererObj, I18n.format("ias.premium"), width - 8 - 61, height / 2 - 64 - 13, 6618980);
+        this.drawString(fontRenderer, I18n.format("ias.premium"), width - 8 - 61, height / 2 - 64 - 13, 6618980);
       else if (queriedaccounts.get(selectedAccountIndex).premium == EnumBool.FALSE)
-        this.drawString(fontRendererObj, I18n.format("ias.notpremium"), width - 8 - 61, height / 2 - 64 - 13, 16737380);
-      this.drawString(fontRendererObj, I18n.format("ias.timesused"), width - 8 - 61, height / 2 - 64 - 15 + 12, -1);
-      this.drawString(fontRendererObj, String.valueOf(queriedaccounts.get(selectedAccountIndex).useCount), width - 8 - 61, height / 2 - 64 - 15 + 21, -1);
+        this.drawString(fontRenderer, I18n.format("ias.notpremium"), width - 8 - 61, height / 2 - 64 - 13, 16737380);
+      this.drawString(fontRenderer, I18n.format("ias.timesused"), width - 8 - 61, height / 2 - 64 - 15 + 12, -1);
+      this.drawString(fontRenderer, String.valueOf(queriedaccounts.get(selectedAccountIndex).useCount), width - 8 - 61, height / 2 - 64 - 15 + 21, -1);
       if (queriedaccounts.get(selectedAccountIndex).useCount > 0) {
-        this.drawString(fontRendererObj, I18n.format("ias.lastused"), width - 8 - 61, height / 2 - 64 - 15 + 30, -1);
-        this.drawString(fontRendererObj, JavaTools.getJavaCompat().getFormattedDate(), width - 8 - 61, height / 2 - 64 - 15 + 39, -1);
+        this.drawString(fontRenderer, I18n.format("ias.lastused"), width - 8 - 61, height / 2 - 64 - 15 + 30, -1);
+        this.drawString(fontRenderer, JavaTools.getJavaCompat().getFormattedDate(), width - 8 - 61, height / 2 - 64 - 15 + 39, -1);
 
       }
     }
@@ -309,8 +309,9 @@ public class GuiAccountSelector extends GuiScreen {
   }
 
   private ArrayList<ExtendedAccountData> convertData() {
-    ArrayList<AccountData> tmp = (ArrayList<AccountData>) AltDatabase.getInstance().getAlts().clone();
-    ArrayList<ExtendedAccountData> converted = new ArrayList();
+    @SuppressWarnings("unchecked")
+	ArrayList<AccountData> tmp = (ArrayList<AccountData>) AltDatabase.getInstance().getAlts().clone();
+    ArrayList<ExtendedAccountData> converted = new ArrayList<>();
     int index = 0;
     for (AccountData data : tmp) {
       if (data instanceof ExtendedAccountData) {
@@ -383,7 +384,7 @@ public class GuiAccountSelector extends GuiScreen {
     }
 
     @Override
-    protected void func_192637_a(int p_192637_1_, int p_192637_2_, int p_192637_3_, int p_192637_4_, int p_192637_5_, int p_192637_6_, float p_192637_7_) {
+    protected void drawSlot(int p_192637_1_, int p_192637_2_, int p_192637_3_, int p_192637_4_, int p_192637_5_, int p_192637_6_, float p_192637_7_) {
       {
         ExtendedAccountData data = queriedaccounts.get(p_192637_1_);
         String s = data.alias;
@@ -394,7 +395,7 @@ public class GuiAccountSelector extends GuiScreen {
         if (Minecraft.getMinecraft().getSession().getUsername().equals(data.alias)) {
           color = 0x00FF00;
         }
-        GuiAccountSelector.this.drawString(GuiAccountSelector.this.fontRendererObj, s, p_192637_2_ + 2, p_192637_3_ + 1, color);
+        GuiAccountSelector.this.drawString(GuiAccountSelector.this.fontRenderer, s, p_192637_2_ + 2, p_192637_3_ + 1, color);
       }
     }
   }

@@ -10,6 +10,7 @@ import the_fireplace.ias.tools.JavaTools;
  * @author The_Fireplace
  */
 public class ExtendedAccountData extends AccountData {
+	private static final long serialVersionUID = -909128662161235160L;
 
 	public EnumBool premium;
 	public int[] lastused;

@@ -40,10 +40,10 @@ public class ClientEvents {
 	public void onTick(TickEvent.RenderTickEvent t) {
 		GuiScreen screen = Minecraft.getMinecraft().currentScreen;
 		if (screen instanceof GuiMainMenu) {
-			screen.drawCenteredString(Minecraft.getMinecraft().fontRendererObj, I18n.format("ias.loggedinas") + Minecraft.getMinecraft().getSession().getUsername()+".", screen.width / 2, screen.height / 4 + 48 + 72 + 12 + 22, 0xFFCC8888);
+			screen.drawCenteredString(Minecraft.getMinecraft().fontRenderer, I18n.format("ias.loggedinas") + Minecraft.getMinecraft().getSession().getUsername()+".", screen.width / 2, screen.height / 4 + 48 + 72 + 12 + 22, 0xFFCC8888);
 		}else if(screen instanceof GuiMultiplayer){
 			if (Minecraft.getMinecraft().getSession().getToken().equals("0")) {
-				screen.drawCenteredString(Minecraft.getMinecraft().fontRendererObj, I18n.format("ias.offlinemode"), screen.width / 2, 10, 16737380);
+				screen.drawCenteredString(Minecraft.getMinecraft().fontRenderer, I18n.format("ias.offlinemode"), screen.width / 2, 10, 16737380);
 			}
 		}
 	}

@@ -16,7 +16,7 @@ public class AltDatabase implements Serializable {
 	private final ArrayList<AccountData> altList;
 
 	private AltDatabase() {
-		this.altList = new ArrayList();
+		this.altList = new ArrayList<>();
 	}
 
 	private static void loadFromConfig() {
