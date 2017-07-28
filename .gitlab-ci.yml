@@ -2,8 +2,8 @@ variables:
   CACHE_DIR: "$CI_PROJECT_DIR/build"
   CACHE_DIR2: "$CI_PROJECT_DIR/.gradle"
   
-  ORIG_ARTIFACTS: "$CI_PROJECT_DIR/build/libs/InGameAccountSwitcher-Forge-1.11.2-*.jar"
-  ARTIFACTS: "$CI_PROJECT_DIR/InGameAccountSwitcher-Forge-1.11.2-*.jar"
+  ORIG_ARTIFACTS: "$CI_PROJECT_DIR/build/libs/InGameAccountSwitcher-*.jar"
+  ARTIFACTS: "$CI_PROJECT_DIR/InGameAccountSwitcher-*.jar"
 
 cache:
  paths:
@@ -22,6 +22,6 @@ deploy:
   - cp $ORIG_ARTIFACTS .
   when: manual
   artifacts:
-    name: "InGameAccountSwitcher-Forge-1.11.2-$(cat $CACHE_DIR/.version)"
+    name: "InGameAccountSwitcher-Forge-1.11-$(cat $CACHE_DIR/.version)"
     paths:
     - $ARTIFACTS

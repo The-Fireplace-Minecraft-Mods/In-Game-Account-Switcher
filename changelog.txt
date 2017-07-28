@@ -1,2 +1,1 @@
-Updated Russian translations(Thanks xMrVizzy)
-Mod now actually accepts 1.11
+Mod now accepts 1.11 and 1.11.2
