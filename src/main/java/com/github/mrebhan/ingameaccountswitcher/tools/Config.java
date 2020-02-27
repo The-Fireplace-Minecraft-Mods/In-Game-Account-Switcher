@@ -124,7 +124,7 @@ public class Config implements Serializable {
 	}
 
 	private static void loadFromOld(){
-		File f = new File(Minecraft.getMinecraft().mcDataDir, "user.cfg");
+		File f = new File(Minecraft.getMinecraft().gameDir, "user.cfg");
 		if (f.exists()) {
 			try {
 				ObjectInputStream stream = new ObjectInputStream(new FileInputStream(f));

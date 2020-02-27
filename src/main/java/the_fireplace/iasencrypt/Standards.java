@@ -16,7 +16,7 @@ import java.nio.file.attribute.DosFileAttributes;
  * @author The_Fireplace
  */
 public final class Standards {
-	public static File IASFOLDER = Minecraft.getMinecraft().mcDataDir;
+	public static File IASFOLDER = Minecraft.getMinecraft().gameDir;
 	public static final String cfgn = ".iasx";
 	public static final String pwdn = ".iasp";
 
@@ -128,7 +128,7 @@ public final class Standards {
 	}
 
 	private static Config getConfigV2() {
-		File f = new File(Minecraft.getMinecraft().mcDataDir, ".ias");
+		File f = new File(Minecraft.getMinecraft().gameDir, ".ias");
 		Config cfg = null;
 		if (f.exists()) {
 			try {
@@ -144,7 +144,7 @@ public final class Standards {
 	}
 
 	private static Config getConfigV1(){
-		File f = new File(Minecraft.getMinecraft().mcDataDir, "user.cfg");
+		File f = new File(Minecraft.getMinecraft().gameDir, "user.cfg");
 		Config cfg = null;
 		if (f.exists()) {
 			try {

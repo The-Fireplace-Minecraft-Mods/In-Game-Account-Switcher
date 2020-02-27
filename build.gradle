@@ -17,7 +17,7 @@ buildscript {
 }
 
 plugins {
-    id "com.matthewprenger.cursegradle" version "1.2.0"
+    id "com.matthewprenger.cursegradle" version "1.4.0"
 }
 apply plugin: 'net.minecraftforge.gradle.forge'
 apply plugin: 'net.cazzar.gradle.modsio'
@@ -27,9 +27,9 @@ allprojects {
     targetCompatibility = 1.8
 }
 
-version = "7.0.4"
+version = "7.0.5"
 group= "the_fireplace.ias"
-archivesBaseName = "InGameAccountSwitcher-Forge-1.12.2"
+archivesBaseName = "InGameAccountSwitcher-1.12.2"
 
 minecraft {
     version = "1.12.2-14.23.5.2768"

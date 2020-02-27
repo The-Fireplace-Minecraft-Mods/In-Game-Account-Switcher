@@ -16,7 +16,7 @@ import java.net.URL;
  */
 @SideOnly(Side.CLIENT)
 public class SkinTools {
-	public static final File cachedir = new File(Minecraft.getMinecraft().mcDataDir, "cachedImages/skins/");
+	public static final File cachedir = new File(Minecraft.getMinecraft().gameDir, "cachedImages/skins/");
 	private static final File skinOut = new File(cachedir, "temp.png");
 
 	public static void buildSkin(String name){
