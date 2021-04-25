@@ -3,7 +3,6 @@ package the_fireplace.ias.gui;
 import com.github.mrebhan.ingameaccountswitcher.tools.alt.AccountData;
 import com.github.mrebhan.ingameaccountswitcher.tools.alt.AltDatabase;
 import the_fireplace.ias.account.ExtendedAccountData;
-import the_fireplace.ias.enums.EnumBool;
 import the_fireplace.ias.tools.JavaTools;
 import the_fireplace.iasencrypt.EncryptionTools;
 /**
@@ -23,7 +22,7 @@ class GuiEditAccount extends AbstractAccountGui {
 		if(data instanceof ExtendedAccountData){
 			this.data = (ExtendedAccountData) data;
 		}else{
-			this.data = new ExtendedAccountData(data.user, data.pass, data.alias, 0, JavaTools.getJavaCompat().getDate(), EnumBool.UNKNOWN);
+			this.data = new ExtendedAccountData(data.user, data.pass, data.alias, 0, JavaTools.getDate(), null);
 		}
 	}
 
@@ -32,6 +31,11 @@ class GuiEditAccount extends AbstractAccountGui {
 		super.initGui();
 		setUsername(EncryptionTools.decode(data.user));
 		setPassword(EncryptionTools.decode(data.pass));
+	}
+	
+	@Override
+	public boolean canComplete() {
+		return getUsername().length() > 0;
 	}
 
 	@Override

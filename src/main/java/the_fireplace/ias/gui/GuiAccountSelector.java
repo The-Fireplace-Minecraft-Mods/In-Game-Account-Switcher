@@ -16,7 +16,6 @@ import org.lwjgl.input.Keyboard;
 import the_fireplace.ias.account.AlreadyLoggedInException;
 import the_fireplace.ias.account.ExtendedAccountData;
 import the_fireplace.ias.config.ConfigValues;
-import the_fireplace.ias.enums.EnumBool;
 import the_fireplace.ias.tools.HttpTools;
 import the_fireplace.ias.tools.JavaTools;
 import the_fireplace.ias.tools.SkinTools;
@@ -112,61 +111,60 @@ public class GuiAccountSelector extends GuiScreen {
     Config.save();
   }
 
-  @Override
-  public void drawScreen(int par1, int par2, float par3) {
-    accountsgui.drawScreen(par1, par2, par3);
-    this.drawCenteredString(fontRenderer, I18n.format("ias.selectaccount"), this.width / 2, 4, -1);
-    if (loginfailed != null) {
-      this.drawCenteredString(fontRenderer, loginfailed.getLocalizedMessage(), this.width / 2, this.height - 62, 16737380);
-    }
-    search.drawTextBox();
-    super.drawScreen(par1, par2, par3);
-    if (!queriedaccounts.isEmpty()) {
-      SkinTools.javDrawSkin(8, height / 2 - 64 - 16, 64, 128);
-      Tools.drawBorderedRect(width - 8 - 64, height / 2 - 64 - 16, width - 8, height / 2 + 64 - 16, 2, -5855578, -13421773);
-      if (queriedaccounts.get(selectedAccountIndex).premium == EnumBool.TRUE)
-        this.drawString(fontRenderer, I18n.format("ias.premium"), width - 8 - 61, height / 2 - 64 - 13, 6618980);
-      else if (queriedaccounts.get(selectedAccountIndex).premium == EnumBool.FALSE)
-        this.drawString(fontRenderer, I18n.format("ias.notpremium"), width - 8 - 61, height / 2 - 64 - 13, 16737380);
-      this.drawString(fontRenderer, I18n.format("ias.timesused"), width - 8 - 61, height / 2 - 64 - 15 + 12, -1);
-      this.drawString(fontRenderer, String.valueOf(queriedaccounts.get(selectedAccountIndex).useCount), width - 8 - 61, height / 2 - 64 - 15 + 21, -1);
-      if (queriedaccounts.get(selectedAccountIndex).useCount > 0) {
-        this.drawString(fontRenderer, I18n.format("ias.lastused"), width - 8 - 61, height / 2 - 64 - 15 + 30, -1);
-        this.drawString(fontRenderer, JavaTools.getJavaCompat().getFormattedDate(), width - 8 - 61, height / 2 - 64 - 15 + 39, -1);
+	@Override
+	public void drawScreen(int par1, int par2, float par3) {
+		accountsgui.drawScreen(par1, par2, par3);
+		this.drawCenteredString(fontRenderer, I18n.format("ias.selectaccount"), this.width / 2, 4, -1);
+		if (loginfailed != null) {
+			this.drawCenteredString(fontRenderer, loginfailed.getLocalizedMessage(), this.width / 2, this.height - 62, 16737380);
+		}
+		search.drawTextBox();
+		if (!queriedaccounts.isEmpty()) {
+			SkinTools.javDrawSkin(8, height / 2 - 64 - 16, 64, 128);
+			Tools.drawBorderedRect(width - 8 - 64, height / 2 - 64 - 16, width - 8, height / 2 + 64 - 16, 2, -5855578, -13421773);
+			if (queriedaccounts.get(selectedAccountIndex).premium != null) {
+				if (queriedaccounts.get(selectedAccountIndex).premium) this.drawString(fontRenderer, I18n.format("ias.premium"), width - 8 - 61, height / 2 - 64 - 13, 6618980);
+				else this.drawString(fontRenderer, I18n.format("ias.notpremium"), width - 8 - 61, height / 2 - 64 - 13, 16737380);
+			}
+			this.drawString(fontRenderer, I18n.format("ias.timesused"), width - 8 - 61, height / 2 - 64 - 15 + 12, -1);
+			this.drawString(fontRenderer, String.valueOf(queriedaccounts.get(selectedAccountIndex).useCount), width - 8 - 61, height / 2 - 64 - 15 + 21, -1);
+			if (queriedaccounts.get(selectedAccountIndex).useCount > 0) {
+				this.drawString(fontRenderer, I18n.format("ias.lastused"), width - 8 - 61, height / 2 - 64 - 15 + 30, -1);
+				this.drawString(fontRenderer, JavaTools.getFormattedDate(), width - 8 - 61, height / 2 - 64 - 15 + 39, -1);
+			}
+		}
+		super.drawScreen(par1, par2, par3);
+	}
 
-      }
-    }
-  }
-
-  @Override
-  protected void actionPerformed(GuiButton button) {
-    if (button.enabled) {
-      if (button.id == 3) {
-        escape();
-      } else if (button.id == 0) {
-        add();
-      } else if (button.id == 4) {
-        delete();
-      } else if (button.id == 1) {
-        login(selectedAccountIndex);
-      } else if (button.id == 2) {
-        logino(selectedAccountIndex);
-      } else if (button.id == 7) {
-        edit();
-      } else if (button.id == 8) {
-        reloadSkins();
-      } else {
-        accountsgui.actionPerformed(button);
-      }
-    }
-  }
+	@Override
+	protected void actionPerformed(GuiButton button) {
+		if (button.enabled) {
+			if (button.id == 3) {
+				escape();
+			} else if (button.id == 0) {
+				add();
+			} else if (button.id == 4) {
+				delete();
+			} else if (button.id == 1) {
+				login(selectedAccountIndex);
+			} else if (button.id == 2) {
+				logino(selectedAccountIndex);
+			} else if (button.id == 7) {
+				edit();
+			} else if (button.id == 8) {
+				reloadSkins();
+			} else {
+				accountsgui.actionPerformed(button);
+			}
+		}
+	}
 
   /**
    * Reload Skins
    */
   private void reloadSkins() {
     Config.save();
-    SkinTools.cacheSkins();
+    SkinTools.cacheSkins(true);
     updateShownSkin();
   }
 
@@ -207,7 +205,7 @@ public class GuiAccountSelector extends GuiScreen {
     Minecraft.getMinecraft().displayGuiScreen(null);
     ExtendedAccountData current = getCurrentAsEditable();
     current.useCount++;
-    current.lastused = JavaTools.getJavaCompat().getDate();
+    current.lastused = JavaTools.getDate();
   }
 
   /**
@@ -221,13 +219,13 @@ public class GuiAccountSelector extends GuiScreen {
     if (loginfailed == null) {
       Minecraft.getMinecraft().displayGuiScreen(null);
       ExtendedAccountData current = getCurrentAsEditable();
-      current.premium = EnumBool.TRUE;
+      current.premium = true;
       current.useCount++;
-      current.lastused = JavaTools.getJavaCompat().getDate();
+      current.lastused = JavaTools.getDate();
     } else if (loginfailed instanceof AlreadyLoggedInException) {
-      getCurrentAsEditable().lastused = JavaTools.getJavaCompat().getDate();
+      getCurrentAsEditable().lastused = JavaTools.getDate();
     } else if (HttpTools.ping("http://minecraft.net")) {
-      getCurrentAsEditable().premium = EnumBool.FALSE;
+      getCurrentAsEditable().premium = false;
     }
   }
 

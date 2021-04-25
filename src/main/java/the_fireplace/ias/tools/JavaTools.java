@@ -1,21 +1,22 @@
 package the_fireplace.ias.tools;
 
-import the_fireplace.ias.legacysupport.ILegacyCompat;
-import the_fireplace.ias.legacysupport.NewJava;
-import the_fireplace.ias.legacysupport.OldJava;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 
 public class JavaTools {
-	private static double getJavaVersion(){
-		String version = System.getProperty("java.version");
-		int pos = version.indexOf('.');
-		pos = version.indexOf('.', pos+1);
-		return Double.parseDouble(version.substring(0, pos));
+	public static int[] getDate() {
+		int[] ret = new int[3];
+		ret[0]=LocalDateTime.now().getMonthValue();
+		ret[1]=LocalDateTime.now().getDayOfMonth();
+		ret[2]=LocalDateTime.now().getYear();
+		return ret;
 	}
-	public static ILegacyCompat getJavaCompat(){
-		if(getJavaVersion() >= 1.8){
-			return new NewJava();
-		}else{
-			return new OldJava();
-		}
+
+	public static String getFormattedDate() {
+		DateTimeFormatter format = DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT);
+		LocalDate date = LocalDateTime.now().withDayOfMonth(getDate()[1]).withMonth(getDate()[0]).withYear(getDate()[2]).toLocalDate();
+		return date.format(format);
 	}
 }

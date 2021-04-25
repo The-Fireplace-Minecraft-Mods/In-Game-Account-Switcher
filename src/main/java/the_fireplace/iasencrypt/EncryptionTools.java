@@ -21,7 +21,7 @@ public final class EncryptionTools {
 	private static Base64.Decoder decoder = Base64.getDecoder();
 	private static MessageDigest sha512 = getSha512Hasher();
 	private static KeyGenerator keyGen = getAESGenerator();
-	private static String secretSalt = "${secretSalt}";
+	private static String secretSalt = "DownWithTheLexManosIsAlwaysRightFoundation";
 
 	public static String decodeOld(String text) {
 		try {

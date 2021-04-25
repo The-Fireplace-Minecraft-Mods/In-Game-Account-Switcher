@@ -18,7 +18,7 @@ import the_fireplace.iasencrypt.Standards;
 /**
  * @author The_Fireplace
  */
-@Mod(modid=Reference.MODID, name=Reference.MODNAME, clientSideOnly=true, guiFactory="the_fireplace.ias.config.IASGuiFactory", updateJSON = "http://thefireplace.bitnamiapp.com/jsons/ias.json", acceptedMinecraftVersions = "[1.11,)")
+@Mod(modid=Reference.MODID, name=Reference.MODNAME, clientSideOnly=true, guiFactory="the_fireplace.ias.config.IASGuiFactory", updateJSON = "https://raw.githubusercontent.com/VidTuGit/In-Game-Account-Switcher/master/updater-forge.json", acceptedMinecraftVersions = "1.12.2")
 public class IAS {
 	public static Configuration config;
 	private static Property CASESENSITIVE_PROPERTY;
@@ -38,10 +38,11 @@ public class IAS {
 		CASESENSITIVE_PROPERTY = config.get(Configuration.CATEGORY_GENERAL, ConfigValues.CASESENSITIVE_NAME, ConfigValues.CASESENSITIVE_DEFAULT, I18n.format(ConfigValues.CASESENSITIVE_NAME+".tooltip"));
 		ENABLERELOG_PROPERTY = config.get(Configuration.CATEGORY_GENERAL, ConfigValues.ENABLERELOG_NAME, ConfigValues.ENABLERELOG_DEFAULT, I18n.format(ConfigValues.ENABLERELOG_NAME+".tooltip"));
 		syncConfig();
-		if(!event.getModMetadata().version.equals("${version}"))//Dev environment needs to use a local list, to avoid issues
+		try {
+			Class.forName("net.minecraft.util.math.MathHelper");
+		} catch (Throwable t) {
 			Standards.updateFolder();
-		else
-			System.out.println("Dev environment detected!");
+		}
 	}
 	@EventHandler
 	public void init(FMLInitializationEvent event){
@@ -51,6 +52,6 @@ public class IAS {
 	}
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent event){
-		SkinTools.cacheSkins();
+		SkinTools.cacheSkins(false);
 	}
 }

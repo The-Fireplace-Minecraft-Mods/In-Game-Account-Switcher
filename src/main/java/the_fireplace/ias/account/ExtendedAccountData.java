@@ -4,26 +4,24 @@ import java.util.Arrays;
 
 import com.github.mrebhan.ingameaccountswitcher.tools.alt.AccountData;
 
-import the_fireplace.ias.enums.EnumBool;
 import the_fireplace.ias.tools.JavaTools;
 /**
  * @author The_Fireplace
  */
 public class ExtendedAccountData extends AccountData {
 	private static final long serialVersionUID = -909128662161235160L;
-
-	public EnumBool premium;
+	/**Can be {@code null}*/
+	public Boolean premium;
 	public int[] lastused;
 	public int useCount;
 
 	public ExtendedAccountData(String user, String pass, String alias) {
 		super(user, pass, alias);
 		useCount = 0;
-		lastused = JavaTools.getJavaCompat().getDate();
-		premium = EnumBool.UNKNOWN;
+		lastused = JavaTools.getDate();
 	}
 
-	public ExtendedAccountData(String user, String pass, String alias, int useCount, int[] lastused, EnumBool premium) {
+	public ExtendedAccountData(String user, String pass, String alias, int useCount, int[] lastused, Boolean premium) {
 		super(user, pass, alias);
 		this.useCount = useCount;
 		this.lastused = lastused;
