@@ -12,7 +12,7 @@ buildscript {
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'eclipse'
 
-version = '7.0.6'
+version = '7.0.7'
 archivesBaseName = 'InGameAccountSwitcher-Forge-1.12.2'
 
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8'
@@ -20,13 +20,19 @@ sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = co
 minecraft {
     mappings channel: 'snapshot', version: '20180814-1.12'
     // makeObfSourceJar = false
-    accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
+    accessTransformer = file('src/main/resources/META-INF/ias_at.cfg')
     runs {
         client {
             workingDirectory project.file('run')
         }
         server {}
     }
+}
+
+jar {
+	manifest {
+		attributes 'FMLAT': 'ias_at.cfg'
+	}
 }
 
 dependencies {

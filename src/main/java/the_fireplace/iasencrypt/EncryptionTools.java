@@ -54,7 +54,7 @@ public final class EncryptionTools {
 
 			return new String(cipher.doFinal(data), DEFAULT_ENCODING);
 		} catch (BadPaddingException e) {
-			throw new RuntimeException("The password does not match", e);
+			return "";
 		} catch (IllegalBlockSizeException | InvalidKeyException | IOException | NoSuchAlgorithmException
 				| NoSuchPaddingException e) {
 			throw new RuntimeException(e);

@@ -11,4 +11,8 @@ public class ConfigValues {
 	public static final boolean ENABLERELOG_DEFAULT = false;
 	public static boolean ENABLERELOG;
 	public static final String ENABLERELOG_NAME = "ias.cfg.enablerelog";
+	
+	public static final String TEXT_POS_NAME = "ias.cfg.textpos";
+	public static String TEXT_X;
+	public static String TEXT_Y;
 }

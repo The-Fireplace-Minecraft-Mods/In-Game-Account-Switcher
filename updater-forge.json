@@ -1,13 +1,17 @@
 {
   "homepage": "https://www.curseforge.com/minecraft/mc-mods/in-game-account-switcher",
   "promos": {
-    "1.16.5-latest": "7.0.5",
-    "1.16.5-recommended": "7.0.5",
-    "1.15.2-latest": "7.0.5",
-    "1.15.2-recommended": "7.0.5",
-    "1.14.4-latest": "7.0.5",
-    "1.14.4-recommended": "7.0.5",
-    "1.13.2-latest": "7.0.5",
-    "1.13.2-recommended": "7.0.5"
+    "1.16.5-latest": "7.0.7",
+    "1.16.5-recommended": "7.0.7",
+    "1.15.2-latest": "7.0.7",
+    "1.15.2-recommended": "7.0.7",
+    "1.14.4-latest": "7.0.7",
+    "1.14.4-recommended": "7.0.7",
+    "1.13.2-latest": "7.0.7",
+    "1.13.2-recommended": "7.0.7",
+    "1.12.2-latest": "7.0.7",
+    "1.12.2-recommended": "7.0.7",
+    "1.8.9-latest": "7.0.7",
+    "1.8.9-recommended": "7.0.7"
   }
 }
