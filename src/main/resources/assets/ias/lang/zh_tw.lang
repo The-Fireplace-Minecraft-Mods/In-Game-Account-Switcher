@@ -15,7 +15,6 @@ ias.cfg.casesensitive=區分大小寫的搜索
 ias.cfg.casesensitive.tooltip=需要區分大小寫進行賬號搜索嗎?
 ias.cfg.enablerelog=重新登錄
 ias.cfg.enablerelog.tooltip=啓用重新登錄到您賬號的功能.
-ias.updatejava=更新Java
 ias.premium=已驗證
 ias.notpremium=未驗證
 ias.timesused=使用次數:

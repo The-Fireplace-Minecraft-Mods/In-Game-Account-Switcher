@@ -11,9 +11,9 @@ import net.minecraft.client.gui.GuiMultiplayer;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
 import net.minecraftforge.client.event.GuiScreenEvent.ActionPerformedEvent;
+import net.minecraftforge.client.event.GuiScreenEvent.DrawScreenEvent;
 import net.minecraftforge.client.event.GuiScreenEvent.InitGuiEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
 import the_fireplace.ias.config.ConfigValues;
 import the_fireplace.ias.gui.GuiAccountSelector;
 import the_fireplace.ias.gui.GuiButtonWithImage;
@@ -37,7 +37,7 @@ public class ClientEvents {
 				textX = event.getGui().width / 2;
 				textY = event.getGui().height / 4 + 48 + 72 + 12 + 22;
 			}
-			event.getButtonList().add(new GuiButtonWithImage(20, gui.width / 2 + 104, (gui.height / 4 + 48) + 72 + 12, 20, 20, ""));
+			event.getButtonList().add(new GuiButtonWithImage(20, gui.width / 2 + 104, (gui.height / 4 + 48) + 72 + 12));
 		}
 	}
 	@SubscribeEvent
@@ -50,8 +50,8 @@ public class ClientEvents {
 		}
 	}
 	@SubscribeEvent
-	public void onTick(TickEvent.RenderTickEvent t) {
-		GuiScreen screen = Minecraft.getMinecraft().currentScreen;
+	public void onTick(DrawScreenEvent.Post t) {
+		GuiScreen screen = t.getGui();
 		if (screen instanceof GuiMainMenu) {
 			screen.drawCenteredString(Minecraft.getMinecraft().fontRenderer, I18n.format("ias.loggedinas") + Minecraft.getMinecraft().getSession().getUsername()+".", textX, textY, 0xFFCC8888);
 		}else if(screen instanceof GuiMultiplayer){
