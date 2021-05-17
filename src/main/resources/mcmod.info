@@ -8,7 +8,7 @@
   "url": "http://mods.curse.com/mc-mods/minecraft/232676-in-game-account-switcher",
   "updateUrl": "http://mods.curse.com/mc-mods/minecraft/232676-in-game-account-switcher",
   "authorList": ["The_Fireplace","The_BrainStone"],
-  "credits": "deFENCE_(aka MRebhan), Elvm",
+  "credits": "2xsaiko, Elvm",
   "logoFile": "iaslogo.png",
   "screenshots": [],
   "dependencies": ["CustomMainMenu"]
