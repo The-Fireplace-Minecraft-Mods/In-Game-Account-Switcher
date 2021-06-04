@@ -1,0 +1,16 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "ru.vidtu.iasfork.mixins",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+  ],
+  "client": [
+    "TitleScreenMixin",
+    "MultiplayerScreenMixin",
+    "MinecraftClientAccessor"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

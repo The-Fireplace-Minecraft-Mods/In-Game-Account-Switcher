@@ -1,15 +1,21 @@
 package com.github.mrebhan.ingameaccountswitcher.tools;
 
-import net.minecraft.client.Minecraft;
-import the_fireplace.iasencrypt.Standards;
-
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.attribute.DosFileAttributeView;
 import java.nio.file.attribute.DosFileAttributes;
 import java.util.ArrayList;
+
+import net.minecraft.client.MinecraftClient;
+import the_fireplace.iasencrypt.Standards;
 /**
  * @author mrebhan
  * @author The_Fireplace
@@ -124,7 +130,8 @@ public class Config implements Serializable {
 	}
 
 	private static void loadFromOld(){
-		File f = new File(Minecraft.getMinecraft().gameDir, "user.cfg");
+		MinecraftClient mc = MinecraftClient.getInstance();
+		File f = new File(mc.runDirectory, "user.cfg");
 		if (f.exists()) {
 			try {
 				ObjectInputStream stream = new ObjectInputStream(new FileInputStream(f));

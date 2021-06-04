@@ -1,40 +1,30 @@
-buildscript {
-    repositories {
-        maven { url = 'https://files.minecraftforge.net/maven' }
-        jcenter()
-        mavenCentral()
-    }
-    dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:3.+'
-    }
-}
-        
-apply plugin: 'net.minecraftforge.gradle'
-apply plugin: 'eclipse'
-
-version = '7.1.0-pre1'
-archivesBaseName = 'InGameAccountSwitcher-Forge-1.12.2'
-
-sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8'
-
-minecraft {
-    mappings channel: 'snapshot', version: '20180814-1.12'
-    // makeObfSourceJar = false
-    accessTransformer = file('src/main/resources/META-INF/ias_at.cfg')
-    runs {
-        client {
-            workingDirectory project.file('run')
-        }
-        server {}
-    }
+plugins {
+	id 'fabric-loom' version '0.8-SNAPSHOT'
 }
 
-jar {
-	manifest {
-		attributes 'FMLAT': 'ias_at.cfg'
-	}
+sourceCompatibility = JavaVersion.VERSION_16
+targetCompatibility = JavaVersion.VERSION_16
+
+archivesBaseName = "InGameAccountSwitcher-Fabric-1.17"
+version = "7.1.0-pre2"
+
+repositories {
+	maven { url = "https://maven.terraformersmc.com/releases/" }
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.12.2-14.23.5.2855'
+	minecraft "com.mojang:minecraft:1.17-pre4"
+	mappings "net.fabricmc:yarn:1.17-pre4+build.1"
+	modImplementation "net.fabricmc:fabric-loader:0.11.3"
+	modImplementation "net.fabricmc.fabric-api:fabric-api:0.34.8+1.17"
+	modImplementation "com.terraformersmc:modmenu:2.0.0-beta.7"
+}
+
+tasks.withType(JavaCompile).configureEach {
+	it.options.encoding = "UTF-8"
+    it.options.release = 16
+}
+
+java {
+	//withSourcesJar()
 }

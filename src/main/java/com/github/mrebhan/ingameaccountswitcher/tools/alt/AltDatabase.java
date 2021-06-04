@@ -1,9 +1,9 @@
 package com.github.mrebhan.ingameaccountswitcher.tools.alt;
 
-import com.github.mrebhan.ingameaccountswitcher.tools.Config;
-
 import java.io.Serializable;
 import java.util.ArrayList;
+
+import com.github.mrebhan.ingameaccountswitcher.tools.Config;
 /**
  * @author mrebhan
  * @author The_Fireplace

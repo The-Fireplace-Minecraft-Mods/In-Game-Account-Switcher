@@ -2,8 +2,9 @@ package the_fireplace.ias.gui;
 
 import com.github.mrebhan.ingameaccountswitcher.tools.alt.AltDatabase;
 
-import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.resources.I18n;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.text.TranslatableText;
 import ru.vidtu.iasfork.msauth.MSAuthScreen;
 import the_fireplace.ias.account.ExtendedAccountData;
 
@@ -14,24 +15,15 @@ import the_fireplace.ias.account.ExtendedAccountData;
  */
 public class GuiAddAccount extends AbstractAccountGui {
 
-	public GuiAddAccount()
+	public GuiAddAccount(Screen prev)
 	{
-		super("ias.addaccount");
+		super(prev, "ias.addaccount");
 	}
 	
 	@Override
-	public void initGui() {
-		super.initGui();
-		addButton(new GuiButton(13, width / 2 - 60, height / 3 * 2, 120, 20, I18n.format("ias.msauth.btn")));
-	}
-	
-	@Override
-	public void actionPerformed(GuiButton button) {
-		if (button.id == 13) {
-			mc.displayGuiScreen(new MSAuthScreen(this));
-			return;
-		}
-		super.actionPerformed(button);
+	public void init() {
+		super.init();
+		addDrawableChild(new ButtonWidget(width / 2 - 60, height / 3 * 2, 120, 20, new TranslatableText("ias.msauth.btn"), btn -> client.openScreen(new MSAuthScreen(this))));
 	}
 
 	@Override

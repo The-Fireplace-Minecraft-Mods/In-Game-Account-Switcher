@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "id": "ias",
+  "version": "7.1.0-pre2",
+  "name": "In-Game Account Switcher",
+  "description": "Allows you to change which account you are signed in to in-game without restarting Minecraft.",
+  "authors": [
+    "The_Fireplace",
+    "The_BrainStone",
+    "2xsaiko",
+    "Elvm",
+    "VidTu"
+  ],
+  "accessWidener" : "ias.accesswidener",
+  "contact": {
+    "homepage": "https://www.curseforge.com/minecraft/mc-mods/in-game-account-switcher",
+    "sources": "https://github.com/VidTuGit/In-Game-Account-Switcher",
+    "issues": "https://github.com/VidTuGit/In-Game-Account-Switcher/issues"
+  },
+  "license": "GNU LGPL 3.0",
+  "icon": "iaslogo.png",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "the_fireplace.ias.IAS"
+    ],
+    "modmenu": [
+      "ru.vidtu.iasfork.IASModMenuCompat"
+    ]
+  },
+  "mixins": [
+    "ias.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.7.4",
+    "fabric": "*",
+    "minecraft": "1.17.x"
+  },
+  "recommends": {
+     "modmenu": "*"
+  }
+}

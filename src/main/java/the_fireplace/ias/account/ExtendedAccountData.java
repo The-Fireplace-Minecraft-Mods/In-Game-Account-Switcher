@@ -3,14 +3,16 @@ package the_fireplace.ias.account;
 import java.util.Arrays;
 
 import com.github.mrebhan.ingameaccountswitcher.tools.alt.AccountData;
+import com.github.mrebhan.ingameaccountswitcher.tools.alt.AltManager;
 
+import ru.vidtu.iasfork.msauth.Account;
 import the_fireplace.ias.tools.JavaTools;
 /**
  * @author The_Fireplace
  */
-public class ExtendedAccountData extends AccountData {
+public class ExtendedAccountData extends AccountData implements Account {
 	private static final long serialVersionUID = -909128662161235160L;
-	/**Can be {@code null}*/
+
 	public Boolean premium;
 	public int[] lastused;
 	public int useCount;
@@ -50,5 +52,15 @@ public class ExtendedAccountData extends AccountData {
 			return false;
 		}
 		return user.equals(other.user) && pass.equals(other.pass);
+	}
+
+	@Override
+	public String alias() {
+		return alias;
+	}
+
+	@Override
+	public Throwable login() {
+		return AltManager.getInstance().setUser(user, pass);
 	}
 }

@@ -1,8 +1,8 @@
 package com.github.mrebhan.ingameaccountswitcher.tools.alt;
 
-import the_fireplace.iasencrypt.EncryptionTools;
-
 import java.io.Serializable;
+
+import the_fireplace.iasencrypt.EncryptionTools;
 /**
  * @author mrebhan
  * @author The_Fireplace
