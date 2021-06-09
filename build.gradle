@@ -20,6 +20,10 @@ dependencies {
 	modImplementation "com.terraformersmc:modmenu:2.0.0-beta.7"
 }
 
+minecraft {
+    accessWidener =  file("src/main/resources/ias.accesswidener")
+}
+
 tasks.withType(JavaCompile).configureEach {
 	it.options.encoding = "UTF-8"
     it.options.release = 16
