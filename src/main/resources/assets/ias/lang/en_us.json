@@ -7,7 +7,7 @@
     "ias.offline": "(Offline Mode)",
     "ias.delete": "Delete",
     "ias.alt": "Account",
-    "ias.username": "Username:",
+    "ias.username": "Email:",
     "ias.password": "Password:",
     "ias.edit": "Edit",
     "ias.editaccount": "Edit Account",
@@ -38,6 +38,6 @@
     "ias.msauth.canclosenow": "You can close this window now.",
     "ias.msauth.error": "Error: %s",
     "ias.msauth.error.gamenotowned": "This account doesn't own the game.",
-    "ias.msauth.error.noxbox": "This account doesn't have Minecraft account linked.",
+    "ias.msauth.error.noxbox": "This account doesn't have a Minecraft account linked. Ensure you have bought the game for this account and your age is over 18.",
     "ias.msauth.error.revoked": "Authorization cancelled."
 }

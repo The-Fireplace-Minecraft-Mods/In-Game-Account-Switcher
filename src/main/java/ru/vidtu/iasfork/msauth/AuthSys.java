@@ -56,7 +56,6 @@ public class AuthSys {
     					} catch (Throwable t) {
     						t.printStackTrace();
     						h.error(t);
-    						stop();
     					}
     				}
     			});

@@ -7,7 +7,7 @@
     "ias.offline": "(Авт. режим)",
     "ias.delete": "Удалить",
     "ias.alt": "Аккаунт",
-    "ias.username": "Логин:",
+    "ias.username": "Почта:",
     "ias.password": "Пароль:",
     "ias.edit": "Редактировать",
     "ias.editaccount": "Редактировать аккаунт",
@@ -38,6 +38,6 @@
     "ias.msauth.canclosenow": "Теперь вы можете закрыть это окно.",
     "ias.msauth.error": "Ошибка: %s",
     "ias.msauth.error.gamenotowned": "На этот аккаунт игра не приобретена.",
-    "ias.msauth.error.noxbox": "К этому аккаунту не привязан аккаунт Minecraft.",
+    "ias.msauth.error.noxbox": "К этому аккаунту не привязан аккаунт Minecraft. Убедитесь, что игра куплена на этот аккаунт и вам больше 18 лет.",
     "ias.msauth.error.revoked": "Авторизация отменена."
 }

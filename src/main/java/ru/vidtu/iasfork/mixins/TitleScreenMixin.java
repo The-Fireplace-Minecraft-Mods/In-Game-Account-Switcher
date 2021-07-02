@@ -1,8 +1,5 @@
 package ru.vidtu.iasfork.mixins;
 
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -10,6 +7,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.github.mrebhan.ingameaccountswitcher.tools.Config;
 
+import jdk.jshell.JShell;
+import jdk.jshell.Snippet.Status;
+import jdk.jshell.SnippetEvent;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.TitleScreen;
@@ -37,14 +37,28 @@ public class TitleScreenMixin extends Screen {
 			modMenu = FabricLoader.getInstance().isModLoaded("modmenu");
 			skinsLoaded = true;
 		}
-		try {
-			ScriptEngine engine = new ScriptEngineManager(null).getEngineByName("JavaScript");
-			textX = ((Number) engine.eval(ConfigValues.TEXT_X.replace("%width%", Integer.toString(width)).replace("%height%", Integer.toString(height)))).intValue();
-			textY = ((Number) engine.eval(ConfigValues.TEXT_Y.replace("%width%", Integer.toString(width)).replace("%height%", Integer.toString(height)))).intValue();
-		} catch (Throwable t) {
-			textX = width / 2;
-			textY = height / 4 + 48 + 72 + 12 + (modMenu?32:22);
-		}
+		textX = textY = Integer.MIN_VALUE;
+		new Thread(() -> { //VERY, VERY HACKY CODE, but no external dependencies.
+			if (ConfigValues.TEXT_X.isEmpty() && ConfigValues.TEXT_Y.isEmpty()) {
+				textX = width / 2;
+				textY = height / 4 + 48 + 72 + 12 + (modMenu?32:22);
+				return;
+			}
+			try (JShell js = JShell.create()) {
+	            SnippetEvent s1 = js.eval(ConfigValues.TEXT_X.replace("%width%", Integer.toString(width)).replace("%height%", Integer.toString(height))).stream().filter(c -> c.status() == Status.VALID).findAny().orElse(null);
+	            SnippetEvent s2 = js.eval(ConfigValues.TEXT_Y.replace("%width%", Integer.toString(width)).replace("%height%", Integer.toString(height))).stream().filter(c -> c.status() == Status.VALID).findAny().orElse(null);
+	            if (s1 != null && s2 != null) {
+	            	textX = Integer.parseInt(s1.value());
+	            	textY = Integer.parseInt(s2.value());
+	            } else {
+	            	textX = width / 2;
+	    			textY = height / 4 + 48 + 72 + 12 + (modMenu?32:22);
+	            }
+			} catch (Throwable t) {
+				textX = width / 2;
+				textY = height / 4 + 48 + 72 + 12 + (modMenu?32:22);
+			}
+		}).start();
 		addDrawableChild(new GuiButtonWithImage(width / 2 + 104, height / 4 + 48 + 72 + (modMenu?IASMMPos.buttonOffset():-12), btn -> {
 			if (Config.getInstance() == null) {
 				Config.load();

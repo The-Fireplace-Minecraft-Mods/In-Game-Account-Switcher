@@ -56,6 +56,7 @@ public class GuiAccountSelector extends Screen {
 
 	@Override
 	protected void init() {
+		queriedaccounts = convertData();
 		accountsgui = new GuiAccountSelector.List(this.client);
 		addDrawable(accountsgui);
 		addDrawableChild(reloadskins = new ButtonWidget(2, 2, 120, 20, new TranslatableText("ias.reloadskins"), btn -> reloadSkins())); //8
