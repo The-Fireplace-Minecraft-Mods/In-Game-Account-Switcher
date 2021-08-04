@@ -39,5 +39,7 @@
     "ias.msauth.error": "Error: %s",
     "ias.msauth.error.gamenotowned": "This account doesn't own the game.",
     "ias.msauth.error.noxbox": "This account doesn't have a Minecraft account linked. Ensure you have bought the game for this account and your age is over 18.",
-    "ias.msauth.error.revoked": "Authorization cancelled."
+    "ias.msauth.error.revoked": "Authorization cancelled.",
+    "ias.delete.title": "Are you sure you want to delete this account?",
+    "ias.delete.text": "%s will be deleted!"
 }

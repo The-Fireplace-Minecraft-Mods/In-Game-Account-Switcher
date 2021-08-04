@@ -5,6 +5,7 @@ import java.util.Arrays;
 import com.github.mrebhan.ingameaccountswitcher.tools.alt.AccountData;
 import com.github.mrebhan.ingameaccountswitcher.tools.alt.AltManager;
 
+import net.minecraft.client.MinecraftClient;
 import ru.vidtu.iasfork.msauth.Account;
 import the_fireplace.ias.tools.JavaTools;
 /**
@@ -61,6 +62,8 @@ public class ExtendedAccountData extends AccountData implements Account {
 
 	@Override
 	public Throwable login() {
-		return AltManager.getInstance().setUser(user, pass);
+		Throwable t = AltManager.getInstance().setUser(user, pass);
+		if (t == null) MinecraftClient.getInstance().setScreen(null);
+		return t;
 	}
 }

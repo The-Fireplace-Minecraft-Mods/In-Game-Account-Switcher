@@ -8,6 +8,7 @@ import java.util.Properties;
 import com.github.mrebhan.ingameaccountswitcher.MR;
 
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import the_fireplace.ias.config.ConfigValues;
 import the_fireplace.iasencrypt.Standards;
@@ -56,11 +57,7 @@ public class IAS implements ClientModInitializer {
 			t.printStackTrace();
 		}
 		syncConfig(false);
-		try {
-			Class.forName("net.minecraft.util.math.MathHelper");
-		} catch (Throwable t) {
-			Standards.updateFolder();
-		}
+		if (!FabricLoader.getInstance().isDevelopmentEnvironment()) Standards.updateFolder();
 		MR.init();
 		Standards.importAccounts();
 	}

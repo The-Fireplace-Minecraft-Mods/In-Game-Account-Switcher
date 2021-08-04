@@ -17,13 +17,13 @@ public class GuiAddAccount extends AbstractAccountGui {
 
 	public GuiAddAccount(Screen prev)
 	{
-		super(prev, "ias.addaccount");
+		super(prev, new TranslatableText("ias.addaccount"));
 	}
 	
 	@Override
 	public void init() {
 		super.init();
-		addDrawableChild(new ButtonWidget(width / 2 - 60, height / 3 * 2, 120, 20, new TranslatableText("ias.msauth.btn"), btn -> client.openScreen(new MSAuthScreen(this))));
+		addDrawableChild(new ButtonWidget(width / 2 - 60, height / 3 * 2, 120, 20, new TranslatableText("ias.msauth.btn"), btn -> client.setScreen(new MSAuthScreen(this))));
 	}
 
 	@Override

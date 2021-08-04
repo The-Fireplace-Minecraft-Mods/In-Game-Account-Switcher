@@ -1,9 +1,11 @@
 package ru.vidtu.iasfork;
 
-import com.mojang.blaze3d.platform.GlStateManager;
-import com.mojang.blaze3d.systems.RenderSystem;
 import java.util.Collections;
 import java.util.List;
+
+import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
+
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
@@ -11,16 +13,18 @@ import net.minecraft.client.gui.AbstractParentElement;
 import net.minecraft.client.gui.Drawable;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.Element;
+import net.minecraft.client.gui.Selectable;
+import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.render.Tessellator;
-import net.minecraft.client.render.VertexFormats;
 import net.minecraft.client.render.VertexFormat.DrawMode;
+import net.minecraft.client.render.VertexFormats;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.math.MathHelper;
 
 @Environment(EnvType.CLIENT)
-public abstract class ListWidget extends AbstractParentElement implements Drawable {
+public abstract class ListWidget extends AbstractParentElement implements Drawable, Selectable {
 	protected static final int NO_DRAG = -1;
 	protected static final int DRAG_OUTSIDE = -2;
 	protected final MinecraftClient minecraft;
@@ -159,6 +163,7 @@ public abstract class ListWidget extends AbstractParentElement implements Drawab
 		renderBackground(ms);
 		int k = getScrollbarPosition();
 		int l = k + 6;
+		this.capYPosition();
 		Tessellator tessellator = Tessellator.getInstance();
 		BufferBuilder bufferBuilder = tessellator.getBuffer();
 		RenderSystem.setShader(GameRenderer::getPositionTexColorShader);
@@ -432,4 +437,12 @@ public abstract class ListWidget extends AbstractParentElement implements Drawab
 	public int getItemHeight() {
 		return this.itemHeight;
 	}
+	
+	@Override
+	public SelectionType getType() {
+		return SelectionType.NONE;
+	}
+
+	@Override
+	public void appendNarrations(NarrationMessageBuilder narrationMessageBuilder) {}
 }

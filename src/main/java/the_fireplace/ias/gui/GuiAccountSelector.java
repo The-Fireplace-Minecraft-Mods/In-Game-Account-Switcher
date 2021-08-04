@@ -11,6 +11,7 @@ import com.github.mrebhan.ingameaccountswitcher.tools.alt.AltDatabase;
 import com.github.mrebhan.ingameaccountswitcher.tools.alt.AltManager;
 
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.screen.ConfirmScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
@@ -58,7 +59,7 @@ public class GuiAccountSelector extends Screen {
 	protected void init() {
 		queriedaccounts = convertData();
 		accountsgui = new GuiAccountSelector.List(this.client);
-		addDrawable(accountsgui);
+		addDrawableChild(accountsgui);
 		addDrawableChild(reloadskins = new ButtonWidget(2, 2, 120, 20, new TranslatableText("ias.reloadskins"), btn -> reloadSkins())); //8
 		addDrawableChild(new ButtonWidget(this.width / 2 + 4 + 40, this.height - 52, 120, 20, new TranslatableText("ias.addaccount"), btn -> add())); //0
 		addDrawableChild(login = new ButtonWidget(this.width / 2 - 154 - 10, this.height - 52, 120, 20, new TranslatableText("ias.login"), btn -> login(selectedAccountIndex))); //1
@@ -86,12 +87,6 @@ public class GuiAccountSelector extends Screen {
 			updateQueried();
 			prevQuery = search.getText();
 		}
-	}
-
-	@Override
-	public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
-		accountsgui.mouseClicked(mouseX, mouseY, mouseButton);
-		return super.mouseClicked(mouseX, mouseY, mouseButton);
 	}
 
 	@Override
@@ -144,25 +139,30 @@ public class GuiAccountSelector extends Screen {
 	 * Leave the gui
 	 */
 	private void escape() {
-		client.openScreen(prev);
+		client.setScreen(prev);
 	}
 
 	/**
 	 * Delete the selected account
 	 */
 	private void delete() {
-		AltDatabase.getInstance().getAlts().remove(getCurrentAsEditable());
-		if (this.queriedaccounts.get(selectedAccountIndex) instanceof MicrosoftAccount) MicrosoftAccount.msaccounts.remove(this.queriedaccounts.get(selectedAccountIndex));
-		if (selectedAccountIndex > 0) selectedAccountIndex--;
-		updateQueried();
-		updateButtons();
+		client.setScreen(new ConfirmScreen(b -> {
+			if (b) {
+				AltDatabase.getInstance().getAlts().remove(getCurrentAsEditable());
+				if (this.queriedaccounts.get(selectedAccountIndex) instanceof MicrosoftAccount) MicrosoftAccount.msaccounts.remove(this.queriedaccounts.get(selectedAccountIndex));
+				if (selectedAccountIndex > 0) selectedAccountIndex--;
+				updateQueried();
+				updateButtons();
+			}
+			client.setScreen(this);
+		}, new TranslatableText("ias.delete.title"), new TranslatableText("ias.delete.text", queriedaccounts.get(selectedAccountIndex).alias())));
 	}
 
 	/**
 	 * Add an account
 	 */
 	private void add() {
-		client.openScreen(new GuiAddAccount(this));
+		client.setScreen(new GuiAddAccount(this));
 	}
 
 	/**
@@ -207,7 +207,7 @@ public class GuiAccountSelector extends Screen {
 	 * Edits the current account's information
 	 */
 	private void edit() {
-		client.openScreen(new GuiEditAccount(this, selectedAccountIndex));
+		client.setScreen(new GuiEditAccount(this, selectedAccountIndex));
 	}
 
 	private void updateQueried() {

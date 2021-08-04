@@ -42,7 +42,7 @@ public class MultiplayerScreenMixin extends Screen {
 				if (Config.getInstance() == null) {
 					Config.load();
 				}
-				client.openScreen(new GuiAccountSelector(this));
+				client.setScreen(new GuiAccountSelector(this));
 			}));
 		}
 	}

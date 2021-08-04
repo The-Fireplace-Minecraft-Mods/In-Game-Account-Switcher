@@ -1,2 +1,2 @@
-accessWidener	v1	named
-mutable   field   Lnet/minecraft/client/MinecraftClient;   session   Lnet/minecraft/client/util/Session;
+accessWidener v1 named
+extendable method net/minecraft/client/gui/screen/Screen init (Lnet/minecraft/client/MinecraftClient;II)V

@@ -4,6 +4,7 @@ import com.github.mrebhan.ingameaccountswitcher.tools.alt.AccountData;
 import com.github.mrebhan.ingameaccountswitcher.tools.alt.AltDatabase;
 
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.text.TranslatableText;
 import the_fireplace.ias.account.ExtendedAccountData;
 import the_fireplace.ias.tools.JavaTools;
 import the_fireplace.iasencrypt.EncryptionTools;
@@ -17,7 +18,7 @@ public class GuiEditAccount extends AbstractAccountGui {
 	private final int selectedIndex;
 
 	public GuiEditAccount(Screen prev, int index){
-		super(prev, "ias.editaccount");
+		super(prev, new TranslatableText("ias.editaccount"));
 		this.selectedIndex=index;
 		AccountData data = AltDatabase.getInstance().getAlts().get(index);
 

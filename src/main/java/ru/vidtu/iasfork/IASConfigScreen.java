@@ -27,7 +27,7 @@ public class IASConfigScreen extends Screen {
 		addDrawableChild(textY = new TextFieldWidget(textRenderer, width / 2 + 2, 90, 98, 20, new LiteralText("Y")));
 		addDrawableChild(mpscreen = new CheckboxWidget(width / 2 - textRenderer.getWidth(new TranslatableText(ConfigValues.SHOW_ON_MULTIPLAYER_SCREEN_NAME)) / 2 - 24, 112, 20, 20, new TranslatableText(ConfigValues.SHOW_ON_MULTIPLAYER_SCREEN_NAME), ConfigValues.SHOW_ON_MULTIPLAYER_SCREEN));
 		addDrawableChild(new ButtonWidget(width / 2 - 75, height - 24, 150, 20, new TranslatableText("gui.done"), btn -> {
-			client.openScreen(prev);
+			client.setScreen(prev);
 		}));
 		if (ConfigValues.TEXT_X != null) textX.setText(ConfigValues.TEXT_X);
 		if (ConfigValues.TEXT_Y != null) textY.setText(ConfigValues.TEXT_Y);

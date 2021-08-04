@@ -52,7 +52,7 @@ public class MSAuthScreen extends Screen implements MSAuthHandler {
 	
 	@Override
 	public void init() {
-		addDrawableChild(new ButtonWidget(width / 2 - 50, (this.height + 114) / 2, 100, 20, new TranslatableText("gui.cancel"), btn -> client.openScreen(prev))).active = cancelButton;
+		addDrawableChild(new ButtonWidget(width / 2 - 50, (this.height + 114) / 2, 100, 20, new TranslatableText("gui.cancel"), btn -> client.setScreen(prev))).active = cancelButton;
 	}
 	
 	@Override
@@ -64,6 +64,12 @@ public class MSAuthScreen extends Screen implements MSAuthHandler {
 	@Override
 	public boolean shouldCloseOnEsc() {
 		return false;
+	}
+	
+	@Override
+	public void init(MinecraftClient minecraftClient, int i, int j) {
+		prev.init(minecraftClient, i, j);
+		super.init(minecraftClient, i, j);
 	}
 	
 	@Override
@@ -117,10 +123,10 @@ public class MSAuthScreen extends Screen implements MSAuthHandler {
 		mc.execute(() -> {
 			if (add) {
 				MicrosoftAccount.msaccounts.add(new MicrosoftAccount(name, EncryptionTools.encode(token), EncryptionTools.encode(refresh)));
-				mc.openScreen(new GuiAccountSelector(prev instanceof AbstractAccountGui?(((AbstractAccountGui)prev).prev instanceof GuiAccountSelector?((GuiAccountSelector)((AbstractAccountGui)prev).prev).prev:((AbstractAccountGui)prev).prev):prev));
+				mc.setScreen(new GuiAccountSelector(prev instanceof AbstractAccountGui?(((AbstractAccountGui)prev).prev instanceof GuiAccountSelector?((GuiAccountSelector)((AbstractAccountGui)prev).prev).prev:((AbstractAccountGui)prev).prev):prev));
 			} else {
 				MR.setSession(new Session(name, uuid, token, "mojang"));
-				mc.openScreen(prev);
+				mc.setScreen(null);
 			}
 		});
 	}

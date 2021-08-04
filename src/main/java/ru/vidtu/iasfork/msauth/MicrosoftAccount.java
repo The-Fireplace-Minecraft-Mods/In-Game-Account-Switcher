@@ -71,7 +71,7 @@ public class MicrosoftAccount implements Account, Serializable {
 	@Override
 	public Throwable login() {
 		MinecraftClient mc = MinecraftClient.getInstance();
-		mc.openScreen(new MSAuthScreen(mc.currentScreen, EncryptionTools.decode(accessToken), EncryptionTools.decode(refreshToken)));
+		mc.setScreen(new MSAuthScreen(mc.currentScreen, EncryptionTools.decode(accessToken), EncryptionTools.decode(refreshToken)));
 		return null;
 	}
 }

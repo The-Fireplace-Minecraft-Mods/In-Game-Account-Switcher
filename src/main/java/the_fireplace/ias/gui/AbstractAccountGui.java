@@ -10,6 +10,7 @@ import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import the_fireplace.iasencrypt.EncryptionTools;
 
@@ -25,9 +26,9 @@ public abstract class AbstractAccountGui extends Screen
 	private ButtonWidget complete;
 	protected boolean hasUserChanged = false;
 
-	public AbstractAccountGui(Screen prev, String actionString)
+	public AbstractAccountGui(Screen prev, Text actionString)
 	{
-		super(new TranslatableText(actionString));
+		super(actionString);
 		this.prev = prev;
 	}
 	
@@ -86,7 +87,7 @@ public abstract class AbstractAccountGui extends Screen
 	}
 
 	private void escape(){
-		client.openScreen(prev);
+		client.setScreen(prev);
 	}
 
 	public String getUsername()

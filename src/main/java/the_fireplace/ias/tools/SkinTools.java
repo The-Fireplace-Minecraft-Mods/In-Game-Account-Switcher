@@ -1,5 +1,6 @@
 package the_fireplace.ias.tools;
 
+import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.InputStream;
@@ -58,22 +59,22 @@ public class SkinTools {
 				int[] lleg2 = skin.getRGB(4, 36, 4, 12, null, 0, 4);
 				int[] rleg2 = skin.getRGB(4, 52, 4, 12, null, 0, 4);
 				for (int i = 0; i < hat.length; i++)
-					if (hat[i] == 0)
+					if (new Color(hat[i], true).getAlpha() == 0)
 						hat[i] = head[i];
 				for (int i = 0; i < jacket.length; i++)
-					if (jacket[i] == 0)
+					if (new Color(jacket[i], true).getAlpha() == 0)
 						jacket[i] = torso[i];
 				for (int i = 0; i < larm2.length; i++)
-					if (larm2[i] == 0)
+					if (new Color(larm2[i], true).getAlpha() == 0)
 						larm2[i] = larm[i];
 				for (int i = 0; i < rarm2.length; i++)
-					if (rarm2[i] == 0)
+					if (new Color(rarm2[i], true).getAlpha() == 0)
 						rarm2[i] = rarm[i];
 				for (int i = 0; i < lleg2.length; i++)
-					if (lleg2[i] == 0)
+					if (new Color(lleg2[i], true).getAlpha() == 0)
 						lleg2[i] = lleg[i];
 				for (int i = 0; i < rleg2.length; i++)
-					if (rleg2[i] == 0)
+					if (new Color(rleg2[i], true).getAlpha() == 0)
 						rleg2[i] = rleg[i];
 				drawing.setRGB(4, 0, 8, 8, hat, 0, 8);
 				drawing.setRGB(4, 8, 8, 12, jacket, 0, 8);
@@ -88,7 +89,7 @@ public class SkinTools {
 				int[] leg = skin.getRGB(4, 20, 4, 12, null, 0, 4);
 				int[] hat = skin.getRGB(40, 8, 8, 8, null, 0, 8);
 				for (int i = 0; i < hat.length; i++)
-					if (hat[i] == 0)
+					if (new Color(hat[i], true).getAlpha() == 0)
 						hat[i] = head[i];
 				drawing.setRGB(4, 0, 8, 8, hat, 0, 8);
 				drawing.setRGB(4, 8, 8, 12, torso, 0, 8);
