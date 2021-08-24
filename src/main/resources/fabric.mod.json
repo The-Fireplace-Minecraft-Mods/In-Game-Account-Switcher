@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "ias",
-  "version": "7.1.0",
+  "version": "${version}",
   "name": "In-Game Account Switcher",
   "description": "Allows you to change which account you are signed in to in-game without restarting Minecraft.",
   "authors": [
