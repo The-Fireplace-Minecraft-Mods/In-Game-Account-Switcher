@@ -40,9 +40,9 @@ public abstract class AbstractAccountGui extends Screen
 		}));
 		addDrawableChild(new ButtonWidget(this.width / 2 + 2, this.height - 28, 150, 20, new TranslatableText("gui.cancel"), btn -> escape()));
 		addDrawableChild(username = new TextFieldWidget(this.textRenderer, this.width / 2 - 100, 60, 200, 20, new LiteralText("")));
-		username.setMaxLength(64);
+		username.setMaxLength(512);
 		addDrawableChild(password = new GuiPasswordField(this.textRenderer, this.width / 2 - 100, 90, 200, 20, new LiteralText("")));
-		password.setMaxLength(64);
+		password.setMaxLength(512);
 		complete.active = false;
 	}
 	

@@ -27,12 +27,32 @@ public class MicrosoftAccount implements Account, Serializable {
 	}
 
 	public static void load(MinecraftClient mc) {
+		//Loads MS account from 7.1.0-pre2 thru 7.1.1.
+		//See: https://github.com/The-Fireplace-Minecraft-Mods/In-Game-Account-Switcher/issues/40
 		try {
-			File ms = new File(mc.runDirectory, ".iasms");
-			if (!ms.exists()) return;
-			ObjectInputStream ois = new ObjectInputStream(new FileInputStream(ms));
-			msaccounts.add((MicrosoftAccount) ois.readObject());
-			ois.close();
+			File oldData = new File(mc.runDirectory, ".iasms");
+			if (oldData.exists()) {
+				try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(oldData))) {
+					msaccounts.add((MicrosoftAccount) ois.readObject());
+				}
+				oldData.delete();
+			}
+		} catch (Throwable t) {
+			System.err.println("Unable to load old microsoft accounts.");
+			t.printStackTrace();
+		}
+		
+		//Loads new account data
+		try {
+			File ms = new File(mc.runDirectory, ".iasms_v2");
+			if (ms.exists()) {
+				try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(ms))) {
+					int amount = ois.readInt();
+					for (int i = 0; i < amount; i++) {
+						msaccounts.add((MicrosoftAccount) ois.readObject());
+					}
+				}
+			}
 		} catch (Throwable t) {
 			System.err.println("Unable to load microsoft accounts.");
 			t.printStackTrace();
@@ -41,24 +61,21 @@ public class MicrosoftAccount implements Account, Serializable {
 	
 	public static void save(MinecraftClient mc) {
 		try {
-			File ms = new File(mc.runDirectory, ".iasms");
-			if (msaccounts.isEmpty()) {
-				if (ms.exists()) ms.delete();
-				return;
-			}
+			File ms = new File(mc.runDirectory, ".iasms_v2");
 			try {
-				if (ms.exists()) Files.setAttribute(ms.toPath(), "dos:hidden", false);
+				Files.setAttribute(ms.toPath(), "dos:hidden", false); //Writing to hidden files is not allowed (at least in Windows)
 			} catch (Throwable t) {}
-			ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(ms));
-			for (MicrosoftAccount acc : msaccounts) {
-				oos.writeObject(acc);
+			try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(ms))) {
+				oos.writeInt(msaccounts.size());
+				for (MicrosoftAccount acc : msaccounts) {
+					oos.writeObject(acc);
+				}
 			}
-			oos.close();
 			try {
 				Files.setAttribute(ms.toPath(), "dos:hidden", true);
 			} catch (Throwable t) {}
 		} catch (Throwable t) {
-			System.err.println("Unable to load microsoft accounts.");
+			System.err.println("Unable to save microsoft accounts.");
 			t.printStackTrace();
 		}
 	}
