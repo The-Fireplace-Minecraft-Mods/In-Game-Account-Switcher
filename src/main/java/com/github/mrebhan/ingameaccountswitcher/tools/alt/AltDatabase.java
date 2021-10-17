@@ -2,42 +2,13 @@ package com.github.mrebhan.ingameaccountswitcher.tools.alt;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-
-import com.github.mrebhan.ingameaccountswitcher.tools.Config;
 /**
  * @author mrebhan
  * @author The_Fireplace
+ * @deprecated Inconvenient. Insure (saved user passwords). Used only for conversion from old accounts to new accounts.
  */
+@Deprecated
 public class AltDatabase implements Serializable {	
-
 	public static final long serialVersionUID = 0xA17DA7AB;
-	private static AltDatabase instance;
-
-	private final ArrayList<AccountData> altList;
-
-	private AltDatabase() {
-		this.altList = new ArrayList<>();
-	}
-
-	private static void loadFromConfig() {
-		if (instance == null)
-			instance = (AltDatabase) Config.getInstance().getKey("altaccounts");
-	}
-
-	private static void saveToConfig() {
-		Config.getInstance().setKey("altaccounts", instance);
-	}
-
-	public static AltDatabase getInstance() {
-		loadFromConfig();
-		if (instance == null) {
-			instance = new AltDatabase();
-			saveToConfig();
-		}
-		return instance;
-	}
-
-	public ArrayList<AccountData> getAlts() {
-		return this.altList;
-	}
+	public ArrayList<AccountData> altList;
 }

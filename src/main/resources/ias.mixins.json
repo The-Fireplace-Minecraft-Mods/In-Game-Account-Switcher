@@ -1,7 +1,7 @@
 {
   "required": true,
   "minVersion": "0.8",
-  "package": "ru.vidtu.iasfork.mixins",
+  "package": "ru.vidtu.ias.mixins",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
   ],

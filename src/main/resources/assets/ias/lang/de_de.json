@@ -1,12 +1,11 @@
 {
-    "ias.loggedinas": "Sie sind derzeit angemeldet als",
+    "ias.loggedinas": "Sie sind derzeit angemeldet als %s.",
     "ias.selectaccount": "Wählen Sie ein Konto aus",
     "ias.offlinemode": "Sie befinden sich derzeit im Offline-Modus. Sie können nur Server im Offline-Modus beitreten",
     "ias.addaccount": "Konto hinzufügen",
     "ias.login": "Einloggen",
     "ias.offline": "(Offline-Modus)",
     "ias.delete": "Löschen",
-    "ias.alt": "Konto",
     "ias.username": "Benutzername:",
     "ias.password": "Passwort:",
     "ias.edit": "Bearbeiten",
@@ -14,12 +13,9 @@
     "ias.search": "Suche",
     "ias.cfg.casesensitive": "Suche nach Groß- und Kleinschreibung",
     "ias.cfg.casesensitive.tooltip": "Sollte die Kontensuche die Groß- und Kleinschreibung berücksichtigen?",
-    "ias.cfg.enablerelog": "Relog aktivieren",
-    "ias.cfg.enablerelog.tooltip": "Ermöglicht die Anmeldung bei dem Konto, bei dem Sie bereits angemeldet sind",
     "ias.premium": "Premium",
     "ias.notpremium": "Nicht Premium",
     "ias.timesused": "Verwendete Zeiten:",
     "ias.lastused": "Zuletzt verwendet:",
-    "ias.alreadyloggedin": "Sie sind bereits an diesem Konto angemeldet",
     "ias.reloadskins": "Skins neu laden"
 }

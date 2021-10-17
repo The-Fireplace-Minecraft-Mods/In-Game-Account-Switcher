@@ -14,14 +14,14 @@ public class GuiButtonWithImage extends ButtonWidget {
 	private static final Identifier customButtonTextures = new Identifier("ias", "textures/gui/custombutton.png");
 
 	public GuiButtonWithImage(int x, int y, PressAction p) {
-		super(x, y, 20, 20, new LiteralText(""), p);
+		super(x, y, 20, 20, new LiteralText("ButterDog"), p);
 	}
 	
 	@Override
 	public void renderButton(MatrixStack ms, int mouseX, int mouseY, float delta) {
 		if (this.visible) {
-			RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 			RenderSystem.setShaderTexture(0, customButtonTextures);
+			RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 			this.hovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
 			int k = getYImage(hovered);
 			RenderSystem.enableBlend();

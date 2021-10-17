@@ -2,6 +2,8 @@ package com.github.mrebhan.ingameaccountswitcher.tools;
 
 import java.io.Serializable;
 
+import com.github.mrebhan.ingameaccountswitcher.tools.alt.AltDatabase;
+
 /**
  * Simple Pair system with 2 variables.
  * @author MRebhan
@@ -9,28 +11,11 @@ import java.io.Serializable;
  * 
  * @param <V1> First variable (mostly {@link String})
  * @param <V2> Second variable
+ * @deprecated Inconvenient. Insure (saved user passwords). Used only for conversion from old accounts to new accounts.
  */
-
-public class Pair<V1, V2> implements Serializable {
+@Deprecated
+public class Pair implements Serializable {
 	private static final long serialVersionUID = 2586850598481149380L;
-
-	private V1 obj1;
-	private V2 obj2;
-
-	public Pair(V1 obj1, V2 obj2) {
-		this.obj1 = obj1;
-		this.obj2 = obj2;
-	}
-
-	public V1 getValue1() {
-		return this.obj1;
-	}
-
-	public V2 getValue2() {
-		return this.obj2;
-	}
-
-	@Override public String toString() { 
-		return Pair.class.getName() + "@" + Integer.toHexString(this.hashCode()) + " [" + this.obj1.toString() + ", " + this.obj2.toString() + "]";
-	}
+	public String obj1;
+	public AltDatabase obj2;
 }

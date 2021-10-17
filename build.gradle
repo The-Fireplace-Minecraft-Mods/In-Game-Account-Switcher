@@ -14,14 +14,10 @@ repositories {
 
 dependencies {
 	minecraft "com.mojang:minecraft:1.17.1"
-	mappings "net.fabricmc:yarn:1.17.1+build.59:v2"
-	modImplementation "net.fabricmc:fabric-loader:0.11.6"
-	modImplementation "net.fabricmc.fabric-api:fabric-api:0.40.1+1.17"
-	modImplementation "com.terraformersmc:modmenu:2.0.10"
-}
-
-loom {
-	accessWidenerPath = file("src/main/resources/ias.accesswidener")
+    mappings "net.fabricmc:yarn:1.17.1+build.61:v2"
+    modImplementation "net.fabricmc:fabric-loader:0.12.1"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:0.40.8+1.17"
+	modImplementation "com.terraformersmc:modmenu:2.0.14"
 }
 
 tasks.withType(JavaCompile).configureEach {
@@ -30,11 +26,14 @@ tasks.withType(JavaCompile).configureEach {
 }
 
 processResources {
+	inputs.property "version", project.version
 	filesMatching("fabric.mod.json") {
-		expand "version": System.getProperty("ias.version", "unknown")
+		expand "version": project.version
 	}
 }
 
-java {
-	//withSourcesJar()
+jar {
+	from("LICENSE") {
+		rename { "${it}_${project.archivesBaseName}"}
+	}
 }
