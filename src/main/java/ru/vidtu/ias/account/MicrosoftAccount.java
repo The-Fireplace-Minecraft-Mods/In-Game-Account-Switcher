@@ -1,5 +1,6 @@
 package ru.vidtu.ias.account;
 
+import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
 
@@ -42,7 +43,8 @@ public class MicrosoftAccount implements Account {
 				return;
 			}
 			mc.execute(() -> {
-				((MinecraftClientAccessor)mc).setSession(new Session(username, UUIDTypeAdapter.fromUUID(uuid), accessToken, "mojang"));
+				((MinecraftClientAccessor)mc).setSession(new Session(username, UUIDTypeAdapter.fromUUID(uuid),
+						accessToken, Optional.empty(), Optional.empty(), Session.AccountType.MOJANG));
 				handler.accept(null);
 			});
 		}, "IAS MS Reauth Thread").start();
