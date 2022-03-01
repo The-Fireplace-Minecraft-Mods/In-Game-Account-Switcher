@@ -28,6 +28,7 @@ body:
     id: version
     attributes:
       label: "Minecraft Version"
+      placeholder: "Fabric 1.16.5"
       description: |
         What version of Minecraft are you using?
     validations:
