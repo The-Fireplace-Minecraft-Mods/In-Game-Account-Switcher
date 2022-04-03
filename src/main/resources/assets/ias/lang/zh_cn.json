@@ -1,7 +1,7 @@
 {
-    "ias.loggedinas": "你正在此账号中游玩: %s。",
-    "ias.selectaccount": "选择一个账号",
-    "ias.offlinemode": "你正在以离线模式游玩!只能进入无正版验证的服务器。",
+    "ias.loggedinas": "你正在此账户中游玩: %s。",
+    "ias.selectaccount": "选择一个账户",
+    "ias.offlinemode": "你正在以离线模式游玩！你只能进入无正版验证的服务器。",
     "ias.addaccount": "添加账号",
     "ias.login": "登录",
     "ias.offline": "(离线模式)",
