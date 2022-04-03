@@ -13,10 +13,10 @@
     "ias.search": "搜索",
     "ias.cfg.casesensitive": "区分大小写的搜索",
     "ias.cfg.casesensitive.tooltip": "需要区分大小写进行账号搜索吗？",
-	"ias.cfg.mpscreen": "在MP界面显示按钮",
-	"ias.cfg.titlescreen": "在标题界面显示按钮",
-	"ias.cfg.btnpos": "按钮位置",
-	"ias.cfg.textpos": "文本位置",
+    "ias.cfg.mpscreen": "在MP界面显示按钮",
+    "ias.cfg.titlescreen": "在标题界面显示按钮",
+    "ias.cfg.btnpos": "按钮位置",
+    "ias.cfg.textpos": "文本位置",
     "ias.premium": "已验证",
     "ias.notpremium": "未验证",
     "ias.timesused": "使用次数:",
@@ -34,7 +34,7 @@
     "ias.mojauth.toofast": "登录次数太多了，请稍等片刻。",
     "ias.mojauth.migrated": "你的账户已经被迁移了。请点击“微软”按钮重新登录。",
     "ias.auth.unknown": "未知错误：%s",
-	"ias.auth.alreadyexists": "这个账户已经存在于账户列表中。",
+    "ias.auth.alreadyexists": "这个账户已经存在于账户列表中。",
     "ias.delete.title": "你确定要删除这个账户吗？",
     "ias.delete.text": "%s将会被删除！"
 }
