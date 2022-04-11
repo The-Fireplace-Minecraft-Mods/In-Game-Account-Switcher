@@ -15,7 +15,7 @@
     "ias.cfg.casesensitive.tooltip": "Должен ли поиск быть чувствителен к регистру букв?",
 	"ias.cfg.mpscreen": "Показать кнопку на экране сетевой игры",
 	"ias.cfg.titlescreen": "Показать кнопку в главном меню",
-	"ias.cfg.buttonpos": "Позиция кнопки",
+	"ias.cfg.btnpos": "Позиция кнопки",
 	"ias.cfg.textpos": "Позиция текста",
     "ias.premium": "Премиум",
     "ias.notpremium": "Не премиум",
