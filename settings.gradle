@@ -9,6 +9,7 @@ pluginManagement {
 }
 
 rootProject.name = 'In-Game Account Switcher'
+include 'fabric-1.19'
 include 'fabric-1.18'
 include 'fabric-1.17'
 include 'fabric-1.16'
