@@ -1,5 +1,5 @@
 plugins {
-	id 'fabric-loom' version '0.11-SNAPSHOT'
+	id 'fabric-loom' version '0.12-SNAPSHOT'
 }
 
 sourceCompatibility = JavaVersion.VERSION_17
@@ -16,8 +16,8 @@ dependencies {
 	minecraft "com.mojang:minecraft:1.18.2"
     mappings loom.officialMojangMappings()
     modImplementation "net.fabricmc:fabric-loader:${project.fabric_loader_version}"
-    modImplementation "net.fabricmc.fabric-api:fabric-api:0.51.1+1.18.2"
-	modImplementation "com.terraformersmc:modmenu:3.2.1"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:0.55.1+1.18.2"
+	modImplementation "com.terraformersmc:modmenu:3.2.2"
 }
 
 tasks.withType(JavaCompile).configureEach {

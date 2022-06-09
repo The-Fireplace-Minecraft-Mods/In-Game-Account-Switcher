@@ -106,10 +106,6 @@ public class AbstractAccountGui extends Screen {
     public void end() {
         if (password.getValue().isEmpty()) {
             String name = username.getValue();
-            if (Config.accounts.stream().anyMatch(acc -> acc.alias().equalsIgnoreCase(name))) {
-                error = font.split(I18n.get("ias.auth.alreadyexists"), width - 10);
-                return;
-            }
             logging = true;
             IAS.EXECUTOR.execute(() -> {
                 SkinRenderer.loadSkin(minecraft, name, null, false);
@@ -129,8 +125,6 @@ public class AbstractAccountGui extends Screen {
                 try {
                     MojangAccount ma = Auth.authMojang(name, pwd);
                     SkinRenderer.loadSkin(minecraft, ma.alias(), ma.uuid(), false);
-                    if (Config.accounts.stream().anyMatch(acc -> acc.alias().equalsIgnoreCase(name)))
-                        throw new AuthException(new TranslatableComponent("ias.auth.alreadyexists"));
                     minecraft.execute(() -> {
                         if (minecraft.screen == this) {
                             handler.accept(ma);

@@ -70,7 +70,7 @@ public class MSAuthScreen extends Screen {
                         "&response_type=code" +
                         "&scope=XboxLive.signin%20XboxLive.offline_access" +
                         "&redirect_uri=http://localhost:59125" +
-                        "&prompt=consent");
+                        "&prompt=select_account");
             } catch (Throwable t) {
                 IAS.LOG.warn("Unable to start MS auth server", t);
                 try {
@@ -104,8 +104,6 @@ public class MSAuthScreen extends Screen {
             Auth.checkGameOwnership(accessToken);
             IAS.LOG.info("Step: getProfile.");
             Pair<UUID, String> profile = Auth.getProfile(accessToken);
-            if (Config.accounts.stream().anyMatch(acc -> acc.alias().equalsIgnoreCase(profile.getRight())))
-                throw new AuthException(new TranslatableComponent("ias.auth.alreadyexists"));
             minecraft.execute(() -> {
                 if (minecraft.screen == this) {
                     handler.accept(new MicrosoftAccount(profile.getRight(), accessToken, refreshToken, profile.getLeft()));

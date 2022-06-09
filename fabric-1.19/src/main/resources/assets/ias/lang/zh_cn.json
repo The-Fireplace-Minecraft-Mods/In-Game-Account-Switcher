@@ -34,7 +34,6 @@
     "ias.mojauth.toofast": "登录次数太多了，请稍等片刻。",
     "ias.mojauth.migrated": "你的账户已经被迁移了。请点击“微软”按钮重新登录。",
     "ias.auth.unknown": "未知错误：%s",
-    "ias.auth.alreadyexists": "这个账户已经存在于账户列表中。",
     "ias.delete.title": "你确定要删除这个账户吗？",
     "ias.delete.text": "%s将会被删除！"
 }

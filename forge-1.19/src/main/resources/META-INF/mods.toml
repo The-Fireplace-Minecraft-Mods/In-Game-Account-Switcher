@@ -1,0 +1,16 @@
+modLoader="javafml"
+loaderVersion="[41,)"
+license="LGPL-3.0-or-later"
+issueTrackerURL="https://github.com/The-Fireplace-Minecraft-Mods/In-Game-Account-Switcher/issues"
+[[mods]]
+modId="ias"
+version="${file.jarVersion}"
+displayName="In-Game Account Switcher"
+updateJSONURL="https://github.com/The-Fireplace-Minecraft-Mods/In-Game-Account-Switcher/raw/main/updater-forge.json"
+displayURL="https://www.curseforge.com/minecraft/mc-mods/in-game-account-switcher"
+logoFile="iaslogo.png"
+credits="2xsaiko, Elvm"
+authors="The_Fireplace, The_BrainStone, VidTu"
+description='''
+Allows you to change which account you are signed in to in-game without restarting Minecraft.
+'''

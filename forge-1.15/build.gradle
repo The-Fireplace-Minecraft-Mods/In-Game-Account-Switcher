@@ -1,0 +1,41 @@
+plugins {
+    id 'net.minecraftforge.gradle' version '5.+'
+}
+
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
+compileJava.sourceCompatibility = JavaVersion.VERSION_1_8
+compileJava.targetCompatibility = JavaVersion.VERSION_1_8
+
+archivesBaseName = "InGameAccountSwitcher-Forge-1.15"
+version = project.mod_version
+
+dependencies {
+    minecraft 'net.minecraftforge:forge:1.15.2-31.2.57'
+}
+
+minecraft {
+    mappings channel: 'official', version: '1.15.2'
+    accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
+    runs {
+        client {
+            workingDirectory project.file('run')
+        }
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    it.options.encoding = "UTF-8"
+    it.options.release = 8
+}
+
+jar {
+    from("LICENSE") {
+        rename { "${it}_${project.archivesBaseName}" }
+    }
+    manifest {
+        attributes([
+                "Implementation-Version": project.version
+        ])
+    }
+}

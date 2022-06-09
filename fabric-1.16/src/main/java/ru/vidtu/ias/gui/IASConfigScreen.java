@@ -28,13 +28,13 @@ public class IASConfigScreen extends Screen {
     @Override
     public void init() {
         addButton(caseSensitive = new Checkbox(width / 2 - font.width(new TranslatableComponent("ias.cfg.casesensitive"))
-                / 2 - 24, 40, 24 + font.width(new TranslatableComponent("ias.cfg.casesensitive")), 20,
+                / 2 - 12, 40, 24 + font.width(new TranslatableComponent("ias.cfg.casesensitive")), 20,
                 new TranslatableComponent("ias.cfg.casesensitive"), Config.caseSensitiveSearch));
         addButton(multiplayerScreen = new Checkbox(width / 2 - font.width(new TranslatableComponent("ias.cfg.mpscreen"))
-                / 2 - 24, 60, 24 + font.width(new TranslatableComponent("ias.cfg.mpscreen")), 20,
+                / 2 - 12, 60, 24 + font.width(new TranslatableComponent("ias.cfg.mpscreen")), 20,
                 new TranslatableComponent("ias.cfg.mpscreen"), Config.showOnMPScreen));
         addButton(titleScreen = new Checkbox(width / 2 - font.width(new TranslatableComponent("ias.cfg.titlescreen"))
-                / 2 - 24, 80, 24 + font.width(new TranslatableComponent("ias.cfg.titlescreen")), 20,
+                / 2 - 12, 80, 24 + font.width(new TranslatableComponent("ias.cfg.titlescreen")), 20,
                 new TranslatableComponent("ias.cfg.titlescreen"), Config.showOnTitleScreen));
         addButton(textX = new EditBox(font, width / 2 - 100, 110, 98, 20, new TextComponent("X")));
         addButton(textY = new EditBox(font, width / 2 + 2, 110, 98, 20, new TextComponent("Y")));

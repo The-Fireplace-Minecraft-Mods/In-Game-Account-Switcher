@@ -4,6 +4,11 @@ pluginManagement {
             name = 'Fabric'
             url = 'https://maven.fabricmc.net/'
         }
+        maven { url = 'https://maven.minecraftforge.net/' }
+        maven {
+            name = "jitpack"
+            url = "https://jitpack.io/"
+        }
         gradlePluginPortal()
     }
 }
@@ -15,11 +20,12 @@ include 'fabric-1.17'
 include 'fabric-1.16'
 include 'fabric-1.15'
 include 'fabric-1.14'
+include 'forge-1.19'
+include 'forge-1.18'
+include 'forge-1.17'
+include 'forge-1.16'
+include 'forge-1.15'
+include 'forge-1.14'
 //TODO
-//include 'forge-1.18'
-//include 'forge-1.17'
-//include 'forge-1.16'
-//include 'forge-1.15'
-//include 'forge-1.14'
 //include 'forge-1.12'
 //include 'forge-1.8'

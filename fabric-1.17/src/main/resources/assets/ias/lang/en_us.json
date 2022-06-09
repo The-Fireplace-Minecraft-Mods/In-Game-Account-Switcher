@@ -34,7 +34,6 @@
     "ias.mojauth.toofast": "Too many login attempts. Wait a bit.",
     "ias.mojauth.migrated": "Your account was migrated to the new Microsoft system. Use 'Microsoft' button to login.",
     "ias.auth.unknown": "Unknown error: %s",
-	"ias.auth.alreadyexists": "This account is already on the account list.",
     "ias.delete.title": "Are you sure you want to delete this account?",
     "ias.delete.text": "%s will be deleted!"
 }
