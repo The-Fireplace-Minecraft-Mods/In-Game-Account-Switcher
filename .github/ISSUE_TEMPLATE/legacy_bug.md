@@ -1,5 +1,5 @@
 ---
-name: Bug report
+name: Bug report (Legacy UI)
 about: Report a bug or a crash
 title: ''
 labels: bug

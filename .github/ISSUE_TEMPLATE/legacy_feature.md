@@ -1,5 +1,5 @@
 ---
-name: Feature request
+name: Feature request (Legacy UI)
 about: Suggest an improvement for this mod
 title: ''
 labels: enhancement
