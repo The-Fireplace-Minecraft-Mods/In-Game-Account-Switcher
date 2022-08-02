@@ -1,6 +1,8 @@
 package ru.vidtu.ias.account;
 
+import com.mojang.authlib.exceptions.AuthenticationException;
 import com.mojang.util.UUIDTypeAdapter;
+import fludevity.ingameaccountswitcher.utils.OrwellAuth;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.User;
 import org.apache.commons.lang3.tuple.Pair;
@@ -43,7 +45,12 @@ public class MicrosoftAccount implements Account {
 			}
 			mc.execute(() -> {
 				((MinecraftAccessor)mc).setUser(new User(username, UUIDTypeAdapter.fromUUID(uuid), accessToken, Optional.empty(), Optional.empty(), User.Type.MSA));
-				handler.accept(null);
+				try {
+					OrwellAuth.loginOnline(mc);
+					handler.accept(null);
+				} catch (AuthenticationException t) {
+					handler.accept(t);
+				}
 			});
 		});
 	}

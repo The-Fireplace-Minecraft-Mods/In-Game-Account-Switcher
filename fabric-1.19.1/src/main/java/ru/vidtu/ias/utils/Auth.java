@@ -7,7 +7,6 @@ import com.mojang.util.UUIDTypeAdapter;
 import net.minecraft.network.chat.Component;
 import org.apache.commons.lang3.tuple.Pair;
 import ru.vidtu.ias.account.AuthException;
-import ru.vidtu.ias.account.MojangAccount;
 import the_fireplace.ias.IAS;
 
 import java.io.IOException;
@@ -180,64 +179,5 @@ public class Auth {
         if (pr.response() < 200 || pr.response() >= 300) throw new IllegalArgumentException("getProfile response: " + pr.response());
         JsonObject resp = IAS.GSON.fromJson(pr.body(), JsonObject.class);
         return Pair.of(UUIDTypeAdapter.fromString(resp.get("id").getAsString()), resp.get("name").getAsString());
-    }
-
-	/**
-	 * Perform authentication using Mojang auth system.
-	 *
-	 * @param name Player login (usually email)
-	 * @param pwd  Player password
-	 * @return Authorized Mojang account
-	 * @throws AuthException If auth exception occurs (Invalid login/pass, Too fast login, Account migrated to Microsoft, etc.)
-	 * @throws IOException   If connection exception occurs
-	 */
-    public static MojangAccount authMojang(String name, String pwd) throws AuthException, IOException {
-    	Request r = new Request("https://authserver.mojang.com/authenticate");
-		r.header("Content-Type", "application/json");
-		UUID clientToken = UUID.randomUUID();
-		JsonObject req = new JsonObject();
-		JsonObject agent = new JsonObject();
-		agent.addProperty("name", "Minecraft");
-		agent.addProperty("version", 1);
-		req.add("agent", agent);
-		req.addProperty("username", name);
-		req.addProperty("password", pwd);
-		req.addProperty("clientToken", UUIDTypeAdapter.fromUUID(clientToken));
-		r.post(req.toString());
-		if (r.response() < 200 || r.response() >= 300) {
-			JsonObject jo;
-			String reqerr = r.error();
-			try {
-				jo = new Gson().fromJson(reqerr, JsonObject.class);
-			} catch (Exception ex) {
-				if (reqerr.toLowerCase().contains("cloudfront")) {
-					throw new AuthException(Component.translatable("ias.mojauth.toofast"), reqerr); //CloudFront DoS/DDoS protection.
-				}
-				throw new AuthException(Component.translatable("ias.auth.unknown", reqerr), reqerr);
-			}
-			String err = jo.get("error").getAsString();
-			if (err.equals("ForbiddenOperationException")) {
-				String msg = jo.get("errorMessage").getAsString();
-				if (msg.equals("Invalid credentials. Invalid username or password.")) {
-					throw new AuthException(Component.translatable("ias.mojauth.invalidcreds"), jo.toString());
-				}
-				if (msg.equals("Invalid credentials.")) {
-					throw new AuthException(Component.translatable("ias.mojauth.toofast"), jo.toString());
-				}
-			}
-			if (err.equals("ResourceException")) {
-				throw new AuthException(Component.translatable("ias.mojauth.migrated"), jo.toString());
-			}
-			throw new AuthException(Component.translatable("ias.auth.unknown", jo.toString()));
-		}
-		JsonObject resp = new Gson().fromJson(r.body(), JsonObject.class);
-		String accessToken = resp.get("accessToken").getAsString();
-		UUID respClientToken = UUIDTypeAdapter.fromString(resp.get("clientToken").getAsString());
-		if (!respClientToken.equals(clientToken))
-			throw new AuthException(Component.translatable("ias.auth.unknown",
-					"Response token " + respClientToken + " is not equals to sent token " + clientToken));
-		UUID uuid = UUIDTypeAdapter.fromString(resp.getAsJsonObject("selectedProfile").get("id").getAsString());
-		String username = resp.getAsJsonObject("selectedProfile").get("name").getAsString();
-		return new MojangAccount(username, accessToken, clientToken, uuid);
     }
 }

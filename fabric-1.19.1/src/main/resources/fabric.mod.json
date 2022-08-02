@@ -28,12 +28,13 @@
     ]
   },
   "mixins": [
-    "ias.mixins.json"
+    "ias.mixins.json",
+    "ias.fluidevity.mixins.json"
   ],
   "depends": {
     "fabricloader": ">=0.13.0",
     "fabric": "*",
-    "minecraft": "1.19.x"
+    "minecraft": "1.19.1"
   },
   "recommends": {
     "modmenu": "*"

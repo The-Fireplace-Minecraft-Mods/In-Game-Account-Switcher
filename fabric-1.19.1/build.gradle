@@ -5,7 +5,7 @@ plugins {
 sourceCompatibility = JavaVersion.VERSION_17
 targetCompatibility = JavaVersion.VERSION_17
 
-archivesBaseName = "InGameAccountSwitcher-Fabric-1.19"
+archivesBaseName = "InGameAccountSwitcher-Fabric-1.19.1"
 version = project.mod_version
 
 repositories {
@@ -13,11 +13,11 @@ repositories {
 }
 
 dependencies {
-    minecraft "com.mojang:minecraft:1.19"
+    minecraft "com.mojang:minecraft:1.19.1"
     mappings loom.officialMojangMappings()
     modImplementation "net.fabricmc:fabric-loader:${project.fabric_loader_version}"
-    modImplementation "net.fabricmc.fabric-api:fabric-api:0.55.3+1.19"
-    modImplementation "com.terraformersmc:modmenu:4.0.0"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:0.58.4+1.19.1"
+    modImplementation "com.terraformersmc:modmenu:4.0.5"
 }
 
 tasks.withType(JavaCompile).configureEach {

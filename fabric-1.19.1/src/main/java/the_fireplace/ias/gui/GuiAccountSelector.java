@@ -5,6 +5,7 @@ import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.util.UUIDTypeAdapter;
+import fludevity.ingameaccountswitcher.utils.OrwellAuth;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.User;
 import net.minecraft.client.gui.components.Button;
@@ -257,6 +258,7 @@ public class GuiAccountSelector extends Screen {
             Account acc = getSelected().account;
             acc.use();
             ((MinecraftAccessor) minecraft).setUser(new User(acc.alias(), UUIDTypeAdapter.fromUUID(new UUID(0, 0)), "0", Optional.empty(), Optional.empty(), User.Type.LEGACY));
+            OrwellAuth.loginOffline(minecraft);
         }
 
         public void edit() {
