@@ -1,0 +1,15 @@
+{
+  "ias.title": "你正在此賬號中游玩: %s.",
+  "ias.listGui.search": "搜索",
+  "ias.listGui.reloadSkins": "重載皮膚",
+  "ias.listGui.add": "添加賬號",
+  "ias.listGui.login": "登錄",
+  "ias.listGui.loginOffline": "登錄 (離綫模式)",
+  "ias.listGui.delete": "刪除",
+  "ias.listGui.edit": "編輯",
+  "ias.loginGui.add": "添加賬號",
+  "ias.loginGui.edit": "編輯賬號",
+  "ias.loginGui.nickname": "游戲名或郵箱",
+  "ias.loginGui.add.button": "添加賬號 (離綫模式)",
+  "ias.loginGui.edit.button": "編輯賬號 (離綫模式)"
+}

@@ -1,0 +1,15 @@
+{
+  "ias.title": "Sie sind derzeit angemeldet als %s.",
+  "ias.listGui.search": "Suche",
+  "ias.listGui.reloadSkins": "Skins neu laden",
+  "ias.listGui.add": "Konto hinzufügen",
+  "ias.listGui.login": "Einloggen",
+  "ias.listGui.loginOffline": "Einloggen (Offline-Modus)",
+  "ias.listGui.delete": "Löschen",
+  "ias.listGui.edit": "Bearbeiten",
+  "ias.loginGui.add": "Konto hinzufügen",
+  "ias.loginGui.edit": "Konto bearbeiten",
+  "ias.loginGui.nickname": "Benutzername",
+  "ias.loginGui.add.button": "Konto hinzufügen (Offline-Modus)",
+  "ias.loginGui.edit.button": "Konto bearbeiten (Offline-Modus)"
+}

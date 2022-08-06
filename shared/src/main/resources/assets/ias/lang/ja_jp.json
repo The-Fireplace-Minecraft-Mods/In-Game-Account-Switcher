@@ -1,0 +1,15 @@
+{
+  "ias.title": "あなたは次のアカウントでログインしています: %s.",
+  "ias.listGui.search": "検索",
+  "ias.listGui.reloadSkins": "スキンをリロード",
+  "ias.listGui.add": "アカウントを追加",
+  "ias.listGui.login": "ログイン",
+  "ias.listGui.loginOffline": "ログイン (オフラインモード)",
+  "ias.listGui.delete": "削除",
+  "ias.listGui.edit": "編集",
+  "ias.loginGui.add": "アカウントを追加",
+  "ias.loginGui.edit": "アカウントを編集",
+  "ias.loginGui.nickname": "ユーザー名",
+  "ias.loginGui.add.button": "アカウントを追加 (オフラインモード)",
+  "ias.loginGui.edit.button": "アカウントを編集 (オフラインモード)",
+}

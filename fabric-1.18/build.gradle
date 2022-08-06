@@ -1,5 +1,5 @@
 plugins {
-	id 'fabric-loom' version '0.12-SNAPSHOT'
+    id 'fabric-loom' version '0.12-SNAPSHOT'
 }
 
 sourceCompatibility = JavaVersion.VERSION_17
@@ -7,33 +7,42 @@ targetCompatibility = JavaVersion.VERSION_17
 
 archivesBaseName = "InGameAccountSwitcher-Fabric-1.18"
 version = project.mod_version
+evaluationDependsOn(':shared')
 
 repositories {
-	maven { url = "https://maven.terraformersmc.com/releases/" }
+    maven { url "https://maven.terraformersmc.com/releases/" }
+    maven { url "https://api.modrinth.com/maven/" }
 }
 
 dependencies {
-	minecraft "com.mojang:minecraft:1.18.2"
+    minecraft "com.mojang:minecraft:1.18.2"
     mappings loom.officialMojangMappings()
     modImplementation "net.fabricmc:fabric-loader:${project.fabric_loader_version}"
-    modImplementation "net.fabricmc.fabric-api:fabric-api:0.55.1+1.18.2"
-	modImplementation "com.terraformersmc:modmenu:3.2.2"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:0.58.0+1.18.2"
+    modImplementation "com.terraformersmc:modmenu:3.2.3"
+    modRuntimeOnly "maven.modrinth:lazydfu:0.1.2"
+    compileOnly project(":shared")
 }
 
 tasks.withType(JavaCompile).configureEach {
-	it.options.encoding = "UTF-8"
+    it.options.encoding = "UTF-8"
     it.options.release = 17
 }
 
 processResources {
-	inputs.property "version", project.version
-	filesMatching("fabric.mod.json") {
-		expand "version": project.version
-	}
+    from project(":shared").sourceSets.main.resources
+    inputs.property "version", project.version
+    filesMatching("fabric.mod.json") {
+        expand "version": project.version
+    }
+}
+
+compileJava {
+    source project(':shared').sourceSets.main.allSource
 }
 
 jar {
-	from("LICENSE") {
-		rename { "${it}_${project.archivesBaseName}"}
-	}
+    from("LICENSE") {
+        rename { "${it}_${project.archivesBaseName}" }
+    }
 }

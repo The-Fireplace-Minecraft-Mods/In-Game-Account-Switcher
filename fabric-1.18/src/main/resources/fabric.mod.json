@@ -17,7 +17,7 @@
     "issues": "https://github.com/The-Fireplace-Minecraft-Mods/In-Game-Account-Switcher/issues"
   },
   "license": "LGPL-3.0-or-later",
-  "icon": "assets/ias/textures/iaslogo.png",
+  "icon": "iaslogo.png",
   "environment": "client",
   "entrypoints": {
     "client": [
@@ -31,7 +31,7 @@
     "ias.mixins.json"
   ],
   "depends": {
-    "fabricloader": ">=0.13.0",
+    "fabricloader": ">=0.11.0",
     "fabric": "*",
     "minecraft": "1.18.x"
   },

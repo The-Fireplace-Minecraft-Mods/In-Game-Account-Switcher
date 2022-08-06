@@ -7,13 +7,17 @@ import ru.vidtu.ias.gui.IASConfigScreen;
 import java.util.function.Function;
 
 public class IASModMenuCompat implements ModMenuApi {
-	@Override
-	public Function<Screen, ? extends Screen> getConfigScreenFactory() {
-		return IASConfigScreen::new;
-	}
-	
-	@Override
-	public String getModId() {
-		return "ias";
-	}
+    @Override
+    public String getModId() {
+        return "ias";
+    }
+
+    @Override
+    public Function<Screen, ? extends Screen> getConfigScreenFactory() {
+        return IASConfigScreen::new;
+    }
+
+    public static int buttonOffset() {
+        return -24;
+    }
 }

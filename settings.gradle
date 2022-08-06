@@ -1,19 +1,14 @@
 pluginManagement {
     repositories {
-        maven {
-            name = 'Fabric'
-            url = 'https://maven.fabricmc.net/'
-        }
-        maven { url = 'https://maven.minecraftforge.net/' }
-        maven {
-            name = "jitpack"
-            url = "https://jitpack.io/"
-        }
+        maven { url 'https://maven.fabricmc.net/' }
+        maven { url 'https://maven.minecraftforge.net/' }
+        maven { url 'https://jitpack.io/' }
         gradlePluginPortal()
     }
 }
 
 rootProject.name = 'In-Game Account Switcher'
+include 'shared'
 include 'fabric-1.19'
 include 'fabric-1.18'
 include 'fabric-1.17'
@@ -26,6 +21,3 @@ include 'forge-1.17'
 include 'forge-1.16'
 include 'forge-1.15'
 include 'forge-1.14'
-//TODO
-//include 'forge-1.12'
-//include 'forge-1.8'

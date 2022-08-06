@@ -9,9 +9,11 @@ compileJava.targetCompatibility = JavaVersion.VERSION_17
 
 archivesBaseName = "InGameAccountSwitcher-Forge-1.18"
 version = project.mod_version
+evaluationDependsOn(':shared')
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.18.2-40.1.48'
+    minecraft "net.minecraftforge:forge:1.18.2-40.1.69"
+    compileOnly project(":shared")
 }
 
 minecraft {
@@ -27,6 +29,14 @@ minecraft {
 tasks.withType(JavaCompile).configureEach {
     it.options.encoding = "UTF-8"
     it.options.release = 17
+}
+
+processResources {
+    from project(":shared").sourceSets.main.resources
+}
+
+compileJava {
+    source project(':shared').sourceSets.main.allSource
 }
 
 jar {

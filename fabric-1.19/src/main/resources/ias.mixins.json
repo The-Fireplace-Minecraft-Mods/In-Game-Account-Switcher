@@ -2,15 +2,7 @@
   "required": true,
   "minVersion": "0.8",
   "package": "ru.vidtu.ias.mixins",
-  "compatibilityLevel": "JAVA_17",
-  "mixins": [
-  ],
   "client": [
-    "JoinMultiplayerScreenMixin",
-    "MinecraftAccessor",
-    "TitleScreenMixin"
-  ],
-  "injectors": {
-    "defaultRequire": 1
-  }
+    "MinecraftAccessor"
+  ]
 }

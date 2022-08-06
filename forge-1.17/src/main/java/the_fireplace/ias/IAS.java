@@ -1,13 +1,13 @@
 package the_fireplace.ias;
 
-import com.google.gson.Gson;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.screens.TitleScreen;
 import net.minecraft.client.gui.screens.multiplayer.JoinMultiplayerScreen;
-import net.minecraft.client.resources.language.I18n;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
-import net.minecraft.util.FormattedCharSequence;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -18,28 +18,27 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fmlclient.ConfigGuiHandler;
 import net.minecraftforge.fmllegacy.network.FMLNetworkConstants;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import ru.vidtu.ias.Config;
+import ru.vidtu.ias.Expression;
 import ru.vidtu.ias.gui.IASConfigScreen;
-import ru.vidtu.ias.utils.SkinRenderer;
-import the_fireplace.ias.gui.GuiAccountSelector;
-import the_fireplace.ias.gui.GuiButtonWithImage;
+import the_fireplace.ias.gui.AccountListScreen;
 
-import java.util.List;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 /**
+ * Main In-Game Account Switcher class.
+ *
  * @author The_Fireplace
+ * @author VidTu
  */
 @Mod("ias")
 public class IAS {
-    public static final Logger LOG = LogManager.getLogger("IAS");
-    public static final Gson GSON = new Gson();
-    public static final Executor EXECUTOR = Executors.newSingleThreadExecutor(r -> new Thread(r, "IAS Thread"));
-    private static int textX, textY;
+    public static final ResourceLocation IAS_BUTTON = new ResourceLocation("ias", "textures/gui/iasbutton.png");
+    public static final Map<UUID, ResourceLocation> SKIN_CACHE = new HashMap<>();
+    private static int tx;
+    private static int ty;
 
     public IAS() {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onClient);
@@ -52,62 +51,66 @@ public class IAS {
 
     @SubscribeEvent
     public void onClient(FMLClientSetupEvent event) {
-        Minecraft mc = Minecraft.getInstance();
-        Config.load();
-        SkinRenderer.loadAllAsync(mc, false, () -> {});
+        Config.load(Minecraft.getInstance().gameDirectory.toPath());
     }
 
     @SubscribeEvent
-    public void onScreenInit(GuiScreenEvent.InitGuiEvent event) {
-        if (event.getGui() instanceof JoinMultiplayerScreen) {
-            if (Config.showOnMPScreen) {
-                event.addWidget(new GuiButtonWithImage(event.getGui().width / 2 + 4 + 76 + 79, event.getGui().height - 28, btn -> {
-                    event.getGui().getMinecraft().setScreen(new GuiAccountSelector(event.getGui()));
-                }));
-            }
-        }
-        if (event.getGui() instanceof TitleScreen) {
+    public void onScreenInit(GuiScreenEvent.InitGuiEvent.Post event) {
+        if (event.getGui() instanceof JoinMultiplayerScreen && Config.multiplayerScreenButton) {
+            int bx = event.getGui().width / 2 + 4 + 76 + 79;
+            int by = event.getGui().height - 28;
             try {
-                if (StringUtils.isNotBlank(Config.textX) && StringUtils.isNotBlank(Config.textY)) {
-                    textX = Integer.parseInt(Config.textX);
-                    textY = Integer.parseInt(Config.textY);
-                } else {
-                    textX = event.getGui().width / 2;
-                    textY = event.getGui().height / 4 + 48 + 72 + 12 + 22;
-                }
+                bx = (int) Expression.parseWidthHeight(Config.titleScreenButtonX, event.getGui().width, event.getGui().height);
+                by = (int) Expression.parseWidthHeight(Config.titleScreenButtonY, event.getGui().width, event.getGui().height);
             } catch (Throwable t) {
-                textX = event.getGui().width / 2;
-                textY = event.getGui().height / 4 + 48 + 72 + 12 + 22;
+                bx = event.getGui().width / 2 + 4 + 76 + 79;
+                by = event.getGui().height - 28;
             }
-            if (Config.showOnTitleScreen) {
-                int buttonX = event.getGui().width / 2 + 104;
-                int buttonY = event.getGui().height / 4 + 48 + 72 - 24;
+            event.addWidget(new ImageButton(bx, by, 20, 20, 0, 0, 20, IAS_BUTTON,
+                    256, 256, btn -> event.getGui().getMinecraft().setScreen(new AccountListScreen(event.getGui())), (button, ms, mx, my)
+                    -> event.getGui().renderTooltip(ms, new TextComponent("In-Game Account Switcher"), mx, my),
+                    new TextComponent("In-Game Account Switcher")));
+        }
+        if (event.getGui() instanceof TitleScreen) {
+            if (Config.titleScreenButton) {
+                int bx = event.getGui().width / 2 + 104;
+                int by = event.getGui().height / 4 + 48 + 72 + -24;
                 try {
-                    if (StringUtils.isNotBlank(Config.btnX) && StringUtils.isNotBlank(Config.btnY)) {
-                        buttonX = Integer.parseInt(Config.btnX);
-                        buttonY = Integer.parseInt(Config.btnY);
-                    }
+                    bx = (int) Expression.parseWidthHeight(Config.titleScreenButtonX, event.getGui().width, event.getGui().height);
+                    by = (int) Expression.parseWidthHeight(Config.titleScreenButtonY, event.getGui().width, event.getGui().height);
                 } catch (Throwable t) {
-                    buttonX = event.getGui().width / 2 + 104;
-                    buttonY = event.getGui().height / 4 + 48 + 72 - 24;
+                    bx = event.getGui().width / 2 + 104;
+                    by = event.getGui().height / 4 + 48 + 72 + -24;
                 }
-                event.addWidget(new GuiButtonWithImage(buttonX, buttonY, btn -> event.getGui().getMinecraft().setScreen(new GuiAccountSelector(event.getGui()))));
+                event.addWidget(new ImageButton(bx, by, 20, 20, 0, 0, 20, IAS_BUTTON,
+                        256, 256, btn -> event.getGui().getMinecraft().setScreen(new AccountListScreen(event.getGui())), (button, ms, mx, my)
+                        -> event.getGui().renderTooltip(ms, new TextComponent("In-Game Account Switcher"), mx, my),
+                        new TextComponent("In-Game Account Switcher")));
+            }
+            if (Config.titleScreenText) {
+                try {
+                    tx = (int) Expression.parseWidthHeight(Config.titleScreenTextX, event.getGui().width, event.getGui().height);
+                    ty = (int) Expression.parseWidthHeight(Config.titleScreenTextY, event.getGui().width, event.getGui().height);
+                } catch (Throwable t) {
+                    tx = event.getGui().width / 2;
+                    ty = event.getGui().height / 4 + 48 + 72 + 12 + 22;
+                }
             }
         }
     }
 
     @SubscribeEvent
-    public void onScreenRender(GuiScreenEvent.DrawScreenEvent event) {
-        if (event.getGui() instanceof JoinMultiplayerScreen) {
-            if (event.getGui().getMinecraft().getUser().getAccessToken().equals("0") || event.getGui().getMinecraft().getUser().getAccessToken().equals("-")) {
-                List<FormattedCharSequence> list = event.getGui().getMinecraft().font.split(new TranslatableComponent("ias.offlinemode"), event.getGui().width);
-                for (int i = 0; i < list.size(); i++) {
-                    event.getGui().getMinecraft().font.draw(event.getMatrixStack(), list.get(i), event.getGui().width / 2 - event.getGui().getMinecraft().font.width(list.get(i)) / 2, i * 9 + 1, 16737380);
-                }
+    public void onScreenRender(GuiScreenEvent.DrawScreenEvent.Post event) {
+        if (event.getGui() instanceof TitleScreen && Config.titleScreenText) {
+            if (Config.titleScreenTextAlignment == Config.Alignment.LEFT) {
+                Gui.drawString(event.getMatrixStack(), event.getGui().getMinecraft().font, new TranslatableComponent("ias.title", event.getGui().getMinecraft().getUser().getName()), tx, ty, 0xFFCC8888);
+                return;
             }
-        }
-        if (event.getGui() instanceof TitleScreen) {
-            Screen.drawCenteredString(event.getMatrixStack(), event.getGui().getMinecraft().font, I18n.get("ias.loggedinas", event.getGui().getMinecraft().getUser().getName()), textX, textY, 0xFFCC8888);
+            if (Config.titleScreenTextAlignment == Config.Alignment.RIGHT) {
+                Gui.drawString(event.getMatrixStack(), event.getGui().getMinecraft().font, new TranslatableComponent("ias.title", event.getGui().getMinecraft().getUser().getName()), tx - event.getGui().getMinecraft().font.width(new TranslatableComponent("ias.title", event.getGui().getMinecraft().getUser().getName())), ty, 0xFFCC8888);
+                return;
+            }
+            Gui.drawCenteredString(event.getMatrixStack(), event.getGui().getMinecraft().font, new TranslatableComponent("ias.title", event.getGui().getMinecraft().getUser().getName()), tx, ty, 0xFFCC8888);
         }
     }
 }

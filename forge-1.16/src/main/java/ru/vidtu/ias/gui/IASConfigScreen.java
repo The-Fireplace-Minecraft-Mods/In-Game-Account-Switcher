@@ -1,14 +1,17 @@
 package ru.vidtu.ias.gui;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
+import net.minecraft.client.gui.DialogTexts;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.gui.widget.button.CheckboxButton;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
-import org.apache.commons.lang3.StringUtils;
 import ru.vidtu.ias.Config;
+
+import java.util.Objects;
 
 /**
  * Screen for editing IAS config.
@@ -16,71 +19,119 @@ import ru.vidtu.ias.Config;
  * @author VidTu
  */
 public class IASConfigScreen extends Screen {
-    public final Screen prev;
-    public CheckboxButton caseSensitive, multiplayerScreen, titleScreen;
-    public TextFieldWidget textX, textY, buttonX, buttonY;
+    private final Screen prev;
+    private CheckboxButton titleScreenText;
+    private TextFieldWidget titleScreenTextX;
+    private TextFieldWidget titleScreenTextY;
+    private Button titleScreenTextAlignment;
+    private CheckboxButton titleScreenButton;
+    private TextFieldWidget titleScreenButtonX;
+    private TextFieldWidget titleScreenButtonY;
+    private CheckboxButton multiplayerScreenButton;
+    private TextFieldWidget multiplayerScreenButtonX;
+    private TextFieldWidget multiplayerScreenButtonY;
 
     public IASConfigScreen(Screen prev) {
-        super(new StringTextComponent("config/ias.json"));
+        super(new TranslationTextComponent("ias.configGui.title"));
         this.prev = prev;
     }
 
     @Override
     public void init() {
-        addButton(caseSensitive = new CheckboxButton(width / 2 - font.width(new TranslationTextComponent("ias.cfg.casesensitive"))
-                / 2 - 12, 40, 24 + font.width(new TranslationTextComponent("ias.cfg.casesensitive")), 20,
-                new TranslationTextComponent("ias.cfg.casesensitive"), Config.caseSensitiveSearch));
-        addButton(multiplayerScreen = new CheckboxButton(width / 2 - font.width(new TranslationTextComponent("ias.cfg.mpscreen"))
-                / 2 - 12, 60, 24 + font.width(new TranslationTextComponent("ias.cfg.mpscreen")), 20,
-                new TranslationTextComponent("ias.cfg.mpscreen"), Config.showOnMPScreen));
-        addButton(titleScreen = new CheckboxButton(width / 2 - font.width(new TranslationTextComponent("ias.cfg.titlescreen"))
-                / 2 - 12, 80, 24 + font.width(new TranslationTextComponent("ias.cfg.titlescreen")), 20,
-                new TranslationTextComponent("ias.cfg.titlescreen"), Config.showOnTitleScreen));
-        addButton(textX = new TextFieldWidget(font, width / 2 - 100, 110, 98, 20, new StringTextComponent("X")));
-        addButton(textY = new TextFieldWidget(font, width / 2 + 2, 110, 98, 20, new StringTextComponent("Y")));
-        addButton(buttonX = new TextFieldWidget(font, width / 2 - 100, 152, 98, 20, new StringTextComponent("X")));
-        addButton(buttonY = new TextFieldWidget(font, width / 2 + 2, 152, 98, 20, new StringTextComponent("Y")));
-        addButton(new Button(width / 2 - 75, height - 24, 150, 20,
-                new TranslationTextComponent("gui.done"), btn -> minecraft.setScreen(prev)));
-        textX.setValue(StringUtils.trimToEmpty(Config.textX));
-        textY.setValue(StringUtils.trimToEmpty(Config.textY));
-        buttonX.setValue(StringUtils.trimToEmpty(Config.btnX));
-        buttonY.setValue(StringUtils.trimToEmpty(Config.btnY));
+        addButton(new Button(width / 2 - 75, height - 28, 150, 20, DialogTexts.GUI_DONE, button -> minecraft.setScreen(prev)));
+        addButton(titleScreenText = new CheckboxButton(5, 20, 24 + font.width(new TranslationTextComponent(
+                "ias.configGui.titleScreenText")), 20, new TranslationTextComponent(
+                        "ias.configGui.titleScreenText"), Config.titleScreenText));
+        addButton(titleScreenTextX = new TextFieldWidget(font, 35 + font.width(new TranslationTextComponent(
+                "ias.configGui.titleScreenText")), 20, 50, 20, new StringTextComponent("X")));
+        addButton(titleScreenTextY = new TextFieldWidget(font, 35 + font.width(new TranslationTextComponent(
+                "ias.configGui.titleScreenText")) + 54, 20, 50, 20, new StringTextComponent("Y")));
+        addButton(titleScreenTextAlignment = new Button(35 + font.width(new TranslationTextComponent(
+                "ias.configGui.titleScreenText")) + 108, 20, font.width(new TranslationTextComponent(
+                "ias.configGui.titleScreenText.alignment", I18n.get(Config.titleScreenTextAlignment.key()))) + 20, 20,
+                new TranslationTextComponent("ias.configGui.titleScreenText.alignment", I18n.get(Config.titleScreenTextAlignment.key())),
+                btn -> changeAlignment()));
+        addButton(titleScreenButton = new CheckboxButton(5, 44, 24 + font.width(new TranslationTextComponent(
+                "ias.configGui.titleScreenButton")), 20, new TranslationTextComponent(
+                "ias.configGui.titleScreenButton"), Config.titleScreenButton));
+        addButton(titleScreenButtonX = new TextFieldWidget(font, 35 + font.width(new TranslationTextComponent(
+                "ias.configGui.titleScreenButton")), 44, 50, 20, new StringTextComponent("X")));
+        addButton(titleScreenButtonY = new TextFieldWidget(font, 35 + font.width(new TranslationTextComponent(
+                "ias.configGui.titleScreenButton")) + 54, 44, 50, 20, new StringTextComponent("Y")));
+        addButton(multiplayerScreenButton = new CheckboxButton(5, 68, 24 + font.width(new TranslationTextComponent(
+                "ias.configGui.multiplayerScreenButton")), 20, new TranslationTextComponent(
+                "ias.configGui.multiplayerScreenButton"), Config.multiplayerScreenButton));
+        addButton(multiplayerScreenButtonX = new TextFieldWidget(font, 35 + font.width(new TranslationTextComponent(
+                "ias.configGui.multiplayerScreenButton")), 68, 50, 20, new StringTextComponent("X")));
+        addButton(multiplayerScreenButtonY = new TextFieldWidget(font, 35 + font.width(new TranslationTextComponent(
+                "ias.configGui.multiplayerScreenButton")) + 54, 68, 50, 20, new StringTextComponent("Y")));
+        titleScreenTextX.setSuggestion(titleScreenTextX.getValue().isEmpty() ? "X" : "");
+        titleScreenTextY.setSuggestion(titleScreenTextY.getValue().isEmpty() ? "Y" : "");
+        titleScreenButtonX.setSuggestion(titleScreenButtonX.getValue().isEmpty() ? "X" : "");
+        titleScreenButtonY.setSuggestion(titleScreenButtonY.getValue().isEmpty() ? "Y" : "");
+        multiplayerScreenButtonX.setSuggestion(multiplayerScreenButtonX.getValue().isEmpty() ? "X" : "");
+        multiplayerScreenButtonY.setSuggestion(multiplayerScreenButtonY.getValue().isEmpty() ? "Y" : "");
+        titleScreenTextX.setResponder(s -> titleScreenTextX.setSuggestion(s.isEmpty() ? "X" : ""));
+        titleScreenTextY.setResponder(s -> titleScreenTextY.setSuggestion(s.isEmpty() ? "Y" : ""));
+        titleScreenButtonX.setResponder(s -> titleScreenButtonX.setSuggestion(s.isEmpty() ? "X" : ""));
+        titleScreenButtonY.setResponder(s -> titleScreenButtonY.setSuggestion(s.isEmpty() ? "Y" : ""));
+        multiplayerScreenButtonX.setResponder(s -> multiplayerScreenButtonX.setSuggestion(s.isEmpty() ? "X" : ""));
+        multiplayerScreenButtonY.setResponder(s -> multiplayerScreenButtonY.setSuggestion(s.isEmpty() ? "Y" : ""));
+        titleScreenTextX.setValue(Objects.toString(Config.titleScreenTextX, ""));
+        titleScreenTextY.setValue(Objects.toString(Config.titleScreenTextY, ""));
+        titleScreenButtonX.setValue(Objects.toString(Config.titleScreenButtonX, ""));
+        titleScreenButtonY.setValue(Objects.toString(Config.titleScreenButtonY, ""));
+        multiplayerScreenButtonX.setValue(Objects.toString(Config.multiplayerScreenButtonX, ""));
+        multiplayerScreenButtonY.setValue(Objects.toString(Config.multiplayerScreenButtonY, ""));
+        tick();
+    }
+
+    private void changeAlignment() {
+        int i = Config.titleScreenTextAlignment.ordinal() + 1;
+        if (i >= Config.Alignment.values().length) i = 0;
+        Config.titleScreenTextAlignment = Config.Alignment.values()[i];
+        titleScreenTextAlignment.setMessage(new TranslationTextComponent("ias.configGui.titleScreenText.alignment",
+                I18n.get(Config.titleScreenTextAlignment.key())));
+        titleScreenTextAlignment.setWidth(font.width(titleScreenTextAlignment.getMessage()) + 20);
+    }
+
+    @Override
+    public void onClose() {
+        minecraft.setScreen(prev);
     }
 
     @Override
     public void removed() {
-        Config.caseSensitiveSearch = caseSensitive.selected();
-        Config.showOnMPScreen = multiplayerScreen.selected();
-        Config.showOnTitleScreen = titleScreen.selected();
-        Config.textX = textX.getValue();
-        Config.textY = textY.getValue();
-        Config.btnX = buttonX.getValue();
-        Config.btnY = buttonY.getValue();
-        Config.save();
+        Config.titleScreenText = titleScreenText.selected();
+        Config.titleScreenTextX = titleScreenTextX.getValue().trim().isEmpty() ? null : titleScreenTextX.getValue();
+        Config.titleScreenTextY = titleScreenTextY.getValue().trim().isEmpty() ? null : titleScreenTextY.getValue();
+        Config.titleScreenButton = titleScreenButton.selected();
+        Config.titleScreenButtonX = titleScreenButtonX.getValue().trim().isEmpty() ? null : titleScreenButtonX.getValue();
+        Config.titleScreenButtonY = titleScreenButtonY.getValue().trim().isEmpty() ? null : titleScreenButtonY.getValue();
+        Config.multiplayerScreenButton = multiplayerScreenButton.selected();
+        Config.multiplayerScreenButtonX = multiplayerScreenButtonX.getValue().trim().isEmpty() ? null : multiplayerScreenButtonX.getValue();
+        Config.multiplayerScreenButtonY = multiplayerScreenButtonY.getValue().trim().isEmpty() ? null : multiplayerScreenButtonY.getValue();
+        Config.save(minecraft.gameDirectory.toPath());
     }
 
     @Override
     public void tick() {
-        buttonX.visible = titleScreen.selected();
-        buttonY.visible = titleScreen.selected();
-        textX.tick();
-        textY.tick();
-        buttonX.tick();
-        buttonY.tick();
-        textX.setSuggestion(textX.getValue().isEmpty() ? "X" : "");
-        textY.setSuggestion(textY.getValue().isEmpty() ? "Y" : "");
-        buttonX.setSuggestion(buttonX.getValue().isEmpty() ? "X" : "");
-        buttonY.setSuggestion(buttonY.getValue().isEmpty() ? "Y" : "");
+        titleScreenTextX.visible = titleScreenTextY.visible = titleScreenTextAlignment.visible = titleScreenText.selected();
+        titleScreenButtonX.visible = titleScreenButtonY.visible = titleScreenButton.selected();
+        multiplayerScreenButtonX.visible = multiplayerScreenButtonY.visible = multiplayerScreenButton.selected();
+        titleScreenTextX.tick();
+        titleScreenTextY.tick();
+        titleScreenButtonX.tick();
+        titleScreenButtonY.tick();
+        multiplayerScreenButtonX.tick();
+        multiplayerScreenButtonY.tick();
         super.tick();
     }
 
     @Override
     public void render(MatrixStack ms, int mx, int my, float delta) {
         renderBackground(ms);
-        drawCenteredString(ms, font, this.title, width / 2, 10, -1);
-        drawCenteredString(ms, font, new TranslationTextComponent("ias.cfg.textpos"), width / 2, 100, -1);
-        if (titleScreen.selected()) drawCenteredString(ms, font, new TranslationTextComponent("ias.cfg.buttonpos"), width / 2, 142, -1);
+        drawCenteredString(ms, font, this.title, width / 2, 5, -1);
         super.render(ms, mx, my, delta);
     }
 }
