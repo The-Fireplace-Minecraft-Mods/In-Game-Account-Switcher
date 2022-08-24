@@ -2,6 +2,7 @@ package ru.vidtu.ias.account;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import org.jetbrains.annotations.NotNull;
 import ru.vidtu.ias.SharedIAS;
 
@@ -33,7 +34,7 @@ import java.util.stream.Collectors;
 public class Auth {
     private static final String CLIENT_ID = "54fd49e4-2103-4044-9603-2b028c814ec3";
     private static final String REDIRECT_URI = "http://localhost:59125";
-    private static final SSLContext FIXED_CONTEXT;
+    public static final SSLContext FIXED_CONTEXT;
     static {
         SSLContext ctx = null;
         try {
@@ -185,7 +186,7 @@ public class Auth {
             JsonObject req = new JsonObject();
             JsonObject reqProps = new JsonObject();
             JsonArray userTokens = new JsonArray();
-            userTokens.add(xblToken);
+            userTokens.add(new JsonPrimitive(xblToken));
             reqProps.add("UserTokens", userTokens);
             reqProps.addProperty("SandboxId", "RETAIL");
             req.add("Properties", reqProps);
