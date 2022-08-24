@@ -12,7 +12,7 @@ version = project.mod_version
 evaluationDependsOn(':shared')
 
 dependencies {
-    minecraft "net.minecraftforge:forge:1.18.2-40.1.69"
+    minecraft "net.minecraftforge:forge:1.18.2-40.1.73"
     compileOnly project(":shared")
 }
 
