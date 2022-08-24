@@ -1,0 +1,8 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "ru.vidtu.ias.mixins",
+  "client": [
+    "MinecraftAccessor"
+  ]
+}
