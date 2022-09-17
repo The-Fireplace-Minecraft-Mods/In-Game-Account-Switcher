@@ -35,9 +35,6 @@
     "fabric": "*",
     "minecraft": "1.19.x"
   },
-  "breaks": {
-    "minecraft": "1.19"
-  },
   "recommends": {
     "modmenu": "*"
   }
