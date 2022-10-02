@@ -1,6 +1,6 @@
 name: Bug Report
 description: Report a bug or a crash
-title: "[Bug] "
+title: "[Bug] {short bug description here}"
 labels: ["bug"]
 assignees: []
 body:
