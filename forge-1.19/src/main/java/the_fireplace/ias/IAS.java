@@ -2,7 +2,9 @@ package the_fireplace.ias;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.ImageButton;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.TitleScreen;
 import net.minecraft.client.gui.screens.multiplayer.JoinMultiplayerScreen;
 import net.minecraft.network.chat.Component;
@@ -55,6 +57,7 @@ public class IAS {
 
     @SubscribeEvent
     public void onScreenInit(ScreenEvent.Init.Post event) {
+        Button temp;
         if (event.getScreen() instanceof JoinMultiplayerScreen && Config.multiplayerScreenButton) {
             int bx = event.getScreen().width / 2 + 4 + 76 + 79;
             int by = event.getScreen().height - 28;
@@ -65,10 +68,11 @@ public class IAS {
                 bx = event.getScreen().width / 2 + 4 + 76 + 79;
                 by = event.getScreen().height - 28;
             }
-            event.addListener(new ImageButton(bx, by, 20, 20, 0, 0, 20, IAS_BUTTON,
-                    256, 256, btn -> event.getScreen().getMinecraft().setScreen(new AccountListScreen(event.getScreen())), (button, ms, mx, my)
-                    -> event.getScreen().renderTooltip(ms, Component.literal("In-Game Account Switcher"), mx, my),
-                    Component.literal("In-Game Account Switcher")));
+            temp = new ImageButton(bx, by, 20, 20, 0, 0, 20, IAS_BUTTON,
+                    256, 256, btn -> event.getScreen().getMinecraft().setScreen(new AccountListScreen(event.getScreen())),
+                    Component.literal("In-Game Account Switcher"));
+            temp.setTooltip(Tooltip.create(Component.literal("In-Game Account Switcher")));
+            event.addListener(temp);
         }
         if (event.getScreen() instanceof TitleScreen) {
             if (Config.titleScreenButton) {
@@ -81,10 +85,11 @@ public class IAS {
                     bx = event.getScreen().width / 2 + 104;
                     by = event.getScreen().height / 4 + 48 + 72 + -24;
                 }
-                event.addListener(new ImageButton(bx, by, 20, 20, 0, 0, 20, IAS_BUTTON,
-                        256, 256, btn -> event.getScreen().getMinecraft().setScreen(new AccountListScreen(event.getScreen())), (button, ms, mx, my)
-                        -> event.getScreen().renderTooltip(ms, Component.literal("In-Game Account Switcher"), mx, my),
-                        Component.literal("In-Game Account Switcher")));
+                temp = new ImageButton(bx, by, 20, 20, 0, 0, 20, IAS_BUTTON,
+                        256, 256, btn -> event.getScreen().getMinecraft().setScreen(new AccountListScreen(event.getScreen())),
+                        Component.literal("In-Game Account Switcher"));
+                temp.setTooltip(Tooltip.create(Component.literal("In-Game Account Switcher")));
+                event.addListener(temp);
             }
             if (Config.titleScreenText) {
                 try {

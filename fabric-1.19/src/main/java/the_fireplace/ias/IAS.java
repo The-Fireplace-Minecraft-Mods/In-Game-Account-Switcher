@@ -6,7 +6,9 @@ import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.fabricmc.fabric.api.client.screen.v1.Screens;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.ImageButton;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.TitleScreen;
 import net.minecraft.client.gui.screens.multiplayer.JoinMultiplayerScreen;
 import net.minecraft.network.chat.Component;
@@ -36,6 +38,7 @@ public class IAS implements ClientModInitializer {
             Config.load(mc.gameDirectory.toPath());
         });
         ScreenEvents.AFTER_INIT.register((mc, screen, w, h) -> {
+            Button temp;
             if (screen instanceof JoinMultiplayerScreen && Config.multiplayerScreenButton) {
                 int bx = w / 2 + 4 + 76 + 79;
                 int by = h - 28;
@@ -46,10 +49,11 @@ public class IAS implements ClientModInitializer {
                     bx = w / 2 + 4 + 76 + 79;
                     by = h - 28;
                 }
-                Screens.getButtons(screen).add(new ImageButton(bx, by, 20, 20, 0, 0, 20, IAS_BUTTON,
-                        256, 256, btn -> mc.setScreen(new AccountListScreen(screen)), (button, ms, mx, my)
-                        -> screen.renderTooltip(ms, Component.literal("In-Game Account Switcher"), mx, my),
-                        Component.literal("In-Game Account Switcher")));
+                temp = new ImageButton(bx, by, 20, 20, 0, 0, 20, IAS_BUTTON,
+                        256, 256, btn -> mc.setScreen(new AccountListScreen(screen)),
+                        Component.literal("In-Game Account Switcher"));
+                temp.setTooltip(Tooltip.create(Component.literal("In-Game Account Switcher")));
+                Screens.getButtons(screen).add(temp);
             }
             if (screen instanceof TitleScreen) {
                 if (Config.titleScreenButton) {
@@ -62,10 +66,11 @@ public class IAS implements ClientModInitializer {
                         bx = w / 2 + 104;
                         by = h / 4 + 48 + 72 + (IAS.modMenu ? IASModMenuCompat.buttonOffset() : -24);
                     }
-                    Screens.getButtons(screen).add(new ImageButton(bx, by, 20, 20, 0, 0, 20, IAS_BUTTON,
-                            256, 256, btn -> mc.setScreen(new AccountListScreen(screen)), (button, ms, mx, my)
-                            -> screen.renderTooltip(ms, Component.literal("In-Game Account Switcher"), mx, my),
-                            Component.literal("In-Game Account Switcher")));
+                    temp = new ImageButton(bx, by, 20, 20, 0, 0, 20, IAS_BUTTON,
+                            256, 256, btn -> mc.setScreen(new AccountListScreen(screen)),
+                            Component.literal("In-Game Account Switcher"));
+                    temp.setTooltip(Tooltip.create(Component.literal("In-Game Account Switcher")));
+                    Screens.getButtons(screen).add(temp);
                 }
                 if (Config.titleScreenText) {
                     try {

@@ -5,6 +5,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.AlertScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.language.I18n;
@@ -47,12 +48,12 @@ public class LoginScreen extends Screen {
     @Override
     public void init() {
         super.init();
-        addRenderableWidget(offline = new Button(width / 2 - 152, this.height - 28, 150, 20, buttonText, btn -> loginOffline(), (btn, ms, mx, my) -> renderTooltip(ms, font.split(buttonTip, 150), mx, my)));
+        addRenderableWidget(offline = Button.builder(buttonText, btn -> loginOffline()).bounds(width / 2 - 152, this.height - 28, 150, 20).tooltip(Tooltip.create(buttonTip)).build());
         offline.active = false;
-        addRenderableWidget(new Button(this.width / 2 + 2, this.height - 28, 150, 20, CommonComponents.GUI_CANCEL, btn -> minecraft.setScreen(prev)));
+        addRenderableWidget(Button.builder(CommonComponents.GUI_CANCEL, btn -> minecraft.setScreen(prev)).bounds(this.width / 2 + 2, this.height - 28, 150, 20).build());
         username = addRenderableWidget(new EditBox(font, this.width / 2 - 100, height / 2 - 12, 200, 20, username, Component.translatable("ias.loginGui.nickname")));
         username.setMaxLength(16);
-        addRenderableWidget(microsoft = new Button(this.width / 2 - 50, this.height / 2 + 12, 100, 20, Component.translatable("ias.loginGui.microsoft"), btn -> loginMicrosoft()));
+        addRenderableWidget(microsoft = Button.builder(Component.translatable("ias.loginGui.microsoft"), btn -> loginMicrosoft()).bounds(this.width / 2 - 50, this.height / 2 + 12, 100, 20).build());
     }
 
     @Override

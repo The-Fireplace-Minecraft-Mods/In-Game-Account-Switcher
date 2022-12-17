@@ -12,12 +12,12 @@ version = project.mod_version
 evaluationDependsOn(':shared')
 
 dependencies {
-    minecraft "net.minecraftforge:forge:1.19.2-43.1.25"
+    minecraft "net.minecraftforge:forge:1.19.3-44.0.30"
     compileOnly project(":shared")
 }
 
 minecraft {
-    mappings channel: 'official', version: '1.19.2'
+    mappings channel: 'official', version: '1.19.3'
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
     runs {
         client {
