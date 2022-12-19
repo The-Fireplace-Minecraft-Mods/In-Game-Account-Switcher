@@ -13,7 +13,7 @@ import net.minecraft.client.gui.screens.ConfirmScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.social.PlayerSocialManager;
 import net.minecraft.client.main.GameConfig;
-import net.minecraft.client.multiplayer.ProfileKeyPairManager;
+import net.minecraft.client.multiplayer.AccountProfileKeyPairManager;
 import net.minecraft.client.multiplayer.chat.report.ReportEnvironment;
 import net.minecraft.client.multiplayer.chat.report.ReportingContext;
 import net.minecraft.client.resources.language.I18n;
@@ -57,14 +57,14 @@ public class AccountListScreen extends Screen {
     public void init() {
         list = new AccountList(minecraft, width, height);
         addRenderableWidget(list);
-        addRenderableWidget(reloadSkins = new Button(2, 2, 120, 20, Component.translatable("ias.listGui.reloadSkins"), btn -> reloadSkins()));
+        addRenderableWidget(reloadSkins = Button.builder(Component.translatable("ias.listGui.reloadSkins"), btn -> reloadSkins()).bounds(2, 2, 120, 20).build());
         addRenderableWidget(search = new EditBox(this.font, this.width / 2 - 80, 14, 160, 16, search, Component.translatable("ias.listGui.search")));
-        addRenderableWidget(add = new Button(this.width / 2 + 4 + 40, this.height - 52, 120, 20, Component.translatable("ias.listGui.add"), btn -> add()));
-        addRenderableWidget(login = new Button(this.width / 2 - 154 - 10, this.height - 52, 120, 20, Component.translatable("ias.listGui.login"), btn -> login()));
-        addRenderableWidget(loginOffline = new Button(this.width / 2 - 154 - 10, this.height - 28, 110, 20, Component.translatable("ias.listGui.loginOffline"), btn -> loginOffline()));
-        addRenderableWidget(edit = new Button(this.width / 2 - 40, this.height - 52, 80, 20, Component.translatable("ias.listGui.edit"), btn -> edit()));
-        addRenderableWidget(delete = new Button(this.width / 2 - 50, this.height - 28, 100, 20, Component.translatable("ias.listGui.delete"), btn -> delete()));
-        addRenderableWidget(new Button(this.width / 2 + 4 + 50, this.height - 28, 110, 20, CommonComponents.GUI_CANCEL, btn -> minecraft.setScreen(prev)));
+        addRenderableWidget(add = Button.builder(Component.translatable("ias.listGui.add"), btn -> add()).bounds(this.width / 2 + 4 + 40, this.height - 52, 120, 20).build());
+        addRenderableWidget(login = Button.builder(Component.translatable("ias.listGui.login"), btn -> login()).bounds(this.width / 2 - 154 - 10, this.height - 52, 120, 20).build());
+        addRenderableWidget(loginOffline = Button.builder(Component.translatable("ias.listGui.loginOffline"), btn -> loginOffline()).bounds(this.width / 2 - 154 - 10, this.height - 28, 110, 20).build());
+        addRenderableWidget(edit = Button.builder(Component.translatable("ias.listGui.edit"), btn -> edit()).bounds(this.width / 2 - 40, this.height - 52, 80, 20).build());
+        addRenderableWidget(delete = Button.builder(Component.translatable("ias.listGui.delete"), btn -> delete()).bounds(this.width / 2 - 50, this.height - 28, 100, 20).build());
+        addRenderableWidget(Button.builder(CommonComponents.GUI_CANCEL, btn -> minecraft.setScreen(prev)).bounds(this.width / 2 + 4 + 50, this.height - 28, 110, 20).build());
         updateButtons();
         search.setSuggestion(I18n.get("ias.listGui.search"));
         search.setResponder(s -> {
@@ -145,7 +145,7 @@ public class AccountListScreen extends Screen {
                 UserApiService apiSvc = minecraft.createUserApiService(minecraft.authenticationService, new GameConfig(new GameConfig.UserData(minecraft.getUser(), null, null, null), null, null, null, null));
                 minecraft.userApiService = apiSvc;
                 minecraft.playerSocialManager = new PlayerSocialManager(minecraft, apiSvc);
-                minecraft.profileKeyPairManager = new ProfileKeyPairManager(apiSvc, d.uuid(), minecraft.gameDirectory.toPath());
+                minecraft.profileKeyPairManager = new AccountProfileKeyPairManager(apiSvc, d.uuid(), minecraft.gameDirectory.toPath());
                 minecraft.reportingContext = ReportingContext.create(ReportEnvironment.local(), apiSvc);
             });
         });
@@ -160,7 +160,7 @@ public class AccountListScreen extends Screen {
         UserApiService apiSvc = minecraft.createUserApiService(minecraft.authenticationService, new GameConfig(new GameConfig.UserData(minecraft.getUser(), null, null, null), null, null, null, null));
         minecraft.userApiService = apiSvc;
         minecraft.playerSocialManager = new PlayerSocialManager(minecraft, apiSvc);
-        minecraft.profileKeyPairManager = new ProfileKeyPairManager(apiSvc, new UUID(0, 0), minecraft.gameDirectory.toPath());
+        minecraft.profileKeyPairManager = new AccountProfileKeyPairManager(apiSvc, new UUID(0, 0), minecraft.gameDirectory.toPath());
         minecraft.reportingContext = ReportingContext.create(ReportEnvironment.local(), apiSvc);
     }
 

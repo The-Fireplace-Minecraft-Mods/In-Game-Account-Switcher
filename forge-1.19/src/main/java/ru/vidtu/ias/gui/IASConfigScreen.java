@@ -39,19 +39,21 @@ public class IASConfigScreen extends Screen {
 
     @Override
     public void init() {
-        addRenderableWidget(new Button(width / 2 - 75, height - 28, 150, 20, CommonComponents.GUI_DONE, button -> minecraft.setScreen(prev)));
+        addRenderableWidget(Button.builder(CommonComponents.GUI_DONE, button -> minecraft.setScreen(prev)).bounds(width / 2 - 75, height - 28, 150, 20).build());
         addRenderableWidget(titleScreenText = new Checkbox(5, 20, 24 + font.width(Component.translatable(
                 "ias.configGui.titleScreenText")), 20, Component.translatable(
-                        "ias.configGui.titleScreenText"), Config.titleScreenText));
+                "ias.configGui.titleScreenText"), Config.titleScreenText));
         addRenderableWidget(titleScreenTextX = new EditBox(font, 35 + font.width(Component.translatable(
                 "ias.configGui.titleScreenText")), 20, 50, 20, Component.literal("X")));
         addRenderableWidget(titleScreenTextY = new EditBox(font, 35 + font.width(Component.translatable(
                 "ias.configGui.titleScreenText")) + 54, 20, 50, 20, Component.literal("Y")));
-        addRenderableWidget(titleScreenTextAlignment = new Button(35 + font.width(Component.translatable(
-                "ias.configGui.titleScreenText")) + 108, 20, font.width(Component.translatable(
-                "ias.configGui.titleScreenText.alignment", I18n.get(Config.titleScreenTextAlignment.key()))) + 20, 20,
+        addRenderableWidget(titleScreenTextAlignment = Button.builder(
                 Component.translatable("ias.configGui.titleScreenText.alignment", I18n.get(Config.titleScreenTextAlignment.key())),
-                btn -> changeAlignment()));
+                btn -> changeAlignment()).bounds(
+                35 + font.width(Component.translatable(
+                        "ias.configGui.titleScreenText")) + 108, 20, font.width(Component.translatable(
+                        "ias.configGui.titleScreenText.alignment", I18n.get(Config.titleScreenTextAlignment.key()))) + 20, 20
+        ).build());
         addRenderableWidget(titleScreenButton = new Checkbox(5, 44, 24 + font.width(Component.translatable(
                 "ias.configGui.titleScreenButton")), 20, Component.translatable(
                 "ias.configGui.titleScreenButton"), Config.titleScreenButton));
