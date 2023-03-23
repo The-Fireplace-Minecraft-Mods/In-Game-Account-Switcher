@@ -1,6 +1,8 @@
 {
   "homepage": "https://www.curseforge.com/minecraft/mc-mods/in-game-account-switcher",
   "promos": {
+    "1.19.4-latest": "8.0.1.2",
+    "1.19.4-recommended": "8.0.1.2",
     "1.19.3-latest": "8.0.1.1",
     "1.19.3-recommended": "8.0.1.1",
     "1.18.2-latest": "8.0.1",
