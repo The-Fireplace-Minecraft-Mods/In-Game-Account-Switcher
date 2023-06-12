@@ -7,17 +7,17 @@ targetCompatibility = JavaVersion.VERSION_17
 compileJava.sourceCompatibility = JavaVersion.VERSION_17
 compileJava.targetCompatibility = JavaVersion.VERSION_17
 
-archivesBaseName = "InGameAccountSwitcher-Forge-1.19"
+archivesBaseName = "InGameAccountSwitcher-Forge-1.20"
 version = project.mod_version
 evaluationDependsOn(':shared')
 
 dependencies {
-    minecraft "net.minecraftforge:forge:1.19.4-45.1.0"
+    minecraft "net.minecraftforge:forge:1.20-46.0.14"
     compileOnly project(":shared")
 }
 
 minecraft {
-    mappings channel: 'official', version: '1.19.4'
+    mappings channel: 'official', version: '1.20'
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
     runs {
         client {
