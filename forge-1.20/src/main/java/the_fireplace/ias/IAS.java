@@ -1,7 +1,6 @@
 package the_fireplace.ias;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.components.Tooltip;
@@ -107,14 +106,14 @@ public class IAS {
     public void onScreenRender(ScreenEvent.Render.Post event) {
         if (event.getScreen() instanceof TitleScreen && Config.titleScreenText) {
             if (Config.titleScreenTextAlignment == Config.Alignment.LEFT) {
-                Gui.drawString(event.getPoseStack(), event.getScreen().getMinecraft().font, Component.translatable("ias.title", event.getScreen().getMinecraft().getUser().getName()), tx, ty, 0xFFCC8888);
+                event.getGuiGraphics().drawString(event.getScreen().getMinecraft().font, Component.translatable("ias.title", event.getScreen().getMinecraft().getUser().getName()), tx, ty, 0xFFCC8888);
                 return;
             }
             if (Config.titleScreenTextAlignment == Config.Alignment.RIGHT) {
-                Gui.drawString(event.getPoseStack(), event.getScreen().getMinecraft().font, Component.translatable("ias.title", event.getScreen().getMinecraft().getUser().getName()), tx - event.getScreen().getMinecraft().font.width(Component.translatable("ias.title", event.getScreen().getMinecraft().getUser().getName())), ty, 0xFFCC8888);
+                event.getGuiGraphics().drawString(event.getScreen().getMinecraft().font, Component.translatable("ias.title", event.getScreen().getMinecraft().getUser().getName()), tx - event.getScreen().getMinecraft().font.width(Component.translatable("ias.title", event.getScreen().getMinecraft().getUser().getName())), ty, 0xFFCC8888);
                 return;
             }
-            Gui.drawCenteredString(event.getPoseStack(), event.getScreen().getMinecraft().font, Component.translatable("ias.title", event.getScreen().getMinecraft().getUser().getName()), tx, ty, 0xFFCC8888);
+            event.getGuiGraphics().drawString(event.getScreen().getMinecraft().font, Component.translatable("ias.title", event.getScreen().getMinecraft().getUser().getName()), tx, ty, 0xFFCC8888);
         }
     }
 }

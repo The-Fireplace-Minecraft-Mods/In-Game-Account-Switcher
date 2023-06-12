@@ -5,7 +5,6 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.fabricmc.fabric.api.client.screen.v1.Screens;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.components.Tooltip;
@@ -78,20 +77,20 @@ public class IAS implements ClientModInitializer {
                         int ty = (int) Expression.parseWidthHeight(Config.titleScreenTextY, screen.width, screen.height);
                         ScreenEvents.afterRender(screen).register((s, ms, mx, my, delta) -> {
                             if (Config.titleScreenTextAlignment == Config.Alignment.LEFT) {
-                                Gui.drawString(ms, mc.font, Component.translatable("ias.title", mc.getUser().getName()), tx, ty, 0xFFCC8888);
+                                ms.drawString(mc.font, Component.translatable("ias.title", mc.getUser().getName()), tx, ty, 0xFFCC8888);
                                 return;
                             }
                             if (Config.titleScreenTextAlignment == Config.Alignment.RIGHT) {
-                                Gui.drawString(ms, mc.font, Component.translatable("ias.title", mc.getUser().getName()), tx - mc.font.width(Component.translatable("ias.title", mc.getUser().getName())), ty, 0xFFCC8888);
+                                ms.drawString(mc.font, Component.translatable("ias.title", mc.getUser().getName()), tx - mc.font.width(Component.translatable("ias.title", mc.getUser().getName())), ty, 0xFFCC8888);
                                 return;
                             }
-                            Gui.drawCenteredString(ms, mc.font, Component.translatable("ias.title", mc.getUser().getName()), tx, ty, 0xFFCC8888);
+                            ms.drawCenteredString(mc.font, Component.translatable("ias.title", mc.getUser().getName()), tx, ty, 0xFFCC8888);
                         });
                     } catch (Throwable t) {
                         int tx = w / 2;
                         int ty = h / 4 + 48 + 72 + 12 + (IAS.modMenu ? 32 : 22);
                         ScreenEvents.afterRender(screen).register((s, ms, mx, my, delta) -> {
-                            Gui.drawCenteredString(ms, mc.font, Component.translatable("ias.title", mc.getUser().getName()), tx, ty, 0xFFCC8888);
+                            ms.drawCenteredString(mc.font, Component.translatable("ias.title", mc.getUser().getName()), tx, ty, 0xFFCC8888);
                         });
                     }
                 }

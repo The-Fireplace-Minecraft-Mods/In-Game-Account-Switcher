@@ -1,7 +1,7 @@
 package ru.vidtu.ias.gui;
 
 import com.google.common.base.Strings;
-import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Checkbox;
 import net.minecraft.client.gui.components.EditBox;
@@ -132,9 +132,9 @@ public class IASConfigScreen extends Screen {
     }
 
     @Override
-    public void render(PoseStack ms, int mx, int my, float delta) {
-        renderBackground(ms);
-        drawCenteredString(ms, font, this.title, width / 2, 5, -1);
-        super.render(ms, mx, my, delta);
+    public void render(GuiGraphics ctx, int mx, int my, float delta) {
+        renderBackground(ctx);
+        ctx.drawCenteredString(font, this.title, width / 2, 5, -1);
+        super.render(ctx, mx, my, delta);
     }
 }

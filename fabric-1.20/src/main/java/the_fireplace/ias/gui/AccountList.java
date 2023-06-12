@@ -2,11 +2,9 @@ package the_fireplace.ias.gui;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.minecraft.MinecraftProfileTexture;
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.ObjectSelectionList;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.DefaultPlayerSkin;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
@@ -78,27 +76,24 @@ public class AccountList extends ObjectSelectionList<AccountList.AccountEntry> {
         }
 
         @Override
-        public void render(PoseStack ms, int i, int y, int x, int w, int h, int mx, int my, boolean hover, float delta) {
+        public void render(GuiGraphics ctx, int i, int y, int x, int w, int h, int mx, int my, boolean hover, float delta) {
             int color = -1;
             if (minecraft.getUser().getName().equals(account.name())) color = 0x00FF00;
-            drawString(ms, minecraft.font, account.name(), x + 10, y + 1, color);
-            RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
-            RenderSystem.setShaderTexture(0, skin());
-            Screen.blit(ms, x, y + 1, 8, 8, 8, 8, 64, 64); // Head
+            ctx.drawString(minecraft.font, account.name(), x + 10, y + 1, color);
+            ctx.blit(skin(), x, y + 1, 8, 8, 8, 8, 64, 64); // Head
             if (minecraft.options.isModelPartEnabled(PlayerModelPart.HAT))
-                Screen.blit(ms, x, y + 1, 40, 8, 8, 8, 64, 64); // Head (Overlay)
+                ctx.blit(skin(), x, y + 1, 40, 8, 8, 8, 64, 64); // Head (Overlay)
             if (getSelected() == this) {
-                RenderSystem.setShaderTexture(0, new ResourceLocation("textures/gui/server_selection.png"));
-                RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
+                ResourceLocation selectionTex = new ResourceLocation("textures/gui/server_selection.png");
                 boolean movableDown = i + 1 < children().size();
                 boolean movableUp = i > 0;
                 if (movableDown) {
                     boolean hoveredDown = mx > x + w - 16 && mx < x + w - 6 && hover;
-                    Screen.blit(ms, x + w - 35, y - 18, 48, hoveredDown ? 32 : 0, 32, 32, 256, 256);
+                    ctx.blit(selectionTex, x + w - 35, y - 18, 48, hoveredDown ? 32 : 0, 32, 32, 256, 256);
                 }
                 if (movableUp) {
                     boolean hoveredUp = mx > x + w - (movableDown ? 28 : 16) && mx < x + w - (movableDown ? 16 : 6) && hover;
-                    Screen.blit(ms, x + w - (movableDown ? 30 : 19), y - 3, 96, hoveredUp ? 32 : 0, 32, 32, 256, 256);
+                    ctx.blit(selectionTex, x + w - (movableDown ? 30 : 19), y - 3, 96, hoveredUp ? 32 : 0, 32, 32, 256, 256);
                 }
             }
         }

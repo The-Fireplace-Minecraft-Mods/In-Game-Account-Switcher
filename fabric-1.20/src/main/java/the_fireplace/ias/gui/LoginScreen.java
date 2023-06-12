@@ -1,8 +1,8 @@
 package the_fireplace.ias.gui;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.Tooltip;
@@ -57,15 +57,15 @@ public class LoginScreen extends Screen {
     }
 
     @Override
-    public void render(PoseStack ms, int mx, int my, float delta) {
-        renderBackground(ms);
-        drawCenteredString(ms, font, this.title, this.width / 2, 5, -1);
-        drawCenteredString(ms, font, I18n.get("ias.loginGui.nickname"), this.width / 2, height / 2 - 22, -1);
+    public void render(GuiGraphics ctx, int mx, int my, float delta) {
+        renderBackground(ctx);
+        ctx.drawCenteredString(font, this.title, this.width / 2, 5, -1);
+        ctx.drawCenteredString(font, I18n.get("ias.loginGui.nickname"), this.width / 2, height / 2 - 22, -1);
         if (state != null) {
-            drawCenteredString(ms, font, state, width / 2, height / 3 * 2, 0xFFFF9900);
-            drawCenteredString(ms, font, SharedIAS.LOADING[(int) ((System.currentTimeMillis() / 50) % SharedIAS.LOADING.length)], width / 2, height / 3 * 2 + 10, 0xFFFF9900);
+            ctx.drawCenteredString(font, state, width / 2, height / 3 * 2, 0xFFFF9900);
+            ctx.drawCenteredString(font, SharedIAS.LOADING[(int) ((System.currentTimeMillis() / 50) % SharedIAS.LOADING.length)], width / 2, height / 3 * 2 + 10, 0xFFFF9900);
         }
-        super.render(ms, mx, my, delta);
+        super.render(ctx, mx, my, delta);
     }
 
     @Override

@@ -1,11 +1,11 @@
 package the_fireplace.ias.gui;
 
 import com.mojang.authlib.minecraft.UserApiService;
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.util.UUIDTypeAdapter;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.User;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.AlertScreen;
@@ -19,6 +19,7 @@ import net.minecraft.client.multiplayer.chat.report.ReportingContext;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.PlayerModelPart;
 import org.lwjgl.glfw.GLFW;
 import ru.vidtu.ias.Config;
@@ -86,37 +87,37 @@ public class AccountListScreen extends Screen {
     }
 
     @Override
-    public void render(PoseStack ms, int mx, int my, float delta) {
-        renderBackground(ms);
-        super.render(ms, mx, my, delta);
-        drawCenteredString(ms, font, this.title, this.width / 2, 4, -1);
+    public void render(GuiGraphics ctx, int mx, int my, float delta) {
+        renderBackground(ctx);
+        super.render(ctx, mx, my, delta);
+        ctx.drawCenteredString(font, this.title, this.width / 2, 4, -1);
         if (list.getSelected() != null) {
-            RenderSystem.setShaderTexture(0, list.getSelected().skin());
-            RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
             boolean slim = list.getSelected().slimSkin();
+            ResourceLocation skinTexture = list.getSelected().skin();
+            PoseStack ms = ctx.pose();
             ms.pushPose();
             ms.scale(4, 4, 4);
             ms.translate(1, height / 8D - 16D - 4D, 0);
-            Screen.blit(ms, 4, 0, 8, 8, 8, 8, 64, 64); // Head
-            Screen.blit(ms, 4, 8, 20, 20, 8, 12, 64, 64); // Body
-            Screen.blit(ms, slim ? 1 : 0, 8, 44, 20, slim ? 3 : 4, 12, 64, 64); // Right Arm (Left from our perspective)
-            Screen.blit(ms, 12, 8, 36, 52, slim ? 3 : 4, 12, 64, 64); // Left Arm (Right from our perspective)
-            Screen.blit(ms, 4, 20, 4, 20, 4, 12, 64, 64); // Right Leg (Left from our perspective)
-            Screen.blit(ms, 8, 20, 20, 52, 4, 12, 64, 64); // Left Leg (Right from our perspective)
+            ctx.blit(skinTexture, 4, 0, 8, 8, 8, 8, 64, 64); // Head
+            ctx.blit(skinTexture, 4, 8, 20, 20, 8, 12, 64, 64); // Body
+            ctx.blit(skinTexture, slim ? 1 : 0, 8, 44, 20, slim ? 3 : 4, 12, 64, 64); // Right Arm (Left from our perspective)
+            ctx.blit(skinTexture, 12, 8, 36, 52, slim ? 3 : 4, 12, 64, 64); // Left Arm (Right from our perspective)
+            ctx.blit(skinTexture, 4, 20, 4, 20, 4, 12, 64, 64); // Right Leg (Left from our perspective)
+            ctx.blit(skinTexture, 8, 20, 20, 52, 4, 12, 64, 64); // Left Leg (Right from our perspective)
             if (minecraft.options.isModelPartEnabled(PlayerModelPart.HAT))
-                Screen.blit(ms, 4, 0, 40, 8, 8, 8, 64, 64); // Head (Overlay)
+                ctx.blit(skinTexture, 4, 0, 40, 8, 8, 8, 64, 64); // Head (Overlay)
             if (minecraft.options.isModelPartEnabled(PlayerModelPart.RIGHT_SLEEVE))
-                Screen.blit(ms, slim ? 1 : 0, 8, 44, 36, slim ? 3 : 4, 12, 64, 64); // Right Arm (Overlay)
+                ctx.blit(skinTexture, slim ? 1 : 0, 8, 44, 36, slim ? 3 : 4, 12, 64, 64); // Right Arm (Overlay)
             if (minecraft.options.isModelPartEnabled(PlayerModelPart.LEFT_SLEEVE))
-                Screen.blit(ms, 12, 8, 52, 52, slim ? 3 : 4, 12, 64, 64); // Left Arm (Overlay)
+                ctx.blit(skinTexture, 12, 8, 52, 52, slim ? 3 : 4, 12, 64, 64); // Left Arm (Overlay)
             if (minecraft.options.isModelPartEnabled(PlayerModelPart.RIGHT_PANTS_LEG))
-                Screen.blit(ms, 4, 20, 4, 36, 4, 12, 64, 64); // Right Leg (Overlay)
+                ctx.blit(skinTexture, 4, 20, 4, 36, 4, 12, 64, 64); // Right Leg (Overlay)
             if (minecraft.options.isModelPartEnabled(PlayerModelPart.LEFT_PANTS_LEG))
-                Screen.blit(ms, 8, 20, 4, 52, 4, 12, 64, 64); // Left Leg (Overlay)
+                ctx.blit(skinTexture, 8, 20, 4, 52, 4, 12, 64, 64); // Left Leg (Overlay)
             ms.popPose();
         }
         if (state != null) {
-            drawCenteredString(ms, font, state, this.width / 2, this.height - 62, 0xFFFF9900);
+            ctx.drawCenteredString(font, state, this.width / 2, this.height - 62, 0xFFFF9900);
         }
     }
 
