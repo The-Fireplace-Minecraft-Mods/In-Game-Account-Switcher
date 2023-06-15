@@ -113,7 +113,7 @@ public class IAS {
                 event.getGuiGraphics().drawString(event.getScreen().getMinecraft().font, Component.translatable("ias.title", event.getScreen().getMinecraft().getUser().getName()), tx - event.getScreen().getMinecraft().font.width(Component.translatable("ias.title", event.getScreen().getMinecraft().getUser().getName())), ty, 0xFFCC8888);
                 return;
             }
-            event.getGuiGraphics().drawString(event.getScreen().getMinecraft().font, Component.translatable("ias.title", event.getScreen().getMinecraft().getUser().getName()), tx, ty, 0xFFCC8888);
+            event.getGuiGraphics().drawCenteredString(event.getScreen().getMinecraft().font, Component.translatable("ias.title", event.getScreen().getMinecraft().getUser().getName()), tx, ty, 0xFFCC8888);
         }
     }
 }
