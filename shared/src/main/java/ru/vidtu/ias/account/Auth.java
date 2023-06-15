@@ -5,20 +5,16 @@ import com.google.gson.JsonObject;
 import org.jetbrains.annotations.NotNull;
 import ru.vidtu.ias.SharedIAS;
 
-import javax.net.ssl.*;
 import java.io.BufferedReader;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.security.KeyStore;
-import java.security.SecureRandom;
-import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
-import java.util.*;
+import java.util.AbstractMap;
+import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -30,103 +26,6 @@ import java.util.stream.Collectors;
 public class Auth {
     private static final String CLIENT_ID = "54fd49e4-2103-4044-9603-2b028c814ec3";
     private static final String REDIRECT_URI = "http://localhost:59125";
-    private static final boolean BLIND_SSL = Boolean.getBoolean("ias.blindSSL");
-    private static final boolean NO_CUSTOM_SSL = Boolean.getBoolean("ias.noCustomSSL");
-    private static final SSLContext FIXED_CONTEXT;
-    static {
-        SSLContext ctx = null;
-        try {
-            if (BLIND_SSL) {
-                SharedIAS.LOG.warn("========== IAS: WARNING ==========");
-                SharedIAS.LOG.warn("You've enabled 'ias.blindSSL' property.");
-                SharedIAS.LOG.warn("(probably via JVM-argument '-Dias.blindSSL=true')");
-                SharedIAS.LOG.warn("While this may fix some SSL problems, it's UNSAFE!");
-                SharedIAS.LOG.warn("Do NOT use this option as a 'permanent solution to all problems',");
-                SharedIAS.LOG.warn("nag the mod authors if any problems arrive:");
-                SharedIAS.LOG.warn("https://github.com/The-Fireplace-Minecraft-Mods/In-Game-Account-Switcher/issues");
-                SharedIAS.LOG.warn("========== IAS: WARNING ==========");
-                TrustManager blindManager = new X509TrustManager() {
-                    @Override
-                    public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
-                        // NO-OP
-                    }
-
-                    @Override
-                    public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
-                        // NO-OP
-                    }
-
-                    @Override
-                    public X509Certificate[] getAcceptedIssuers() {
-                        return new X509Certificate[0];
-                    }
-                };
-                ctx = SSLContext.getInstance("TLS");
-                ctx.init(null, new TrustManager[] { blindManager }, new SecureRandom());
-                SharedIAS.LOG.warn("Blindly skipping SSL checks. (behavior: 'ias.blindSSL' property)");
-            } else if (!NO_CUSTOM_SSL) {
-                KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
-                try (InputStream in = Auth.class.getResourceAsStream("/iasjavafix.jks")) {
-                    ks.load(in, "iasjavafix".toCharArray());
-                }
-                TrustManagerFactory customTmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
-                customTmf.init(ks);
-                TrustManagerFactory defaultTmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
-                defaultTmf.init((KeyStore) null);
-                List<X509TrustManager> managers = new ArrayList<>();
-                managers.addAll(Arrays.stream(customTmf.getTrustManagers()).filter(tm -> tm instanceof X509TrustManager)
-                        .map(tm -> (X509TrustManager) tm).collect(Collectors.toList()));
-                managers.addAll(Arrays.stream(defaultTmf.getTrustManagers()).filter(tm -> tm instanceof X509TrustManager)
-                        .map(tm -> (X509TrustManager) tm).collect(Collectors.toList()));
-                TrustManager multiManager = new X509TrustManager() {
-                    @Override
-                    public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
-                        CertificateException wrapper = new CertificateException("Unable to validate via any trust manager.");
-                        for (X509TrustManager manager : managers) {
-                            try {
-                                manager.checkClientTrusted(chain, authType);
-                                return;
-                            } catch (Throwable t) {
-                                wrapper.addSuppressed(t);
-                            }
-                        }
-                        throw wrapper;
-                    }
-
-                    @Override
-                    public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
-                        CertificateException wrapper = new CertificateException("Unable to validate via any trust manager.");
-                        for (X509TrustManager manager : managers) {
-                            try {
-                                manager.checkServerTrusted(chain, authType);
-                                return;
-                            } catch (Throwable t) {
-                                wrapper.addSuppressed(t);
-                            }
-                        }
-                        throw wrapper;
-                    }
-
-                    @Override
-                    public X509Certificate[] getAcceptedIssuers() {
-                        List<X509Certificate> certificates = new ArrayList<>();
-                        for (X509TrustManager manager : managers) {
-                            certificates.addAll(Arrays.asList(manager.getAcceptedIssuers()));
-                        }
-                        return certificates.toArray(new X509Certificate[0]);
-                    }
-                };
-                ctx = SSLContext.getInstance("TLS");
-                ctx.init(null, new TrustManager[] { multiManager }, new SecureRandom());
-                SharedIAS.LOG.info("Using shared SSL context. (behavior: default; custom + default certificates)");
-            } else {
-                SharedIAS.LOG.warn("Not editing SSL context. (behavior: 'ias.noCustomSSL' property)");
-            }
-        } catch (Throwable t) {
-            SharedIAS.LOG.error("Unable to init SSL context.", t);
-        }
-        FIXED_CONTEXT = ctx;
-    }
 
     /**
      * Get Microsoft Access Token and Microsoft Refresh Token from Microsoft Authentication Code.
@@ -137,8 +36,7 @@ public class Auth {
      * @see <a href="https://wiki.vg/Microsoft_Authentication_Scheme#Authorization_Code_-.3E_Authorization_Token">Reference</a>
      */
     public static Map.@NotNull Entry<@NotNull String, @NotNull String> codeToToken(@NotNull String code) throws Exception {
-        HttpsURLConnection conn = (HttpsURLConnection) new URL("https://login.live.com/oauth20_token.srf").openConnection();
-        if (FIXED_CONTEXT != null) conn.setSSLSocketFactory(FIXED_CONTEXT.getSocketFactory());
+        HttpURLConnection conn = (HttpURLConnection) new URL("https://login.live.com/oauth20_token.srf").openConnection();
         conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
         conn.setRequestMethod("POST");
         conn.setConnectTimeout(15000);
@@ -173,8 +71,7 @@ public class Auth {
      * @see <a href="https://wiki.vg/Microsoft_Authentication_Scheme#Refreshing_Tokens">Reference</a>
      */
     public static Map.@NotNull Entry<@NotNull String, @NotNull String> refreshToken(@NotNull String refreshToken) throws Exception {
-        HttpsURLConnection conn = (HttpsURLConnection) new URL("https://login.live.com/oauth20_token.srf").openConnection();
-        if (FIXED_CONTEXT != null) conn.setSSLSocketFactory(FIXED_CONTEXT.getSocketFactory());
+        HttpURLConnection conn = (HttpURLConnection) new URL("https://login.live.com/oauth20_token.srf").openConnection();
         conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
         conn.setRequestMethod("POST");
         conn.setConnectTimeout(15000);
@@ -209,8 +106,7 @@ public class Auth {
      * @see <a href="https://wiki.vg/Microsoft_Authentication_Scheme#Authenticate_with_XBL">Reference</a>
      */
     public static @NotNull String authXBL(@NotNull String authToken) throws Exception {
-        HttpsURLConnection conn = (HttpsURLConnection) new URL("https://user.auth.xboxlive.com/user/authenticate").openConnection();
-        if (FIXED_CONTEXT != null) conn.setSSLSocketFactory(FIXED_CONTEXT.getSocketFactory());
+        HttpURLConnection conn = (HttpURLConnection) new URL("https://user.auth.xboxlive.com/user/authenticate").openConnection();
         conn.setRequestProperty("Content-Type", "application/json");
         conn.setRequestProperty("Accept", "application/json");
         conn.setRequestMethod("POST");
@@ -250,8 +146,7 @@ public class Auth {
      * @see <a href="https://wiki.vg/Microsoft_Authentication_Scheme#Authenticate_with_XSTS">Reference</a>
      */
     public static Map.@NotNull Entry<@NotNull String, @NotNull String> authXSTS(@NotNull String xblToken) throws Exception {
-        HttpsURLConnection conn = (HttpsURLConnection) new URL("https://xsts.auth.xboxlive.com/xsts/authorize").openConnection();
-        if (FIXED_CONTEXT != null) conn.setSSLSocketFactory(FIXED_CONTEXT.getSocketFactory());
+        HttpURLConnection conn = (HttpURLConnection) new URL("https://xsts.auth.xboxlive.com/xsts/authorize").openConnection();
         conn.setRequestProperty("Content-Type", "application/json");
         conn.setRequestProperty("Accept", "application/json");
         conn.setRequestMethod("POST");
@@ -295,8 +190,7 @@ public class Auth {
      * @see <a href="https://wiki.vg/Microsoft_Authentication_Scheme#Authenticate_with_Minecraft">Reference</a>
      */
     public static @NotNull String authMinecraft(@NotNull String userHash, @NotNull String xstsToken) throws Exception {
-        HttpsURLConnection conn = (HttpsURLConnection) new URL("https://api.minecraftservices.com/authentication/login_with_xbox").openConnection();
-        if (FIXED_CONTEXT != null) conn.setSSLSocketFactory(FIXED_CONTEXT.getSocketFactory());
+        HttpURLConnection conn = (HttpURLConnection) new URL("https://api.minecraftservices.com/authentication/login_with_xbox").openConnection();
         conn.setRequestProperty("Content-Type", "application/json");
         conn.setRequestProperty("Accept", "application/json");
         conn.setRequestMethod("POST");

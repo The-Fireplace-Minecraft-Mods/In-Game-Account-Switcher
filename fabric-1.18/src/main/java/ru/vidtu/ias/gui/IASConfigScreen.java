@@ -1,6 +1,5 @@
 package ru.vidtu.ias.gui;
 
-import com.google.common.base.Strings;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Checkbox;
@@ -8,10 +7,8 @@ import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.CommonComponents;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
-import org.apache.commons.lang3.StringUtils;
 import ru.vidtu.ias.Config;
 
 import java.util.Objects;
