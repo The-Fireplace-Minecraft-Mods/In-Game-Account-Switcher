@@ -7,12 +7,12 @@ targetCompatibility = JavaVersion.VERSION_17
 compileJava.sourceCompatibility = JavaVersion.VERSION_17
 compileJava.targetCompatibility = JavaVersion.VERSION_17
 
-archivesBaseName = "InGameAccountSwitcher-Forge-1.19"
+archivesBaseName = "InGameAccountSwitcher-Forge-1.19.4"
 version = project.mod_version
 evaluationDependsOn(':shared')
 
 dependencies {
-    minecraft "net.minecraftforge:forge:1.19.4-45.1.0"
+    minecraft "net.minecraftforge:forge:1.19.4-45.2.0"
     compileOnly project(":shared")
 }
 
