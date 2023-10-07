@@ -22,7 +22,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.PlayerModelPart;
 import org.lwjgl.glfw.GLFW;
 import ru.vidtu.ias.Config;
-import ru.vidtu.ias.account.Account;
+import ru.vidtu.ias.auth.account.Account;
 import ru.vidtu.ias.mixins.MinecraftAccessor;
 import the_fireplace.ias.IAS;
 
@@ -142,7 +142,7 @@ public class AccountListScreen extends Screen {
                 return;
             }
             minecraft.execute(() -> {
-                ((MinecraftAccessor) minecraft).ias$user(new User(d.name(), UUIDTypeAdapter.fromUUID(d.uuid()), d.accessToken(), Optional.empty(), Optional.empty(), User.Type.byName(d.userType())));
+                ((MinecraftAccessor) minecraft).ias$user(new User(d.name(), UUIDTypeAdapter.fromUUID(d.uuid()), d.token(), Optional.empty(), Optional.empty(), User.Type.byName(d.type())));
                 UserApiService apiSvc = ((MinecraftAccessor) minecraft).ias$createUserApiService(((MinecraftAccessor) minecraft).ias$authenticationService(), new GameConfig(new GameConfig.UserData(minecraft.getUser(), null, null, null), null, null, null, null));
                 ((MinecraftAccessor) minecraft).ias$userApiService(apiSvc);
                 ((MinecraftAccessor) minecraft).ias$playerSocialManager(new PlayerSocialManager(minecraft, apiSvc));

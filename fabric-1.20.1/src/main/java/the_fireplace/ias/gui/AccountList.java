@@ -11,9 +11,9 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.player.PlayerModelPart;
-import ru.vidtu.ias.Config;
-import ru.vidtu.ias.account.Account;
-import the_fireplace.ias.IAS;
+import ru.vidtu.ias.config.IASConfig;
+import ru.vidtu.ias.auth.account.Account;
+import the_fireplace.ias.IASFabric;
 
 import java.util.Locale;
 
@@ -24,7 +24,7 @@ public class AccountList extends ObjectSelectionList<AccountList.AccountEntry> {
 
     public void updateAccounts(String query) {
         clearEntries();
-        Config.accounts.stream()
+        IASConfig.accounts.stream()
                 .filter(acc -> query.trim().isEmpty() || acc.name().toLowerCase(Locale.ROOT)
                         .startsWith(query.toLowerCase(Locale.ROOT)))
                 .forEach(acc -> addEntry(new AccountEntry(acc)));
@@ -32,10 +32,10 @@ public class AccountList extends ObjectSelectionList<AccountList.AccountEntry> {
     }
 
     public void swap(int first, int second) {
-        Account account = Config.accounts.get(first);
-        Config.accounts.set(first, Config.accounts.get(second));
-        Config.accounts.set(second, account);
-        Config.save(minecraft.gameDirectory.toPath());
+        Account account = IASConfig.accounts.get(first);
+        IASConfig.accounts.set(first, IASConfig.accounts.get(second));
+        IASConfig.accounts.set(second, account);
+        IASConfig.save(minecraft.gameDirectory.toPath());
         AccountEntry entry = children().get(first);
         children().set(first, children().get(second));
         children().set(second, entry);
@@ -48,8 +48,8 @@ public class AccountList extends ObjectSelectionList<AccountList.AccountEntry> {
         private boolean slimSkin;
         public AccountEntry(Account account) {
             this.account = account;
-            if (IAS.SKIN_CACHE.containsKey(account.uuid())) {
-                this.skin = IAS.SKIN_CACHE.get(account.uuid());
+            if (IASFabric.SKIN_CACHE.containsKey(account.uuid())) {
+                this.skin = IASFabric.SKIN_CACHE.get(account.uuid());
                 return;
             }
             skin = DefaultPlayerSkin.getDefaultSkin(account.uuid());
@@ -58,7 +58,7 @@ public class AccountList extends ObjectSelectionList<AccountList.AccountEntry> {
                 if (type == MinecraftProfileTexture.Type.SKIN) {
                     skin = loc;
                     slimSkin = "slim".equalsIgnoreCase(tex.getMetadata("model"));
-                    IAS.SKIN_CACHE.put(account.uuid(), loc);
+                    IASFabric.SKIN_CACHE.put(account.uuid(), loc);
                 }
             }, true);
         }

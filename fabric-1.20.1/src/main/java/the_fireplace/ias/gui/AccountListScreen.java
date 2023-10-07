@@ -22,10 +22,10 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.PlayerModelPart;
 import org.lwjgl.glfw.GLFW;
-import ru.vidtu.ias.Config;
-import ru.vidtu.ias.account.Account;
+import ru.vidtu.ias.config.IASConfig;
+import ru.vidtu.ias.auth.account.Account;
 import ru.vidtu.ias.mixins.MinecraftAccessor;
-import the_fireplace.ias.IAS;
+import the_fireplace.ias.IASFabric;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
@@ -84,7 +84,7 @@ public class AccountListScreen extends Screen {
 
     @Override
     public void removed() {
-        Config.save(minecraft.gameDirectory.toPath());
+        IASConfig.save(minecraft.gameDirectory.toPath());
     }
 
     @Override
@@ -124,7 +124,7 @@ public class AccountListScreen extends Screen {
 
     private void reloadSkins() {
         if (list.children().isEmpty() || System.currentTimeMillis() <= nextSkinUpdate || state != null) return;
-        IAS.SKIN_CACHE.clear();
+        IASFabric.SKIN_CACHE.clear();
         list.updateAccounts(search.getValue());
         nextSkinUpdate = System.currentTimeMillis() + 15000L;
     }
@@ -143,7 +143,7 @@ public class AccountListScreen extends Screen {
                 return;
             }
             minecraft.execute(() -> {
-                ((MinecraftAccessor) minecraft).ias$user(new User(d.name(), UUIDTypeAdapter.fromUUID(d.uuid()), d.accessToken(), Optional.empty(), Optional.empty(), User.Type.byName(d.userType())));
+                ((MinecraftAccessor) minecraft).ias$user(new User(d.name(), UUIDTypeAdapter.fromUUID(d.uuid()), d.token(), Optional.empty(), Optional.empty(), User.Type.byName(d.type())));
                 UserApiService apiSvc = ((MinecraftAccessor) minecraft).ias$createUserApiService(((MinecraftAccessor) minecraft).ias$authenticationService(), new GameConfig(new GameConfig.UserData(minecraft.getUser(), null, null, null), null, null, null, null));
                 ((MinecraftAccessor) minecraft).ias$userApiService(apiSvc);
                 ((MinecraftAccessor) minecraft).ias$playerSocialManager(new PlayerSocialManager(minecraft, apiSvc));
@@ -171,8 +171,8 @@ public class AccountListScreen extends Screen {
         minecraft.setScreen(new LoginScreen(this, Component.translatable("ias.loginGui.add"),
                 Component.translatable("ias.loginGui.add.button"),
                 Component.translatable("ias.loginGui.add.button.tooltip"), acc -> {
-            Config.accounts.add(acc);
-            Config.save(minecraft.gameDirectory.toPath());
+            IASConfig.accounts.add(acc);
+            IASConfig.save(minecraft.gameDirectory.toPath());
             list.updateAccounts(search.getValue());
         }));
     }
@@ -183,8 +183,8 @@ public class AccountListScreen extends Screen {
         minecraft.setScreen(new LoginScreen(this, Component.translatable("ias.loginGui.edit"),
                 Component.translatable("ias.loginGui.edit.button"),
                 Component.translatable("ias.loginGui.edit.button.tooltip"), newAcc -> {
-            Config.accounts.set(Config.accounts.indexOf(acc), newAcc);
-            Config.save(minecraft.gameDirectory.toPath());
+            IASConfig.accounts.set(IASConfig.accounts.indexOf(acc), newAcc);
+            IASConfig.save(minecraft.gameDirectory.toPath());
         }));
     }
 
@@ -192,15 +192,15 @@ public class AccountListScreen extends Screen {
         if (list.getSelected() == null || state != null) return;
         Account acc = list.getSelected().account();
         if (hasShiftDown()) {
-            Config.accounts.remove(acc);
-            Config.save(minecraft.gameDirectory.toPath());
+            IASConfig.accounts.remove(acc);
+            IASConfig.save(minecraft.gameDirectory.toPath());
             updateButtons();
             list.updateAccounts(search.getValue());
             return;
         }
         minecraft.setScreen(new ConfirmScreen(b -> {
             if (b) {
-                Config.accounts.remove(acc);
+                IASConfig.accounts.remove(acc);
                 updateButtons();
                 list.updateAccounts(search.getValue());
             }

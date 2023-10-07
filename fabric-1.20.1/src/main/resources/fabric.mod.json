@@ -12,7 +12,7 @@
     "VidTu"
   ],
   "contact": {
-    "homepage": "https://www.curseforge.com/minecraft/mc-mods/in-game-account-switcher",
+    "homepage": "https://modrinth.com/mod/in-game-account-switcher",
     "sources": "https://github.com/The-Fireplace-Minecraft-Mods/In-Game-Account-Switcher",
     "issues": "https://github.com/The-Fireplace-Minecraft-Mods/In-Game-Account-Switcher/issues"
   },
@@ -21,7 +21,7 @@
   "environment": "client",
   "entrypoints": {
     "client": [
-      "the_fireplace.ias.IAS"
+      "the_fireplace.ias.IASFabric"
     ],
     "modmenu": [
       "ru.vidtu.ias.IASModMenuCompat"
@@ -31,7 +31,7 @@
     "ias.mixins.json"
   ],
   "depends": {
-    "fabricloader": ">=0.11.0",
+    "fabricloader": "*",
     "fabric": "*",
     "minecraft": "1.20.x"
   },

@@ -14,7 +14,7 @@ import net.minecraft.client.gui.screens.multiplayer.JoinMultiplayerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import ru.vidtu.ias.Config;
-import ru.vidtu.ias.Expression;
+import ru.vidtu.ias.utils.Expression;
 import ru.vidtu.ias.IASModMenuCompat;
 import the_fireplace.ias.gui.AccountListScreen;
 

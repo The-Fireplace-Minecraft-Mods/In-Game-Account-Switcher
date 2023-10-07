@@ -14,7 +14,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.player.PlayerModelPart;
 import ru.vidtu.ias.Config;
-import ru.vidtu.ias.account.Account;
+import ru.vidtu.ias.auth.account.Account;
 import the_fireplace.ias.IAS;
 
 import java.util.Locale;

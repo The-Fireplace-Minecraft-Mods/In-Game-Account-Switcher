@@ -12,11 +12,11 @@ import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
-import ru.vidtu.ias.MicrosoftAuthCallback;
-import ru.vidtu.ias.SharedIAS;
-import ru.vidtu.ias.account.Account;
-import ru.vidtu.ias.account.Auth;
-import ru.vidtu.ias.account.OfflineAccount;
+import ru.vidtu.ias.auth.ms.MSAuthServer;
+import ru.vidtu.ias.IAS;
+import ru.vidtu.ias.auth.account.Account;
+import ru.vidtu.ias.auth.ms.MSAuth;
+import ru.vidtu.ias.auth.account.OfflineAccount;
 
 import java.util.function.Consumer;
 
@@ -32,7 +32,7 @@ public class LoginScreen extends Screen {
     private final Component buttonText;
     private final Component buttonTip;
     private final Consumer<Account> handler;
-    private final MicrosoftAuthCallback callback = new MicrosoftAuthCallback();
+    private final MSAuthServer callback = new MSAuthServer();
     private EditBox username;
     private Button offline;
     private Button microsoft;
@@ -64,7 +64,7 @@ public class LoginScreen extends Screen {
         drawCenteredString(ms, font, I18n.get("ias.loginGui.nickname"), this.width / 2, height / 2 - 22, -1);
         if (state != null) {
             drawCenteredString(ms, font, state, width / 2, height / 3 * 2, 0xFFFF9900);
-            drawCenteredString(ms, font, SharedIAS.LOADING[(int) ((System.currentTimeMillis() / 50) % SharedIAS.LOADING.length)], width / 2, height / 3 * 2 + 10, 0xFFFF9900);
+            drawCenteredString(ms, font, IAS.LOADING[(int) ((System.currentTimeMillis() / 50) % IAS.LOADING.length)], width / 2, height / 3 * 2 + 10, 0xFFFF9900);
         }
         super.render(ms, mx, my, delta);
     }
@@ -76,7 +76,7 @@ public class LoginScreen extends Screen {
 
     @Override
     public void removed() {
-        SharedIAS.EXECUTOR.execute(callback::close);
+        IAS.EXECUTOR.execute(callback::close);
         super.removed();
     }
 
@@ -91,9 +91,9 @@ public class LoginScreen extends Screen {
 
     private void loginMicrosoft() {
         state = "";
-        SharedIAS.EXECUTOR.execute(() -> {
+        IAS.EXECUTOR.execute(() -> {
             state = I18n.get("ias.loginGui.microsoft.checkBrowser");
-            Util.getPlatform().openUri(MicrosoftAuthCallback.MICROSOFT_AUTH_URL);
+            Util.getPlatform().openUri(MSAuthServer.MICROSOFT_AUTH_URL);
             callback.start((s, o) -> state = I18n.get(s, o), I18n.get("ias.loginGui.microsoft.canClose")).whenComplete((acc, t) -> {
                 if (minecraft.screen != this) return;
                 if (t != null) {
@@ -116,9 +116,9 @@ public class LoginScreen extends Screen {
 
     private void loginOffline() {
         state = "";
-        SharedIAS.EXECUTOR.execute(() -> {
+        IAS.EXECUTOR.execute(() -> {
             state = I18n.get("ias.loginGui.offline.progress");
-            Account account = new OfflineAccount(username.getValue(), Auth.resolveUUID(username.getValue()));
+            Account account = new OfflineAccount(username.getValue(), MSAuth.nameToProfile(username.getValue()));
             minecraft.execute(() -> {
                 handler.accept(account);
                 minecraft.setScreen(prev);

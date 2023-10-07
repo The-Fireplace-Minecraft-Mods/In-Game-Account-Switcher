@@ -13,7 +13,7 @@ import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import ru.vidtu.ias.Config;
-import ru.vidtu.ias.Expression;
+import ru.vidtu.ias.utils.Expression;
 import ru.vidtu.ias.IASModMenuCompat;
 import the_fireplace.ias.gui.AccountListScreen;
 

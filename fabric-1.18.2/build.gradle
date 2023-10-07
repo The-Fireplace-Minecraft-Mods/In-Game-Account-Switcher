@@ -22,6 +22,8 @@ dependencies {
     modImplementation "com.terraformersmc:modmenu:3.2.5"
     modRuntimeOnly "maven.modrinth:lazydfu:0.1.2"
     compileOnly project(":shared")
+    compileOnly 'org.jetbrains:annotations:24.0.1'
+    compileOnly 'com.google.errorprone:error_prone_annotations:2.22.0'
 }
 
 tasks.withType(JavaCompile).configureEach {

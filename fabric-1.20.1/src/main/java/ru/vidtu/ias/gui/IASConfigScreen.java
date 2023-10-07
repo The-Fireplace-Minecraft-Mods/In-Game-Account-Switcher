@@ -8,7 +8,8 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
-import ru.vidtu.ias.Config;
+import ru.vidtu.ias.config.Alignment;
+import ru.vidtu.ias.config.IASConfig;
 
 import java.util.Objects;
 
@@ -40,28 +41,28 @@ public class IASConfigScreen extends Screen {
         addRenderableWidget(Button.builder(CommonComponents.GUI_DONE, button -> minecraft.setScreen(prev)).bounds(width / 2 - 75, height - 28, 150, 20).build());
         addRenderableWidget(titleScreenText = new Checkbox(5, 20, 24 + font.width(Component.translatable(
                 "ias.configGui.titleScreenText")), 20, Component.translatable(
-                        "ias.configGui.titleScreenText"), Config.titleScreenText));
+                        "ias.configGui.titleScreenText"), IASConfig.titleScreenText));
         addRenderableWidget(titleScreenTextX = new EditBox(font, 35 + font.width(Component.translatable(
                 "ias.configGui.titleScreenText")), 20, 50, 20, Component.literal("X")));
         addRenderableWidget(titleScreenTextY = new EditBox(font, 35 + font.width(Component.translatable(
                 "ias.configGui.titleScreenText")) + 54, 20, 50, 20, Component.literal("Y")));
         addRenderableWidget(titleScreenTextAlignment = Button.builder(
-                Component.translatable("ias.configGui.titleScreenText.alignment", I18n.get(Config.titleScreenTextAlignment.key())),
+                Component.translatable("ias.configGui.titleScreenText.alignment", I18n.get(IASConfig.titleScreenTextAlignment.key())),
                 btn -> changeAlignment()).bounds(
                 35 + font.width(Component.translatable(
                         "ias.configGui.titleScreenText")) + 108, 20, font.width(Component.translatable(
-                        "ias.configGui.titleScreenText.alignment", I18n.get(Config.titleScreenTextAlignment.key()))) + 20, 20
+                        "ias.configGui.titleScreenText.alignment", I18n.get(IASConfig.titleScreenTextAlignment.key()))) + 20, 20
         ).build());
         addRenderableWidget(titleScreenButton = new Checkbox(5, 44, 24 + font.width(Component.translatable(
                 "ias.configGui.titleScreenButton")), 20, Component.translatable(
-                "ias.configGui.titleScreenButton"), Config.titleScreenButton));
+                "ias.configGui.titleScreenButton"), IASConfig.titleScreenButton));
         addRenderableWidget(titleScreenButtonX = new EditBox(font, 35 + font.width(Component.translatable(
                 "ias.configGui.titleScreenButton")), 44, 50, 20, Component.literal("X")));
         addRenderableWidget(titleScreenButtonY = new EditBox(font, 35 + font.width(Component.translatable(
                 "ias.configGui.titleScreenButton")) + 54, 44, 50, 20, Component.literal("Y")));
         addRenderableWidget(multiplayerScreenButton = new Checkbox(5, 68, 24 + font.width(Component.translatable(
                 "ias.configGui.multiplayerScreenButton")), 20, Component.translatable(
-                "ias.configGui.multiplayerScreenButton"), Config.multiplayerScreenButton));
+                "ias.configGui.multiplayerScreenButton"), IASConfig.multiplayerScreenButton));
         addRenderableWidget(multiplayerScreenButtonX = new EditBox(font, 35 + font.width(Component.translatable(
                 "ias.configGui.multiplayerScreenButton")), 68, 50, 20, Component.literal("X")));
         addRenderableWidget(multiplayerScreenButtonY = new EditBox(font, 35 + font.width(Component.translatable(
@@ -78,21 +79,21 @@ public class IASConfigScreen extends Screen {
         titleScreenButtonY.setResponder(s -> titleScreenButtonY.setSuggestion(s.isEmpty() ? "Y" : ""));
         multiplayerScreenButtonX.setResponder(s -> multiplayerScreenButtonX.setSuggestion(s.isEmpty() ? "X" : ""));
         multiplayerScreenButtonY.setResponder(s -> multiplayerScreenButtonY.setSuggestion(s.isEmpty() ? "Y" : ""));
-        titleScreenTextX.setValue(Objects.toString(Config.titleScreenTextX, ""));
-        titleScreenTextY.setValue(Objects.toString(Config.titleScreenTextY, ""));
-        titleScreenButtonX.setValue(Objects.toString(Config.titleScreenButtonX, ""));
-        titleScreenButtonY.setValue(Objects.toString(Config.titleScreenButtonY, ""));
-        multiplayerScreenButtonX.setValue(Objects.toString(Config.multiplayerScreenButtonX, ""));
-        multiplayerScreenButtonY.setValue(Objects.toString(Config.multiplayerScreenButtonY, ""));
+        titleScreenTextX.setValue(Objects.toString(IASConfig.titleScreenTextX, ""));
+        titleScreenTextY.setValue(Objects.toString(IASConfig.titleScreenTextY, ""));
+        titleScreenButtonX.setValue(Objects.toString(IASConfig.titleScreenButtonX, ""));
+        titleScreenButtonY.setValue(Objects.toString(IASConfig.titleScreenButtonY, ""));
+        multiplayerScreenButtonX.setValue(Objects.toString(IASConfig.multiplayerScreenButtonX, ""));
+        multiplayerScreenButtonY.setValue(Objects.toString(IASConfig.multiplayerScreenButtonY, ""));
         tick();
     }
 
     private void changeAlignment() {
-        int i = Config.titleScreenTextAlignment.ordinal() + 1;
-        if (i >= Config.Alignment.values().length) i = 0;
-        Config.titleScreenTextAlignment = Config.Alignment.values()[i];
+        int i = IASConfig.titleScreenTextAlignment.ordinal() + 1;
+        if (i >= Alignment.values().length) i = 0;
+        IASConfig.titleScreenTextAlignment = Alignment.values()[i];
         titleScreenTextAlignment.setMessage(Component.translatable("ias.configGui.titleScreenText.alignment",
-                I18n.get(Config.titleScreenTextAlignment.key())));
+                I18n.get(IASConfig.titleScreenTextAlignment.key())));
         titleScreenTextAlignment.setWidth(font.width(titleScreenTextAlignment.getMessage()) + 20);
     }
 
@@ -103,16 +104,16 @@ public class IASConfigScreen extends Screen {
 
     @Override
     public void removed() {
-        Config.titleScreenText = titleScreenText.selected();
-        Config.titleScreenTextX = titleScreenTextX.getValue().trim().isEmpty() ? null : titleScreenTextX.getValue();
-        Config.titleScreenTextY = titleScreenTextY.getValue().trim().isEmpty() ? null : titleScreenTextY.getValue();
-        Config.titleScreenButton = titleScreenButton.selected();
-        Config.titleScreenButtonX = titleScreenButtonX.getValue().trim().isEmpty() ? null : titleScreenButtonX.getValue();
-        Config.titleScreenButtonY = titleScreenButtonY.getValue().trim().isEmpty() ? null : titleScreenButtonY.getValue();
-        Config.multiplayerScreenButton = multiplayerScreenButton.selected();
-        Config.multiplayerScreenButtonX = multiplayerScreenButtonX.getValue().trim().isEmpty() ? null : multiplayerScreenButtonX.getValue();
-        Config.multiplayerScreenButtonY = multiplayerScreenButtonY.getValue().trim().isEmpty() ? null : multiplayerScreenButtonY.getValue();
-        Config.save(minecraft.gameDirectory.toPath());
+        IASConfig.titleScreenText = titleScreenText.selected();
+        IASConfig.titleScreenTextX = titleScreenTextX.getValue().trim().isEmpty() ? null : titleScreenTextX.getValue();
+        IASConfig.titleScreenTextY = titleScreenTextY.getValue().trim().isEmpty() ? null : titleScreenTextY.getValue();
+        IASConfig.titleScreenButton = titleScreenButton.selected();
+        IASConfig.titleScreenButtonX = titleScreenButtonX.getValue().trim().isEmpty() ? null : titleScreenButtonX.getValue();
+        IASConfig.titleScreenButtonY = titleScreenButtonY.getValue().trim().isEmpty() ? null : titleScreenButtonY.getValue();
+        IASConfig.multiplayerScreenButton = multiplayerScreenButton.selected();
+        IASConfig.multiplayerScreenButtonX = multiplayerScreenButtonX.getValue().trim().isEmpty() ? null : multiplayerScreenButtonX.getValue();
+        IASConfig.multiplayerScreenButtonY = multiplayerScreenButtonY.getValue().trim().isEmpty() ? null : multiplayerScreenButtonY.getValue();
+        IASConfig.save(minecraft.gameDirectory.toPath());
     }
 
     @Override

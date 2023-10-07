@@ -1,4 +1,4 @@
-package ru.vidtu.ias;
+package ru.vidtu.ias.utils;
 
 import org.jetbrains.annotations.Contract;
 
