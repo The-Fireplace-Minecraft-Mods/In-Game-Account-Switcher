@@ -1,5 +1,5 @@
 {
-  "ias.title": "你正在以 %s 的身分登入。",
+  "ias.title": "你正在以 %s 的帳號遊玩。",
   "ias.listGui.search": "搜尋...",
   "ias.listGui.reloadSkins": "重新載入外觀",
   "ias.listGui.add": "新增",
@@ -13,7 +13,7 @@
   "ias.loginGui.add.button": "新增（離線）",
   "ias.loginGui.add.button.tooltip": "按下此按鈕將會新增一個離線帳號。你將無法使用此帳號加入伺服器。請使用「Microsoft」按鈕新增一般帳號。",
   "ias.loginGui.edit.button": "編輯（離線）",
-  "ias.loginGui.edit.button.tooltip": "按下此按鈕將會使此帳號成為離線帳號。你將無法使用此帳號加入伺服器。請使用「Microsoft」按鈕使用一般帳號。",
+  "ias.loginGui.edit.button.tooltip": "按下此按鈕將會使此帳號成為離線帳號。你將無法使用此帳號加入伺服器。請使用「Microsoft」按鈕新增一般帳號。",
   "ias.loginGui.offline.progress": "正在取得 UUID...",
   "ias.loginGui.microsoft": "Microsoft",
   "ias.loginGui.microsoft.checkBrowser": "檢查你的瀏覽器。",
