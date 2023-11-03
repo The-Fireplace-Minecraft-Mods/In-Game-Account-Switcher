@@ -23,13 +23,13 @@
   "ias.deleteGui.text": "%s 將會被刪除！",
   "ias.configGui.title": "遊戲內帳號切換 - In-Game Account Switcher 設定",
   "ias.configGui.titleScreenText": "標題畫面文字",
-  "ias.configGui.titleScreenText.alignment": "Alignment: %s",
+  "ias.configGui.titleScreenText.alignment": "對齊方式：%s",
   "ias.configGui.titleScreenText.alignment.left": "左",
   "ias.configGui.titleScreenText.alignment.center": "中",
   "ias.configGui.titleScreenText.alignment.right": "右",
   "ias.configGui.titleScreenButton": "標題畫面按鈕",
   "ias.configGui.multiplayerScreenButton": "多人遊戲畫面按鈕",
   "ias.error": "發生錯誤。",
-  "modmenu.descriptionTranslation.ias": "允許在不重新啟動 Minecraft 的情況下更改登入的帳號",
+  "modmenu.descriptionTranslation.ias": "允許在不重新啟動 Minecraft 的情況下更改登入的帳號。",
   "modmenu.summaryTranslation.ias": "允許你在遊戲內更改帳號。"
 }
