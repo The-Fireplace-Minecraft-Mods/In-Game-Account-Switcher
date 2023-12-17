@@ -1,0 +1,10 @@
+{
+  "ias.button.tip": "In-Game Account Switcher",
+  "ias.accounts": "In-Game Account Switcher Accounts",
+  "ias.config": "In-Game Account Switcher Config",
+  "ias.config.textAlign.left": "Left",
+  "ias.config.textAlign.center": "Center",
+  "ias.config.textAlign.right": "Right",
+  "modmenu.descriptionTranslation.ias": "Allows you to change which account you are signed in to in-game without restarting Minecraft.",
+  "modmenu.summaryTranslation.ias": "Allows you to change your account in-game."
+}
