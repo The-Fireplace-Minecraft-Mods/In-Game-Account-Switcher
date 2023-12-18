@@ -21,7 +21,7 @@ import java.util.concurrent.CompletableFuture;
 
 public class AccountList extends ObjectSelectionList<AccountList.AccountEntry> {
     public AccountList(Minecraft mc, int width, int height) {
-        super(mc, width, height, 32, height - 64, 14);
+        super(mc, width, height - 64 - 32, 32, 14);
     }
 
     public void updateAccounts(String query) {
