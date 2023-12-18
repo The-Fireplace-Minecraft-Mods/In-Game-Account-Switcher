@@ -20,7 +20,6 @@
 package ru.vidtu.ias.screen;
 
 import com.mojang.authlib.yggdrasil.ProfileResult;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.ObjectSelectionList;
 import net.minecraft.client.gui.screens.ConfirmScreen;
@@ -177,8 +176,8 @@ final class AccountList extends ObjectSelectionList<AccountEntry> {
         // Skip confirmation if shift is pressed.
         if (Screen.hasShiftDown()) {
             IASStorage.accounts.remove(account);
-            IASStorage.saveSafe(FabricLoader.getInstance().getGameDir());
-            IASStorage.disclaimers(FabricLoader.getInstance().getGameDir());
+            IAS.saveStorageSafe();
+            IAS.disclaimersStorage();
             this.update(this.screen.search.getValue());
             return;
         }
@@ -188,8 +187,8 @@ final class AccountList extends ObjectSelectionList<AccountEntry> {
             // Delete if confirmed.
             if (result) {
                 IASStorage.accounts.remove(account);
-                IASStorage.saveSafe(FabricLoader.getInstance().getGameDir());
-                IASStorage.disclaimers(FabricLoader.getInstance().getGameDir());
+                IAS.saveStorageSafe();
+                IAS.disclaimersStorage();
                 this.update(this.screen.search.getValue());
             }
 

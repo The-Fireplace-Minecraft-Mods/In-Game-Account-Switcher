@@ -69,6 +69,16 @@ public final class IAS {
     private static String userAgent = null;
 
     /**
+     * Current IAS game directory.
+     */
+    private static Path gameDirectory;
+
+    /**
+     * Current IAS config directory.
+     */
+    private static Path configDirectory;
+
+    /**
      * An instance of this class cannot be created.
      *
      * @throws AssertionError Always
@@ -84,14 +94,18 @@ public final class IAS {
      * @param configPath Config directory
      */
     public static void init(Path gamePath, Path configPath) {
+        // Initialize the dirs.
+        gameDirectory = gamePath;
+        configDirectory = configPath;
+
         // Write the disclaimers.
-        IASStorage.disclaimers(gamePath);
+        disclaimersStorage();
 
         // Read the config.
-        IASConfig.loadSafe(configPath);
+        loadConfigSafe();
 
         // Read the storage.
-        IASStorage.loadSafe(gamePath);
+        loadStorageSafe();
 
         // Create the executor.
         executor = Executors.newSingleThreadScheduledExecutor(r -> new Thread(r, "IAS Executor Thread"));
@@ -99,10 +113,8 @@ public final class IAS {
 
     /**
      * Closes the IAS.
-     *
-     * @param gamePath Game directory
      */
-    public static void close(Path gamePath) {
+    public static void close() {
         // Shutdown the executor.
         shutdown:
         try {
@@ -122,8 +134,10 @@ public final class IAS {
         // Destroy the UA.
         userAgent = null;
 
-        // Write the disclaimers.
-        IASStorage.disclaimers(gamePath);
+        // Write the disclaimers, if can.
+        if (gameDirectory != null) {
+            disclaimersStorage();
+        }
     }
 
     /**
@@ -159,5 +173,86 @@ public final class IAS {
     public static void userAgent(String version, String loader, String loaderVersion, String gameVersion) {
         userAgent = IAS.USER_AGENT_TEMPLATE.formatted(version, SESSION, loader, loaderVersion, gameVersion, Runtime.version().toString());
         LOG.info("IAS user agent: {}", userAgent);
+    }
+
+    /**
+     * Delegates to {@link IASConfig#loadSafe(Path)} with {@link #configDirectory}.
+     *
+     * @return Whether the config has been loaded without errors
+     */
+    public static boolean loadConfigSafe() {
+        return IASConfig.loadSafe(configDirectory);
+    }
+
+    /**
+     * Delegates to {@link IASConfig#load(Path)} with {@link #configDirectory}.
+     *
+     * @throws RuntimeException If unable to load the config
+     */
+    public static void loadConfig() {
+        IASConfig.load(configDirectory);
+    }
+
+    /**
+     * Delegates to {@link IASConfig#saveSafe(Path)} with {@link #configDirectory}.
+     *
+     * @return Whether the config has been saved without errors
+     */
+    public static boolean saveConfigSafe() {
+        return IASConfig.saveSafe(configDirectory);
+    }
+
+    /**
+     * Delegates to {@link IASConfig#save(Path)} with {@link #configDirectory}.
+     *
+     * @throws RuntimeException If unable to save the config
+     */
+    public static void saveConfig() {
+        IASConfig.save(configDirectory);
+    }
+
+    /**
+     * Delegates to {@link IASStorage#loadSafe(Path)} with {@link #gameDirectory}.
+     *
+     * @return Whether the storage has been loaded without errors
+     */
+    public static boolean loadStorageSafe() {
+        return IASStorage.loadSafe(gameDirectory);
+    }
+
+    /**
+     * Delegates to {@link IASStorage#load(Path)} with {@link #gameDirectory}.
+     *
+     * @throws RuntimeException If unable to load the storage
+     */
+    public static void loadStorage() {
+        IASStorage.load(gameDirectory);
+    }
+
+    /**
+     * Delegates to {@link IASStorage#saveSafe(Path)} with {@link #gameDirectory}.
+     *
+     * @return Whether the storage has been saved without errors
+     */
+    public static boolean saveStorageSafe() {
+        return IASStorage.saveSafe(gameDirectory);
+    }
+
+    /**
+     * Delegates to {@link IASStorage#save(Path)} with {@link #gameDirectory}.
+     *
+     * @throws RuntimeException If unable to save the storage
+     */
+    public static void saveStorage() {
+        IASStorage.save(gameDirectory);
+    }
+
+    /**
+     * Delegates to {@link IASStorage#disclaimers(Path)} with {@link #gameDirectory}.
+     *
+     * @throws RuntimeException If unable to write the disclaimers
+     */
+    public static void disclaimersStorage() {
+        IASStorage.disclaimers(gameDirectory);
     }
 }

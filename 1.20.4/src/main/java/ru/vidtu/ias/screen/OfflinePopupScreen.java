@@ -20,12 +20,12 @@
 package ru.vidtu.ias.screen;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
+import ru.vidtu.ias.IAS;
 import ru.vidtu.ias.account.OfflineAccount;
 import ru.vidtu.ias.config.IASStorage;
 
@@ -118,8 +118,8 @@ public final class OfflinePopupScreen extends Screen {
 
         // Add account.
         IASStorage.accounts.add(OfflineAccount.create(value));
-        IASStorage.saveSafe(FabricLoader.getInstance().getGameDir());
-        IASStorage.disclaimers(FabricLoader.getInstance().getGameDir());
+        IAS.saveStorageSafe();
+        IAS.disclaimersStorage();
 
         // Close to parent.
         this.minecraft.setScreen(this.parent);

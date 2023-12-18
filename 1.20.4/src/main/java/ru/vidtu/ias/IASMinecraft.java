@@ -21,15 +21,6 @@ package ru.vidtu.ias;
 
 import com.mojang.authlib.exceptions.AuthenticationException;
 import com.mojang.authlib.minecraft.UserApiService;
-import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.loader.api.FabricLoader;
-import net.fabricmc.loader.api.ModContainer;
-import net.fabricmc.loader.api.Version;
-import net.fabricmc.loader.api.metadata.ModMetadata;
 import net.minecraft.SharedConstants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.User;
@@ -38,49 +29,35 @@ import net.minecraft.client.multiplayer.ProfileKeyPairManager;
 import net.minecraft.client.multiplayer.chat.report.ReportEnvironment;
 import net.minecraft.client.multiplayer.chat.report.ReportingContext;
 import net.minecraft.client.telemetry.ClientTelemetryManager;
-import org.lwjgl.glfw.GLFW;
 import ru.vidtu.ias.account.Account;
 import ru.vidtu.ias.mixins.MinecraftAccessor;
-import ru.vidtu.ias.screen.AccountsScreen;
 
+import java.nio.file.Path;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * Main IAS class for Fabric.
+ * Main IAS class for Minecraft.
  *
  * @author VidTu
  */
-@Environment(EnvType.CLIENT)
-public final class IASFabric implements ClientModInitializer {
-    @Override
-    public void onInitializeClient() {
+public final class IASMinecraft {
+    /**
+     * Initializes the IAS.
+     *
+     * @param gameDir       Game directory
+     * @param configDir     Config directory
+     * @param loader        Loader name
+     * @param loaderVersion Loader version
+     * @param modVersion    Mod version
+     */
+    public static void init(Path gameDir, Path configDir, String loader, String modVersion, String loaderVersion) {
         // Initialize the IAS.
-        IAS.init(FabricLoader.getInstance().getGameDir(), FabricLoader.getInstance().getConfigDir());
+        IAS.init(gameDir, configDir);
 
         // Set the UA.
-        String modVersion = FabricLoader.getInstance().getModContainer("ias")
-                .map(ModContainer::getMetadata)
-                .map(ModMetadata::getVersion)
-                .map(Version::getFriendlyString)
-                .orElse("UNKNOWN");
-        String loaderVersion = FabricLoader.getInstance().getModContainer("fabricloader")
-                .map(ModContainer::getMetadata)
-                .map(ModMetadata::getVersion)
-                .map(Version::getFriendlyString)
-                .orElse("UNKNOWN");
-        IAS.userAgent(modVersion, "Fabric", loaderVersion, SharedConstants.getCurrentVersion().getName());
-
-        // Register closer.
-        ClientLifecycleEvents.CLIENT_STOPPING.register(client -> IAS.close(FabricLoader.getInstance().getGameDir()));
-
-        // Debug.
-        ClientTickEvents.END_CLIENT_TICK.register(client -> {
-            if (GLFW.glfwGetKey(client.getWindow().getWindow(), GLFW.GLFW_KEY_0) == GLFW.GLFW_PRESS) {
-                client.setScreen(new AccountsScreen(null));
-            }
-        });
+        IAS.userAgent(modVersion, loader, loaderVersion, SharedConstants.getCurrentVersion().getName());
     }
 
     /**

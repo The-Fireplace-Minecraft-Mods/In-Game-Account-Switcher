@@ -192,6 +192,9 @@ public final class AccountsScreen extends Screen {
             // Disable every button.
             this.login.active = this.offlineLogin.active = this.edit.active = this.delete.active = false;
 
+            // Hide tooltip, if exists.
+            this.login.setTooltip(null);
+
             // Hide skin.
             this.skin.visible = false;
 
@@ -203,7 +206,11 @@ public final class AccountsScreen extends Screen {
         this.offlineLogin.active = this.edit.active = this.delete.active = true;
 
         // Enable online login button if can log in.
-        this.login.active = selected.account.canLogin();
+        if (selected.account.canLogin()) {
+            this.login.active = true;
+        } else {
+            this.login.setTooltip(null);
+        }
 
         // Show skin.
         this.skin.visible = true;

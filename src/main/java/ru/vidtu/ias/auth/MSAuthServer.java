@@ -233,7 +233,7 @@ public final class MSAuthServer implements Runnable, Closeable {
                     ex.close();
 
                     // Close the server.
-                    close();
+                    IAS.executor().schedule(this::close, 10L, TimeUnit.SECONDS);
                 } catch (Throwable t) {
                     // Try to close the request.
                     try {
