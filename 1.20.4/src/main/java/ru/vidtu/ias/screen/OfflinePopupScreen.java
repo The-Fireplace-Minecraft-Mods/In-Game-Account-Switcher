@@ -26,9 +26,11 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import ru.vidtu.ias.IAS;
+import ru.vidtu.ias.account.Account;
 import ru.vidtu.ias.account.OfflineAccount;
 import ru.vidtu.ias.config.IASStorage;
 
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /**
@@ -41,6 +43,11 @@ public final class OfflinePopupScreen extends Screen {
      * Parent screen.
      */
     private final Screen parent;
+
+    /**
+     * Account handler.
+     */
+    private final Consumer<Account> handler;
 
     /**
      * Name box.
@@ -60,11 +67,13 @@ public final class OfflinePopupScreen extends Screen {
     /**
      * Creates a new add screen.
      *
-     * @param parent Parent screen
+     * @param parent  Parent screen
+     * @param handler Account handler
      */
-    OfflinePopupScreen(Screen parent) {
+    OfflinePopupScreen(Screen parent, Consumer<Account> handler) {
         super(Component.translatable("ias.offline"));
         this.parent = parent;
+        this.handler = handler;
     }
 
     @Override
@@ -116,13 +125,11 @@ public final class OfflinePopupScreen extends Screen {
         // Don't allow blank.
         if (value.isBlank()) return;
 
-        // Add account.
-        IASStorage.accounts.add(OfflineAccount.create(value));
-        IAS.saveStorageSafe();
-        IAS.disclaimersStorage();
-
         // Close to parent.
         this.minecraft.setScreen(this.parent);
+
+        // Create and accept.
+        this.handler.accept(OfflineAccount.create(value));
     }
 
     /**

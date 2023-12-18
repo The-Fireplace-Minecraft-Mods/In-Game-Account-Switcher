@@ -110,16 +110,4 @@ final class AccountEntry extends ObjectSelectionList.Entry<AccountEntry> {
                 "account=" + this.account +
                 '}';
     }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(this.account);
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (!(obj instanceof AccountEntry that)) return false;
-        return Objects.equals(this.account, that.account);
-    }
 }

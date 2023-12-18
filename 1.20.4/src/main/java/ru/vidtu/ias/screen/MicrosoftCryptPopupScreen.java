@@ -26,9 +26,11 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import org.lwjgl.glfw.GLFW;
+import ru.vidtu.ias.account.Account;
 import ru.vidtu.ias.crypt.DummyCrypt;
 import ru.vidtu.ias.crypt.HardwareCrypt;
 
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /**
@@ -41,6 +43,11 @@ final class MicrosoftCryptPopupScreen extends Screen {
      * Parent screen.
      */
     private final Screen parent;
+
+    /**
+     * Account handler.
+     */
+    private final Consumer<Account> handler;
 
     /**
      * Password encryption.
@@ -65,11 +72,13 @@ final class MicrosoftCryptPopupScreen extends Screen {
     /**
      * Creates a new add screen.
      *
-     * @param parent Parent screen
+     * @param parent  Parent screen
+     * @param handler Account handler
      */
-    MicrosoftCryptPopupScreen(Screen parent) {
+    MicrosoftCryptPopupScreen(Screen parent, Consumer<Account> handler) {
         super(Component.translatable("ias.microsoft"));
         this.parent = parent;
+        this.handler = handler;
     }
 
     @Override
@@ -84,7 +93,7 @@ final class MicrosoftCryptPopupScreen extends Screen {
 
         // Add password button.
         this.password = new PopupButton(this.width / 2 - 75, this.height / 2 - 24 - 12, 150, 20,
-                Component.translatable("ias.microsoft.password"), button -> this.minecraft.setScreen(new MicrosoftPopupScreen(this.parent, null)), Supplier::get);
+                Component.translatable("ias.microsoft.password"), button -> this.minecraft.setScreen(new MicrosoftPopupScreen(this.parent, this.handler, null)), Supplier::get);
         this.password.setTooltip(Tooltip.create(Component.translatable("ias.microsoft.password.tip")));
         this.password.setTooltipDelay(250);
         this.password.color(0.5F, 1.0F, 0.5F);
@@ -92,7 +101,7 @@ final class MicrosoftCryptPopupScreen extends Screen {
 
         // Add hardware button.
         this.hardware = new PopupButton(this.width / 2 - 75, this.height / 2 - 12, 150, 20,
-                Component.translatable("ias.microsoft.hardware"), button -> this.minecraft.setScreen(new MicrosoftPopupScreen(this.parent, HardwareCrypt.INSTANCE)), Supplier::get);
+                Component.translatable("ias.microsoft.hardware"), button -> this.minecraft.setScreen(new MicrosoftPopupScreen(this.parent, this.handler, HardwareCrypt.INSTANCE)), Supplier::get);
         this.hardware.setTooltip(Tooltip.create(Component.translatable("ias.microsoft.hardware.tip")));
         this.hardware.setTooltipDelay(250);
         this.hardware.color(1.0F, 1.0F, 0.5F);
@@ -100,7 +109,7 @@ final class MicrosoftCryptPopupScreen extends Screen {
 
         // Add offline button.
         this.plain = new PopupButton(this.width / 2 - 75, this.height / 2 + 12, 150, 20,
-                Component.translatable("ias.microsoft.plain"), button -> this.minecraft.setScreen(new MicrosoftPopupScreen(this.parent, DummyCrypt.INSTANCE)), Supplier::get);
+                Component.translatable("ias.microsoft.plain"), button -> this.minecraft.setScreen(new MicrosoftPopupScreen(this.parent, this.handler, DummyCrypt.INSTANCE)), Supplier::get);
         this.plain.setTooltipDelay(250);
         this.plain.setTooltip(Tooltip.create(Component.translatable("ias.microsoft.plain.tip.off", Component.translatable("key.keyboard.left.alt"), GLFW.glfwGetKeyName(GLFW.GLFW_KEY_Y, GLFW.GLFW_KEY_UNKNOWN))));
         this.plain.color(1.0F, 0.5F, 0.5F);

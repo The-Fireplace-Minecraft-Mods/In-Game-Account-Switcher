@@ -32,6 +32,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.util.FormattedCharSequence;
 import ru.vidtu.ias.IAS;
+import ru.vidtu.ias.account.Account;
 import ru.vidtu.ias.account.MicrosoftAccount;
 import ru.vidtu.ias.auth.MSAuthServer;
 import ru.vidtu.ias.config.IASStorage;
@@ -40,6 +41,7 @@ import ru.vidtu.ias.crypt.PasswordCrypt;
 
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /**
@@ -52,6 +54,11 @@ final class MicrosoftPopupScreen extends Screen implements MSAuthServer.CreateHa
      * Parent screen.
      */
     private final Screen parent;
+
+    /**
+     * Account handler.
+     */
+    private final Consumer<Account> handler;
 
     /**
      * Crypt method.
@@ -91,12 +98,14 @@ final class MicrosoftPopupScreen extends Screen implements MSAuthServer.CreateHa
     /**
      * Creates a new login screen.
      *
-     * @param parent Parent screen
-     * @param crypt  Crypt method, {@code null} to use password
+     * @param parent  Parent screen
+     * @param handler Account handler
+     * @param crypt   Crypt method, {@code null} to use password
      */
-    MicrosoftPopupScreen(Screen parent, Crypt crypt) {
+    MicrosoftPopupScreen(Screen parent, Consumer<Account> handler, Crypt crypt) {
         super(Component.translatable("ias.login"));
         this.parent = parent;
+        this.handler = handler;
         this.crypt = crypt;
     }
 
@@ -326,13 +335,14 @@ final class MicrosoftPopupScreen extends Screen implements MSAuthServer.CreateHa
 
         // Schedule on main.
         this.minecraft.execute(() -> {
-            // Add the account and save it.
-            IASStorage.accounts.add(account);
-            IAS.saveStorageSafe();
-            IAS.disclaimersStorage();
+            // Skip if not current screen.
+            if (this != this.minecraft.screen) return;
 
             // Back to parent screen.
             this.minecraft.setScreen(this.parent);
+
+            // Call the callback.
+            this.handler.accept(account);
         });
     }
 

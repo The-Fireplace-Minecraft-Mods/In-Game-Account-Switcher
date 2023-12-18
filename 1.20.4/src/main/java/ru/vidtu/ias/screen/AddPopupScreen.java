@@ -25,7 +25,9 @@ import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
+import ru.vidtu.ias.account.Account;
 
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /**
@@ -38,6 +40,11 @@ final class AddPopupScreen extends Screen {
      * Parent screen.
      */
     private final Screen parent;
+
+    /**
+     * Account handler.
+     */
+    private final Consumer<Account> handler;
 
     /**
      * Microsoft button.
@@ -57,11 +64,13 @@ final class AddPopupScreen extends Screen {
     /**
      * Creates a new add screen.
      *
-     * @param parent Parent screen
+     * @param parent  Parent screen
+     * @param handler Account handler
      */
-    AddPopupScreen(Screen parent) {
+    AddPopupScreen(Screen parent, Consumer<Account> handler) {
         super(Component.translatable("ias.add"));
         this.parent = parent;
+        this.handler = handler;
     }
 
     @Override
@@ -76,7 +85,7 @@ final class AddPopupScreen extends Screen {
 
         // Add offline button.
         this.microsoft = new PopupButton(this.width / 2 - 75, this.height / 2 - 24, 150, 20,
-                Component.translatable("ias.add.microsoft"), button -> this.minecraft.setScreen(new MicrosoftCryptPopupScreen(this.parent)), Supplier::get);
+                Component.translatable("ias.add.microsoft"), button -> this.minecraft.setScreen(new MicrosoftCryptPopupScreen(this.parent, this.handler)), Supplier::get);
         this.microsoft.setTooltip(Tooltip.create(Component.translatable("ias.add.microsoft.tip")));
         this.microsoft.setTooltipDelay(250);
         this.microsoft.color(0.5F, 1.0F, 0.5F);
@@ -84,7 +93,7 @@ final class AddPopupScreen extends Screen {
 
         // Add offline button.
         this.offline = new PopupButton(this.width / 2 - 75, this.height / 2, 150, 20,
-                Component.translatable("ias.add.offline"), button -> this.minecraft.setScreen(new OfflinePopupScreen(this.parent)), Supplier::get);
+                Component.translatable("ias.add.offline"), button -> this.minecraft.setScreen(new OfflinePopupScreen(this.parent, this.handler)), Supplier::get);
         this.offline.setTooltip(Tooltip.create(Component.translatable("ias.add.offline.tip")));
         this.offline.setTooltipDelay(250);
         this.offline.color(1.0F, 0.5F, 0.5F);

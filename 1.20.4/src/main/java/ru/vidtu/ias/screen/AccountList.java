@@ -160,7 +160,28 @@ final class AccountList extends ObjectSelectionList<AccountEntry> {
     }
 
     void edit() {
-        TinyFileDialogs.tinyfd_messageBox("IAS", "Not implemented yet.", "ok", "error", true);
+        // Skip if nothing is selected.
+        AccountEntry selected = this.getSelected();
+        if (selected == null) return;
+        int index = this.children().indexOf(selected);
+        if (index < 0 || index >= this.children().size() || index >= IASStorage.accounts.size()) return;
+
+        // Replace in storage.
+        this.minecraft.setScreen(new AddPopupScreen(this.screen, account -> {
+            // Skip if not current.
+            if (this.screen != this.minecraft.screen) return;
+            if (index >= this.children().size()) return;
+
+            // Add the account and save it.
+            IASStorage.accounts.set(index, account);
+            IAS.saveStorageSafe();
+            IAS.disclaimersStorage();
+
+            // Update the list.
+            this.update(this.screen.search.getValue());
+            if (index >= IASStorage.accounts.size()) return;
+            this.setSelected(this.children().get(index));
+        }));
     }
 
     /**
@@ -202,7 +223,15 @@ final class AccountList extends ObjectSelectionList<AccountEntry> {
      * Opens the account adding screen.
      */
     void add() {
-        this.minecraft.setScreen(new AddPopupScreen(this.screen));
+        this.minecraft.setScreen(new AddPopupScreen(this.screen, account -> {
+            // Skip if not current.
+            if (this.screen != this.minecraft.screen) return;
+
+            // Add the account and save it.
+            IASStorage.accounts.add(account);
+            IAS.saveStorageSafe();
+            IAS.disclaimersStorage();
+        }));
     }
 
     /**

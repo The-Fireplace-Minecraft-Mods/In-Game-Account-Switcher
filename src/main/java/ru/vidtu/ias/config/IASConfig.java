@@ -196,7 +196,7 @@ public class IASConfig {
     public static void save(Path path) {
         try {
             // Get the file.
-            Path file = path.resolve("ias.json");
+            Path file = path.resolve("ias_v9.json");
 
             // Hacky JSON writing.
             @SuppressWarnings("InstantiationOfUtilityClass")
