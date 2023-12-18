@@ -1,3 +1,22 @@
+/*
+ * In-Game Account Switcher is a mod for Minecraft that allows you to change your logged in account in-game, without restarting Minecraft.
+ * Copyright (C) 2015-2022 The_Fireplace
+ * Copyright (C) 2021-2023 VidTu
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>
+ */
+
 package ru.vidtu.ias;
 
 import org.slf4j.Logger;
@@ -9,13 +28,12 @@ import ru.vidtu.ias.config.IASStorage;
 import java.nio.file.Path;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Shared IAS class.
+ * Main IAS class.
  *
  * @author VidTu
  */
@@ -43,7 +61,7 @@ public final class IAS {
     /**
      * IAS executor.
      */
-    private static ExecutorService executor = null;
+    private static ScheduledExecutorService executor = null;
 
     /**
      * Current IAS user agent.
@@ -76,16 +94,19 @@ public final class IAS {
         IASStorage.loadSafe(gamePath);
 
         // Create the executor.
-        executor = Executors.newSingleThreadExecutor(r -> new Thread(r, "IAS Executor Thread"));
+        executor = Executors.newSingleThreadScheduledExecutor(r -> new Thread(r, "IAS Executor Thread"));
     }
 
     /**
      * Closes the IAS.
+     *
+     * @param gamePath Game directory
      */
-    public static void close() {
+    public static void close(Path gamePath) {
         // Shutdown the executor.
         shutdown:
         try {
+            if (executor == null) break shutdown;
             executor.shutdown();
             if (executor.awaitTermination(30L, TimeUnit.SECONDS)) break shutdown;
             LOG.warn("Unable to shutdown IAS executor. Shutting down forcefully...");
@@ -100,6 +121,9 @@ public final class IAS {
 
         // Destroy the UA.
         userAgent = null;
+
+        // Write the disclaimers.
+        IASStorage.disclaimers(gamePath);
     }
 
     /**
@@ -108,7 +132,7 @@ public final class IAS {
      * @return IAS executor
      * @throws NullPointerException If the executor is not available
      */
-    public static Executor executor() {
+    public static ScheduledExecutorService executor() {
         Objects.requireNonNull(executor, "IAS executor is not available.");
         return executor;
     }

@@ -1,8 +1,27 @@
+/*
+ * In-Game Account Switcher is a mod for Minecraft that allows you to change your logged in account in-game, without restarting Minecraft.
+ * Copyright (C) 2015-2022 The_Fireplace
+ * Copyright (C) 2021-2023 VidTu
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>
+ */
+
 package ru.vidtu.ias.account;
 
 import ru.vidtu.ias.IAS;
 import ru.vidtu.ias.auth.MSAuth;
-import ru.vidtu.ias.utils.CryptUtils;
+import ru.vidtu.ias.crypt.Crypt;
 import ru.vidtu.ias.utils.Holder;
 
 import java.io.ByteArrayInputStream;
@@ -12,9 +31,8 @@ import java.io.DataInputStream;
 import java.io.DataOutput;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.security.SecureRandom;
 import java.time.Duration;
-import java.util.Random;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
@@ -53,6 +71,11 @@ public final class MicrosoftAccount implements Account {
      * Encrypting tokens.
      */
     public static final String ENCRYPTING = "ias.login.encrypting";
+
+    /**
+     * Creating services.
+     */
+    public static final String SERVICES = "ias.login.services";
 
     /**
      * Converting Microsoft Authentication Code (MSAC) to Microsoft Access (MSA) and Microsoft Refresh (MSR) tokens.
@@ -128,6 +151,12 @@ public final class MicrosoftAccount implements Account {
     }
 
     @Override
+    public boolean canLogin() {
+        // Online accounts should be loggable.
+        return true;
+    }
+
+    @Override
     public void login(LoginHandler handler) {
         try {
             // Log it and display progress.
@@ -138,41 +167,48 @@ public final class MicrosoftAccount implements Account {
             MSAuth auth = new MSAuth(IAS.userAgent(), IAS.CLIENT_ID, null, Duration.ofSeconds(15L), IAS.executor());
 
             // Value holders.
-            Holder<String> password = new Holder<>();
+            Holder<Crypt> crypt = new Holder<>();
             Holder<String> access = new Holder<>();
             Holder<String> refresh = new Holder<>();
 
-            // Ask for password.
-            handler.password().thenApplyAsync(pwd -> {
-                // Skip if cancelled.
-                if (pwd == null) return false;
+            // Read the crypt.
+            CompletableFuture<Crypt> future;
+            byte[] crypted;
+            try (ByteArrayInputStream byteIn = new ByteArrayInputStream(this.data);
+                 DataInputStream in = new DataInputStream(byteIn)) {
+                // Read and process the crypt.
+                future = Crypt.decrypt(in, handler::password);
 
-                // Set the value.
-                password.set(pwd);
+                // Crypted data.
+                crypted = in.readAllBytes();
+            }
+
+            // Decrypt.
+            future.thenApplyAsync(value -> {
+                // Crypt was cancelled.
+                if (value == null) {
+                    // Log it.
+                    IAS.LOG.info("IAS: Crypt was cancelled.");
+
+                    // Return cancel.
+                    return null;
+                }
 
                 // Log it and display progress.
                 IAS.LOG.info("IAS: Decrypting tokens...");
                 handler.stage(DECRYPTING);
 
-                // Decrypt the tokens.
-                byte[] decrypted;
-                try (ByteArrayInputStream byteIn = new ByteArrayInputStream(this.data);
-                     DataInputStream in = new DataInputStream(byteIn)) {
-                    // Read the salt.
-                    byte[] salt = new byte[256];
-                    in.readFully(salt);
+                // Set the crypt.
+                crypt.set(value);
 
-                    // Read the encrypted data.
-                    byte[] encrypted = in.readAllBytes();
-
-                    // Decrypt the data.
-                    decrypted = CryptUtils.decrypt(encrypted, pwd, salt);
-                } catch (Throwable t) {
-                    throw new RuntimeException("Unable to decrypt the tokens.", t);
-                }
+                // Decrypt.
+                return value.decrypt(crypted);
+            }, IAS.executor()).thenApplyAsync(value -> {
+                // Skip if cancelled.
+                if (value == null) return false;
 
                 // Read the decrypted data into tokens.
-                try (ByteArrayInputStream byteIn = new ByteArrayInputStream(decrypted);
+                try (ByteArrayInputStream byteIn = new ByteArrayInputStream(value);
                      DataInputStream in = new DataInputStream(byteIn)) {
                     // Read the access token.
                     access.set(in.readUTF());
@@ -190,105 +226,108 @@ public final class MicrosoftAccount implements Account {
                 } catch (Throwable t) {
                     throw new RuntimeException("Unable to read the tokens.", t);
                 }
-            }, IAS.executor()).thenComposeAsync(progress -> {
+            }, IAS.executor()).thenComposeAsync(value -> {
                 // Skip if cancelled.
-                if (!progress) return CompletableFuture.completedFuture(null);
+                if (!value) return CompletableFuture.completedFuture(null);
 
                 // Log it and display progress.
                 IAS.LOG.info("IAS: Converting MCA to MCP... (stored)");
                 handler.stage(MCA_TO_MCP);
 
                 // Convert MCA to MCP.
-                return auth.mcaToMcp(access.get());
-            }, IAS.executor()).exceptionallyComposeAsync(original -> {
-                // Log it and display progress.
-                IAS.LOG.warn("IAS: MCA is (probably) expired. Refreshing...");
-                IAS.LOG.info("IAS: Converting MSR to MSA/MSR...");
-                handler.stage(MSR_TO_MSA_MSR);
-
-                // Convert MSR to MSA/MSR.
-                return auth.msrToMsaMsr(refresh.get()).thenComposeAsync(ms -> {
-                    // Update the refresh token.
-                    refresh.set(ms.refresh());
-
+                return auth.mcaToMcp(access.get()).exceptionallyComposeAsync(original -> {
                     // Log it and display progress.
-                    IAS.LOG.info("IAS: Converting MSA to XBL...");
-                    handler.stage(MSA_TO_XBL);
+                    IAS.LOG.warn("IAS: MCA is (probably) expired. Refreshing...");
+                    IAS.LOG.info("IAS: Converting MSR to MSA/MSR...");
+                    handler.stage(MSR_TO_MSA_MSR);
 
-                    // Convert MSA to XBL.
-                    return auth.msaToXbl(ms.access());
-                }, IAS.executor()).thenComposeAsync(xbl -> {
-                    // Log it and display progress.
-                    IAS.LOG.info("IAS: Converting XBL to XSTS...");
-                    handler.stage(XBL_TO_XSTS);
+                    // Convert MSR to MSA/MSR.
+                    return auth.msrToMsaMsr(refresh.get()).thenComposeAsync(ms -> {
+                        // Update the refresh token.
+                        refresh.set(ms.refresh());
 
-                    // Convert XBL to XSTS.
-                    return auth.xblToXsts(xbl.token(), xbl.hash());
-                }, IAS.executor()).thenComposeAsync(xsts -> {
-                    // Log it and display progress.
-                    IAS.LOG.info("IAS: Converting XSTS to MCA...");
-                    handler.stage(XSTS_TO_MCA);
+                        // Log it and display progress.
+                        IAS.LOG.info("IAS: Converting MSA to XBL...");
+                        handler.stage(MSA_TO_XBL);
 
-                    // Convert XSTS to MCA.
-                    return auth.xstsToMca(xsts.token(), xsts.hash());
-                }, IAS.executor()).thenComposeAsync(token -> {
-                    // Update the access token.
-                    access.set(token);
+                        // Convert MSA to XBL.
+                        return auth.msaToXbl(ms.access());
+                    }, IAS.executor()).thenComposeAsync(xbl -> {
+                        // Log it and display progress.
+                        IAS.LOG.info("IAS: Converting XBL to XSTS...");
+                        handler.stage(XBL_TO_XSTS);
 
-                    // Log it and display progress.
-                    IAS.LOG.info("IAS: Converting MCA TO MCP... (refreshed)");
-                    handler.stage(MCA_TO_MCP);
+                        // Convert XBL to XSTS.
+                        return auth.xblToXsts(xbl.token(), xbl.hash());
+                    }, IAS.executor()).thenComposeAsync(xsts -> {
+                        // Log it and display progress.
+                        IAS.LOG.info("IAS: Converting XSTS to MCA...");
+                        handler.stage(XSTS_TO_MCA);
 
-                    // Convert MCA to MCP.
-                    return auth.mcaToMcp(token);
-                }, IAS.executor()).thenApplyAsync(profile -> {
-                    // Log it and display progress.
-                    IAS.LOG.info("IAS: Encrypting tokens...");
-                    handler.stage(ENCRYPTING);
+                        // Convert XSTS to MCA.
+                        return auth.xstsToMca(xsts.token(), xsts.hash());
+                    }, IAS.executor()).thenComposeAsync(token -> {
+                        // Update the access token.
+                        access.set(token);
 
-                    // Write the tokens.
-                    byte[] unencrypted;
-                    try (ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
-                         DataOutputStream out = new DataOutputStream(byteOut)) {
-                        // Write the access token.
-                        out.writeUTF(access.get());
+                        // Log it and display progress.
+                        IAS.LOG.info("IAS: Converting MCA TO MCP... (refreshed)");
+                        handler.stage(MCA_TO_MCP);
 
-                        // Write the refresh token.
-                        out.writeUTF(refresh.get());
+                        // Convert MCA to MCP.
+                        return auth.mcaToMcp(token);
+                    }, IAS.executor()).thenApplyAsync(profile -> {
+                        // Log it and display progress.
+                        IAS.LOG.info("IAS: Encrypting tokens...");
+                        handler.stage(ENCRYPTING);
 
-                        // Flush it.
-                        unencrypted = byteOut.toByteArray();
-                    } catch (Throwable t) {
-                        throw new RuntimeException("Unable to write the tokens.", t);
-                    }
+                        // Write the tokens.
+                        byte[] unencrypted;
+                        try (ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
+                             DataOutputStream out = new DataOutputStream(byteOut)) {
+                            // Write the access token.
+                            out.writeUTF(access.get());
 
-                    // Encrypt the tokens.
-                    try (ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
-                         DataOutputStream out = new DataOutputStream(byteOut)) {
-                        // Generate and write the salt.
-                        Random random = SecureRandom.getInstanceStrong();
-                        byte[] salt = new byte[256];
-                        random.nextBytes(salt);
-                        out.write(salt);
+                            // Write the refresh token.
+                            out.writeUTF(refresh.get());
 
-                        // Write the data.
-                        out.write(unencrypted);
+                            // Flush it.
+                            unencrypted = byteOut.toByteArray();
+                        } catch (Throwable t) {
+                            throw new RuntimeException("Unable to write the tokens.", t);
+                        }
 
-                        // Encrypt the data.
-                        this.data = CryptUtils.encrypt(unencrypted, password.get(), salt);
-                    } catch (Throwable t) {
-                        throw new RuntimeException("Unable to encrypt the tokens.", t);
-                    }
+                        // Encrypt the tokens.
+                        try (ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
+                             DataOutputStream out = new DataOutputStream(byteOut)) {
+                            // Encrypt.
+                            byte[] encrypted = crypt.get().encrypt(unencrypted);
 
-                    // Return the profile as-is.
-                    return profile;
-                }, IAS.executor()).exceptionallyAsync(t -> {
-                    // Rethrow. (adding original)
-                    RuntimeException e = new RuntimeException("Unable to refresh MSR.", t);
-                    t.addSuppressed(original);
-                    throw e;
+                            // Write type.
+                            Crypt.encrypt(out, crypt.get());
+
+                            // Write data.
+                            out.write(encrypted);
+
+                            // Flush it.
+                            this.data = byteOut.toByteArray();
+                        } catch (Throwable t) {
+                            throw new RuntimeException("Unable to encrypt the tokens.", t);
+                        }
+
+                        // Return the profile as-is.
+                        return profile;
+                    }, IAS.executor()).exceptionallyAsync(t -> {
+                        // Rethrow. (adding original)
+                        RuntimeException e = new RuntimeException("Unable to refresh MSR.", t);
+                        t.addSuppressed(original);
+                        throw e;
+                    }, IAS.executor());
                 }, IAS.executor());
             }, IAS.executor()).thenAcceptAsync(profile -> {
+                // Skip if null.
+                if (profile == null) return;
+
                 // Authentication successful, refresh the profile.
                 this.uuid = profile.uuid();
                 this.name = profile.name();
@@ -298,11 +337,11 @@ public final class MicrosoftAccount implements Account {
                 handler.stage(FINALIZING);
 
                 // Create and return the data.
-                LoginData data = new LoginData(this.name, this.uuid, access.get(), LoginData.MSA);
-                handler.success(data);
+                LoginData login = new LoginData(this.name, this.uuid, access.get(), LoginData.MSA);
+                handler.success(login);
             }, IAS.executor()).exceptionallyAsync(t -> {
                 // Handle error.
-                handler.error(new RuntimeException("Unable to create an MS account", t));
+                handler.error(new RuntimeException("Unable to login as MS account", t));
 
                 // Return null.
                 return null;
@@ -311,6 +350,18 @@ public final class MicrosoftAccount implements Account {
             // Handle.
             handler.error(new RuntimeException("Unable to begin MS auth.", t));
         }
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (!(obj instanceof MicrosoftAccount that)) return false;
+        return Objects.equals(this.uuid, that.uuid) && Objects.equals(this.name, that.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.uuid, this.name);
     }
 
     @Override

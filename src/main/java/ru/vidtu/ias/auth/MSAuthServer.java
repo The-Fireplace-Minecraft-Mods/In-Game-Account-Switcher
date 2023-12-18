@@ -1,10 +1,29 @@
+/*
+ * In-Game Account Switcher is a mod for Minecraft that allows you to change your logged in account in-game, without restarting Minecraft.
+ * Copyright (C) 2015-2022 The_Fireplace
+ * Copyright (C) 2021-2023 VidTu
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>
+ */
+
 package ru.vidtu.ias.auth;
 
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpServer;
 import ru.vidtu.ias.IAS;
 import ru.vidtu.ias.account.MicrosoftAccount;
-import ru.vidtu.ias.utils.CryptUtils;
+import ru.vidtu.ias.crypt.Crypt;
 import ru.vidtu.ias.utils.Holder;
 
 import java.io.ByteArrayOutputStream;
@@ -15,15 +34,14 @@ import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
-import java.security.SecureRandom;
 import java.time.Duration;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
-import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 /**
  * HTTP server for MS authentication.
@@ -31,6 +49,16 @@ import java.util.concurrent.CompletableFuture;
  * @author VidTu
  */
 public final class MSAuthServer implements Runnable, Closeable {
+    /**
+     * Auth URI with {@code %%port%%} to be replaced by port.
+     */
+    private static final String MICROSOFT_AUTH_URL = "https://login.live.com/oauth20_authorize.srf" +
+            "?client_id=54fd49e4-2103-4044-9603-2b028c814ec3" +
+            "&response_type=code" +
+            "&scope=XboxLive.signin%20XboxLive.offline_access" +
+            "&redirect_uri=http://localhost:%%port%%/in_game_account_switcher_long_enough_uri_to_prevent_accidental_leaks_on_screensharing_even_if_you_have_like_extremely_big_screen_though_it_might_not_mork_but_we_will_try_it_anyway_to_prevent_funny_things_from_happening_or_something" +
+            "&prompt=select_account";
+
     /**
      * Redirect URI with one {@code %s} argument to be replaced by port.
      */
@@ -47,9 +75,9 @@ public final class MSAuthServer implements Runnable, Closeable {
     private final String doneMessage;
 
     /**
-     * Encryption password.
+     * Account crypt.
      */
-    private final String password;
+    private final Crypt crypt;
 
     /**
      * Login handler.
@@ -71,15 +99,15 @@ public final class MSAuthServer implements Runnable, Closeable {
      * Creates an HTTP server for MS auth.
      *
      * @param doneMessage Message on the "done" screen
-     * @param password    Encryption password
+     * @param crypt       Account crypt
      * @param handler     Creation handler
      * @throws RuntimeException If unable to create an HTTP server
      */
-    public MSAuthServer(String doneMessage, String password, CreateHandler handler) {
+    public MSAuthServer(String doneMessage, Crypt crypt, CreateHandler handler) {
         try {
             // Assign the values.
             this.doneMessage = doneMessage;
-            this.password = password;
+            this.crypt = crypt;
             this.handler = handler;
 
             // Create the server.
@@ -100,8 +128,12 @@ public final class MSAuthServer implements Runnable, Closeable {
             // Create the root handler.
             this.server.createContext("/", ex -> {
                 try {
+                    // Log it.
+                    IAS.LOG.info("IAS: Requested HTTP to '/'.");
+
                     // Close and ignore if not localhost.
                     if (!ex.getRemoteAddress().getAddress().isLoopbackAddress()) {
+                        IAS.LOG.warn("IAS: Closed not loopback HTTP request to '/'.");
                         ex.close();
                         return;
                     }
@@ -139,11 +171,8 @@ public final class MSAuthServer implements Runnable, Closeable {
                     // Send the query.
                     auth(uri);
 
-                    // Wait for processing.
-                    Thread.sleep(10000L);
-
                     // Close the server.
-                    close();
+                    IAS.executor().schedule(this::close, 10L, TimeUnit.SECONDS);
                 } catch (Throwable t) {
                     // Try to close the request.
                     try {
@@ -167,8 +196,12 @@ public final class MSAuthServer implements Runnable, Closeable {
             // Create the end handler. (safe spot)
             this.server.createContext("/end", ex -> {
                 try {
+                    // Log it.
+                    IAS.LOG.info("IAS: Requested HTTP to '/end'.");
+
                     // Close and ignore if not localhost.
                     if (!ex.getRemoteAddress().getAddress().isLoopbackAddress()) {
+                        IAS.LOG.warn("IAS: Closed not loopback request to '/end'.");
                         ex.close();
                         return;
                     }
@@ -258,6 +291,8 @@ public final class MSAuthServer implements Runnable, Closeable {
                 this.server.bind(new InetSocketAddress(port), 0);
 
                 // No exception is thrown, return and do not process throwing.
+                this.port = port;
+                IAS.LOG.info("IAS: Bound HTTP server {} to: {}", this.server, this.port);
                 return;
             } catch (Throwable t) {
                 // Add to thrown.
@@ -269,6 +304,15 @@ public final class MSAuthServer implements Runnable, Closeable {
         RuntimeException holder = new RuntimeException("Unable to bind to any port: " + this.server);
         thrown.forEach(holder::addSuppressed);
         throw holder;
+    }
+
+    /**
+     * Gets the auth URL.
+     *
+     * @return Auth URL
+     */
+    public String authUrl() {
+        return MICROSOFT_AUTH_URL.replace("%%port%%", Integer.toString(this.port));
     }
 
     /**
@@ -382,17 +426,17 @@ public final class MSAuthServer implements Runnable, Closeable {
                 // Encrypt the tokens.
                 try (ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
                      DataOutputStream out = new DataOutputStream(byteOut)) {
-                    // Generate and write the salt.
-                    Random random = SecureRandom.getInstanceStrong();
-                    byte[] salt = new byte[256];
-                    random.nextBytes(salt);
-                    out.write(salt);
+                    // Encrypt.
+                    byte[] encrypted = this.crypt.encrypt(unencrypted);
 
-                    // Write the data.
-                    out.write(unencrypted);
+                    // Write type.
+                    Crypt.encrypt(out, this.crypt);
 
-                    // Encrypt the data.
-                    data.set(CryptUtils.encrypt(unencrypted, this.password, salt));
+                    // Write data.
+                    out.write(encrypted);
+
+                    // Flush it.
+                    data.set(byteOut.toByteArray());
                 } catch (Throwable t) {
                     throw new RuntimeException("Unable to encrypt the tokens.", t);
                 }
@@ -431,6 +475,9 @@ public final class MSAuthServer implements Runnable, Closeable {
     public void close() {
         // Close the server.
         this.server.stop(0);
+
+        // Log it.
+        IAS.LOG.info("IAS: HTTP server {} stopped.", this.server);
     }
 
     /**

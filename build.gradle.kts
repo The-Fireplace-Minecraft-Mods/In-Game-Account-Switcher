@@ -6,6 +6,7 @@ java.sourceCompatibility = JavaVersion.VERSION_17
 java.targetCompatibility = JavaVersion.VERSION_17
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 group = "ru.vidtu.ias"
+base.archivesName = "IAS-Commons"
 
 repositories {
     mavenCentral()
@@ -22,6 +23,6 @@ tasks.withType<JavaCompile> {
 }
 
 tasks.withType<Jar> {
-    from("LICENSE")
-    from("GPL")
+    from(rootDir.resolve("LICENSE"))
+    from(rootDir.resolve("GPL"))
 }

@@ -17,77 +17,52 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
 
-package ru.vidtu.ias.utils;
-
-import java.util.Objects;
+package ru.vidtu.ias.crypt;
 
 /**
- * Mutable data holder.
+ * Dummy crypt.
  *
- * @param <T> Hold data type
  * @author VidTu
- * @apiNote Exists because local vars can't be modified in lambdas
  */
-public final class Holder<T> {
+public final class DummyCrypt implements Crypt {
     /**
-     * Hold value.
+     * Shared dummy crypt.
+     *
+     * @apiNote Use {@link #equals(Object)} for comparison
      */
-    private T value;
+    public static final DummyCrypt INSTANCE = new DummyCrypt();
 
     /**
-     * Creates a new holder that holds {@code null}.
+     * Creates a new dummy crypt.
+     *
+     * @see #INSTANCE
      */
-    public Holder() {
-        this.value = null;
+    public DummyCrypt() {
+        // Empty
     }
 
-    /**
-     * Creates a new holder.
-     *
-     * @param value Hold value
-     * @see #get()
-     * @see #set(Object)
-     */
-    public Holder(T value) {
-        this.value = value;
+    @Override
+    public byte[] encrypt(byte[] decrypted) {
+        return decrypted;
     }
 
-    /**
-     * Gets the hold value.
-     *
-     * @return Hold value
-     * @see #get()
-     */
-    public T get() {
-        return this.value;
-    }
-
-    /**
-     * Sets the hold value.
-     *
-     * @param value Hold value
-     * @see #set(Object)
-     */
-    public void set(T value) {
-        this.value = value;
+    @Override
+    public byte[] decrypt(byte[] encrypted) {
+        return encrypted;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (!(obj instanceof Holder<?> that)) return false;
-        return Objects.equals(this.value, that.value);
+        return obj instanceof DummyCrypt;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.value);
+        return 158798543;
     }
 
     @Override
     public String toString() {
-        return "Holder{" +
-                "value=" + this.value +
-                '}';
+        return "DummyCrypt{}";
     }
 }

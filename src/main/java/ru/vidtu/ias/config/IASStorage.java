@@ -1,16 +1,31 @@
+/*
+ * In-Game Account Switcher is a mod for Minecraft that allows you to change your logged in account in-game, without restarting Minecraft.
+ * Copyright (C) 2015-2022 The_Fireplace
+ * Copyright (C) 2021-2023 VidTu
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>
+ */
+
 package ru.vidtu.ias.config;
 
 import ru.vidtu.ias.IAS;
 import ru.vidtu.ias.account.Account;
-import ru.vidtu.ias.account.MicrosoftAccount;
-import ru.vidtu.ias.account.OfflineAccount;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.DataInput;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
@@ -66,7 +81,7 @@ public final class IASStorage {
     /**
      * Account data, encrypted or not.
      */
-    private static List<Account> accounts;
+    public static List<Account> accounts = new ArrayList<>();
 
     /**
      * Creates a new storage for GSON.
@@ -152,11 +167,8 @@ public final class IASStorage {
 
                 // Read all accounts.
                 for (int i = 0; i < length; i++) {
-                    // Read the type.
-                    String type = in.readUTF();
-
-                    // Read the account.
-                    Account account = readTypedAccount(type, in);
+                    // Read typed.
+                    Account account = Account.readTyped(in);
 
                     // Add the account.
                     list.add(account);
@@ -217,14 +229,8 @@ public final class IASStorage {
 
                 // Write the accounts.
                 for (Account account : list) {
-                    // Get the account type.
-                    String type = accountType(account);
-
-                    // Write the account type.
-                    out.writeUTF(type);
-
-                    // Write the account.
-                    account.write(out);
+                    // Write typed.
+                    Account.writeTyped(out, account);
                 }
 
                 // Flush the data.
@@ -243,35 +249,5 @@ public final class IASStorage {
             // Rethrow.
             throw new RuntimeException("Unable to save IAS storage.", t);
         }
-    }
-
-    /**
-     * Reads the account by its type.
-     *
-     * @param type Account type
-     * @param in   Target input
-     * @return Read account
-     * @throws IllegalArgumentException On invalid account type
-     * @throws IOException              On I/O exception
-     */
-    private static Account readTypedAccount(String type, DataInput in) throws IOException {
-        return switch (type) {
-            case "ias:offline" -> OfflineAccount.read(in);
-            case "ias:microsoft" -> MicrosoftAccount.read(in);
-            default -> throw new IllegalArgumentException("Unknown account type: " + type);
-        };
-    }
-
-    /**
-     * Gets the account type from its class.
-     *
-     * @param account Target account
-     * @return Account type
-     * @throws IllegalArgumentException On invalid account type
-     */
-    private static String accountType(Account account) {
-        if (account instanceof OfflineAccount) return "ias:offline";
-        if (account instanceof MicrosoftAccount) return "ias:microsoft";
-        throw new IllegalArgumentException("Unknown account type: " + account + " (" + (account != null ? account.getClass() : null) + ")");
     }
 }

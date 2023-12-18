@@ -15,17 +15,28 @@ repositories {
 
 dependencies {
     val fabric = project.properties["fabric"]
-    minecraft("com.mojang:minecraft:1.19.4")
+    minecraft("com.mojang:minecraft:1.20.4")
     mappings(loom.officialMojangMappings())
     modImplementation("net.fabricmc:fabric-loader:${fabric}")
+    modImplementation("net.fabricmc.fabric-api:fabric-api:0.91.3+1.20.4")
+    compileOnly(rootProject)
 }
 
 tasks.withType<JavaCompile> {
+    source(rootProject.sourceSets.main.get().java)
     options.encoding = "UTF-8"
     options.release.set(17)
 }
 
+tasks.withType<ProcessResources> {
+    from(rootProject.sourceSets.main.get().resources)
+    inputs.property("version", project.version)
+    filesMatching("fabric.mod.json") {
+        expand("version" to project.version)
+    }
+}
+
 tasks.withType<Jar> {
-    from("LICENSE")
-    from("GPL")
+    from(rootDir.resolve("LICENSE"))
+    from(rootDir.resolve("GPL"))
 }

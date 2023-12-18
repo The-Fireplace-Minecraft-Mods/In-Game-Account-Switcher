@@ -1,10 +1,28 @@
-package ru.vidtu.ias.account;
+/*
+ * In-Game Account Switcher is a mod for Minecraft that allows you to change your logged in account in-game, without restarting Minecraft.
+ * Copyright (C) 2015-2022 The_Fireplace
+ * Copyright (C) 2021-2023 VidTu
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>
+ */
 
-import ru.vidtu.ias.IAS;
+package ru.vidtu.ias.account;
 
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
 /**
@@ -16,13 +34,15 @@ import java.util.UUID;
  */
 public record OfflineAccount(UUID uuid, String name) implements Account {
     @Override
-    public void login(LoginHandler handler) {
-        // Log the info.
-        IAS.LOG.info("Logging (offline) as {}/{}", this.uuid, this.name);
+    public boolean canLogin() {
+        // Offline account can be logged in only via offline.
+        return false;
+    }
 
-        // Log in.
-        LoginData data = new LoginData(this.name, this.uuid, "ias:offline", LoginData.LEGACY);
-        handler.success(data);
+    @Override
+    public void login(LoginHandler handler) {
+        // Offline account can be logged in only via offline.
+        handler.error(new UnsupportedOperationException("Offline account login: " + this));
     }
 
     /**
@@ -56,6 +76,17 @@ public record OfflineAccount(UUID uuid, String name) implements Account {
         String name = in.readUTF();
 
         // Create and return.
+        return new OfflineAccount(uuid, name);
+    }
+
+    /**
+     * Creates an offline account with UUID matching the offline UUID convention.
+     *
+     * @param name Offline account name
+     * @return Created offline account
+     */
+    public static OfflineAccount create(String name) {
+        UUID uuid = UUID.nameUUIDFromBytes("OfflinePlayer:".concat(name).getBytes(StandardCharsets.UTF_8));
         return new OfflineAccount(uuid, name);
     }
 }
