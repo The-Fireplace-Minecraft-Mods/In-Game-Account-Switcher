@@ -81,7 +81,7 @@ public final class OfflinePopupScreen extends Screen {
         }
 
         // Add name box.
-        this.name = new PopupBox(this.font, this.width / 2 - 75, this.height / 2 - 10 + 5, 148, 20, this.name, Component.translatable("ias.offline.name"), this::done);
+        this.name = new PopupBox(this.font, this.width / 2 - 75, this.height / 2 - 10 + 5, 148, 20, this.name, Component.translatable("ias.offline.nick"), this::done);
         this.name.setMaxLength(16);
         this.addRenderableWidget(this.name);
 
@@ -139,7 +139,7 @@ public final class OfflinePopupScreen extends Screen {
             this.done.active = false;
 
             // Tooltip.
-            this.done.setTooltip(Tooltip.create(Component.translatable("ias.offline.name.blank")));
+            this.done.setTooltip(Tooltip.create(Component.translatable("ias.offline.nick.blank")));
             this.done.setTooltipDelay(-1);
 
             // Update color.
@@ -165,7 +165,7 @@ public final class OfflinePopupScreen extends Screen {
             }
 
             // Tooltip.
-            this.done.setTooltip(Tooltip.create(Component.translatable("ias.offline.name.short", Component.translatable("key.keyboard.left.alt"))));
+            this.done.setTooltip(Tooltip.create(Component.translatable("ias.offline.nick.short", Component.translatable("key.keyboard.left.alt"))));
             this.done.setTooltipDelay(-1);
 
             // Don't process.
@@ -184,7 +184,7 @@ public final class OfflinePopupScreen extends Screen {
             }
 
             // Tooltip.
-            this.done.setTooltip(Tooltip.create(Component.translatable("ias.offline.name.long", Component.translatable("key.keyboard.left.alt"))));
+            this.done.setTooltip(Tooltip.create(Component.translatable("ias.offline.nick.long", Component.translatable("key.keyboard.left.alt"))));
             this.done.setTooltipDelay(-1);
 
             // Don't process.
@@ -208,7 +208,7 @@ public final class OfflinePopupScreen extends Screen {
             }
 
             // Tooltip.
-            this.done.setTooltip(Tooltip.create(Component.translatable("ias.offline.name.character", c, Component.translatable("key.keyboard.left.alt"))));
+            this.done.setTooltip(Tooltip.create(Component.translatable("ias.offline.nick.chars", Character.toString(c), Component.translatable("key.keyboard.left.alt"))));
             this.done.setTooltipDelay(-1);
 
             // Don't process.
