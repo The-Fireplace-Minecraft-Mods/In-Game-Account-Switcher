@@ -1,7 +1,7 @@
 /*
  * In-Game Account Switcher is a mod for Minecraft that allows you to change your logged in account in-game, without restarting Minecraft.
  * Copyright (C) 2015-2022 The_Fireplace
- * Copyright (C) 2021-2023 VidTu
+ * Copyright (C) 2021-2024 VidTu
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -19,6 +19,8 @@
 
 package ru.vidtu.ias.account;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.vidtu.ias.IAS;
 import ru.vidtu.ias.auth.MSAuth;
 import ru.vidtu.ias.crypt.Crypt;
@@ -113,6 +115,11 @@ public final class MicrosoftAccount implements Account {
     public static final String FINALIZING = "ias.login.finalizing";
 
     /**
+     * Logger for this class.
+     */
+    public static final Logger LOGGER = LoggerFactory.getLogger("IAS/MicrosoftAccount");
+
+    /**
      * Account UUID.
      */
     private UUID uuid;
@@ -160,7 +167,7 @@ public final class MicrosoftAccount implements Account {
     public void login(LoginHandler handler) {
         try {
             // Log it and display progress.
-            IAS.LOG.info("IAS: Logging (Microsoft) as {}/{}", this.uuid, this.name);
+            LOGGER.info("IAS: Logging (Microsoft) as {}/{}", this.uuid, this.name);
             handler.stage(INITIALIZING);
 
             // Create the authenticator.
@@ -188,14 +195,14 @@ public final class MicrosoftAccount implements Account {
                 // Crypt was cancelled.
                 if (value == null) {
                     // Log it.
-                    IAS.LOG.info("IAS: Crypt was cancelled.");
+                    LOGGER.info("IAS: Crypt was cancelled.");
 
                     // Return cancel.
                     return null;
                 }
 
                 // Log it and display progress.
-                IAS.LOG.info("IAS: Decrypting tokens...");
+                LOGGER.info("IAS: Decrypting tokens...");
                 handler.stage(DECRYPTING);
 
                 // Set the crypt.
@@ -231,14 +238,14 @@ public final class MicrosoftAccount implements Account {
                 if (!value) return CompletableFuture.completedFuture(null);
 
                 // Log it and display progress.
-                IAS.LOG.info("IAS: Converting MCA to MCP... (stored)");
+                LOGGER.info("IAS: Converting MCA to MCP... (stored)");
                 handler.stage(MCA_TO_MCP);
 
                 // Convert MCA to MCP.
                 return auth.mcaToMcp(access.get()).exceptionallyComposeAsync(original -> {
                     // Log it and display progress.
-                    IAS.LOG.warn("IAS: MCA is (probably) expired. Refreshing...");
-                    IAS.LOG.info("IAS: Converting MSR to MSA/MSR...");
+                    LOGGER.warn("IAS: MCA is (probably) expired. Refreshing...");
+                    LOGGER.info("IAS: Converting MSR to MSA/MSR...");
                     handler.stage(MSR_TO_MSA_MSR);
 
                     // Convert MSR to MSA/MSR.
@@ -247,21 +254,21 @@ public final class MicrosoftAccount implements Account {
                         refresh.set(ms.refresh());
 
                         // Log it and display progress.
-                        IAS.LOG.info("IAS: Converting MSA to XBL...");
+                        LOGGER.info("IAS: Converting MSA to XBL...");
                         handler.stage(MSA_TO_XBL);
 
                         // Convert MSA to XBL.
                         return auth.msaToXbl(ms.access());
                     }, IAS.executor()).thenComposeAsync(xbl -> {
                         // Log it and display progress.
-                        IAS.LOG.info("IAS: Converting XBL to XSTS...");
+                        LOGGER.info("IAS: Converting XBL to XSTS...");
                         handler.stage(XBL_TO_XSTS);
 
                         // Convert XBL to XSTS.
                         return auth.xblToXsts(xbl.token(), xbl.hash());
                     }, IAS.executor()).thenComposeAsync(xsts -> {
                         // Log it and display progress.
-                        IAS.LOG.info("IAS: Converting XSTS to MCA...");
+                        LOGGER.info("IAS: Converting XSTS to MCA...");
                         handler.stage(XSTS_TO_MCA);
 
                         // Convert XSTS to MCA.
@@ -271,14 +278,14 @@ public final class MicrosoftAccount implements Account {
                         access.set(token);
 
                         // Log it and display progress.
-                        IAS.LOG.info("IAS: Converting MCA TO MCP... (refreshed)");
+                        LOGGER.info("IAS: Converting MCA TO MCP... (refreshed)");
                         handler.stage(MCA_TO_MCP);
 
                         // Convert MCA to MCP.
                         return auth.mcaToMcp(token);
                     }, IAS.executor()).thenApplyAsync(profile -> {
                         // Log it and display progress.
-                        IAS.LOG.info("IAS: Encrypting tokens...");
+                        LOGGER.info("IAS: Encrypting tokens...");
                         handler.stage(ENCRYPTING);
 
                         // Write the tokens.
@@ -333,11 +340,11 @@ public final class MicrosoftAccount implements Account {
                 this.name = profile.name();
 
                 // Log it and display progress.
-                IAS.LOG.info("IAS: Successful login as {}", profile);
+                LOGGER.info("IAS: Successful login as {}", profile);
                 handler.stage(FINALIZING);
 
                 // Create and return the data.
-                LoginData login = new LoginData(this.name, this.uuid, access.get(), LoginData.MSA);
+                LoginData login = new LoginData(this.name, this.uuid, access.get(), true);
                 handler.success(login);
             }, IAS.executor()).exceptionallyAsync(t -> {
                 // Handle error.
@@ -361,7 +368,10 @@ public final class MicrosoftAccount implements Account {
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.uuid, this.name);
+        int result = 1;
+        result = 31 * result + Objects.hashCode(this.uuid);
+        result = 31 * result + Objects.hashCode(this.name);
+        return result;
     }
 
     @Override

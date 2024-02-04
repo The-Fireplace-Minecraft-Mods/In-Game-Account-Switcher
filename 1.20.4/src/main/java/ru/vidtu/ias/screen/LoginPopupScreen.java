@@ -1,7 +1,7 @@
 /*
  * In-Game Account Switcher is a mod for Minecraft that allows you to change your logged in account in-game, without restarting Minecraft.
  * Copyright (C) 2015-2022 The_Fireplace
- * Copyright (C) 2021-2023 VidTu
+ * Copyright (C) 2021-2024 VidTu
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -22,14 +22,14 @@ package ru.vidtu.ias.screen;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.MultiLineLabel;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.util.FormattedCharSequence;
-import ru.vidtu.ias.IAS;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.vidtu.ias.IASMinecraft;
 import ru.vidtu.ias.account.Account;
 import ru.vidtu.ias.account.MicrosoftAccount;
@@ -45,34 +45,36 @@ import java.util.function.Supplier;
  */
 final class LoginPopupScreen extends Screen implements Account.LoginHandler {
     /**
+     * Logger for this class.
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger("IAS/LoginPopupScreen");
+
+    /**
      * Parent screen.
      */
     private final Screen parent;
 
     /**
-     * Cancel button.
+     * Synchronization lock.
      */
-    private Button cancel;
+    private final Object lock = new Object();
 
     /**
      * Current stage.
      */
+    @SuppressWarnings("FieldAccessedSynchronizedAndUnsynchronized") // <- toString()
     private Component stage = Component.translatable(MicrosoftAccount.INITIALIZING);
 
     /**
      * Current stage label.
      */
+    @SuppressWarnings("FieldAccessedSynchronizedAndUnsynchronized") // <- toString()
     private MultiLineLabel label;
 
     /**
      * Password box.
      */
     private PopupBox password;
-
-    /**
-     * Enter password button
-     */
-    private Button enterPassword;
 
     /**
      * Password future.
@@ -100,9 +102,8 @@ final class LoginPopupScreen extends Screen implements Account.LoginHandler {
         }
 
         // Add cancel button.
-        this.cancel = new PopupButton(this.width / 2 - 75, this.height / 2 + 49 - 22, 150, 20,
-                CommonComponents.GUI_CANCEL, button -> this.onClose(), Supplier::get);
-        addRenderableWidget(this.cancel);
+        this.addRenderableWidget(new PopupButton(this.width / 2 - 75, this.height / 2 + 49 - 22, 150, 20,
+                CommonComponents.GUI_CANCEL, btn -> this.onClose(), Supplier::get));
 
         // Add password box, if future exists.
         if (this.passFuture != null) {
@@ -121,14 +122,13 @@ final class LoginPopupScreen extends Screen implements Account.LoginHandler {
             this.addRenderableWidget(this.password);
 
             // Add enter password button.
-            this.enterPassword = new PopupButton(this.width / 2 - 100 + 180, this.height / 2 - 10 + 5, 20, 20, Component.literal(">>"), button -> {
+            this.addRenderableWidget(new PopupButton(this.width / 2 - 100 + 180, this.height / 2 - 10 + 5, 20, 20, Component.literal(">>"), btn -> {
                 // Prevent NPE, just in case.
                 if (this.passFuture == null || this.password == null) return;
 
                 // Complete the future.
                 this.passFuture.complete(this.password.getValue());
-            }, Supplier::get);
-            this.addRenderableWidget(this.enterPassword);
+            }, Supplier::get));
         }
     }
 
@@ -146,6 +146,7 @@ final class LoginPopupScreen extends Screen implements Account.LoginHandler {
         this.minecraft.setScreen(this.parent);
     }
 
+    @SuppressWarnings("NonPrivateFieldAccessedInSynchronizedContext") // <- Supertype.
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
         // Bruh.
@@ -170,11 +171,11 @@ final class LoginPopupScreen extends Screen implements Account.LoginHandler {
         pose.popPose();
 
         // Render password OR label.
-        if (this.passFuture != null && this.password != null && this.enterPassword != null) {
+        if (this.passFuture != null && this.password != null) {
             graphics.drawCenteredString(this.font, this.password.getMessage(), this.width / 2, this.height / 2 - 10 - 5, 0xFF_FF_FF_FF);
         } else {
             // Synchronize to prevent funny things.
-            synchronized (this) {
+            synchronized (this.lock) {
                 // Label is unbaked.
                 if (this.label == null) {
                     // Get the component.
@@ -193,6 +194,7 @@ final class LoginPopupScreen extends Screen implements Account.LoginHandler {
         }
     }
 
+    @SuppressWarnings("VariableNotUsedInsideIf") // <- Background choosing.
     @Override
     public void renderBackground(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
         // Bruh.
@@ -225,7 +227,7 @@ final class LoginPopupScreen extends Screen implements Account.LoginHandler {
         if (this != this.minecraft.screen) return;
 
         // Flush the stage.
-        synchronized (this) {
+        synchronized (this.lock) {
             this.stage = Component.translatable(stage).withStyle(ChatFormatting.YELLOW);
             this.label = null;
         }
@@ -247,7 +249,6 @@ final class LoginPopupScreen extends Screen implements Account.LoginHandler {
             // Remove future on completion.
             this.passFuture = null;
             this.password = null;
-            this.enterPassword = null;
 
             // Redraw.
             this.init(this.minecraft, this.width, this.height);
@@ -306,16 +307,23 @@ final class LoginPopupScreen extends Screen implements Account.LoginHandler {
         assert this.minecraft != null;
 
         // Log it.
-        IAS.LOG.error("IAS: Login error.", error);
+        LOGGER.error("IAS: Login error.", error);
 
         // Skip if not current screen.
         if (this != this.minecraft.screen) return;
 
         // Flush the stage.
-        synchronized (this) {
+        synchronized (this.lock) {
             this.stage = Component.translatable("ias.error").withStyle(ChatFormatting.RED);
             this.label = null;
         }
     }
 
+    @Override
+    public String toString() {
+        return "LoginPopupScreen{" +
+                "stage=" + this.stage +
+                ", label=" + this.label +
+                '}';
+    }
 }

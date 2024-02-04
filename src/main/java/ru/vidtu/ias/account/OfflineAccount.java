@@ -1,7 +1,7 @@
 /*
  * In-Game Account Switcher is a mod for Minecraft that allows you to change your logged in account in-game, without restarting Minecraft.
  * Copyright (C) 2015-2022 The_Fireplace
- * Copyright (C) 2021-2023 VidTu
+ * Copyright (C) 2021-2024 VidTu
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -86,7 +86,7 @@ public record OfflineAccount(UUID uuid, String name) implements Account {
      * @return Created offline account
      */
     public static OfflineAccount create(String name) {
-        UUID uuid = UUID.nameUUIDFromBytes("OfflinePlayer:".concat(name).getBytes(StandardCharsets.UTF_8));
+        UUID uuid = UUID.nameUUIDFromBytes(("OfflinePlayer:" + name).getBytes(StandardCharsets.UTF_8));
         return new OfflineAccount(uuid, name);
     }
 }

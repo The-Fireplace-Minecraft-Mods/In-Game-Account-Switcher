@@ -1,7 +1,7 @@
 /*
  * In-Game Account Switcher is a mod for Minecraft that allows you to change your logged in account in-game, without restarting Minecraft.
  * Copyright (C) 2015-2022 The_Fireplace
- * Copyright (C) 2021-2023 VidTu
+ * Copyright (C) 2021-2024 VidTu
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -31,11 +31,13 @@ import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.util.FormattedCharSequence;
+import org.lwjgl.glfw.GLFW;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.vidtu.ias.IAS;
 import ru.vidtu.ias.account.Account;
 import ru.vidtu.ias.account.MicrosoftAccount;
 import ru.vidtu.ias.auth.MSAuthServer;
-import ru.vidtu.ias.config.IASStorage;
 import ru.vidtu.ias.crypt.Crypt;
 import ru.vidtu.ias.crypt.PasswordCrypt;
 
@@ -51,9 +53,19 @@ import java.util.function.Supplier;
  */
 final class MicrosoftPopupScreen extends Screen implements MSAuthServer.CreateHandler {
     /**
+     * Logger for this class.
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger("IAS/MicrosoftPopupScreen");
+
+    /**
      * Parent screen.
      */
     private final Screen parent;
+
+    /**
+     * Synchronization lock.
+     */
+    private final Object lock = new Object();
 
     /**
      * Account handler.
@@ -71,29 +83,21 @@ final class MicrosoftPopupScreen extends Screen implements MSAuthServer.CreateHa
     private MSAuthServer server;
 
     /**
-     * Cancel button.
-     */
-    private Button cancel;
-
-    /**
      * Current stage.
      */
+    @SuppressWarnings("FieldAccessedSynchronizedAndUnsynchronized") // <- toString()
     private Component stage = Component.translatable(MicrosoftAccount.INITIALIZING);
 
     /**
      * Current stage label.
      */
+    @SuppressWarnings("FieldAccessedSynchronizedAndUnsynchronized") // <- toString()
     private MultiLineLabel label;
 
     /**
      * Password box.
      */
     private PopupBox password;
-
-    /**
-     * Enter password button
-     */
-    private Button enterPassword;
 
     /**
      * Creates a new login screen.
@@ -120,9 +124,8 @@ final class MicrosoftPopupScreen extends Screen implements MSAuthServer.CreateHa
         }
 
         // Add back button.
-        this.cancel = new PopupButton(this.width / 2 - 75, this.height / 2 + 49 - 22, 150, 20,
-                CommonComponents.GUI_BACK, button -> this.onClose(), Supplier::get);
-        addRenderableWidget(this.cancel);
+        this.addRenderableWidget(new PopupButton(this.width / 2 - 75, this.height / 2 + 49 - 22, 150, 20,
+                CommonComponents.GUI_BACK, btn -> this.onClose(), Supplier::get));
 
         // Add password box, if future exists.
         if (this.crypt == null) {
@@ -134,7 +137,6 @@ final class MicrosoftPopupScreen extends Screen implements MSAuthServer.CreateHa
                 // Complete the future.
                 this.crypt = new PasswordCrypt(this.password.getValue());
                 this.password = null;
-                this.enterPassword = null;
 
                 // Rebuild the UI.
                 this.init(this.minecraft, this.width, this.height);
@@ -146,19 +148,18 @@ final class MicrosoftPopupScreen extends Screen implements MSAuthServer.CreateHa
             this.addRenderableWidget(this.password);
 
             // Add enter password button.
-            this.enterPassword = new PopupButton(this.width / 2 - 100 + 180, this.height / 2 - 10 + 5, 20, 20, Component.literal(">>"), button -> {
+            Button enterPassword = new PopupButton(this.width / 2 - 100 + 180, this.height / 2 - 10 + 5, 20, 20, Component.literal(">>"), btn -> {
                 // Prevent NPE, just in case.
                 if (this.password == null || this.crypt != null) return;
 
                 // Complete the future.
                 this.crypt = new PasswordCrypt(this.password.getValue());
                 this.password = null;
-                this.enterPassword = null;
 
                 // Rebuild the UI.
                 this.init(this.minecraft, this.width, this.height);
             }, Supplier::get);
-            this.addRenderableWidget(this.enterPassword);
+            this.addRenderableWidget(enterPassword);
         }
 
         // Try to open the server.
@@ -177,7 +178,7 @@ final class MicrosoftPopupScreen extends Screen implements MSAuthServer.CreateHa
             if (this.crypt == null || this.server != null) return;
 
             // Create the server.
-            this.server = new MSAuthServer(I18n.get("ias.microsoft.done"), this.crypt, this);
+            this.server = new MSAuthServer(I18n.get("ias.login.done"), this.crypt, this);
 
             // Run the server.
             CompletableFuture.runAsync(() -> {
@@ -185,7 +186,7 @@ final class MicrosoftPopupScreen extends Screen implements MSAuthServer.CreateHa
                 this.server.run();
             }, IAS.executor()).thenRunAsync(() -> {
                 // Log it and display progress.
-                IAS.LOG.info("IAS: Opening link...");
+                LOGGER.info("IAS: Opening link...");
                 this.stage(MicrosoftAccount.BROWSER);
 
                 // Copy and open link.
@@ -222,6 +223,7 @@ final class MicrosoftPopupScreen extends Screen implements MSAuthServer.CreateHa
         });
     }
 
+    @SuppressWarnings("NonPrivateFieldAccessedInSynchronizedContext") // <- Supertype.
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
         // Bruh.
@@ -246,11 +248,11 @@ final class MicrosoftPopupScreen extends Screen implements MSAuthServer.CreateHa
         pose.popPose();
 
         // Render password OR label.
-        if (this.crypt == null && this.password != null && this.enterPassword != null) {
+        if (this.crypt == null && this.password != null) {
             graphics.drawCenteredString(this.font, this.password.getMessage(), this.width / 2, this.height / 2 - 10 - 5, 0xFF_FF_FF_FF);
         } else {
             // Synchronize to prevent funny things.
-            synchronized (this) {
+            synchronized (this.lock) {
                 // Label is unbaked.
                 if (this.label == null) {
                     // Get the component.
@@ -269,6 +271,7 @@ final class MicrosoftPopupScreen extends Screen implements MSAuthServer.CreateHa
         }
     }
 
+    @SuppressWarnings("VariableNotUsedInsideIf") // <- Background choosing.
     @Override
     public void renderBackground(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
         // Bruh.
@@ -300,8 +303,18 @@ final class MicrosoftPopupScreen extends Screen implements MSAuthServer.CreateHa
         // Skip if not current screen.
         if (this != this.minecraft.screen) return;
 
+        // Try to focus.
+        if (MicrosoftAccount.PROCESSING.equals(stage)) {
+            this.minecraft.execute(() -> {
+                long ptr = this.minecraft.getWindow().getWindow();
+                GLFW.glfwRequestWindowAttention(ptr);
+                GLFW.glfwFocusWindow(ptr);
+                GLFW.glfwRequestWindowAttention(ptr);
+            });
+        }
+
         // Flush the stage.
-        synchronized (this) {
+        synchronized (this.lock) {
             this.stage = Component.translatable(stage).withStyle(ChatFormatting.YELLOW);
             this.label = null;
         }
@@ -338,9 +351,6 @@ final class MicrosoftPopupScreen extends Screen implements MSAuthServer.CreateHa
             // Skip if not current screen.
             if (this != this.minecraft.screen) return;
 
-            // Back to parent screen.
-            this.minecraft.setScreen(this.parent);
-
             // Call the callback.
             this.handler.accept(account);
         });
@@ -352,16 +362,24 @@ final class MicrosoftPopupScreen extends Screen implements MSAuthServer.CreateHa
         assert this.minecraft != null;
 
         // Log it.
-        IAS.LOG.error("IAS: Create error.", error);
+        LOGGER.error("IAS: Create error.", error);
 
         // Skip if not current screen.
         if (this != this.minecraft.screen) return;
 
         // Flush the stage.
-        synchronized (this) {
+        synchronized (this.lock) {
             this.stage = Component.translatable("ias.error").withStyle(ChatFormatting.RED);
             this.label = null;
         }
     }
 
+    @Override
+    public String toString() {
+        return "MicrosoftPopupScreen{" +
+                ", crypt=" + this.crypt +
+                ", stage=" + this.stage +
+                ", label=" + this.label +
+                '}';
+    }
 }

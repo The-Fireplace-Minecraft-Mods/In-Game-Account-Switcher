@@ -1,7 +1,7 @@
 /*
  * In-Game Account Switcher is a mod for Minecraft that allows you to change your logged in account in-game, without restarting Minecraft.
  * Copyright (C) 2015-2022 The_Fireplace
- * Copyright (C) 2021-2023 VidTu
+ * Copyright (C) 2021-2024 VidTu
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -85,6 +85,7 @@ public sealed interface Account permits OfflineAccount, MicrosoftAccount {
      * @throws IOException              On I/O error
      * @throws IllegalArgumentException On unknown account type
      */
+    @SuppressWarnings("ChainOfInstanceofChecks") // <- Sealed.
     static void writeTyped(DataOutput out, Account account) throws IOException {
         // Get the account type.
         String type;
@@ -124,24 +125,50 @@ public sealed interface Account permits OfflineAccount, MicrosoftAccount {
     }
 
     /**
+     * Gets whether the user should be warned about the name.
+     *
+     * @param name Target name
+     * @return Warning key, {@code null} if none
+     */
+    static String warnKey(String name) {
+        // Blank.
+        if (name.isBlank()) return "ias.nick.blank";
+
+        // Length.
+        int length = name.length();
+        if (length < 3) return "ias.nick.short";
+        if (length > 16) return "ias.nick.long";
+
+        // Chars.
+        for (int i = 0; i < length; i++) {
+            int c = name.codePointAt(i);
+            if (c == '_' || c >= '0' && c <= '9' || c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z') continue;
+            return "ias.nick.chars";
+        }
+
+        // Valid.
+        return null;
+    }
+
+    /**
      * Data provided for {@link Account} for authentication in-game.
      *
-     * @param name  Player name
-     * @param uuid  Player UUID
-     * @param token Session access token
-     * @param type  User type
+     * @param name   Player name
+     * @param uuid   Player UUID
+     * @param token  Session access token
+     * @param online Whether the account type is online
      * @author VidTu
      */
-    record LoginData(String name, UUID uuid, String token, String type) {
-        /**
-         * Microsoft Authentication - current system used by Minecraft.
-         */
-        public static final String MSA = "msa";
-
-        /**
-         * Legacy Authentication - deprecated system, not officially supported by Minecraft, used for offline accounts.
-         */
-        public static final String LEGACY = "legacy";
+    record LoginData(String name, UUID uuid, String token, boolean online) {
+        @Override
+        public String toString() {
+            return "LoginData{" +
+                    "name='" + this.name + '\'' +
+                    ", uuid=" + this.uuid +
+                    ", token=[TOKEN]" +
+                    ", online=" + this.online +
+                    '}';
+        }
     }
 
     /**

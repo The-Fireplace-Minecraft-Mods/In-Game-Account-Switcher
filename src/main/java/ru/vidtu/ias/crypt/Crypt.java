@@ -1,7 +1,7 @@
 /*
  * In-Game Account Switcher is a mod for Minecraft that allows you to change your logged in account in-game, without restarting Minecraft.
  * Copyright (C) 2015-2022 The_Fireplace
- * Copyright (C) 2021-2023 VidTu
+ * Copyright (C) 2021-2024 VidTu
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -19,8 +19,15 @@
 
 package ru.vidtu.ias.crypt;
 
+import javax.crypto.Cipher;
+import javax.crypto.SecretKey;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.PBEKeySpec;
+import javax.crypto.spec.SecretKeySpec;
 import java.io.DataInput;
 import java.io.DataOutput;
+import java.security.spec.KeySpec;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 
@@ -78,6 +85,7 @@ public sealed interface Crypt permits DummyCrypt, HardwareCrypt, PasswordCrypt {
      * @param out   Target output
      * @param crypt Target crypt
      */
+    @SuppressWarnings("ChainOfInstanceofChecks") // <- Sealed.
     static void encrypt(DataOutput out, Crypt crypt) {
         try {
             // Write type.
@@ -94,6 +102,62 @@ public sealed interface Crypt permits DummyCrypt, HardwareCrypt, PasswordCrypt {
             out.writeUTF(type);
         } catch (Throwable t) {
             throw new RuntimeException("Unable to write typed crypt.", t);
+        }
+    }
+
+    /**
+     * Encrypts the data using password and salt.
+     *
+     * @param decrypted Decrypted data
+     * @param password  Target password
+     * @param salt      Target salt
+     * @param iv        IV for AES
+     * @return Encrypted data
+     * @throws RuntimeException If unable to encrypt the data
+     */
+    static byte[] pbkdfAesEncrypt(byte[] decrypted, String password, byte[] salt, byte[] iv) {
+        try {
+            // Create the key.
+            SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA512");
+            KeySpec spec = new PBEKeySpec(password.toCharArray(), salt, 300_000, 256);
+            byte[] secret = factory.generateSecret(spec).getEncoded();
+            SecretKey key = new SecretKeySpec(secret, "AES");
+            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+            cipher.init(Cipher.ENCRYPT_MODE, key, new IvParameterSpec(iv));
+
+            // Encrypt and return.
+            return cipher.doFinal(decrypted);
+        } catch (Throwable t) {
+            // Rethrow.
+            throw new RuntimeException("Unable to encrypt data using AES via PBKDF2-hashed password.", t);
+        }
+    }
+
+    /**
+     * Decrypts the data using password and salt.
+     *
+     * @param encrypted Encrypted data
+     * @param password  Target password
+     * @param salt      Target salt
+     * @param iv        IV for AES
+     * @return Decrypted data
+     * @throws RuntimeException If unable to decrypt the data
+     */
+    static byte[] pbkdfAesDecrypt(byte[] encrypted, String password, byte[] salt, byte[] iv) {
+        try {
+            // Create the key.
+            SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA512");
+            KeySpec spec = new PBEKeySpec(password.toCharArray(), salt, 300_000, 256);
+            byte[] secret = factory.generateSecret(spec).getEncoded();
+            SecretKey key = new SecretKeySpec(secret, "AES");
+            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+            cipher.init(Cipher.DECRYPT_MODE, key, new IvParameterSpec(iv));
+
+            // Decrypt and return.
+            return cipher.doFinal(encrypted);
+        } catch (Throwable t) {
+            // Rethrow.
+            throw new RuntimeException("Unable to decrypt data using AES via PBKDF2-hashed password.", t);
         }
     }
 }

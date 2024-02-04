@@ -1,7 +1,7 @@
 /*
  * In-Game Account Switcher is a mod for Minecraft that allows you to change your logged in account in-game, without restarting Minecraft.
  * Copyright (C) 2015-2022 The_Fireplace
- * Copyright (C) 2021-2023 VidTu
+ * Copyright (C) 2021-2024 VidTu
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -21,6 +21,8 @@ package ru.vidtu.ias.auth;
 
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpServer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.vidtu.ias.IAS;
 import ru.vidtu.ias.account.MicrosoftAccount;
 import ru.vidtu.ias.crypt.Crypt;
@@ -42,6 +44,7 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
 
 /**
  * HTTP server for MS authentication.
@@ -70,6 +73,16 @@ public final class MSAuthServer implements Runnable, Closeable {
     private static final String END_URI = "http://localhost:%s/end";
 
     /**
+     * Code obfuscation pattern.
+     */
+    private static final Pattern CODE_PATTERN = Pattern.compile("code=[A-Za-z0-9_.-]*");
+
+    /**
+     * Logger for this class.
+     */
+    public static final Logger LOGGER = LoggerFactory.getLogger("IAS/MSAuthServer");
+
+    /**
      * Message to display on "done" page.
      */
     private final String doneMessage;
@@ -94,6 +107,11 @@ public final class MSAuthServer implements Runnable, Closeable {
      * {@code 0} if not yet bound.
      */
     private int port;
+
+    /**
+     * Whether the request to the main endpoint has been received once.
+     */
+    private boolean once;
 
     /**
      * Creates an HTTP server for MS auth.
@@ -122,21 +140,31 @@ public final class MSAuthServer implements Runnable, Closeable {
     public void run() {
         try {
             // Log it and display progress.
-            IAS.LOG.info("IAS: Booting up local HTTP server: {}", this.server);
+            LOGGER.info("IAS: Booting up local HTTP server...");
             this.handler.stage(MicrosoftAccount.SERVER);
 
             // Create the root handler.
             this.server.createContext("/", ex -> {
                 try {
                     // Log it.
-                    IAS.LOG.info("IAS: Requested HTTP to '/'.");
+                    LOGGER.info("IAS: Requested HTTP to '/'.");
 
                     // Close and ignore if not localhost.
                     if (!ex.getRemoteAddress().getAddress().isLoopbackAddress()) {
-                        IAS.LOG.warn("IAS: Closed not loopback HTTP request to '/'.");
+                        LOGGER.warn("IAS: Closed not loopback HTTP request to '/'.");
                         ex.close();
                         return;
                     }
+                    
+                    // Close if already requested.
+                    if (this.once) {
+                        LOGGER.warn("IAS: Closed non-once HTTP request to '/'.");
+                        ex.close();
+                        return;
+                    }
+
+                    // Mark as once.
+                    this.once = true;
 
                     // Capture the query.
                     URI uri = ex.getRequestURI();
@@ -169,7 +197,7 @@ public final class MSAuthServer implements Runnable, Closeable {
                     ex.close();
 
                     // Send the query.
-                    auth(uri);
+                    this.auth(uri);
 
                     // Close the server.
                     IAS.executor().schedule(this::close, 10L, TimeUnit.SECONDS);
@@ -183,7 +211,7 @@ public final class MSAuthServer implements Runnable, Closeable {
 
                     // Try to close the server.
                     try {
-                        close();
+                        this.close();
                     } catch (Throwable th) {
                         t.addSuppressed(th);
                     }
@@ -197,11 +225,11 @@ public final class MSAuthServer implements Runnable, Closeable {
             this.server.createContext("/end", ex -> {
                 try {
                     // Log it.
-                    IAS.LOG.info("IAS: Requested HTTP to '/end'.");
+                    LOGGER.info("IAS: Requested HTTP to '/end'.");
 
                     // Close and ignore if not localhost.
                     if (!ex.getRemoteAddress().getAddress().isLoopbackAddress()) {
-                        IAS.LOG.warn("IAS: Closed not loopback request to '/end'.");
+                        LOGGER.warn("IAS: Closed not loopback request to '/end'.");
                         ex.close();
                         return;
                     }
@@ -244,7 +272,7 @@ public final class MSAuthServer implements Runnable, Closeable {
 
                     // Try to close the server.
                     try {
-                        close();
+                        this.close();
                     } catch (Throwable th) {
                         t.addSuppressed(th);
                     }
@@ -259,11 +287,11 @@ public final class MSAuthServer implements Runnable, Closeable {
             this.server.start();
 
             // Log it.
-            IAS.LOG.info("IAS: HTTP server {} started.", this.server);
+            LOGGER.info("IAS: HTTP server started.");
         } catch (Throwable t) {
             // Try to close the server.
             try {
-                close();
+                this.close();
             } catch (Throwable th) {
                 t.addSuppressed(th);
             }
@@ -292,10 +320,10 @@ public final class MSAuthServer implements Runnable, Closeable {
 
                 // No exception is thrown, return and do not process throwing.
                 this.port = port;
-                IAS.LOG.info("IAS: Bound HTTP server {} to: {}", this.server, this.port);
+                LOGGER.info("IAS: Bound HTTP server to {} port.", this.port);
                 return;
             } catch (Throwable t) {
-                // Add to thrown.
+                // Add to thrown exceptions.
                 thrown.add(new RuntimeException("Unable to bind: " + port, t));
             }
         }
@@ -323,7 +351,7 @@ public final class MSAuthServer implements Runnable, Closeable {
     private void auth(URI uri) {
         try {
             // Log it and display progress.
-            IAS.LOG.info("IAS: Processing response...");
+            LOGGER.info("IAS: Processing response...");
             this.handler.stage(MicrosoftAccount.PROCESSING);
 
             // Extract the query.
@@ -340,7 +368,7 @@ public final class MSAuthServer implements Runnable, Closeable {
             // Extract the MSAC.
             CompletableFuture.supplyAsync(() -> {
                 // Log it and display progress.
-                IAS.LOG.info("IAS: Extracting MSAC from query...");
+                LOGGER.info("IAS: Extracting MSAC from query...");
 
                 // Null query. What?
                 if (query == null) {
@@ -355,15 +383,15 @@ public final class MSAuthServer implements Runnable, Closeable {
                 // Query won't start with code. Weird query.
                 if (!query.startsWith("code=")) {
                     // Throw, suppressing possible another code location.
-                    throw new IllegalStateException("Invalid query: " + query
-                            .replaceAll("code=[A-Za-z0-9_.-]*", "code=[CODE]"));
+                    throw new IllegalStateException("Invalid query: " + CODE_PATTERN.matcher(query)
+                            .replaceAll("code=[CODE]"));
                 }
 
                 // Extract the MSAC.
                 return query.replace("code=", "");
             }, IAS.executor()).thenComposeAsync(code -> {
                 // Log it and display progress.
-                IAS.LOG.info("IAS: Converting MSAC to MSA/MSR...");
+                LOGGER.info("IAS: Converting MSAC to MSA/MSR...");
                 this.handler.stage(MicrosoftAccount.MSAC_TO_MSA_MSR);
 
                 // Convert MSAC to MSA/MSR.
@@ -373,21 +401,21 @@ public final class MSAuthServer implements Runnable, Closeable {
                 refresh.set(ms.refresh());
 
                 // Log it and display progress.
-                IAS.LOG.info("IAS: Converting MSA to XBL...");
+                LOGGER.info("IAS: Converting MSA to XBL...");
                 this.handler.stage(MicrosoftAccount.MSA_TO_XBL);
 
                 // Convert MSA to XBL.
                 return auth.msaToXbl(ms.access());
             }, IAS.executor()).thenComposeAsync(xbl -> {
                 // Log it and display progress.
-                IAS.LOG.info("IAS: Converting XBL to XSTS...");
+                LOGGER.info("IAS: Converting XBL to XSTS...");
                 this.handler.stage(MicrosoftAccount.XBL_TO_XSTS);
 
                 // Convert XBL to XSTS.
                 return auth.xblToXsts(xbl.token(), xbl.hash());
             }, IAS.executor()).thenComposeAsync(xsts -> {
                 // Log it and display progress.
-                IAS.LOG.info("IAS: Converting XSTS to MCA...");
+                LOGGER.info("IAS: Converting XSTS to MCA...");
                 this.handler.stage(MicrosoftAccount.XSTS_TO_MCA);
 
                 // Convert XSTS to MCA.
@@ -397,14 +425,14 @@ public final class MSAuthServer implements Runnable, Closeable {
                 access.set(token);
 
                 // Log it and display progress.
-                IAS.LOG.info("IAS: Converting MCA to MCP...");
+                LOGGER.info("IAS: Converting MCA to MCP...");
                 this.handler.stage(MicrosoftAccount.MCA_TO_MCP);
 
                 // Convert MCA to MCP.
                 return auth.mcaToMcp(token);
             }, IAS.executor()).thenApplyAsync(profile -> {
                 // Log it and display progress.
-                IAS.LOG.info("IAS: Encrypting tokens...");
+                LOGGER.info("IAS: Encrypting tokens...");
                 this.handler.stage(MicrosoftAccount.ENCRYPTING);
 
                 // Write the tokens.
@@ -449,7 +477,7 @@ public final class MSAuthServer implements Runnable, Closeable {
                 String name = profile.name();
 
                 // Log it and display progress.
-                IAS.LOG.info("IAS: Successfully added {}", profile);
+                LOGGER.info("IAS: Successfully added {}", profile);
                 this.handler.stage(MicrosoftAccount.FINALIZING);
 
                 // Create and return the data.
@@ -477,7 +505,15 @@ public final class MSAuthServer implements Runnable, Closeable {
         this.server.stop(0);
 
         // Log it.
-        IAS.LOG.info("IAS: HTTP server {} stopped.", this.server);
+        LOGGER.info("IAS: HTTP server stopped.");
+    }
+
+    @Override
+    public String toString() {
+        return "MSAuthServer{" +
+                "crypt=" + this.crypt +
+                ", port=" + this.port +
+                '}';
     }
 
     /**

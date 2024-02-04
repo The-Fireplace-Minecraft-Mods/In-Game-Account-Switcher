@@ -1,5 +1,5 @@
 plugins {
-    id("fabric-loom") version "1.4-SNAPSHOT"
+    id("fabric-loom") version "1.5-SNAPSHOT"
 }
 
 java.sourceCompatibility = JavaVersion.VERSION_17
@@ -16,11 +16,10 @@ repositories {
 }
 
 dependencies {
-    val fabric = project.properties["fabric"]
     minecraft("com.mojang:minecraft:1.20.4")
     mappings(loom.officialMojangMappings())
-    modImplementation("net.fabricmc:fabric-loader:${fabric}")
-    modImplementation("net.fabricmc.fabric-api:fabric-api:0.91.3+1.20.4")
+    modImplementation("net.fabricmc:fabric-loader:0.15.6")
+    modImplementation("net.fabricmc.fabric-api:fabric-api:0.95.4+1.20.4")
     compileOnly(shared)
 }
 

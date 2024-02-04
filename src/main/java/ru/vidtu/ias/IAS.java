@@ -1,7 +1,7 @@
 /*
  * In-Game Account Switcher is a mod for Minecraft that allows you to change your logged in account in-game, without restarting Minecraft.
  * Copyright (C) 2015-2022 The_Fireplace
- * Copyright (C) 2021-2023 VidTu
+ * Copyright (C) 2021-2024 VidTu
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -44,9 +44,9 @@ public final class IAS {
     public static final String CLIENT_ID = "54fd49e4-2103-4044-9603-2b028c814ec3";
 
     /**
-     * IAS logger.
+     * Logger for this class.
      */
-    public static final Logger LOG = LoggerFactory.getLogger("IAS");
+    private static final Logger LOGGER = LoggerFactory.getLogger("IAS");
 
     /**
      * Session. Used in {@link #USER_AGENT_TEMPLATE}
@@ -114,6 +114,7 @@ public final class IAS {
     /**
      * Closes the IAS.
      */
+    @SuppressWarnings("VariableNotUsedInsideIf") // <- Used in declared methods.
     public static void close() {
         // Shutdown the executor.
         shutdown:
@@ -121,10 +122,10 @@ public final class IAS {
             if (executor == null) break shutdown;
             executor.shutdown();
             if (executor.awaitTermination(30L, TimeUnit.SECONDS)) break shutdown;
-            LOG.warn("Unable to shutdown IAS executor. Shutting down forcefully...");
+            LOGGER.warn("Unable to shutdown IAS executor. Shutting down forcefully...");
             executor.shutdownNow();
             if (executor.awaitTermination(30L, TimeUnit.SECONDS)) break shutdown;
-            LOG.error("Unable to shutdown IAS executor forcefully.");
+            LOGGER.error("Unable to shutdown IAS executor forcefully.");
         } catch (InterruptedException ex) {
             executor.shutdownNow();
             Thread.currentThread().interrupt();
@@ -134,7 +135,7 @@ public final class IAS {
         // Destroy the UA.
         userAgent = null;
 
-        // Write the disclaimers, if can.
+        // Write the disclaimers, if we can.
         if (gameDirectory != null) {
             disclaimersStorage();
         }
@@ -171,8 +172,8 @@ public final class IAS {
      * @param gameVersion   Game version
      */
     public static void userAgent(String version, String loader, String loaderVersion, String gameVersion) {
-        userAgent = IAS.USER_AGENT_TEMPLATE.formatted(version, SESSION, loader, loaderVersion, gameVersion, Runtime.version().toString());
-        LOG.info("IAS user agent: {}", userAgent);
+        userAgent = USER_AGENT_TEMPLATE.formatted(version, SESSION, loader, loaderVersion, gameVersion, Runtime.version().toString());
+        LOGGER.info("IAS user agent: {}", userAgent);
     }
 
     /**

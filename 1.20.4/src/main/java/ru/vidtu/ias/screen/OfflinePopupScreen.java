@@ -1,7 +1,7 @@
 /*
  * In-Game Account Switcher is a mod for Minecraft that allows you to change your logged in account in-game, without restarting Minecraft.
  * Copyright (C) 2015-2022 The_Fireplace
- * Copyright (C) 2021-2023 VidTu
+ * Copyright (C) 2021-2024 VidTu
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -25,10 +25,9 @@ import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
-import ru.vidtu.ias.IAS;
+import org.lwjgl.glfw.GLFW;
 import ru.vidtu.ias.account.Account;
 import ru.vidtu.ias.account.OfflineAccount;
-import ru.vidtu.ias.config.IASStorage;
 
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -60,11 +59,6 @@ public final class OfflinePopupScreen extends Screen {
     private PopupButton done;
 
     /**
-     * Cancel button.
-     */
-    private PopupButton cancel;
-
-    /**
      * Creates a new add screen.
      *
      * @param parent  Parent screen
@@ -93,15 +87,15 @@ public final class OfflinePopupScreen extends Screen {
 
         // Add done button.
         this.done = new PopupButton(this.width / 2 - 75, this.height / 2 + 49 - 22, 74, 20,
-                CommonComponents.GUI_DONE, button -> this.done(), Supplier::get);
+                CommonComponents.GUI_DONE, btn -> this.done(), Supplier::get);
         this.done.color(1.0F, 0.5F, 0.5F);
-        addRenderableWidget(this.done);
+        this.addRenderableWidget(this.done);
 
         // Add cancel button.
-        this.cancel = new PopupButton(this.width / 2 + 1, this.height / 2 + 49 - 22, 74, 20,
-                CommonComponents.GUI_CANCEL, button -> this.onClose(), Supplier::get);
-        this.cancel.color(1.0F, 1.0F, 1.0F);
-        addRenderableWidget(this.cancel);
+        PopupButton button = new PopupButton(this.width / 2 + 1, this.height / 2 + 49 - 22, 74, 20,
+                CommonComponents.GUI_CANCEL, btn -> this.onClose(), Supplier::get);
+        button.color(1.0F, 1.0F, 1.0F);
+        this.addRenderableWidget(button);
 
         // Update.
         this.name.setResponder(value -> this.type());
@@ -125,9 +119,6 @@ public final class OfflinePopupScreen extends Screen {
         // Don't allow blank.
         if (value.isBlank()) return;
 
-        // Close to parent.
-        this.minecraft.setScreen(this.parent);
-
         // Create and accept.
         this.handler.accept(OfflineAccount.create(value));
     }
@@ -149,6 +140,7 @@ public final class OfflinePopupScreen extends Screen {
 
             // Tooltip.
             this.done.setTooltip(Tooltip.create(Component.translatable("ias.offline.name.blank")));
+            this.done.setTooltipDelay(-1);
 
             // Update color.
             this.done.color(1.0F, 0.5F, 0.5F);
@@ -163,11 +155,18 @@ public final class OfflinePopupScreen extends Screen {
         // Check for short.
         int length = value.length();
         if (length < 3) {
-            // Update color.
-            this.done.color(1.0F, 1.0F, 0.5F);
+            // Enable if ALT is hold.
+            if (Screen.hasAltDown()) {
+                this.done.active = true;
+                this.done.color(0.75F, 0.75F, 0.25F);
+            } else {
+                this.done.active = false;
+                this.done.color(1.0F, 1.0F, 0.5F);
+            }
 
             // Tooltip.
-            this.done.setTooltip(Tooltip.create(Component.translatable("ias.offline.name.short")));
+            this.done.setTooltip(Tooltip.create(Component.translatable("ias.offline.name.short", Component.translatable("key.keyboard.left.alt"))));
+            this.done.setTooltipDelay(-1);
 
             // Don't process.
             return;
@@ -175,11 +174,18 @@ public final class OfflinePopupScreen extends Screen {
 
         // Check for long.
         if (length > 16) {
-            // Update color.
-            this.done.color(1.0F, 1.0F, 0.5F);
+            // Enable if ALT is hold.
+            if (Screen.hasAltDown()) {
+                this.done.active = true;
+                this.done.color(0.75F, 0.75F, 0.25F);
+            } else {
+                this.done.active = false;
+                this.done.color(1.0F, 1.0F, 0.5F);
+            }
 
             // Tooltip.
-            this.done.setTooltip(Tooltip.create(Component.translatable("ias.offline.name.long")));
+            this.done.setTooltip(Tooltip.create(Component.translatable("ias.offline.name.long", Component.translatable("key.keyboard.left.alt"))));
+            this.done.setTooltipDelay(-1);
 
             // Don't process.
             return;
@@ -188,14 +194,22 @@ public final class OfflinePopupScreen extends Screen {
         // Check for characters.
         for (int i = 0; i < length; i++) {
             // Skip allowed chars.
-            char c = value.charAt(i);
+            int c = value.codePointAt(i);
             if (c == '_' || c >= '0' && c <= '9' || c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z') continue;
+            this.done.active = Screen.hasAltDown();
 
-            // Update color.
-            this.done.color(1.0F, 1.0F, 0.5F);
+            // Enable if ALT is hold.
+            if (Screen.hasAltDown()) {
+                this.done.active = true;
+                this.done.color(0.75F, 0.75F, 0.25F);
+            } else {
+                this.done.active = false;
+                this.done.color(1.0F, 1.0F, 0.5F);
+            }
 
             // Tooltip.
-            this.done.setTooltip(Tooltip.create(Component.translatable("ias.offline.name.character", c)));
+            this.done.setTooltip(Tooltip.create(Component.translatable("ias.offline.name.character", c, Component.translatable("key.keyboard.left.alt"))));
+            this.done.setTooltipDelay(-1);
 
             // Don't process.
             return;
@@ -206,6 +220,24 @@ public final class OfflinePopupScreen extends Screen {
 
         // Tooltip.
         this.done.setTooltip(null);
+    }
+
+    @Override
+    public boolean keyPressed(int key, int scan, int mods) {
+        boolean res = super.keyPressed(key, scan, mods);
+        if (key == GLFW.GLFW_KEY_LEFT_ALT || key == GLFW.GLFW_KEY_RIGHT_ALT) {
+            this.type();
+        }
+        return res;
+    }
+
+    @Override
+    public boolean keyReleased(int key, int scan, int mods) {
+        boolean res = super.keyReleased(key, scan, mods);
+        if (key == GLFW.GLFW_KEY_LEFT_ALT || key == GLFW.GLFW_KEY_RIGHT_ALT) {
+            this.type();
+        }
+        return res;
     }
 
     @Override
@@ -237,6 +269,7 @@ public final class OfflinePopupScreen extends Screen {
         }
     }
 
+    @SuppressWarnings("VariableNotUsedInsideIf") // <- Background choosing.
     @Override
     public void renderBackground(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
         // Bruh.
@@ -267,5 +300,10 @@ public final class OfflinePopupScreen extends Screen {
 
         // Close to parent.
         this.minecraft.setScreen(this.parent);
+    }
+
+    @Override
+    public String toString() {
+        return "OfflinePopupScreen{}";
     }
 }

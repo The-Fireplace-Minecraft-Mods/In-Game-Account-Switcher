@@ -1,7 +1,7 @@
 /*
  * In-Game Account Switcher is a mod for Minecraft that allows you to change your logged in account in-game, without restarting Minecraft.
  * Copyright (C) 2015-2022 The_Fireplace
- * Copyright (C) 2021-2023 VidTu
+ * Copyright (C) 2021-2024 VidTu
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -27,6 +27,7 @@ import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import org.lwjgl.glfw.GLFW;
 import ru.vidtu.ias.account.Account;
+import ru.vidtu.ias.config.IASConfig;
 import ru.vidtu.ias.crypt.DummyCrypt;
 import ru.vidtu.ias.crypt.HardwareCrypt;
 
@@ -50,24 +51,9 @@ final class MicrosoftCryptPopupScreen extends Screen {
     private final Consumer<Account> handler;
 
     /**
-     * Password encryption.
-     */
-    private PopupButton password;
-
-    /**
-     * Hardware encryption.
-     */
-    private PopupButton hardware;
-
-    /**
      * No encryption.
      */
     private PopupButton plain;
-
-    /**
-     * Cancel button.
-     */
-    private PopupButton cancel;
 
     /**
      * Creates a new add screen.
@@ -91,35 +77,52 @@ final class MicrosoftCryptPopupScreen extends Screen {
             this.parent.init(this.minecraft, this.width, this.height);
         }
 
-        // Add password button.
-        this.password = new PopupButton(this.width / 2 - 75, this.height / 2 - 24 - 12, 150, 20,
-                Component.translatable("ias.microsoft.password"), button -> this.minecraft.setScreen(new MicrosoftPopupScreen(this.parent, this.handler, null)), Supplier::get);
-        this.password.setTooltip(Tooltip.create(Component.translatable("ias.microsoft.password.tip")));
-        this.password.setTooltipDelay(250);
-        this.password.color(0.5F, 1.0F, 0.5F);
-        addRenderableWidget(this.password);
+        if (IASConfig.allowNoCrypt) {
+            // Add password button.
+            PopupButton button = new PopupButton(this.width / 2 - 75, this.height / 2 - 24 - 12, 150, 20,
+                    Component.translatable("ias.microsoft.password"), btn -> this.minecraft.setScreen(new MicrosoftPopupScreen(this.parent, this.handler, null)), Supplier::get);
+            button.setTooltip(Tooltip.create(Component.translatable("ias.microsoft.password.tip")));
+            button.setTooltipDelay(250);
+            button.color(0.5F, 1.0F, 0.5F);
+            this.addRenderableWidget(button);
 
-        // Add hardware button.
-        this.hardware = new PopupButton(this.width / 2 - 75, this.height / 2 - 12, 150, 20,
-                Component.translatable("ias.microsoft.hardware"), button -> this.minecraft.setScreen(new MicrosoftPopupScreen(this.parent, this.handler, HardwareCrypt.INSTANCE)), Supplier::get);
-        this.hardware.setTooltip(Tooltip.create(Component.translatable("ias.microsoft.hardware.tip")));
-        this.hardware.setTooltipDelay(250);
-        this.hardware.color(1.0F, 1.0F, 0.5F);
-        addRenderableWidget(this.hardware);
+            // Add hardware button.
+            button = new PopupButton(this.width / 2 - 75, this.height / 2 - 12, 150, 20,
+                    Component.translatable("ias.microsoft.hardware"), btn -> this.minecraft.setScreen(new MicrosoftPopupScreen(this.parent, this.handler, HardwareCrypt.INSTANCE)), Supplier::get);
+            button.setTooltip(Tooltip.create(Component.translatable("ias.microsoft.hardware.tip")));
+            button.setTooltipDelay(250);
+            button.color(1.0F, 1.0F, 0.5F);
+            this.addRenderableWidget(button);
 
-        // Add offline button.
-        this.plain = new PopupButton(this.width / 2 - 75, this.height / 2 + 12, 150, 20,
-                Component.translatable("ias.microsoft.plain"), button -> this.minecraft.setScreen(new MicrosoftPopupScreen(this.parent, this.handler, DummyCrypt.INSTANCE)), Supplier::get);
-        this.plain.setTooltipDelay(250);
-        this.plain.setTooltip(Tooltip.create(Component.translatable("ias.microsoft.plain.tip.off", Component.translatable("key.keyboard.left.alt"), GLFW.glfwGetKeyName(GLFW.GLFW_KEY_Y, GLFW.GLFW_KEY_UNKNOWN))));
-        this.plain.color(1.0F, 0.5F, 0.5F);
-        this.plain.active = false;
-        addRenderableWidget(this.plain);
+            // Add plain button.
+            this.plain = new PopupButton(this.width / 2 - 75, this.height / 2 + 12, 150, 20,
+                    Component.translatable("ias.microsoft.plain"), btn -> this.minecraft.setScreen(new MicrosoftPopupScreen(this.parent, this.handler, DummyCrypt.INSTANCE)), Supplier::get);
+            this.plain.setTooltip(Tooltip.create(Component.translatable("ias.microsoft.plain.tip.off", Component.translatable("key.keyboard.left.alt"), GLFW.glfwGetKeyName(GLFW.GLFW_KEY_Y, GLFW.GLFW_KEY_UNKNOWN))));
+            this.plain.setTooltipDelay(250);
+            this.plain.color(1.0F, 0.5F, 0.5F);
+            this.plain.active = false;
+            this.addRenderableWidget(this.plain);
+        } else {
+            // Add password button.
+            PopupButton button = new PopupButton(this.width / 2 - 75, this.height / 2 - 24, 150, 20,
+                    Component.translatable("ias.microsoft.password"), btn -> this.minecraft.setScreen(new MicrosoftPopupScreen(this.parent, this.handler, null)), Supplier::get);
+            button.setTooltip(Tooltip.create(Component.translatable("ias.microsoft.password.tip")));
+            button.setTooltipDelay(250);
+            button.color(0.5F, 1.0F, 0.5F);
+            this.addRenderableWidget(button);
+
+            // Add hardware button.
+            button = new PopupButton(this.width / 2 - 75, this.height / 2, 150, 20,
+                    Component.translatable("ias.microsoft.hardware"), btn -> this.minecraft.setScreen(new MicrosoftPopupScreen(this.parent, this.handler, HardwareCrypt.INSTANCE)), Supplier::get);
+            button.setTooltip(Tooltip.create(Component.translatable("ias.microsoft.hardware.tip")));
+            button.setTooltipDelay(250);
+            button.color(1.0F, 1.0F, 0.5F);
+            this.addRenderableWidget(button);
+        }
 
         // Add cancel button.
-        this.cancel = new PopupButton(this.width / 2 - 75, this.height / 2 + 79 - 22, 150, 20,
-                CommonComponents.GUI_CANCEL, button -> this.onClose(), Supplier::get);
-        addRenderableWidget(this.cancel);
+        this.addRenderableWidget(new PopupButton(this.width / 2 - 75, this.height / 2 + 79 - 22, 150, 20,
+                CommonComponents.GUI_CANCEL, btn -> this.onClose(), Supplier::get));
     }
 
     @Override
@@ -146,6 +149,7 @@ final class MicrosoftCryptPopupScreen extends Screen {
         pose.popPose();
     }
 
+    @SuppressWarnings("VariableNotUsedInsideIf") // <- Background choosing.
     @Override
     public void renderBackground(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
         // Bruh.
@@ -187,10 +191,16 @@ final class MicrosoftCryptPopupScreen extends Screen {
 
             // Recolor button and update tooltip.
             this.plain.setTooltip(Tooltip.create(Component.translatable("ias.microsoft.plain.tip.on")));
+            this.plain.setTooltipDelay(250);
             this.plain.color(1.0F, 0.25F, 0.25F);
         }
 
         // Pass-through.
         return super.keyPressed(key, scan, mods);
+    }
+
+    @Override
+    public String toString() {
+        return "MicrosoftCryptPopupScreen{}";
     }
 }

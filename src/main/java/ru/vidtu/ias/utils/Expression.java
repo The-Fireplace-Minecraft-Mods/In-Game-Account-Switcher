@@ -1,7 +1,7 @@
 /*
  * In-Game Account Switcher is a mod for Minecraft that allows you to change your logged in account in-game, without restarting Minecraft.
  * Copyright (C) 2015-2022 The_Fireplace
- * Copyright (C) 2021-2023 VidTu
+ * Copyright (C) 2021-2024 VidTu
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -23,120 +23,208 @@ import java.util.Locale;
 
 /**
  * Simple math expression parser. Used for configuration.
- * <small>Actually made from 5-7 math parsing methods found on the internet.</small>
+ * A modified version of the <a href="https://stackoverflow.com/a/26227947">this public domain answer from StackOverflow</a>.
  *
+ * @author Boann
  * @author VidTu
+ * @see <a href="https://stackoverflow.com/a/26227947">stackoverflow.com/a/26227947</a>
  */
-public class Expression {
+public final class Expression {
+    /**
+     * Current expression.
+     */
     private final String expression;
-    private int position;
 
     /**
-     * Create new expression.
+     * Current position.
+     */
+    private int pos = -1;
+
+    /**
+     * Current character.
+     */
+    private int ch;
+
+    /**
+     * Creates a new expression.
      *
      * @param expression Expression string
      */
     public Expression(String expression) {
-        this.expression = expression.replaceAll("\\s+",""); //Remove all white spaces
+        this.expression = expression;
     }
 
     /**
-     * Get the current expression char.
-     *
-     * @return Current expression char
-     */
-    private char current() {
-        return position >= expression.length() ? '?' : expression.charAt(position);
-    }
-
-    /**
-     * Parse expression.
+     * Parses the expression.
      *
      * @return Parsed expression
-     * @throws IllegalArgumentException If we can't calculate this
+     * @throws IllegalStateException If expression is not valid
      */
     public double parse() {
-        return parse(0);
-    }
-
-    /**
-     * Parse expression.
-     *
-     * @param returnFlag Flag for return value. 0 = return at end, 1 = return at multiply, 2 = return at factor
-     * @return Parsed expression
-     * @throws IllegalArgumentException If we can't calculate this
-     * @implNote This is the worst code I've seen in my life
-     */
-    private double parse(int returnFlag) {
         try {
-            if (returnFlag == 2) {
-                if (current() == '-') {
-                    position++;
-                    return -parse(2);
-                }
-                double x;
-                if (current() == '(') {
-                    position++;
-                    x = parse(0);
-                    if (current() == ')') position++;
-                    if (current() == '^') {
-                        position++;
-                        x = Math.pow(x, parse(2));
-                    }
-                    return x;
-                }
-                int begin = position;
-                while (current() == '.' || Character.isDigit(current())) position++;
-                x = Double.parseDouble(expression.substring(begin, position));
-                if (current() == '^') {
-                    position++;
-                    x = Math.pow(x, parse(2));
-                }
-                return x;
-            }
-            double x = parse(2);
-            while (true) {
-                if (current() == '*') {
-                    position++;
-                    x *= parse(2);
-                    continue;
-                }
-                if (current() == '/') {
-                    position++;
-                    x /= parse(2);
-                    continue;
-                }
-                if (returnFlag == 1) return x;
-                break;
-            }
-            while (true) {
-                if (current() == '+') {
-                    position++;
-                    x += parse(1);
-                    continue;
-                }
-                if (current() == '-') {
-                    position++;
-                    x -= parse(1);
-                    continue;
-                }
-                return x;
-            }
+            // Begin reading.
+            this.next();
+
+            // Parse and return.
+            double val = this.parseExpression();
+            if (this.pos >= this.expression.length()) return val;
+            throw new IllegalStateException("Read not fully: " + Character.toString(this.ch));
         } catch (Throwable t) {
-            throw new IllegalArgumentException("Sorry, but we're unable to calculate " + expression + " at pos " + position, t);
+            // Rethrow.
+            throw new IllegalStateException("Unable to parse: " + this, t);
         }
     }
 
+    // Grammar:
+    // expression = term | expression `+` term | expression `-` term
+    // term = factor | term `*` factor | term `/` factor
+    // factor = `+` factor | `-` factor | `(` expression `)` | number
+    //        | functionName `(` expression `)` | functionName factor
+    //        | factor `^` factor
+
     /**
-     * Parse expression, replacing <code>w</code> with width, <code>h</code> with height.
+     * Parsed the expression.
+     *
+     * @return Parsed expression
+     */
+    private double parseExpression() {
+        double x = this.parseTerm();
+        for (int i = 0; i < 64; i++) {
+            if (this.skipIf('+')) x += this.parseTerm(); // addition
+            else if (this.skipIf('-')) x -= this.parseTerm(); // subtraction
+            else return x;
+        }
+        throw new RuntimeException("Out of tries.");
+    }
+
+    /**
+     * Parses the term.
+     *
+     * @return Parsed term
+     */
+    private double parseTerm() {
+        double x = this.parseFactor();
+        for (int i = 0; i < 64; i++) {
+            if (this.skipIf('*')) x *= this.parseFactor(); // multiplication
+            else if (this.skipIf('/')) x /= this.parseFactor(); // division
+            else return x;
+        }
+        throw new RuntimeException("Out of tries.");
+    }
+
+    /**
+     * Parses the factor.
+     *
+     * @return Parsed factor
+     */
+    private double parseFactor() {
+        if (this.skipIf('+')) return +this.parseFactor(); // unary plus
+        if (this.skipIf('-')) return -this.parseFactor(); // unary minus
+        double x;
+        int startPos = this.pos;
+        if (this.skipIf('(')) { // parentheses
+            x = this.parseExpression();
+            if (!this.skipIf(')')) throw new RuntimeException("Missing ')'");
+        } else if ((this.ch >= '0' && this.ch <= '9') || this.ch == '.') { // numbers
+            for (int i = 0; i < 64 && ((this.ch >= '0' && this.ch <= '9') || this.ch == '.'); i++) {
+                this.next();
+            }
+            x = Double.parseDouble(this.expression.substring(startPos, this.pos));
+        } else if (this.ch >= 'a' && this.ch <= 'z') { // functions
+            for (int i = 0; i < 64 && this.ch >= 'a' && this.ch <= 'z'; i++) {
+                this.next();
+            }
+            String func = this.expression.substring(startPos, this.pos);
+            if (this.skipIf('(')) {
+                x = this.parseExpression();
+                if (!this.skipIf(')')) throw new RuntimeException("Missing ')' after argument to " + func);
+            } else {
+                x = this.parseFactor();
+            }
+            x = switch (func) {
+                case "sqrt" -> Math.sqrt(x);
+                case "sin" -> Math.sin(Math.toRadians(x));
+                case "cos" -> Math.cos(Math.toRadians(x));
+                case "tan" -> Math.tan(Math.toRadians(x));
+                default -> throw new RuntimeException("Unknown function: " + func);
+            };
+        } else {
+            throw new RuntimeException("Unexpected: " + Character.toString(this.ch));
+        }
+        if (this.skipIf('^')) x = Math.pow(x, this.parseFactor()); // exponentiation
+        return x;
+    }
+
+    /**
+     * Skips the whitespaces and character from the string if it's the next character, otherwise does nothing.
+     *
+     * @param ch Character to skip
+     * @return Whether the character was skipped
+     */
+    private boolean skipIf(int ch) {
+        // Skip all whitespaces.
+        for (int i = 0; i < 1024 && Character.isWhitespace(ch); i++) {
+            this.next();
+        }
+
+        // Do nothing if not current.
+        if (this.ch != ch) return false;
+
+        // Eat otherwise.
+        this.next();
+        return true;
+    }
+
+    /**
+     * Sets the {@link #ch} to the next string char. (or to -1 if EOF)
+     */
+    private void next() {
+        this.pos++;
+        this.ch = this.pos < this.expression.length() ? this.expression.codePointAt(this.pos) : -1;
+    }
+
+    @Override
+    public String toString() {
+        return "Expression{" +
+                "expression='" + this.expression + '\'' +
+                ", pos=" + this.pos +
+                ", ch=" + this.ch +
+                '}';
+    }
+
+    /**
+     * Parses the expression.
      *
      * @param expression Expression string
-     * @param width      Screen width
-     * @param height     Screen height
-     * @return Expression result
-     * @throws IllegalArgumentException If we can't calculate this
+     * @return Parsed expression
+     * @throws IllegalStateException If expression is not valid
      */
-    public static double parseWidthHeight(String expression, int width, int height) throws IllegalArgumentException {
-        return new Expression(expression.toLowerCase(Locale.ROOT).replace("w", String.valueOf(width)).replace("h", String.valueOf(height))).parse();
+    public static double parse(String expression) {
+        Expression expr = new Expression(expression);
+        return expr.parse();
+    }
+
+    /**
+     * Parses (and rounds) the expression replacing "{@code %width%}" with width
+     * and "{@code %height%}" with height or returns null if not able to parse.
+     *
+     * @param expression Target expression
+     * @param width      Target width
+     * @param height     Target height
+     * @return Parsed (rounded) expression or null
+     */
+    public static Integer parsePosition(String expression, int width, int height) {
+        try {
+            // Null/empty shortcut.
+            if (expression == null || expression.isBlank()) return null;
+
+            // Calculate.
+            return (int) parse(expression.toLowerCase(Locale.ROOT)
+                    .replace("%width%", Integer.toString(width))
+                    .replace("%height%", Integer.toString(height)));
+        } catch (Throwable ignored) {
+            // Return null;
+            return null;
+        }
     }
 }

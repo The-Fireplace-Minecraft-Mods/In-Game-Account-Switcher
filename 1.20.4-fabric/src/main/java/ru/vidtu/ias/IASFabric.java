@@ -1,7 +1,7 @@
 /*
  * In-Game Account Switcher is a mod for Minecraft that allows you to change your logged in account in-game, without restarting Minecraft.
  * Copyright (C) 2015-2022 The_Fireplace
- * Copyright (C) 2021-2023 VidTu
+ * Copyright (C) 2021-2024 VidTu
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -23,16 +23,20 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.networking.v1.ClientLoginConnectionEvents;
+import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
+import net.fabricmc.fabric.api.client.screen.v1.Screens;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
 import net.fabricmc.loader.api.Version;
 import net.fabricmc.loader.api.metadata.ModMetadata;
-import net.minecraft.SharedConstants;
-import org.lwjgl.glfw.GLFW;
-import ru.vidtu.ias.IAS;
-import ru.vidtu.ias.IASMinecraft;
-import ru.vidtu.ias.screen.AccountsScreen;
+import net.minecraft.client.User;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.components.toasts.SystemToast;
+import net.minecraft.client.gui.components.toasts.ToastComponent;
+import net.minecraft.network.chat.Component;
+import ru.vidtu.ias.account.Account;
+import ru.vidtu.ias.config.IASConfig;
 
 /**
  * Main IAS class for Fabric.
@@ -59,11 +63,32 @@ public final class IASFabric implements ClientModInitializer {
         // Register closer.
         ClientLifecycleEvents.CLIENT_STOPPING.register(client -> IAS.close());
 
-        // Debug.
-        ClientTickEvents.END_CLIENT_TICK.register(client -> {
-            if (GLFW.glfwGetKey(client.getWindow().getWindow(), GLFW.GLFW_KEY_0) == GLFW.GLFW_PRESS) {
-                client.setScreen(new AccountsScreen(null));
-            }
+        // Register screen handlers.
+        ScreenEvents.AFTER_INIT.register((client, screen, width, height) -> {
+            // Init.
+            IASMinecraft.onInit(screen, Screens.getButtons(screen)::add);
+
+            // Draw.
+            Font font = client.font;
+            ScreenEvents.afterRender(screen).register((scr, graphics, mouseX, mouseY, delta) -> IASMinecraft.onDraw(scr, font, graphics));
+        });
+
+        // Register warnings about invalid accounts.
+        ClientLoginConnectionEvents.INIT.register((handler, client) -> {
+            // Skip if disabled.
+            if (!IASConfig.nickWarns) return;
+
+            // Warn about invalid names.
+            User user = client.getUser();
+            // Mods break non-nullness.
+            //noinspection ConstantValue
+            String name = user != null ? user.getName() : "";
+            String key = Account.warnKey(name);
+            if (key == null) return;
+
+            // Display the toast.
+            ToastComponent toasts = client.getToasts();
+            toasts.addToast(SystemToast.multiline(client, IASMinecraft.NICK_WARN, Component.literal("In-Game Account Switcher"), Component.translatable(key, name)));
         });
     }
 }

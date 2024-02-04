@@ -1,7 +1,7 @@
 /*
  * In-Game Account Switcher is a mod for Minecraft that allows you to change your logged in account in-game, without restarting Minecraft.
  * Copyright (C) 2015-2022 The_Fireplace
- * Copyright (C) 2021-2023 VidTu
+ * Copyright (C) 2021-2024 VidTu
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -19,7 +19,8 @@
 
 package ru.vidtu.ias.config;
 
-import ru.vidtu.ias.IAS;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.vidtu.ias.account.Account;
 
 import java.io.ByteArrayInputStream;
@@ -45,8 +46,10 @@ public final class IASStorage {
      */
     private static final String DISCLAIMER = """
             > ENGLISH
-            UNDER NO CIRCUMSTANCES SHOULD YOU SEND THE "accounts.donotsend" FILE OR THIS FOLDER TO *ANYONE*.
-            IF YOU ACCIDENTALLY SENT THIS FILE OR FOLDER TO ANYONE, PLEASE, VISIT THE FOLLOWING WEBSITE:
+            Notification about security of accounts stored in the "In-Game Account Switcher" mod:
+            UNDER NO CIRCUMSTANCES SHOULD YOU SEND THIS FOLDER TO *ANYONE* (INCLUDING DEVELOPERS OF THIS MOD),
+            EVEN IF IT APPEARS THAT THIS FOLDER IS FULLY EMPTY.
+            IF YOU ACCIDENTALLY SENT THIS FOLDER TO ANYONE, PLEASE, VISIT THE FOLLOWING WEBSITE:
             https://account.microsoft.com/security
             AND CHANGE YOUR PASSWORD, THEN VISIT THE FOLLOWING WEBSITE:
             https://account.live.com/consent/manage
@@ -56,9 +59,13 @@ public final class IASStorage {
             (If you suspect someone has got access to your game account, revoke ALL permissions
             for ALL applications and do *NOT* launch the game for 31 days at all)
             
+            
+            
             > РУССКИЙ (RUSSIAN)
-            НИ ПРИ КАКИХ ОБСТОЯТЕЛЬСТВАХ НЕ ОТПРАВЛЯЙТЕ ФАЙЛ "accounts.donotsend" ИЛИ ЭТУ ПАПКУ *КОМУ-ЛИБО*.
-            ЕСЛИ ВЫ СЛУЧАЙНО ОТПРАВИЛИ ЭТОТ ФАЙЛ ИЛИ ПАПКУ КОМУ-ЛИБО, ПОЖАЛУЙСТА, ЗАЙДИТЕ НА СЛЕДУЮЩИЙ ВЕБСАЙТ:
+            Уведомление о безопасности аккаунтов из мода "In-Game Account Switcher":
+            НИ ПРИ КАКИХ ОБСТОЯТЕЛЬСТВАХ НЕ ОТПРАВЛЯЙТЕ ЭТУ ПАПКУ *КОМУ-ЛИБО* (В ТОМ ЧИСЛЕ И РАЗРАБОТЧИКАМ ЭТОГО МОДА),
+            ДАЖЕ ЕСЛИ ВАМ КАЖЕТСЯ, ЧТО ЭТА ПАПКА ПОЛНОСТЬЮ ПУСТАЯ.
+            ЕСЛИ ВЫ СЛУЧАЙНО ОТПРАВИЛИ ЭТУ ПАПКУ КОМУ-ЛИБО, ПОЖАЛУЙСТА, ЗАЙДИТЕ НА СЛЕДУЮЩИЙ ВЕБСАЙТ:
             https://account.microsoft.com/security
             И СМЕНИТЕ СВОЙ ПАРОЛЬ, ПОТОМ ЗАЙДИТЕ НА СЛЕДУЮЩИЙ ВЕБСАЙТ:
             https://account.live.com/consent/manage
@@ -79,15 +86,22 @@ public final class IASStorage {
     );
 
     /**
-     * Account data, encrypted or not.
+     * Logger for this class.
      */
-    public static List<Account> accounts = new ArrayList<>();
+    public static final Logger LOGGER = LoggerFactory.getLogger("IAS/IASStorage");
 
     /**
-     * Creates a new storage for GSON.
+     * Account data, encrypted or not.
+     */
+    public static List<Account> accounts = new ArrayList<>(0);
+
+    /**
+     * An instance of this class cannot be created.
+     *
+     * @throws AssertionError Always
      */
     private IASStorage() {
-        // Private
+        throw new AssertionError("No instances.");
     }
 
     /**
@@ -99,7 +113,7 @@ public final class IASStorage {
     public static void disclaimers(Path path) {
         try {
             // Get the path.
-            path = path.resolve(".ias");
+            path = path.resolve("_IAS_ACCOUNTS_DO_NOT_SEND_TO_ANYONE");
 
             // Create the path.
             Files.createDirectories(path);
@@ -135,7 +149,7 @@ public final class IASStorage {
             return true;
         } catch (Throwable t) {
             // Log it.
-            IAS.LOG.error("Unable to load IAS storage.", t);
+            LOGGER.error("Unable to load IAS storage.", t);
 
             // Return fail.
             return false;
@@ -151,10 +165,13 @@ public final class IASStorage {
     public static void load(Path path) {
         try {
             // Get the file.
-            Path file = path.resolve(".ias").resolve("accounts_v1.donotsend");
+            Path file = path.resolve("_IAS_ACCOUNTS_DO_NOT_SEND_TO_ANYONE/.hidden/accounts_v1.do_not_send_to_anyone");
 
-            // Skip if doesn't exist.
-            if (!Files.isRegularFile(file)) return;
+            // Skip if it doesn't exist.
+            if (!Files.isRegularFile(file)) {
+                save(path);
+                return;
+            }
 
             // Read the data.
             byte[] data = Files.readAllBytes(file);
@@ -198,7 +215,7 @@ public final class IASStorage {
             return true;
         } catch (Throwable t) {
             // Log it.
-            IAS.LOG.error("Unable to save IAS storage.", t);
+            LOGGER.error("Unable to save IAS storage.", t);
 
             // Return fail.
             return false;
@@ -214,7 +231,7 @@ public final class IASStorage {
     public static void save(Path path) {
         try {
             // Get the file.
-            Path file = path.resolve(".ias").resolve("accounts_v1.donotsend");
+            Path file = path.resolve("_IAS_ACCOUNTS_DO_NOT_SEND_TO_ANYONE/.hidden/accounts_v1.do_not_send_to_anyone");
 
             // Encode the data.
             byte[] data;
@@ -240,6 +257,20 @@ public final class IASStorage {
 
             // Create parent directories.
             Files.createDirectories(file.getParent());
+
+            // Try to make folder hidden on Windows. (already hidden by name on UNIX-like)
+            try {
+                Files.setAttribute(file.getParent(), "dos:hidden", true);
+            } catch (Throwable ignored) {
+                // Ignored
+            }
+
+            // Try to make folder EXTRA hidden on Windows. (already hidden by name on UNIX-like)
+            try {
+                Files.setAttribute(file.getParent(), "dos:system", true);
+            } catch (Throwable ignored) {
+                // Ignored
+            }
 
             // Write the data.
             Files.write(file, data, StandardOpenOption.CREATE,

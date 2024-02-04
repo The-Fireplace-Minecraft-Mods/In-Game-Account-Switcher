@@ -1,7 +1,7 @@
 /*
  * In-Game Account Switcher is a mod for Minecraft that allows you to change your logged in account in-game, without restarting Minecraft.
  * Copyright (C) 2015-2022 The_Fireplace
- * Copyright (C) 2021-2023 VidTu
+ * Copyright (C) 2021-2024 VidTu
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -21,7 +21,8 @@ package ru.vidtu.ias.config;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import ru.vidtu.ias.IAS;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Modifier;
 import java.nio.file.Files;
@@ -33,13 +34,23 @@ import java.nio.file.StandardOpenOption;
  *
  * @author VidTu
  */
-public class IASConfig {
+public final class IASConfig {
     /**
      * Config GSON.
      */
     private static final Gson GSON = new GsonBuilder()
             .excludeFieldsWithModifiers(Modifier.TRANSIENT, Modifier.FINAL)
             .create();
+
+    /**
+     * Logger for this class.
+     */
+    public static final Logger LOGGER = LoggerFactory.getLogger("IAS/IASConfig");
+
+    /**
+     * For future config versions.
+     */
+    public static boolean skipMigration = false;
 
     /**
      * Whether the title screen text is enabled, {@code true} by default.
@@ -79,7 +90,7 @@ public class IASConfig {
     /**
      * Whether the servers screen text is enabled, {@code false} by default.
      */
-    public static boolean serversText = false;
+    public static boolean serversText = true;
 
     /**
      * Custom servers screen text X position, {@code null} by default.
@@ -99,7 +110,7 @@ public class IASConfig {
     /**
      * Whether the servers screen button is enabled, {@code false} by default.
      */
-    public static boolean serversButton = false;
+    public static boolean serversButton = true;
 
     /**
      * Custom servers screen button X position, {@code null} by default.
@@ -110,6 +121,16 @@ public class IASConfig {
      * Custom servers screen button Y position, {@code null} by default.
      */
     public static String serversButtonY = null;
+
+    /**
+     * Allow storing accounts without Crypt.
+     */
+    public static boolean allowNoCrypt = false;
+
+    /**
+     * Display warning toasts for invalid names.
+     */
+    public static boolean nickWarns = true;
 
     /**
      * Creates a new config for GSON.
@@ -133,7 +154,7 @@ public class IASConfig {
             return true;
         } catch (Throwable t) {
             // Log it.
-            IAS.LOG.error("Unable to load IAS config.", t);
+            LOGGER.error("Unable to load IAS config.", t);
 
             // Return fail.
             return false;
@@ -151,8 +172,11 @@ public class IASConfig {
             // Get the file.
             Path file = path.resolve("ias_v9.json");
 
-            // Skip if doesn't exist.
-            if (!Files.isRegularFile(file)) return;
+            // Skip if it doesn't exist.
+            if (!Files.isRegularFile(file)) {
+                save(path);
+                return;
+            }
 
             // Read the file.
             String value = Files.readString(file);
@@ -180,7 +204,7 @@ public class IASConfig {
             return true;
         } catch (Throwable t) {
             // Log it.
-            IAS.LOG.error("Unable to save IAS config.", t);
+            LOGGER.error("Unable to save IAS config.", t);
 
             // Return fail.
             return false;
@@ -199,7 +223,7 @@ public class IASConfig {
             Path file = path.resolve("ias_v9.json");
 
             // Hacky JSON writing.
-            @SuppressWarnings("InstantiationOfUtilityClass")
+            @SuppressWarnings("InstantiationOfUtilityClass") // <- Hack.
             String value = GSON.toJson(new IASConfig());
 
             // Create parent directories.

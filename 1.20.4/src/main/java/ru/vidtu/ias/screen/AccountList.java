@@ -1,7 +1,7 @@
 /*
  * In-Game Account Switcher is a mod for Minecraft that allows you to change your logged in account in-game, without restarting Minecraft.
  * Copyright (C) 2015-2022 The_Fireplace
- * Copyright (C) 2021-2023 VidTu
+ * Copyright (C) 2021-2024 VidTu
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -22,13 +22,11 @@ package ru.vidtu.ias.screen;
 import com.mojang.authlib.yggdrasil.ProfileResult;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.ObjectSelectionList;
-import net.minecraft.client.gui.screens.ConfirmScreen;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.DefaultPlayerSkin;
 import net.minecraft.client.resources.PlayerSkin;
-import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.Nullable;
-import org.lwjgl.util.tinyfd.TinyFileDialogs;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.vidtu.ias.IAS;
 import ru.vidtu.ias.account.Account;
 import ru.vidtu.ias.config.IASStorage;
@@ -38,6 +36,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.WeakHashMap;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Predicate;
 
 /**
  * Account GUI list.
@@ -48,7 +47,12 @@ final class AccountList extends ObjectSelectionList<AccountEntry> {
     /**
      * Skins cache.
      */
-    private static final Map<UUID, PlayerSkin> SKINS = new WeakHashMap<>();
+    private static final Map<UUID, PlayerSkin> SKINS = new WeakHashMap<>(4);
+
+    /**
+     * Logger for this class.
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger("IAS/AccountList");
 
     /**
      * Parent screen.
@@ -97,7 +101,7 @@ final class AccountList extends ObjectSelectionList<AccountEntry> {
             this.replaceEntries(IASStorage.accounts.stream()
                     .map(account -> new AccountEntry(this.minecraft, this, account))
                     .toList());
-            this.setSelected(selected);
+            this.setSelected(this.children().contains(selected) ? selected : null);
 
             // Notify the root.
             this.screen.updateSelected();
@@ -119,7 +123,7 @@ final class AccountList extends ObjectSelectionList<AccountEntry> {
                 ))
                 .map(account -> new AccountEntry(this.minecraft, this, account))
                 .toList());
-        this.setSelected(selected);
+        this.setSelected(this.children().contains(selected) ? selected : null);
 
         // Notify the root.
         this.screen.updateSelected();
@@ -137,7 +141,7 @@ final class AccountList extends ObjectSelectionList<AccountEntry> {
         if (selected == null) return;
         Account account = selected.account;
 
-        // Check if should log in online.
+        // Check if we should log in online.
         if (online && account.canLogin()) {
             // Initialize and set the login screen.
             LoginPopupScreen login = new LoginPopupScreen(this.screen);
@@ -155,7 +159,7 @@ final class AccountList extends ObjectSelectionList<AccountEntry> {
         this.minecraft.setScreen(login);
 
         // Login offline.
-        Account.LoginData data = new Account.LoginData(account.name(), account.uuid(), "ias:offline", Account.LoginData.LEGACY);
+        Account.LoginData data = new Account.LoginData(account.name(), account.uuid(), "ias:offline", false);
         login.success(data);
     }
 
@@ -164,38 +168,42 @@ final class AccountList extends ObjectSelectionList<AccountEntry> {
         AccountEntry selected = this.getSelected();
         if (selected == null) return;
         int index = this.children().indexOf(selected);
-        if (index < 0 || index >= this.children().size() || index >= IASStorage.accounts.size()) return;
+        if (index < 0 || index >= IASStorage.accounts.size()) return;
 
         // Replace in storage.
-        this.minecraft.setScreen(new AddPopupScreen(this.screen, account -> {
-            // Skip if not current.
-            if (this.screen != this.minecraft.screen) return;
-            if (index >= this.children().size()) return;
+        this.minecraft.setScreen(new AddPopupScreen(this.screen, true, account -> {
+            // Set to this.
+            this.minecraft.setScreen(this.screen);
 
             // Add the account and save it.
-            IASStorage.accounts.set(index, account);
+            IASStorage.accounts.removeIf(Predicate.isEqual(account));
+            if (index >= IASStorage.accounts.size()) {
+                IASStorage.accounts.add(account);
+            } else {
+                IASStorage.accounts.set(index, account);
+            }
             IAS.saveStorageSafe();
             IAS.disclaimersStorage();
 
             // Update the list.
             this.update(this.screen.search.getValue());
-            if (index >= IASStorage.accounts.size()) return;
-            this.setSelected(this.children().get(index));
         }));
     }
 
     /**
      * Deletes the selected account.
      * Does nothing if nothing is selected.
+     *
+     * @param confirm Whether to show the confirmation
      */
-    void delete() {
+    void delete(boolean confirm) {
         // Skip if nothing is selected.
         AccountEntry selected = this.getSelected();
         if (selected == null) return;
         Account account = selected.account;
 
         // Skip confirmation if shift is pressed.
-        if (Screen.hasShiftDown()) {
+        if (!confirm) {
             IASStorage.accounts.remove(account);
             IAS.saveStorageSafe();
             IAS.disclaimersStorage();
@@ -204,33 +212,31 @@ final class AccountList extends ObjectSelectionList<AccountEntry> {
         }
 
         // Display confirmation screen.
-        this.minecraft.setScreen(new ConfirmScreen(result -> {
+        this.minecraft.setScreen(new DeletePopupScreen(this.screen, account, () -> {
             // Delete if confirmed.
-            if (result) {
-                IASStorage.accounts.remove(account);
-                IAS.saveStorageSafe();
-                IAS.disclaimersStorage();
-                this.update(this.screen.search.getValue());
-            }
-
-            // Display accounts screen again.
-            this.minecraft.setScreen(this.screen);
-        }, Component.translatable("ias.delete", account.name()),
-                Component.translatable("ias.delete.hint", Component.translatable("key.keyboard.left.shift"))));
+            IASStorage.accounts.removeIf(Predicate.isEqual(account));
+            IAS.saveStorageSafe();
+            IAS.disclaimersStorage();
+            this.update(this.screen.search.getValue());
+        }));
     }
 
     /**
      * Opens the account adding screen.
      */
     void add() {
-        this.minecraft.setScreen(new AddPopupScreen(this.screen, account -> {
-            // Skip if not current.
-            if (this.screen != this.minecraft.screen) return;
+        this.minecraft.setScreen(new AddPopupScreen(this.screen, false, account -> {
+            // Set to this.
+            this.minecraft.setScreen(this.screen);
 
             // Add the account and save it.
+            IASStorage.accounts.removeIf(Predicate.isEqual(account));
             IASStorage.accounts.add(account);
             IAS.saveStorageSafe();
             IAS.disclaimersStorage();
+
+            // Update the list.
+            this.update(this.screen.search.getValue());
         }));
     }
 
@@ -277,7 +283,7 @@ final class AccountList extends ObjectSelectionList<AccountEntry> {
             SKINS.put(uuid, loaded);
         }, this.minecraft).exceptionally(t -> {
             // Log it.
-            IAS.LOG.warn("IAS: Unable to load skin: {}", entry, t);
+            LOGGER.warn("IAS: Unable to load skin: {}", entry, t);
 
             // Return null.
             return null;
@@ -285,5 +291,12 @@ final class AccountList extends ObjectSelectionList<AccountEntry> {
 
         // Return quick skin.
         return skin;
+    }
+
+    @Override
+    public String toString() {
+        return "AccountList{" +
+                "children=" + this.children() +
+                '}';
     }
 }

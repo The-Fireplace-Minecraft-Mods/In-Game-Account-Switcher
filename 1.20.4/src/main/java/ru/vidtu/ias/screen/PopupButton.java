@@ -1,7 +1,7 @@
 /*
  * In-Game Account Switcher is a mod for Minecraft that allows you to change your logged in account in-game, without restarting Minecraft.
  * Copyright (C) 2015-2022 The_Fireplace
- * Copyright (C) 2021-2023 VidTu
+ * Copyright (C) 2021-2024 VidTu
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -90,6 +90,7 @@ final class PopupButton extends Button {
      * @param blue Button B
      * @return {@code this}
      */
+    @SuppressWarnings("UnusedReturnValue") // <- Chain helper.
     PopupButton color(float red, float green, float blue) {
         this.red = red;
         this.green = green;
@@ -129,5 +130,18 @@ final class PopupButton extends Button {
 
         // Render string.
         graphics.drawString(font, message, x + (width - font.width(message)) / 2, y + height / 2 - 4, 0xFF_00_00_00, false);
+    }
+
+    @Override
+    public String toString() {
+        return "PopupButton{" +
+                "red=" + this.red +
+                ", green=" + this.green +
+                ", blue=" + this.blue +
+                ", currentRed=" + this.currentRed +
+                ", currentGreen=" + this.currentGreen +
+                ", currentBlue=" + this.currentBlue +
+                ", multiplier=" + this.multiplier +
+                '}';
     }
 }

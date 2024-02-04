@@ -1,5 +1,5 @@
 plugins {
-    id("fabric-loom") version "1.4-SNAPSHOT"
+    id("fabric-loom") version "1.5-SNAPSHOT"
 }
 
 java.sourceCompatibility = JavaVersion.VERSION_17
@@ -14,10 +14,9 @@ repositories {
 }
 
 dependencies {
-    val mixin = project.properties["mixin"]
     minecraft("com.mojang:minecraft:1.20.4")
     mappings(loom.officialMojangMappings())
-    compileOnly("org.spongepowered:mixin:${mixin}")
+    compileOnly("org.spongepowered:mixin:0.8.5")
     compileOnlyApi(rootProject)
 }
 

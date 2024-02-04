@@ -1,7 +1,7 @@
 /*
  * In-Game Account Switcher is a mod for Minecraft that allows you to change your logged in account in-game, without restarting Minecraft.
  * Copyright (C) 2015-2022 The_Fireplace
- * Copyright (C) 2021-2023 VidTu
+ * Copyright (C) 2021-2024 VidTu
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -19,11 +19,6 @@
 
 package ru.vidtu.ias.crypt;
 
-import javax.crypto.Cipher;
-import javax.crypto.SecretKey;
-import javax.crypto.SecretKeyFactory;
-import javax.crypto.spec.PBEKeySpec;
-import javax.crypto.spec.SecretKeySpec;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
@@ -35,7 +30,6 @@ import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
-import java.security.spec.KeySpec;
 import java.util.Base64;
 import java.util.List;
 import java.util.Objects;
@@ -54,12 +48,32 @@ public final class HardwareCrypt implements Crypt {
     public static final HardwareCrypt INSTANCE = new HardwareCrypt();
 
     /**
+     * Empty byte array for unknown MAC.
+     */
+    private static final byte[] EMPTY_MAC = {};
+
+    /**
+     * List of environmental keys used for hardware password.
+     */
+    private static final List<String> ENV = List.of("COMPUTERNAME", "PROCESSOR_ARCHITECTURE",
+            "PROCESSOR_REVISION", "PROCESSOR_IDENTIFIER", "PROCESSOR_LEVEL", "NUMBER_OF_PROCESSORS", "OS", "USERNAME",
+            "USERDOMAIN", "USERDOMAIN_ROAMINGPROFILE", "APPDATA", "HOMEPATH", "LOGONSERVER", "LOCALAPPDATA", "TEMP", "TMP");
+
+    /**
+     * List of system properties used for hardware password.
+     */
+    private static final List<String> PROPS = List.of("java.io.tmpdir", "native.encoding", "user.name",
+            "user.home", "user.country", "sun.io.unicode.encoding", "stderr.encoding", "sun.cpu.endian",
+            "sun.cpu.isalist", "sun.jnu.encoding", "stdout.encoding", "native.encoding", "sun.arch.data.model",
+            "user.language", "user.variant");
+
+    /**
      * Creates a new "hardware ID" crypt.
      *
      * @see #INSTANCE
      */
-    public HardwareCrypt() {
-        // Empty
+    private HardwareCrypt() {
+        // Private
     }
 
     @Override
@@ -71,8 +85,16 @@ public final class HardwareCrypt implements Crypt {
             random.nextBytes(salt);
             out.write(salt);
 
+            // Generate and write IV.
+            byte[] iv = new byte[16];
+            random.nextBytes(iv);
+            out.write(iv);
+
+            // Generate the password.
+            String pwd = hardwarePassword();
+
             // Encrypt and write the data.
-            byte[] data = hardwareEncrypt(decrypted, salt);
+            byte[] data = Crypt.pbkdfAesEncrypt(decrypted, pwd, salt, iv);
             out.write(data);
 
             // Return data.
@@ -93,11 +115,21 @@ public final class HardwareCrypt implements Crypt {
                 throw new EOFException("Not enough salt bytes: " + read);
             }
 
+            // Read the IV.
+            byte[] iv = new byte[16];
+            read = in.read(iv);
+            if (read != 16) {
+                throw new EOFException("Not enough IV bytes: " + read);
+            }
+
+            // Generate the password.
+            String pwd = hardwarePassword();
+
             // Read the data.
             byte[] data = in.readAllBytes();
 
-            // Decrypt and return the data.
-            return hardwareDecrypt(data, salt);
+            // Decrypt and return.
+            return Crypt.pbkdfAesDecrypt(data, pwd, salt, iv);
         } catch (Throwable t) {
             // Rethrow.
             throw new RuntimeException("Unable to decrypt using HardwareCrypt.", t);
@@ -120,66 +152,14 @@ public final class HardwareCrypt implements Crypt {
     }
 
     /**
-     * Encrypts the data using "HWID" and salt.
+     * Creates a from various hardware things and salt using PBKDF2 algorithm.
      *
-     * @param decrypted Decrypted data
-     * @param salt      Target salt
-     * @return Encrypted data
-     * @throws RuntimeException If unable to encrypt the data
-     */
-    private static byte[] hardwareEncrypt(byte[] decrypted, byte[] salt) {
-        try {
-            // Create the key.
-            SecretKey key = hardwareKey(salt);
-
-            // Create the AES.
-            Cipher cipher = Cipher.getInstance("AES");
-            cipher.init(Cipher.ENCRYPT_MODE, key);
-
-            // Encrypt and return.
-            return cipher.doFinal(decrypted);
-        } catch (Throwable t) {
-            // Rethrow.
-            throw new RuntimeException("Unable to encrypt data using AES via PBKDF2-hashed hardware key.", t);
-        }
-    }
-
-    /**
-     * Decrypts the data using "HWID" and salt.
-     *
-     * @param encrypted Encrypted data
-     * @param salt      Target salt
-     * @return Decrypted data
-     * @throws RuntimeException If unable to decrypt the data
-     */
-    private static byte[] hardwareDecrypt(byte[] encrypted, byte[] salt) {
-        try {
-            // Create the key.
-            SecretKey key = hardwareKey(salt);
-
-            // Create the AES.
-            Cipher cipher = Cipher.getInstance("AES");
-            cipher.init(Cipher.DECRYPT_MODE, key);
-
-            // Decrypt and return.
-            return cipher.doFinal(encrypted);
-        } catch (Throwable t) {
-            // Rethrow.
-            throw new RuntimeException("Unable to decrypt data using AES via PBKDF2-hashed hardware key.", t);
-        }
-    }
-
-    /**
-     * Creates a new AES key from various hardware things and salt using PBKDF2 algorithm.
-     *
-     * @param salt Target salt
      * @return Created AES key
      * @throws RuntimeException If unable to create the key
      */
-    private static SecretKey hardwareKey(byte[] salt) {
+    private static String hardwarePassword() {
         try {
             // Calculate the "hardware ID".
-            String hwid;
             try (ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
                  DataOutputStream out = new DataOutputStream(byteOut)) {
                 // Basic system info.
@@ -193,22 +173,16 @@ public final class HardwareCrypt implements Crypt {
                 out.write(System.lineSeparator().getBytes(StandardCharsets.UTF_8));
 
                 // System properties.
-                List<String> list = List.of("java.io.tmpdir", "native.encoding", "user.name", "user.home", "user.country",
-                        "sun.io.unicode.encoding", "stderr.encoding", "sun.cpu.endian", "sun.cpu.isalist", "sun.jnu.encoding",
-                        "stdout.encoding", "sun.arch.data.model", "user.language", "user.variant");
-                for (String key : list) {
-                    String value = System.getProperty(key, "\0\0\0\0\0\0\0\0\0");
+                for (String key : PROPS) {
+                    String value = System.getProperty(key, "IAS_NO_DATA");
                     out.write(value.getBytes(StandardCharsets.UTF_8));
                 }
 
                 // Environmental info.
                 // Can be undefined in Mac/Linux distributions, too lazy to test, but if it's null
                 // it will stay null anyway, so should be persistent.
-                list = List.of("COMPUTERNAME", "PROCESSOR_ARCHITECTURE", "PROCESSOR_REVISION", "PROCESSOR_IDENTIFIER",
-                        "PROCESSOR_LEVEL", "NUMBER_OF_PROCESSORS", "OS", "USERNAME", "USERDOMAIN", "USERDOMAIN_ROAMINGPROFILE",
-                        "APPDATA", "HOMEPATH", "LOGONSERVER", "LOCALAPPDATA", "TEMP", "TMP");
-                for (String key : list) {
-                    String value = Objects.requireNonNullElse(System.getenv(key), "\0\0\0\0\0\0\0\0\0");
+                for (String key : ENV) {
+                    String value = Objects.requireNonNullElse(System.getenv(key), "IAS_NO_DATA");
                     out.write(value.getBytes(StandardCharsets.UTF_8));
                 }
 
@@ -224,9 +198,9 @@ public final class HardwareCrypt implements Crypt {
                     out.write(net.getDisplayName().getBytes(StandardCharsets.UTF_8));
                     byte[] mac;
                     try {
-                        mac = Objects.requireNonNullElse(net.getHardwareAddress(), new byte[0]);
+                        mac = Objects.requireNonNullElse(net.getHardwareAddress(), EMPTY_MAC);
                     } catch (SocketException ignored) {
-                        mac = new byte[0];
+                        mac = EMPTY_MAC;
                     }
                     out.write(mac);
                     try {
@@ -236,24 +210,12 @@ public final class HardwareCrypt implements Crypt {
                     }
                 }
 
-                // Bake the "HWID".
-                hwid = Base64.getEncoder().encodeToString(byteOut.toByteArray());
+                // Bake and return the "HWID".
+                return Base64.getEncoder().encodeToString(byteOut.toByteArray());
             }
-
-            // Create a new PBKDF2WithHmacSHA512 factory.
-            SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA512");
-
-            // Create a PBKDF2 key with 256 bits key (for AES) and 1_300_000 iterations.
-            KeySpec spec = new PBEKeySpec(hwid.toCharArray(), salt, 1_300_000, 256);
-
-            // Create a new secret.
-            byte[] secret = factory.generateSecret(spec).getEncoded();
-
-            // Create a new key.
-            return new SecretKeySpec(secret, "AES");
         } catch (Throwable t) {
             // Rethrow.
-            throw new RuntimeException("Unable to create a secret AES key from password using PBKDF2.", t);
+            throw new RuntimeException("Unable to create a hardware password.", t);
         }
     }
 }

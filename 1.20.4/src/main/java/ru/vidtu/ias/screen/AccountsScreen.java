@@ -1,7 +1,7 @@
 /*
  * In-Game Account Switcher is a mod for Minecraft that allows you to change your logged in account in-game, without restarting Minecraft.
  * Copyright (C) 2015-2022 The_Fireplace
- * Copyright (C) 2021-2023 VidTu
+ * Copyright (C) 2021-2024 VidTu
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -25,10 +25,13 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.PlayerSkinWidget;
+import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.gui.navigation.CommonInputs;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.DefaultPlayerSkin;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
+import org.lwjgl.glfw.GLFW;
 
 public final class AccountsScreen extends Screen {
     /**
@@ -119,32 +122,32 @@ public final class AccountsScreen extends Screen {
         this.addRenderableWidget(this.skin);
 
         // Add login button.
-        this.login = Button.builder(Component.translatable("ias.accounts.login"), button -> this.list.login(true))
+        this.login = Button.builder(Component.translatable("ias.accounts.login"), btn -> this.list.login(true))
                 .bounds(this.width / 2 - 50 - 100 - 4, this.height - 24 - 24, 100, 20).build();
         this.addRenderableWidget(this.login);
 
         // Add offline login button.
-        this.offlineLogin = Button.builder(Component.translatable("ias.accounts.offlineLogin"), button -> this.list.login(false))
+        this.offlineLogin = Button.builder(Component.translatable("ias.accounts.offlineLogin"), btn -> this.list.login(false))
                 .bounds(this.width / 2 - 50 - 100 - 4, this.height - 24, 100, 20).build();
         this.addRenderableWidget(this.offlineLogin);
 
         // Add edit button.
-        this.edit = Button.builder(Component.translatable("ias.accounts.edit"), button -> this.list.edit())
+        this.edit = Button.builder(Component.translatable("ias.accounts.edit"), btn -> this.list.edit())
                 .bounds(this.width / 2 - 50, this.height - 24 - 24, 100, 20).build();
         this.addRenderableWidget(this.edit);
 
         // Add delete button.
-        this.delete = Button.builder(Component.translatable("ias.accounts.delete"), button -> this.list.delete())
+        this.delete = Button.builder(Component.translatable("ias.accounts.delete"), btn -> this.list.delete(!Screen.hasShiftDown()))
                 .bounds(this.width / 2 - 50, this.height - 24, 100, 20).build();
         this.addRenderableWidget(this.delete);
 
         // Add edit button.
-        this.add = Button.builder(Component.translatable("ias.accounts.add"), button -> this.list.add())
+        this.add = Button.builder(Component.translatable("ias.accounts.add"), btn -> this.list.add())
                 .bounds(this.width / 2 + 50 + 4, this.height - 24 - 24, 100, 20).build();
         this.addRenderableWidget(this.add);
 
         // Add delete button.
-        this.back = Button.builder(CommonComponents.GUI_BACK, button -> this.minecraft.setScreen(this.parent))
+        this.back = Button.builder(CommonComponents.GUI_BACK, btn -> this.minecraft.setScreen(this.parent))
                 .bounds(this.width / 2 + 50 + 4, this.height - 24, 100, 20).build();
         this.addRenderableWidget(this.back);
 
@@ -205,14 +208,59 @@ public final class AccountsScreen extends Screen {
         // Enable always-on buttons.
         this.offlineLogin.active = this.edit.active = this.delete.active = true;
 
-        // Enable online login button if can log in.
+        // Enable online login button if we can log in.
         if (selected.account.canLogin()) {
             this.login.active = true;
-        } else {
             this.login.setTooltip(null);
+        } else {
+            this.login.active = false;
+            this.login.setTooltip(Tooltip.create(Component.translatable("ias.accounts.login.offline")));
+            this.login.setTooltipDelay(-1);
         }
 
         // Show skin.
         this.skin.visible = true;
+    }
+
+    @Override
+    public boolean keyPressed(int key, int scan, int mods) {
+        // Skip if handled by super.
+        if (super.keyPressed(key, scan, mods)) {
+            return true;
+        }
+
+        // Enter or Numpad Enter to log in.
+        if (CommonInputs.selected(key)) {
+            this.list.login(!Screen.hasShiftDown());
+            return true;
+        }
+
+        // Delete or Numpad Minus to delete.
+        if (key == GLFW.GLFW_KEY_DELETE || key == GLFW.GLFW_KEY_KP_SUBTRACT) {
+            this.list.delete(!Screen.hasShiftDown());
+            return true;
+        }
+
+        // CTRL+N or Numpad Plus to add.
+        if ((key == GLFW.GLFW_KEY_N && Screen.hasControlDown()) || key == GLFW.GLFW_KEY_KP_ADD) {
+            this.list.add();
+            return true;
+        }
+
+        // CTRL+R or Numpad Asterisk to edit.
+        if ((key == GLFW.GLFW_KEY_R && Screen.hasControlDown()) || key == GLFW.GLFW_KEY_KP_MULTIPLY) {
+            this.list.edit();
+            return true;
+        }
+
+        // Not handled.
+        return false;
+    }
+
+    @Override
+    public String toString() {
+        return "AccountsScreen{" +
+                "list=" + this.list +
+                '}';
     }
 }
