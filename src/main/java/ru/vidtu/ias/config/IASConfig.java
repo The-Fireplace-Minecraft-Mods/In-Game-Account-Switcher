@@ -154,7 +154,7 @@ public final class IASConfig {
             return true;
         } catch (Throwable t) {
             // Log it.
-            LOGGER.error("Unable to load IAS config.", t);
+            LOGGER.error("IAS: Unable to load IAS config.", t);
 
             // Return fail.
             return false;
@@ -204,7 +204,7 @@ public final class IASConfig {
             return true;
         } catch (Throwable t) {
             // Log it.
-            LOGGER.error("Unable to save IAS config.", t);
+            LOGGER.error("IAS: Unable to save IAS config.", t);
 
             // Return fail.
             return false;

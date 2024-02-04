@@ -149,7 +149,7 @@ public final class IASStorage {
             return true;
         } catch (Throwable t) {
             // Log it.
-            LOGGER.error("Unable to load IAS storage.", t);
+            LOGGER.error("IAS: Unable to load IAS storage.", t);
 
             // Return fail.
             return false;
@@ -215,7 +215,7 @@ public final class IASStorage {
             return true;
         } catch (Throwable t) {
             // Log it.
-            LOGGER.error("Unable to save IAS storage.", t);
+            LOGGER.error("IAS: Unable to save IAS storage.", t);
 
             // Return fail.
             return false;

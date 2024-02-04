@@ -33,6 +33,7 @@ import org.slf4j.LoggerFactory;
 import ru.vidtu.ias.IASMinecraft;
 import ru.vidtu.ias.account.Account;
 import ru.vidtu.ias.account.MicrosoftAccount;
+import ru.vidtu.ias.utils.ProbableException;
 
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
@@ -96,13 +97,19 @@ final class LoginPopupScreen extends Screen implements Account.LoginHandler {
         // Bruh.
         assert this.minecraft != null;
 
+        // Synchronize to prevent funny things.
+        synchronized (this.lock) {
+            // Unbake label.
+            this.label = null;
+        }
+
         // Init parent.
         if (this.parent != null) {
             this.parent.init(this.minecraft, this.width, this.height);
         }
 
         // Add cancel button.
-        this.addRenderableWidget(new PopupButton(this.width / 2 - 75, this.height / 2 + 49 - 22, 150, 20,
+        this.addRenderableWidget(new PopupButton(this.width / 2 - 75, this.height / 2 + 74 - 22, 150, 20,
                 CommonComponents.GUI_CANCEL, btn -> this.onClose(), Supplier::get));
 
         // Add password box, if future exists.
@@ -167,7 +174,7 @@ final class LoginPopupScreen extends Screen implements Account.LoginHandler {
         // Render the title.
         pose.pushPose();
         pose.scale(2.0F, 2.0F, 2.0F);
-        graphics.drawCenteredString(this.font, this.title, this.width / 4, this.height / 4 - 49 / 2, 0xFF_FF_FF_FF);
+        graphics.drawCenteredString(this.font, this.title, this.width / 4, this.height / 4 - 74 / 2, 0xFF_FF_FF_FF);
         pose.popPose();
 
         // Render password OR label.
@@ -182,14 +189,14 @@ final class LoginPopupScreen extends Screen implements Account.LoginHandler {
                     Component component = Objects.requireNonNullElse(this.stage, Component.empty());
 
                     // Bake the label.
-                    this.label = MultiLineLabel.create(this.font, component, 200, 5);
+                    this.label = MultiLineLabel.create(this.font, component, 240);
 
                     // Narrate.
                     this.minecraft.getNarrator().say(component);
                 }
 
                 // Render the label.
-                this.label.renderCentered(graphics, this.width / 2, (this.height - this.label.getLineCount() * 9) / 2, 9, 0xFF_FF_FF_FF);
+                this.label.renderCentered(graphics, this.width / 2, (this.height - this.label.getLineCount() * 9) / 2 - 4, 9, 0xFF_FF_FF_FF);
             }
         }
     }
@@ -213,9 +220,9 @@ final class LoginPopupScreen extends Screen implements Account.LoginHandler {
         // Render "form".
         int centerX = this.width / 2;
         int centerY = this.height / 2;
-        graphics.fill(centerX - 105, centerY - 50, centerX + 105, centerY + 50, 0xF8_20_20_30);
-        graphics.fill(centerX - 104, centerY - 51, centerX + 104, centerY - 50, 0xF8_20_20_30);
-        graphics.fill(centerX - 104, centerY + 50, centerX + 104, centerY + 51, 0xF8_20_20_30);
+        graphics.fill(centerX - 125, centerY - 75, centerX + 125, centerY + 75, 0xF8_20_20_30);
+        graphics.fill(centerX - 124, centerY - 76, centerX + 124, centerY - 75, 0xF8_20_20_30);
+        graphics.fill(centerX - 124, centerY + 75, centerX + 124, centerY + 76, 0xF8_20_20_30);
     }
 
     @Override
@@ -227,8 +234,9 @@ final class LoginPopupScreen extends Screen implements Account.LoginHandler {
         if (this != this.minecraft.screen) return;
 
         // Flush the stage.
+        Component component = Component.translatable(stage).withStyle(ChatFormatting.YELLOW);
         synchronized (this.lock) {
-            this.stage = Component.translatable(stage).withStyle(ChatFormatting.YELLOW);
+            this.stage = component;
             this.label = null;
         }
     }
@@ -313,8 +321,11 @@ final class LoginPopupScreen extends Screen implements Account.LoginHandler {
         if (this != this.minecraft.screen) return;
 
         // Flush the stage.
+        ProbableException probable = ProbableException.probableCause(error);
+        String key = probable != null ? Objects.requireNonNullElse(probable.getMessage(), "ias.error") : "ias.error";
+        Component component = Component.translatable(key).withStyle(ChatFormatting.RED);
         synchronized (this.lock) {
-            this.stage = Component.translatable("ias.error").withStyle(ChatFormatting.RED);
+            this.stage = component;
             this.label = null;
         }
     }

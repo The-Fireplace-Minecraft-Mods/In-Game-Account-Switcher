@@ -35,8 +35,8 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.toasts.SystemToast;
 import net.minecraft.client.gui.components.toasts.ToastComponent;
 import net.minecraft.network.chat.Component;
-import ru.vidtu.ias.account.Account;
 import ru.vidtu.ias.config.IASConfig;
+import ru.vidtu.ias.utils.IUtils;
 
 /**
  * Main IAS class for Fabric.
@@ -83,7 +83,7 @@ public final class IASFabric implements ClientModInitializer {
             // Mods break non-nullness.
             //noinspection ConstantValue
             String name = user != null ? user.getName() : "";
-            String key = Account.warnKey(name);
+            String key = IUtils.warnKey(name);
             if (key == null) return;
 
             // Display the toast.

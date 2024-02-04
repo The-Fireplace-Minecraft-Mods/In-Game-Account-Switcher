@@ -286,6 +286,7 @@ public final class IASMinecraft {
      */
     public static CompletableFuture<Void> account(Minecraft minecraft, Account.LoginData data) {
         // Check if not in-game.
+        LOGGER.info("IAS: Received login request: {}", data);
         if (minecraft.player != null || minecraft.level != null || minecraft.getConnection() != null ||
                 minecraft.cameraEntity != null || minecraft.gameMode != null || minecraft.isSingleplayer()) {
             return CompletableFuture.failedFuture(new IllegalStateException("Changing accounts in world."));
@@ -298,6 +299,7 @@ public final class IASMinecraft {
         // Create everything async, because it lags.
         return CompletableFuture.runAsync(() -> {
             // Create the user.
+            LOGGER.info("IAS: Creating user...");
             // I have no idea what are the OPTIONAL fields and the game
             // works FINE without them, even with chat reporting and parental control, etc.
             // etc., it may be some telemetry, it may be something else. If something is broken by this
@@ -324,6 +326,7 @@ public final class IASMinecraft {
             // Schedule to the main thread
             minecraft.execute(() -> {
                 // Flush everything.
+                LOGGER.info("IAS: Flushing user...");
                 accessor.ias$user(user);
                 accessor.ias$userApiService(apiService);
                 accessor.ias$userPropertiesFuture(propertiesFuture);
@@ -331,6 +334,7 @@ public final class IASMinecraft {
                 accessor.ias$telemetryManager(telemetry);
                 accessor.ias$profileKeyPairManager(keyPair);
                 accessor.ias$reportingContext(reporting);
+                LOGGER.info("IAS: Flushed user.");
             });
         }, IAS.executor()).exceptionally(t -> {
             // Log it.

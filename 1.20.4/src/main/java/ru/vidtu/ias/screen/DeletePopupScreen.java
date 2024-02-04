@@ -125,7 +125,7 @@ final class DeletePopupScreen extends Screen {
         pose.popPose();
 
         // Render the prompt.
-        this.label.renderCentered(graphics, this.width / 2, this.height / 2 - 12);
+        this.label.renderCentered(graphics, this.width / 2, (this.height - this.label.getLineCount() * 9) / 2 - 4);
     }
 
     @SuppressWarnings("VariableNotUsedInsideIf") // <- Background choosing.

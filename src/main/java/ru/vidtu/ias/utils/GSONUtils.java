@@ -39,6 +39,22 @@ public final class GSONUtils {
     }
 
     /**
+     * Gets the long value from the JSON object.
+     *
+     * @param json Target object
+     * @param key  Target key
+     * @return Read long
+     * @throws JsonParseException If there was no long by that key, was a non-int element by that key, or if the json or the key is {@code null}
+     */
+    public static long getLongOrThrow(JsonObject json, String key) {
+        try {
+            return json.get(key).getAsLong();
+        } catch (Throwable t) {
+            throw new JsonParseException("Expected to have long '" + key + "': " + json, t);
+        }
+    }
+
+    /**
      * Gets the string value from the JSON object.
      *
      * @param json Target object

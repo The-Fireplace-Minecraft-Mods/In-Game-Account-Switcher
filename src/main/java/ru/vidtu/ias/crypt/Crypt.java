@@ -19,10 +19,13 @@
 
 package ru.vidtu.ias.crypt;
 
+import ru.vidtu.ias.utils.ProbableException;
+
+import javax.crypto.AEADBadTagException;
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
-import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.DataInput;
@@ -122,8 +125,8 @@ public sealed interface Crypt permits DummyCrypt, HardwareCrypt, PasswordCrypt {
             KeySpec spec = new PBEKeySpec(password.toCharArray(), salt, 300_000, 256);
             byte[] secret = factory.generateSecret(spec).getEncoded();
             SecretKey key = new SecretKeySpec(secret, "AES");
-            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-            cipher.init(Cipher.ENCRYPT_MODE, key, new IvParameterSpec(iv));
+            Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
+            cipher.init(Cipher.ENCRYPT_MODE, key, new GCMParameterSpec(128, iv));
 
             // Encrypt and return.
             return cipher.doFinal(decrypted);
@@ -150,11 +153,16 @@ public sealed interface Crypt permits DummyCrypt, HardwareCrypt, PasswordCrypt {
             KeySpec spec = new PBEKeySpec(password.toCharArray(), salt, 300_000, 256);
             byte[] secret = factory.generateSecret(spec).getEncoded();
             SecretKey key = new SecretKeySpec(secret, "AES");
-            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-            cipher.init(Cipher.DECRYPT_MODE, key, new IvParameterSpec(iv));
+            Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
+            cipher.init(Cipher.DECRYPT_MODE, key, new GCMParameterSpec(128, iv));
 
             // Decrypt and return.
-            return cipher.doFinal(encrypted);
+            try {
+                return cipher.doFinal(encrypted);
+            } catch (AEADBadTagException e) {
+                // Probable case - bad password.
+                throw new ProbableException("ias.error.decrypt", e);
+            }
         } catch (Throwable t) {
             // Rethrow.
             throw new RuntimeException("Unable to decrypt data using AES via PBKDF2-hashed password.", t);

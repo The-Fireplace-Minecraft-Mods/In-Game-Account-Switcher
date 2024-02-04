@@ -25,6 +25,8 @@ import ru.vidtu.ias.IAS;
 import ru.vidtu.ias.auth.MSAuth;
 import ru.vidtu.ias.crypt.Crypt;
 import ru.vidtu.ias.utils.Holder;
+import ru.vidtu.ias.utils.IUtils;
+import ru.vidtu.ias.utils.ProbableException;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -33,6 +35,9 @@ import java.io.DataInputStream;
 import java.io.DataOutput;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.net.NoRouteToHostException;
+import java.net.http.HttpTimeoutException;
+import java.nio.channels.UnresolvedAddressException;
 import java.time.Duration;
 import java.util.Objects;
 import java.util.UUID;
@@ -224,7 +229,8 @@ public final class MicrosoftAccount implements Account {
                     refresh.set(in.readUTF());
 
                     // Verify the buffer.
-                    if (in.available() > 0) {
+                    int available = in.available();
+                    if (available != 0) {
                         throw new IOException("Leftover: " + in.available());
                     }
 
@@ -283,6 +289,16 @@ public final class MicrosoftAccount implements Account {
 
                         // Convert MCA to MCP.
                         return auth.mcaToMcp(token);
+                    }, IAS.executor()).exceptionallyAsync(t -> {
+                        t.addSuppressed(original);
+
+                        // Probable case - no internet connection.
+                        if (IUtils.anyInCausalChain(t, err -> err instanceof UnresolvedAddressException || err instanceof NoRouteToHostException || err instanceof HttpTimeoutException)) {
+                            throw new ProbableException("ias.error.connect", t);
+                        }
+
+                        // Handle error.
+                        throw new RuntimeException("Unable to perform MSR auth.", t);
                     }, IAS.executor()).thenApplyAsync(profile -> {
                         // Log it and display progress.
                         LOGGER.info("IAS: Encrypting tokens...");
@@ -326,9 +342,8 @@ public final class MicrosoftAccount implements Account {
                         return profile;
                     }, IAS.executor()).exceptionallyAsync(t -> {
                         // Rethrow. (adding original)
-                        RuntimeException e = new RuntimeException("Unable to refresh MSR.", t);
                         t.addSuppressed(original);
-                        throw e;
+                        throw new RuntimeException("Unable to refresh MSR.", t);
                     }, IAS.executor());
                 }, IAS.executor());
             }, IAS.executor()).thenAcceptAsync(profile -> {

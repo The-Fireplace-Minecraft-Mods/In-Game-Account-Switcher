@@ -125,32 +125,6 @@ public sealed interface Account permits OfflineAccount, MicrosoftAccount {
     }
 
     /**
-     * Gets whether the user should be warned about the name.
-     *
-     * @param name Target name
-     * @return Warning key, {@code null} if none
-     */
-    static String warnKey(String name) {
-        // Blank.
-        if (name.isBlank()) return "ias.nick.blank";
-
-        // Length.
-        int length = name.length();
-        if (length < 3) return "ias.nick.short";
-        if (length > 16) return "ias.nick.long";
-
-        // Chars.
-        for (int i = 0; i < length; i++) {
-            int c = name.codePointAt(i);
-            if (c == '_' || c >= '0' && c <= '9' || c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z') continue;
-            return "ias.nick.chars";
-        }
-
-        // Valid.
-        return null;
-    }
-
-    /**
      * Data provided for {@link Account} for authentication in-game.
      *
      * @param name   Player name

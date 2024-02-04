@@ -24,7 +24,9 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import ru.vidtu.ias.utils.GSONUtils;
+import ru.vidtu.ias.utils.ProbableException;
 
+import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.net.http.HttpClient;
@@ -191,7 +193,7 @@ public final class MSAuth {
             try {
                 // Check the code.
                 int status = response.statusCode();
-                if (status < 200 || status > 299) {
+                if (status != HttpURLConnection.HTTP_OK) {
                     throw new IllegalArgumentException("Invalid status code: " + status);
                 }
 
@@ -232,7 +234,7 @@ public final class MSAuth {
             try {
                 // Check the code.
                 int status = response.statusCode();
-                if (status < 200 || status > 299) {
+                if (status != HttpURLConnection.HTTP_OK) {
                     throw new IllegalArgumentException("Invalid status code: " + status);
                 }
 
@@ -288,7 +290,7 @@ public final class MSAuth {
             try {
                 // Check the code.
                 int status = response.statusCode();
-                if (status < 200 || status > 299) {
+                if (status != HttpURLConnection.HTTP_OK) {
                     throw new IllegalArgumentException("Invalid status code: " + status);
                 }
 
@@ -342,7 +344,30 @@ public final class MSAuth {
             try {
                 // Check the code.
                 int status = response.statusCode();
-                if (status < 200 || status > 299) {
+
+                // 401 - special cases.
+                if (status == HttpURLConnection.HTTP_UNAUTHORIZED) {
+                    try {
+                        JsonObject json = GSON.fromJson(response.body(), JsonObject.class);
+                        long err = GSONUtils.getLongOrThrow(json, "XErr");
+                        if (err == 2148916233L) {
+                            throw new ProbableException("ias.error.noXbox");
+                        }
+                        if (err == 2148916235L) {
+                            throw new ProbableException("ias.error.xboxAvailable");
+                        }
+                        if (err == 2148916236L || err == 2148916237L || err == 2148916238L) {
+                            throw new ProbableException("ias.error.xboxAdult");
+                        }
+                        throw new RuntimeException("Unknown XErr: " + err);
+                    } catch (Throwable t) {
+                        // Rethrow.
+                        throw new IllegalArgumentException("Invalid status code: 401", t);
+                    }
+                }
+
+                // Other errors.
+                if (status != HttpURLConnection.HTTP_OK) {
                     throw new IllegalArgumentException("Invalid status code: " + status);
                 }
 
@@ -394,7 +419,7 @@ public final class MSAuth {
             try {
                 // Check the code.
                 int status = response.statusCode();
-                if (status < 200 || status > 299) {
+                if (status != HttpURLConnection.HTTP_OK) {
                     throw new IllegalArgumentException("Invalid status code: " + status);
                 }
 
@@ -431,7 +456,14 @@ public final class MSAuth {
             try {
                 // Check the code.
                 int status = response.statusCode();
-                if (status < 200 || status > 299) {
+
+                // Probable case - no profile linked. (no Minecraft account)
+                if (status == HttpURLConnection.HTTP_NOT_FOUND) {
+                    throw new ProbableException("ias.error.noProfile");
+                }
+
+                // Other errors.
+                if (status != HttpURLConnection.HTTP_OK) {
                     throw new IllegalArgumentException("Invalid status code: " + status);
                 }
 
@@ -464,7 +496,7 @@ public final class MSAuth {
                     .build(), HttpResponse.BodyHandlers.ofString()).thenApplyAsync(response -> {
                 // Check the code.
                 int status = response.statusCode();
-                if (status < 200 || status > 299) {
+                if (status != HttpURLConnection.HTTP_OK) {
                     throw new IllegalArgumentException("Invalid status code: " + status);
                 }
 

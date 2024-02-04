@@ -27,6 +27,8 @@ import ru.vidtu.ias.IAS;
 import ru.vidtu.ias.account.MicrosoftAccount;
 import ru.vidtu.ias.crypt.Crypt;
 import ru.vidtu.ias.utils.Holder;
+import ru.vidtu.ias.utils.IUtils;
+import ru.vidtu.ias.utils.ProbableException;
 
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
@@ -34,8 +36,12 @@ import java.io.DataOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
+import java.net.NoRouteToHostException;
 import java.net.URI;
+import java.net.http.HttpTimeoutException;
+import java.nio.channels.UnresolvedAddressException;
 import java.nio.charset.StandardCharsets;
+import java.security.SecureRandom;
 import java.time.Duration;
 import java.util.LinkedList;
 import java.util.List;
@@ -44,6 +50,7 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -53,14 +60,15 @@ import java.util.regex.Pattern;
  */
 public final class MSAuthServer implements Runnable, Closeable {
     /**
-     * Auth URI with {@code %%port%%} to be replaced by port.
+     * Auth URI with {@code %%port%%} to be replaced by port and {@code %%state%%} to be replaced by state.
      */
     private static final String MICROSOFT_AUTH_URL = "https://login.live.com/oauth20_authorize.srf" +
             "?client_id=54fd49e4-2103-4044-9603-2b028c814ec3" +
             "&response_type=code" +
             "&scope=XboxLive.signin%20XboxLive.offline_access" +
             "&redirect_uri=http://localhost:%%port%%/in_game_account_switcher_long_enough_uri_to_prevent_accidental_leaks_on_screensharing_even_if_you_have_like_extremely_big_screen_though_it_might_not_mork_but_we_will_try_it_anyway_to_prevent_funny_things_from_happening_or_something" +
-            "&prompt=select_account";
+            "&prompt=select_account" +
+            "&state=%%state%%";
 
     /**
      * Redirect URI with one {@code %s} argument to be replaced by port.
@@ -73,9 +81,19 @@ public final class MSAuthServer implements Runnable, Closeable {
     private static final String END_URI = "http://localhost:%s/end";
 
     /**
+     * Random state.
+     */
+    private static final String STATE_CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+
+    /**
+     * Data extraction pattern.
+     */
+    private static final Pattern DATA_EXTRACT_PATTERN = Pattern.compile("^code=([^&]*)&state=([^&]*)$");
+
+    /**
      * Code obfuscation pattern.
      */
-    private static final Pattern CODE_PATTERN = Pattern.compile("code=[A-Za-z0-9_.-]*");
+    private static final Pattern CODE_OBFUSCATE_PATTERN = Pattern.compile("code=[^&]*");
 
     /**
      * Logger for this class.
@@ -101,6 +119,11 @@ public final class MSAuthServer implements Runnable, Closeable {
      * Created HTTP server.
      */
     private final HttpServer server;
+
+    /**
+     * Validation state.
+     */
+    private final String state;
 
     /**
      * Bound port.
@@ -130,6 +153,15 @@ public final class MSAuthServer implements Runnable, Closeable {
 
             // Create the server.
             this.server = HttpServer.create();
+
+            // Generate the state.
+            SecureRandom random = SecureRandom.getInstanceStrong();
+            int length = random.nextInt(64, 96);
+            StringBuilder builder = new StringBuilder(length);
+            for (int i = 0; i < length; i++) {
+                builder.appendCodePoint(STATE_CHARACTERS.codePointAt(random.nextInt(STATE_CHARACTERS.length())));
+            }
+            this.state = builder.toString();
         } catch (Throwable t) {
             // Rethrow.
             throw new RuntimeException("Unable to create HTTP server for MS auth.", t);
@@ -340,7 +372,9 @@ public final class MSAuthServer implements Runnable, Closeable {
      * @return Auth URL
      */
     public String authUrl() {
-        return MICROSOFT_AUTH_URL.replace("%%port%%", Integer.toString(this.port));
+        return MICROSOFT_AUTH_URL
+                .replace("%%port%%", Integer.toString(this.port))
+                .replace("%%state%%", this.state);
     }
 
     /**
@@ -370,25 +404,34 @@ public final class MSAuthServer implements Runnable, Closeable {
                 // Log it and display progress.
                 LOGGER.info("IAS: Extracting MSAC from query...");
 
-                // Null query. What?
+                // Probable case - direct URL.
                 if (query == null) {
-                    throw new NullPointerException("Query from callback is null. Possibly you've opened the 127.0.0.1 url directly, instead of opening it via the link or you're using old browser. (or unsupported plugins/extensions)");
+                    throw new ProbableException("ias.error.query");
                 }
 
-                // User aborted the auth.
+                // Probable case - User aborted the auth.
                 if (query.toLowerCase(Locale.ROOT).contains("access_denied")) {
-                    return null;
+                    // Throw, suppressing possible another code location.
+                    throw new ProbableException("ias.error.cancel", new IllegalStateException("Invalid query: " + CODE_OBFUSCATE_PATTERN.matcher(query)
+                            .replaceAll("code=[CODE]")));
                 }
 
                 // Query won't start with code. Weird query.
-                if (!query.startsWith("code=")) {
+                Matcher matcher = DATA_EXTRACT_PATTERN.matcher(query);
+                if (!matcher.matches()) {
                     // Throw, suppressing possible another code location.
-                    throw new IllegalStateException("Invalid query: " + CODE_PATTERN.matcher(query)
+                    throw new IllegalStateException("Invalid query: " + CODE_OBFUSCATE_PATTERN.matcher(query)
                             .replaceAll("code=[CODE]"));
                 }
 
+                // Extract and validate the state.
+                String state = matcher.group(2);
+                if (!this.state.equals(state)) {
+                    throw new IllegalStateException("Expected state " + state + ", got " + this.state);
+                }
+
                 // Extract the MSAC.
-                return query.replace("code=", "");
+                return matcher.group(1);
             }, IAS.executor()).thenComposeAsync(code -> {
                 // Log it and display progress.
                 LOGGER.info("IAS: Converting MSAC to MSA/MSR...");
@@ -430,6 +473,14 @@ public final class MSAuthServer implements Runnable, Closeable {
 
                 // Convert MCA to MCP.
                 return auth.mcaToMcp(token);
+            }, IAS.executor()).exceptionallyAsync(t -> {
+                // Probable case - no internet connection.
+                if (IUtils.anyInCausalChain(t, err -> err instanceof UnresolvedAddressException || err instanceof NoRouteToHostException || err instanceof HttpTimeoutException)) {
+                    throw new ProbableException("ias.error.connect", t);
+                }
+
+                // Handle error.
+                throw new RuntimeException("Unable to perform MS auth.", t);
             }, IAS.executor()).thenApplyAsync(profile -> {
                 // Log it and display progress.
                 LOGGER.info("IAS: Encrypting tokens...");
@@ -485,7 +536,7 @@ public final class MSAuthServer implements Runnable, Closeable {
                 this.handler.success(account);
             }, IAS.executor()).exceptionallyAsync(t -> {
                 // Handle error.
-                this.handler.error(new RuntimeException("Unable to create an MS account", t));
+                this.handler.error(new RuntimeException("Unable to create an MS account.", t));
 
                 // Return null.
                 return null;
