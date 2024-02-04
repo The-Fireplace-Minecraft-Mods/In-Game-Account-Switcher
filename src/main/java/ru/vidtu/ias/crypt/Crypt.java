@@ -122,7 +122,7 @@ public sealed interface Crypt permits DummyCrypt, HardwareCrypt, PasswordCrypt {
         try {
             // Create the key.
             SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA512");
-            KeySpec spec = new PBEKeySpec(password.toCharArray(), salt, 300_000, 256);
+            KeySpec spec = new PBEKeySpec(password.toCharArray(), salt, 500_000, 256);
             byte[] secret = factory.generateSecret(spec).getEncoded();
             SecretKey key = new SecretKeySpec(secret, "AES");
             Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
@@ -150,7 +150,7 @@ public sealed interface Crypt permits DummyCrypt, HardwareCrypt, PasswordCrypt {
         try {
             // Create the key.
             SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA512");
-            KeySpec spec = new PBEKeySpec(password.toCharArray(), salt, 300_000, 256);
+            KeySpec spec = new PBEKeySpec(password.toCharArray(), salt, 500_000, 256);
             byte[] secret = factory.generateSecret(spec).getEncoded();
             SecretKey key = new SecretKeySpec(secret, "AES");
             Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
