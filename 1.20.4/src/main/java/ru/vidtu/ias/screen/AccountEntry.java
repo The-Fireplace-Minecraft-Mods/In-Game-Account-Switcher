@@ -28,12 +28,16 @@ import net.minecraft.client.gui.components.PlayerFaceRenderer;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.PlayerSkin;
+import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.FormattedCharSequence;
 import org.jetbrains.annotations.NotNull;
 import ru.vidtu.ias.account.Account;
 
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Stream;
 
 /**
  * Account GUI entry.
@@ -75,9 +79,19 @@ final class AccountEntry extends ObjectSelectionList.Entry<AccountEntry> {
     private final Account account;
 
     /**
+     * Account tooltip.
+     */
+    private final List<FormattedCharSequence> tooltip;
+
+    /**
      * Last click time.
      */
     private long clicked = Util.getMillis();
+
+    /**
+     * Last non-hovered time.
+     */
+    private long lastFree = System.nanoTime();
 
     /**
      * Creates a new account list entry widget.
@@ -90,10 +104,24 @@ final class AccountEntry extends ObjectSelectionList.Entry<AccountEntry> {
         this.minecraft = minecraft;
         this.list = list;
         this.account = account;
+        this.tooltip = Stream.of(
+                CommonComponents.optionNameValue(Component.translatable("ias.accounts.tip.nick"), Component.literal(this.account.name())),
+                CommonComponents.optionNameValue(Component.translatable("ias.accounts.tip.uuid"), Component.literal(this.account.uuid().toString())),
+                CommonComponents.optionNameValue(Component.translatable("ias.accounts.tip.type"), Component.translatable(this.account.typeTipKey()))
+        ).map(Component::getVisualOrderText).toList();
     }
 
     @Override
     public void render(GuiGraphics graphics, int index, int y, int x, int width, int height, int mouseX, int mouseY, boolean hovered, float delta) {
+        // Render tooltip.
+        if (hovered) {
+            if ((System.nanoTime() - this.lastFree) >= 500_000_000L) {
+                this.list.screen().setTooltipForNextRenderPass(this.tooltip);
+            }
+        } else {
+            this.lastFree = System.nanoTime();
+        }
+
         // Render the skin.
         PlayerSkin skin = this.list.skin(this);
         PlayerFaceRenderer.draw(graphics, skin, x, y, 8);

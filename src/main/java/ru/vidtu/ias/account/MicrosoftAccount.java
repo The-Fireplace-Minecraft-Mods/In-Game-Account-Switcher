@@ -153,6 +153,11 @@ public final class MicrosoftAccount implements Account {
     }
 
     @Override
+    public String typeTipKey() {
+        return "ias.accounts.tip.type.microsoft";
+    }
+
+    @Override
     public UUID uuid() {
         return this.uuid;
     }

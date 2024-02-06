@@ -139,9 +139,9 @@ public final class IASConfig {
     public static boolean unexpectedPigs = true;
 
     /**
-     * Whether to show the username in the title bar.
+     * Whether to show the nick in the title bar.
      */
-    public static boolean barName = false;
+    public static boolean barNick = false;
 
     /**
      * Creates a new config for GSON.

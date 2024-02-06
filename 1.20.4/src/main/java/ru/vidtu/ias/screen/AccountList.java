@@ -382,6 +382,15 @@ final class AccountList extends ObjectSelectionList<AccountEntry> {
         this.setSelected(entry);
     }
 
+    /**
+     * Gets the screen.
+     *
+     * @return Parent accounts screen
+     */
+    AccountsScreen screen() {
+        return this.screen;
+    }
+
     @Override
     public String toString() {
         return "AccountList{" +

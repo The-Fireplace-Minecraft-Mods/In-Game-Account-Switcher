@@ -383,14 +383,14 @@ public final class ConfigScreen extends Screen {
         this.addRenderableWidget(box);
 
         // Bar Name.
-        box = Checkbox.builder(Component.translatable("ias.config.barName"), this.font)
+        box = Checkbox.builder(Component.translatable("ias.config.barNick"), this.font)
                 .pos(5, 188)
-                .selected(IASConfig.barName)
+                .selected(IASConfig.barNick)
                 .onValueChange((cb, value) -> {
-                    IASConfig.barName = value;
+                    IASConfig.barNick = value;
                     this.minecraft.updateTitle();
                 })
-                .tooltip(Tooltip.create(Component.translatable("ias.config.barName.tip")))
+                .tooltip(Tooltip.create(Component.translatable("ias.config.barNick.tip")))
                 .build();
         box.setTooltipDelay(250);
         this.addRenderableWidget(box);

@@ -32,6 +32,7 @@ import net.minecraft.client.resources.DefaultPlayerSkin;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import org.lwjgl.glfw.GLFW;
+import ru.vidtu.ias.account.Account;
 
 public final class AccountsScreen extends Screen {
     /**
@@ -226,6 +227,9 @@ public final class AccountsScreen extends Screen {
 
     @Override
     public boolean keyPressed(int key, int scan, int mods) {
+        // Bruh.
+        assert this.minecraft != null;
+
         // Shift+Down or Page Down to swap down.
         if ((key == GLFW.GLFW_KEY_DOWN && Screen.hasShiftDown()) || key == GLFW.GLFW_KEY_PAGE_DOWN) {
             this.list.swapDown(this.list.getSelected());
@@ -236,6 +240,16 @@ public final class AccountsScreen extends Screen {
         if ((key == GLFW.GLFW_KEY_UP && Screen.hasShiftDown()) || key == GLFW.GLFW_KEY_PAGE_UP) {
             this.list.swapUp(this.list.getSelected());
             return true;
+        }
+
+        // Ctrl+C to copy name. (Ctrl+Shift+C to copy UUID) {
+        if (key == GLFW.GLFW_KEY_C && Screen.hasControlDown()) {
+            AccountEntry selected = this.list.getSelected();
+            if (selected != null) {
+                Account account = selected.account();
+                this.minecraft.keyboardHandler.setClipboard(Screen.hasShiftDown() ? account.uuid().toString() : account.name());
+                return true;
+            }
         }
 
         // Skip if handled by super.

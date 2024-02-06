@@ -34,6 +34,11 @@ import java.util.UUID;
  */
 public record OfflineAccount(UUID uuid, String name) implements Account {
     @Override
+    public String typeTipKey() {
+        return "ias.accounts.tip.type.offline";
+    }
+
+    @Override
     public boolean canLogin() {
         // Offline account can be logged in only via offline.
         return false;

@@ -32,6 +32,13 @@ import java.util.concurrent.CompletableFuture;
  */
 public sealed interface Account permits OfflineAccount, MicrosoftAccount {
     /**
+     * Gets the account type translation tip key.
+     *
+     * @return Account type translation key
+     */
+    String typeTipKey();
+
+    /**
      * Gets the UUID of this account.
      *
      * @return Account UUID
