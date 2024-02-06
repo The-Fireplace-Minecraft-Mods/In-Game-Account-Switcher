@@ -226,6 +226,18 @@ public final class AccountsScreen extends Screen {
 
     @Override
     public boolean keyPressed(int key, int scan, int mods) {
+        // Shift+Down or Page Down to swap down.
+        if ((key == GLFW.GLFW_KEY_DOWN && Screen.hasShiftDown()) || key == GLFW.GLFW_KEY_PAGE_DOWN) {
+            this.list.swapDown(this.list.getSelected());
+            return true;
+        }
+
+        // Shift+Up or Page Up to swap up.
+        if ((key == GLFW.GLFW_KEY_UP && Screen.hasShiftDown()) || key == GLFW.GLFW_KEY_PAGE_UP) {
+            this.list.swapUp(this.list.getSelected());
+            return true;
+        }
+
         // Skip if handled by super.
         if (super.keyPressed(key, scan, mods)) {
             return true;

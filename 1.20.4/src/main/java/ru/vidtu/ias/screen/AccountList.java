@@ -322,6 +322,66 @@ final class AccountList extends ObjectSelectionList<AccountEntry> {
         return skin;
     }
 
+    /**
+     * Swaps the entry with the account above, if possible.
+     *
+     * @param entry Target entry
+     */
+    void swapUp(AccountEntry entry) {
+        // Get and validate indexes.
+        int idx = this.children().indexOf(entry);
+        if (idx < 0 || idx >= IASStorage.accounts.size()) return;
+        int upIdx = idx - 1;
+        if (upIdx < 0) return;
+
+        // Move storage.
+        IASStorage.accounts.set(idx, IASStorage.accounts.get(upIdx));
+        IASStorage.accounts.set(upIdx, entry.account());
+
+        // Save storage.
+        try {
+            IAS.disclaimersStorage();
+            IAS.saveStorage();
+        } catch (Throwable t) {
+            LOGGER.error("IAS: Unable to save storage.", t);
+        }
+
+        // Move elements.
+        this.children().set(idx, this.children().get(upIdx));
+        this.children().set(upIdx, entry);
+        this.setSelected(entry);
+    }
+
+    /**
+     * Swaps the entry with the account below, if possible.
+     *
+     * @param entry Target entry
+     */
+    void swapDown(AccountEntry entry) {
+        // Get and validate indexes.
+        int idx = this.children().indexOf(entry);
+        if (idx < 0 || idx >= IASStorage.accounts.size()) return;
+        int downIdx = idx + 1;
+        if (downIdx >= this.children().size() || downIdx >= IASStorage.accounts.size()) return;
+
+        // Move storage.
+        IASStorage.accounts.set(idx, IASStorage.accounts.get(downIdx));
+        IASStorage.accounts.set(downIdx, entry.account());
+
+        // Save storage.
+        try {
+            IAS.disclaimersStorage();
+            IAS.saveStorage();
+        } catch (Throwable t) {
+            LOGGER.error("IAS: Unable to save storage.", t);
+        }
+
+        // Move elements.
+        this.children().set(idx, this.children().get(downIdx));
+        this.children().set(downIdx, entry);
+        this.setSelected(entry);
+    }
+
     @Override
     public String toString() {
         return "AccountList{" +

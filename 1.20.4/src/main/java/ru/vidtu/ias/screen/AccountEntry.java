@@ -25,8 +25,11 @@ import net.minecraft.client.User;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.ObjectSelectionList;
 import net.minecraft.client.gui.components.PlayerFaceRenderer;
+import net.minecraft.client.gui.components.WidgetSprites;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.PlayerSkin;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 import ru.vidtu.ias.account.Account;
 
@@ -38,6 +41,24 @@ import java.util.Objects;
  * @author VidTu
  */
 final class AccountEntry extends ObjectSelectionList.Entry<AccountEntry> {
+    /**
+     * Up button sprites.
+     */
+    private static final WidgetSprites UP = new WidgetSprites(
+            new ResourceLocation("ias", "up_plain"),
+            new ResourceLocation("ias", "up_disabled"),
+            new ResourceLocation("ias", "up_focus")
+    );
+
+    /**
+     * Down button sprites.
+     */
+    private static final WidgetSprites DOWN = new WidgetSprites(
+            new ResourceLocation("ias", "down_plain"),
+            new ResourceLocation("ias", "down_disabled"),
+            new ResourceLocation("ias", "down_focus")
+    );
+
     /**
      * Minecraft instance.
      */
@@ -84,13 +105,56 @@ final class AccountEntry extends ObjectSelectionList.Entry<AccountEntry> {
 
         // Render the name.
         graphics.drawString(this.minecraft.font, this.account.name(), x + 10, y, color);
+
+        // Render only for focused, selected or hovered.
+        if (this.equals(this.list.getFocused()) || this.equals(this.list.getSelected())) {
+            // Render up widget.
+            ResourceLocation upTexture;
+            int upX = x + width - 28;
+            if (this == this.list.children().get(0)) {
+                upTexture = UP.disabled();
+            } else if (mouseX >= upX && mouseY >= y && mouseX <= upX + 11 && mouseY <= y + height) {
+                upTexture = UP.enabledFocused();
+            } else {
+                upTexture = UP.enabled();
+            }
+            graphics.blitSprite(upTexture, upX, y, 11, 7);
+
+            // Render down widget.
+            ResourceLocation downTexture;
+            int downX = x + width - 15;
+            if (this == this.list.children().get(this.list.children().size() - 1)) {
+                downTexture = DOWN.disabled();
+            } else if (mouseX >= downX && mouseY >= y && mouseX <= downX + 11 && mouseY <= y + height) {
+                downTexture = DOWN.enabledFocused();
+            } else {
+                downTexture = DOWN.enabled();
+            }
+            graphics.blitSprite(downTexture, downX, y, 11, 7);
+        }
     }
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        int right = this.list.getRowRight();
+
+        // Up widget.
+        int upX = right - 28;
+        if (mouseX >= upX && mouseX <= upX + 11) {
+            this.list.swapUp(this);
+            return true;
+        }
+
+        // Down widget.
+        int downX = right - 15;
+        if (mouseX >= downX && mouseX <= downX + 11) {
+            this.list.swapDown(this);
+            return true;
+        }
+
         // Login on double click.
         if (Util.getMillis() - this.clicked < 250L) {
-            this.list.login(true);
+            this.list.login(Screen.hasShiftDown());
         }
 
         // Set time for double click.

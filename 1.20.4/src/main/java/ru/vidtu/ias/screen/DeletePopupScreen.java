@@ -23,6 +23,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.MultiLineLabel;
 import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.gui.navigation.CommonInputs;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
@@ -150,6 +151,21 @@ final class DeletePopupScreen extends Screen {
         graphics.fill(centerX - 80, centerY - 50, centerX + 80, centerY + 50, 0xF8_20_20_30);
         graphics.fill(centerX - 79, centerY - 51, centerX + 79, centerY - 50, 0xF8_20_20_30);
         graphics.fill(centerX - 79, centerY + 50, centerX + 79, centerY + 51, 0xF8_20_20_30);
+    }
+
+    @Override
+    public boolean keyPressed(int key, int scan, int mods) {
+        // Enter to confirm.
+        if (CommonInputs.selected(key)) {
+            // Delete.
+            this.handler.run();
+
+            // Close.
+            this.onClose();
+            return true;
+        }
+
+        return super.keyPressed(key, scan, mods);
     }
 
     @Override
