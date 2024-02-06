@@ -16,8 +16,14 @@ repositories {
     maven("https://api.modrinth.com/maven/")
 }
 
-loom.runs.named("client") {
-    vmArgs("-XX:+IgnoreUnrecognizedVMOptions", "-XX:+AllowEnhancedClassRedefinition", "-XX:HotswapAgent=fatjar", "-Dfabric.debug.disableClassPathIsolation=true")
+loom {
+    runs.named("client") {
+        vmArgs("-XX:+IgnoreUnrecognizedVMOptions", "-XX:+AllowEnhancedClassRedefinition", "-XX:HotswapAgent=fatjar", "-Dfabric.debug.disableClassPathIsolation=true")
+    }
+    @Suppress("UnstableApiUsage")
+    mixin {
+        defaultRefmapName = "ias.mixins.refmap.json"
+    }
 }
 
 dependencies {
