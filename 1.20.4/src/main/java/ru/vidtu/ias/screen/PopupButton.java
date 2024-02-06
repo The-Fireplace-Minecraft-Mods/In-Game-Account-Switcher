@@ -85,14 +85,19 @@ final class PopupButton extends Button {
     /**
      * Sets the button color.
      *
-     * @param red   Button R
-     * @param green Button G
-     * @param blue  Button B
+     * @param red     Button R
+     * @param green   Button G
+     * @param blue    Button B
+     * @param instant Whether the color change should be instant
      */
-    void color(float red, float green, float blue) {
+    void color(float red, float green, float blue, boolean instant) {
         this.red = red;
         this.green = green;
         this.blue = blue;
+        if (!instant) return;
+        this.currentRed = red;
+        this.currentGreen = green;
+        this.currentBlue = blue;
     }
 
     @Override

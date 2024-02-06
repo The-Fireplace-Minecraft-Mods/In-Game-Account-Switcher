@@ -74,7 +74,7 @@ final class AddPopupScreen extends Screen {
                 Component.translatable("ias.add.microsoft"), btn -> this.minecraft.setScreen(new MicrosoftCryptPopupScreen(this.parent, this.handler)), Supplier::get);
         button.setTooltip(Tooltip.create(Component.translatable("ias.add.microsoft.tip")));
         button.setTooltipDelay(250);
-        button.color(0.5F, 1.0F, 0.5F);
+        button.color(0.5F, 1.0F, 0.5F, true);
         this.addRenderableWidget(button);
 
         // Add offline button.
@@ -82,7 +82,7 @@ final class AddPopupScreen extends Screen {
                 Component.translatable("ias.add.offline"), btn -> this.minecraft.setScreen(new OfflinePopupScreen(this.parent, this.handler)), Supplier::get);
         button.setTooltip(Tooltip.create(Component.translatable("ias.add.offline.tip")));
         button.setTooltipDelay(250);
-        button.color(1.0F, 0.5F, 0.5F);
+        button.color(1.0F, 0.5F, 0.5F, true);
         this.addRenderableWidget(button);
 
         // Add cancel button.

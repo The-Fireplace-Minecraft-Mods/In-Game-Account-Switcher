@@ -96,6 +96,8 @@
   "ias.config.nickWarns.tip": "Warn with toast notifications when joining a server with possibly not allowed name.",
   "ias.config.unexpectedPigs": "Unexpected Pigs",
   "ias.config.unexpectedPigs.tip": "Allow unexpected pigs (easter eggs) to show up.",
+  "ias.config.barName": "Bar Name",
+  "ias.config.barName.tip": "Show current username in the window title bar.",
   "ias.config.textAlign.left": "Left",
   "ias.config.textAlign.center": "Center",
   "ias.config.textAlign.right": "Right",
@@ -104,6 +106,7 @@
   "ias.nick.short": "Your (too short) nick '%s' may cause some servers to prevent you from joining.",
   "ias.nick.long": "Your (too long) nick '%s' may cause some servers to prevent you from joining.",
   "ias.nick.chars": "Your nick '%s' (containing invalid characters) may cause some servers to prevent you from joining.",
+  "ias.bar": "%s (Account: %s)",
   "modmenu.descriptionTranslation.ias": "Allows you to change which account you are signed in to in-game without restarting Minecraft.",
   "modmenu.summaryTranslation.ias": "Allows you to change your account in-game."
 }

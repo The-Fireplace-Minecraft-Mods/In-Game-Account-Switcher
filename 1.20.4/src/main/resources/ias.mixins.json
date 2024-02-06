@@ -5,7 +5,8 @@
   "package": "ru.vidtu.ias.mixins",
   "refmap": "ias.mixins.refmap.json",
   "client": [
-    "MinecraftAccessor"
+    "MinecraftAccessor",
+    "MinecraftMixin"
   ],
   "injectors": {
     "defaultRequire": 1

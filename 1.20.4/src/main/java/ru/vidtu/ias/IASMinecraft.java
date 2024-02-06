@@ -308,10 +308,6 @@ public final class IASMinecraft {
             return CompletableFuture.failedFuture(new IllegalStateException("Changing accounts in world."));
         }
 
-        // Create the accessor.
-        @SuppressWarnings("CastToIncompatibleInterface") // <- Mixin Accessor.
-        MinecraftAccessor accessor = (MinecraftAccessor) minecraft;
-
         // Create everything async, because it lags.
         return CompletableFuture.runAsync(() -> {
             // Create the user.
@@ -326,6 +322,8 @@ public final class IASMinecraft {
             User user = new User(data.name(), data.uuid(), data.token(), Optional.empty(), Optional.empty(), type);
 
             // Create various services.
+            @SuppressWarnings("CastToIncompatibleInterface") // <- Mixin Accessor.
+            MinecraftAccessor accessor = (MinecraftAccessor) minecraft;
             UserApiService apiService = online ? accessor.ias$authenticationService().createUserApiService(data.token()) : UserApiService.OFFLINE;
             UserApiService.UserProperties properties;
             try {
@@ -350,6 +348,7 @@ public final class IASMinecraft {
                 accessor.ias$telemetryManager(telemetry);
                 accessor.ias$profileKeyPairManager(keyPair);
                 accessor.ias$reportingContext(reporting);
+                minecraft.updateTitle();
                 LOGGER.info("IAS: Flushed user.");
             });
         }, IAS.executor()).exceptionally(t -> {

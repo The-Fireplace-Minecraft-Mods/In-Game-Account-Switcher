@@ -96,18 +96,18 @@ public final class OfflinePopupScreen extends Screen {
         // Add done button.
         this.done = new PopupButton(this.width / 2 - 75, this.height / 2 + 49 - 22, 74, 20,
                 CommonComponents.GUI_DONE, btn -> this.done(), Supplier::get);
-        this.done.color(1.0F, 0.5F, 0.5F);
+        this.done.color(1.0F, 0.5F, 0.5F, true);
         this.addRenderableWidget(this.done);
 
         // Add cancel button.
         PopupButton button = new PopupButton(this.width / 2 + 1, this.height / 2 + 49 - 22, 74, 20,
                 CommonComponents.GUI_CANCEL, btn -> this.onClose(), Supplier::get);
-        button.color(1.0F, 1.0F, 1.0F);
+        button.color(1.0F, 1.0F, 1.0F, true);
         this.addRenderableWidget(button);
 
         // Update.
-        this.name.setResponder(value -> this.type());
-        this.type();
+        this.name.setResponder(value -> this.type(false));
+        this.type(true);
     }
 
     /**
@@ -133,8 +133,10 @@ public final class OfflinePopupScreen extends Screen {
 
     /**
      * Updates the {@link #done} button.
+     *
+     * @param instant Whether the color change should be instant
      */
-    private void type() {
+    private void type(boolean instant) {
         // Prevent NPE.
         if (this.done == null || this.name == null) return;
 
@@ -151,7 +153,7 @@ public final class OfflinePopupScreen extends Screen {
             this.done.setTooltipDelay(-1);
 
             // Update color.
-            this.done.color(1.0F, 0.5F, 0.5F);
+            this.done.color(1.0F, 0.5F, 0.5F, instant);
 
             // Don't process.
             return;
@@ -166,10 +168,10 @@ public final class OfflinePopupScreen extends Screen {
             // Enable if ALT is hold.
             if (Screen.hasAltDown()) {
                 this.done.active = true;
-                this.done.color(0.75F, 0.75F, 0.25F);
+                this.done.color(0.75F, 0.75F, 0.25F, instant);
             } else {
                 this.done.active = false;
-                this.done.color(1.0F, 1.0F, 0.5F);
+                this.done.color(1.0F, 1.0F, 0.5F, instant);
             }
 
             // Tooltip.
@@ -185,10 +187,10 @@ public final class OfflinePopupScreen extends Screen {
             // Enable if ALT is hold.
             if (Screen.hasAltDown()) {
                 this.done.active = true;
-                this.done.color(0.75F, 0.75F, 0.25F);
+                this.done.color(0.75F, 0.75F, 0.25F, instant);
             } else {
                 this.done.active = false;
-                this.done.color(1.0F, 1.0F, 0.5F);
+                this.done.color(1.0F, 1.0F, 0.5F, instant);
             }
 
             // Tooltip.
@@ -209,10 +211,10 @@ public final class OfflinePopupScreen extends Screen {
             // Enable if ALT is hold.
             if (Screen.hasAltDown()) {
                 this.done.active = true;
-                this.done.color(0.75F, 0.75F, 0.25F);
+                this.done.color(0.75F, 0.75F, 0.25F, instant);
             } else {
                 this.done.active = false;
-                this.done.color(1.0F, 1.0F, 0.5F);
+                this.done.color(1.0F, 1.0F, 0.5F, instant);
             }
 
             // Tooltip.
@@ -224,7 +226,7 @@ public final class OfflinePopupScreen extends Screen {
         }
 
         // Update color.
-        this.done.color(0.5F, 1.0F, 0.5F);
+        this.done.color(0.5F, 1.0F, 0.5F, instant);
 
         // Tooltip.
         this.done.setTooltip(null);
@@ -234,7 +236,7 @@ public final class OfflinePopupScreen extends Screen {
     public boolean keyPressed(int key, int scan, int mods) {
         boolean res = super.keyPressed(key, scan, mods);
         if (key == GLFW.GLFW_KEY_LEFT_ALT || key == GLFW.GLFW_KEY_RIGHT_ALT) {
-            this.type();
+            this.type(false);
         }
         return res;
     }
@@ -243,7 +245,7 @@ public final class OfflinePopupScreen extends Screen {
     public boolean keyReleased(int key, int scan, int mods) {
         boolean res = super.keyReleased(key, scan, mods);
         if (key == GLFW.GLFW_KEY_LEFT_ALT || key == GLFW.GLFW_KEY_RIGHT_ALT) {
-            this.type();
+            this.type(false);
         }
         return res;
     }

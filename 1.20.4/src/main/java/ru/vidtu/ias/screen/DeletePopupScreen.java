@@ -91,7 +91,7 @@ final class DeletePopupScreen extends Screen {
         }, Supplier::get);
         button.setTooltip(Tooltip.create(Component.translatable("ias.delete.hint", Component.translatable("key.keyboard.left.shift"))));
         button.setTooltipDelay(250);
-        button.color(1.0F, 0.5F, 0.5F);
+        button.color(1.0F, 0.5F, 0.5F, true);
         this.addRenderableWidget(button);
 
         // Add cancel button.

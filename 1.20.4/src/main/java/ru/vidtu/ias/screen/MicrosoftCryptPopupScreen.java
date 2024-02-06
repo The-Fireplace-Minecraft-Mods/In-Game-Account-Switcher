@@ -82,7 +82,7 @@ final class MicrosoftCryptPopupScreen extends Screen {
                 Component.translatable("ias.microsoft.password"), btn -> this.minecraft.setScreen(new MicrosoftPopupScreen(this.parent, this.handler, null)), Supplier::get);
         button.setTooltip(Tooltip.create(Component.translatable("ias.microsoft.password.tip")));
         button.setTooltipDelay(250);
-        button.color(0.5F, 1.0F, 0.5F);
+        button.color(0.5F, 1.0F, 0.5F, true);
         this.addRenderableWidget(button);
 
         // Add hardware button.
@@ -90,7 +90,7 @@ final class MicrosoftCryptPopupScreen extends Screen {
                 Component.translatable("ias.microsoft.hardware"), btn -> this.minecraft.setScreen(new MicrosoftPopupScreen(this.parent, this.handler, HardwareCrypt.INSTANCE)), Supplier::get);
         button.setTooltip(Tooltip.create(Component.translatable("ias.microsoft.hardware.tip")));
         button.setTooltipDelay(250);
-        button.color(1.0F, 1.0F, 0.5F);
+        button.color(1.0F, 1.0F, 0.5F, true);
         this.addRenderableWidget(button);
 
         // Add plain button.
@@ -102,7 +102,7 @@ final class MicrosoftCryptPopupScreen extends Screen {
             this.plain.setTooltip(Tooltip.create(Component.translatable("ias.microsoft.plain.tip.no")));
         }
         this.plain.setTooltipDelay(250);
-        this.plain.color(1.0F, 0.5F, 0.5F);
+        this.plain.color(1.0F, 0.5F, 0.5F, true);
         this.plain.active = false;
         this.addRenderableWidget(this.plain);
 
@@ -178,7 +178,7 @@ final class MicrosoftCryptPopupScreen extends Screen {
             // Recolor button and update tooltip.
             this.plain.setTooltip(Tooltip.create(Component.translatable("ias.microsoft.plain.tip.on")));
             this.plain.setTooltipDelay(250);
-            this.plain.color(1.0F, 0.25F, 0.25F);
+            this.plain.color(1.0F, 0.25F, 0.25F, false);
         }
 
         // Pass-through.

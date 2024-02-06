@@ -382,6 +382,19 @@ public final class ConfigScreen extends Screen {
         box.setTooltipDelay(250);
         this.addRenderableWidget(box);
 
+        // Bar Name.
+        box = Checkbox.builder(Component.translatable("ias.config.barName"), this.font)
+                .pos(5, 188)
+                .selected(IASConfig.barName)
+                .onValueChange((cb, value) -> {
+                    IASConfig.barName = value;
+                    this.minecraft.updateTitle();
+                })
+                .tooltip(Tooltip.create(Component.translatable("ias.config.barName.tip")))
+                .build();
+        box.setTooltipDelay(250);
+        this.addRenderableWidget(box);
+
         // Add done button.
         this.addRenderableWidget(Button.builder(CommonComponents.GUI_DONE, btn -> this.onClose())
                 .bounds(this.width / 2 - 100, this.height - 24, 200, 20)
