@@ -32,11 +32,12 @@ import net.minecraft.client.gui.screens.TitleScreen;
 import net.minecraft.client.gui.screens.multiplayer.JoinMultiplayerScreen;
 
 /**
- * Main IAS class for Fabric.
+ * Main IAS class for Quilt.
  *
  * @author VidTu
  */
-public final class IASFabric implements ClientModInitializer {
+@SuppressWarnings("deprecation") // <- QSL is not out for 1.20.4.
+public final class IASQuilt implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         // Create the UA and initialize.
@@ -45,12 +46,12 @@ public final class IASFabric implements ClientModInitializer {
                 .map(ModMetadata::getVersion)
                 .map(Version::getFriendlyString)
                 .orElse("UNKNOWN");
-        String loaderVersion = FabricLoader.getInstance().getModContainer("fabricloader")
+        String loaderVersion = FabricLoader.getInstance().getModContainer("quilt_loader")
                 .map(ModContainer::getMetadata)
                 .map(ModMetadata::getVersion)
                 .map(Version::getFriendlyString)
                 .orElse("UNKNOWN");
-        IASMinecraft.init(FabricLoader.getInstance().getGameDir(), FabricLoader.getInstance().getConfigDir(), "Fabric", modVersion, loaderVersion);
+        IASMinecraft.init(FabricLoader.getInstance().getGameDir(), FabricLoader.getInstance().getConfigDir(), "Quilt", modVersion, loaderVersion);
 
         // Register closer.
         ClientLifecycleEvents.CLIENT_STOPPING.register(client -> IAS.close());

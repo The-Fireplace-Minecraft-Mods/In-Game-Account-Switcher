@@ -1,0 +1,67 @@
+{
+  "schema_version": 1,
+  "quilt_loader": {
+    "group": "ru.vidtu.ias",
+    "id": "ias",
+    "version": "${version}",
+    "metadata": {
+      "name": "In-Game Account Switcher",
+      "description": "Allows you to change which account you are signed in to in-game without restarting Minecraft.",
+      "license": "LGPL-3.0-or-later",
+      "contributors": {
+        "The_Fireplace": "Original Mod Author",
+        "VidTu": "Current Maintainer",
+        "The_BrainStone": "Contributor",
+        "2xsaiko": "Contributor",
+        "Elvm": "Contributor"
+      },
+      "contact": {
+        "homepage": "https://modrinth.com/mod/in-game-account-switcher",
+        "sources": "https://github.com/The-Fireplace-Minecraft-Mods/In-Game-Account-Switcher",
+        "issues": "https://github.com/The-Fireplace-Minecraft-Mods/In-Game-Account-Switcher/issues",
+        "discord": "https://discord.gg/TpU2nEkSPk"
+      },
+      "icon": "ias.png"
+    },
+    "intermediate_mappings": "net.fabricmc:intermediary",
+    "depends": [
+      {
+        "id": "quilt_loader",
+        "versions": ">=0.23.0",
+        "reason": "The IAS mod requires a mod loader to be loaded."
+      },
+      {
+        "id": "minecraft",
+        "versions": ">=1.20.3 <=1.20.4",
+        "reason": "This version of IAS mod requires the Minecraft 1.20.3 or 1.20.4 to be loaded."
+      },
+      {
+        "id": "fabric-api",
+        "versions": "*",
+        "reason": "The IAS mod requires Fabric API to add its button into the GUI."
+      },
+      {
+        "id": "modmenu",
+        "versions": "*",
+        "reason": "The IAS mod recommends ModMenu for configuration access.",
+        "optional": true
+      }
+    ],
+    "entrypoints": {
+      "client": "ru.vidtu.ias.IASQuilt",
+      "modmenu": "ru.vidtu.ias.IASModMenu"
+    }
+  },
+  "minecraft": {
+    "environment": "client"
+  },
+  "mixin": "ias.mixins.json",
+  "modmenu": {
+    "links": {
+      "modmenu.modrinth": "https://modrinth.com/mod/in-game-account-switcher",
+      "modmenu.curseforge": "https://curseforge.com/minecraft/mc-mods/in-game-account-switcher",
+      "modmenu.github_releases": "https://github.com/The-Fireplace-Minecraft-Mods/In-Game-Account-Switcher/releases",
+      "modmenu.discord": "https://discord.gg/TpU2nEkSPk"
+    }
+  }
+}

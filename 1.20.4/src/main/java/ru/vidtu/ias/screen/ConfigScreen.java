@@ -27,8 +27,10 @@ import net.minecraft.client.gui.components.Checkbox;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvents;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.vidtu.ias.IAS;
@@ -370,8 +372,11 @@ public final class ConfigScreen extends Screen {
         // Unexpected Pigs.
         box = Checkbox.builder(Component.translatable("ias.config.unexpectedPigs"), this.font)
                 .pos(5, 164)
-                .selected(IASConfig.nickWarns)
-                .onValueChange((cb, value) -> IASConfig.nickWarns = value)
+                .selected(IASConfig.unexpectedPigs)
+                .onValueChange((cb, value) -> {
+                    IASConfig.unexpectedPigs = value;
+                    this.minecraft.getSoundManager().play(SimpleSoundInstance.forUI(value ? SoundEvents.PIG_AMBIENT : SoundEvents.PIG_DEATH, 1.0F));
+                })
                 .tooltip(Tooltip.create(Component.translatable("ias.config.unexpectedPigs.tip")))
                 .build();
         box.setTooltipDelay(250);
@@ -416,12 +421,5 @@ public final class ConfigScreen extends Screen {
             graphics.renderTooltip(this.font, Component.translatable("ias.config.mousePos", mouseX, mouseY), mouseX, mouseY);
             pose.popPose();
         }
-    }
-
-    /**
-     * Updates the visible buttons.
-     */
-    private void updateVisibility() {
-
     }
 }

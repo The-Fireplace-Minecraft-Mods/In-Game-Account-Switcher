@@ -3,7 +3,9 @@ pluginManagement {
         gradlePluginPortal()
         maven("https://maven.fabricmc.net/")
         maven("https://maven.architectury.dev/")
+        maven("https://maven.quiltmc.org/repository/release/")
         maven("https://maven.minecraftforge.net/")
+        maven("https://maven.neoforged.net/releases/")
     }
 }
 
@@ -12,5 +14,4 @@ plugins {
 }
 
 rootProject.name = "In-Game Account Switcher"
-include("1.20.4")
-include("1.20.4-fabric")
+include("1.20.4", "1.20.4-fabric", "1.20.4-quilt", "1.20.4-forge", "1.20.4-neoforge")

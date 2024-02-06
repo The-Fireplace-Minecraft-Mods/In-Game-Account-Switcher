@@ -1,7 +1,9 @@
 [versions]
 fabric-loader = "0.15.6"
 mixin = "0.8.5"
+quilt-loader = "0.23.1"
 
 [libraries]
 fabric-loader = { module = "net.fabricmc:fabric-loader", version.ref = "fabric-loader" }
 mixin = { module = "org.spongepowered:mixin", version.ref = "mixin" }
+quilt-loader = { module = "org.quiltmc:quilt-loader", version.ref = "quilt-loader" }

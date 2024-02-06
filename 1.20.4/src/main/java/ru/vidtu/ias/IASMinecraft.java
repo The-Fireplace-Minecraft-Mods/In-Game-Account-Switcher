@@ -32,7 +32,9 @@ import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.components.toasts.SystemToast;
+import net.minecraft.client.gui.components.toasts.ToastComponent;
 import net.minecraft.client.gui.layouts.LayoutElement;
+import net.minecraft.client.gui.screens.ConnectScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.TitleScreen;
 import net.minecraft.client.gui.screens.multiplayer.JoinMultiplayerScreen;
@@ -50,6 +52,7 @@ import ru.vidtu.ias.config.IASConfig;
 import ru.vidtu.ias.mixins.MinecraftAccessor;
 import ru.vidtu.ias.screen.AccountsScreen;
 import ru.vidtu.ias.utils.Expression;
+import ru.vidtu.ias.utils.IUtils;
 
 import java.nio.file.Path;
 import java.util.Optional;
@@ -115,11 +118,15 @@ public final class IASMinecraft {
      * @param modVersion    Mod version
      */
     public static void init(Path gameDir, Path configDir, String loader, String modVersion, String loaderVersion) {
+        // Log the info.
+        String gameVersion = SharedConstants.getCurrentVersion().getName();
+        LOGGER.info("IAS: Booting up... (version: {}, loader: {}, loader version: {}, game version: {})", modVersion, loader, loaderVersion, gameVersion);
+
         // Initialize the IAS.
         IAS.init(gameDir, configDir);
 
         // Set the UA.
-        IAS.userAgent(modVersion, loader, loaderVersion, SharedConstants.getCurrentVersion().getName());
+        IAS.userAgent(modVersion, loader, loaderVersion, gameVersion);
     }
 
     /**
@@ -129,11 +136,10 @@ public final class IASMinecraft {
      * @param buttonAdder Adder function
      */
     @SuppressWarnings({"ChainOfInstanceofChecks", "ConstantValue"}) // <- Abstraction for Minecraft is not possible, mods break user non-nullness.
-    public static void onInit(Screen screen, Consumer<Button> buttonAdder) {
+    public static void onInit(Minecraft minecraft, Screen screen, Consumer<Button> buttonAdder) {
         // Add title button.
         if (IASConfig.titleButton && screen instanceof TitleScreen) {
             // Calculate the position.
-            Minecraft minecraft = Minecraft.getInstance();
             int width = screen.width;
             int height = screen.height;
             Integer x = Expression.parsePosition(IASConfig.titleButtonX, width, height);
@@ -178,7 +184,6 @@ public final class IASMinecraft {
         // Add servers button.
         if (IASConfig.serversButton && screen instanceof JoinMultiplayerScreen) {
             // Calculate the position.
-            Minecraft minecraft = Minecraft.getInstance();
             int width = screen.width;
             int height = screen.height;
             Integer x = Expression.parsePosition(IASConfig.serversButtonX, width, height);
@@ -223,7 +228,6 @@ public final class IASMinecraft {
         // Add title text.
         if (IASConfig.titleText && screen instanceof TitleScreen) {
             // Calculate the position.
-            Minecraft minecraft = Minecraft.getInstance();
             int width = screen.width;
             int height = screen.height;
             Integer cx = Expression.parsePosition(IASConfig.titleTextX, width, height);
@@ -242,7 +246,6 @@ public final class IASMinecraft {
         // Add servers text.
         if (IASConfig.serversText && screen instanceof JoinMultiplayerScreen) {
             // Calculate the position.
-            Minecraft minecraft = Minecraft.getInstance();
             int width = screen.width;
             int height = screen.height;
             Integer cx = Expression.parsePosition(IASConfig.serversTextX, width, height);
@@ -257,6 +260,19 @@ public final class IASMinecraft {
             };
             textY = cx == null || cy == null ? 5 : cy;
         }
+
+        // Warn about invalid names.
+        if (!IASConfig.nickWarns || !(screen instanceof ConnectScreen) || minecraft.getToasts().getToast(SystemToast.class, NICK_WARN) != null) return;
+        User user = minecraft.getUser();
+        // Mods break non-nullness.
+        //noinspection ConstantValue
+        String name = user != null ? user.getName() : "";
+        String key = IUtils.warnKey(name);
+        if (key == null) return;
+
+        // Display the toast.
+        ToastComponent toasts = minecraft.getToasts();
+        toasts.addToast(SystemToast.multiline(minecraft, NICK_WARN, Component.literal("In-Game Account Switcher"), Component.translatable(key, name)));
     }
 
     /**

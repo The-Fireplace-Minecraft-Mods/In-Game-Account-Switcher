@@ -1,5 +1,5 @@
 plugins {
-    id("fabric-loom") version "1.5-SNAPSHOT"
+    id("dev.architectury.loom") version "1.5-SNAPSHOT"
 }
 
 java.sourceCompatibility = JavaVersion.VERSION_17
@@ -12,13 +12,14 @@ val shared = project(":1.20.4")
 
 repositories {
     mavenCentral()
+    maven("https://maven.fabricmc.net/")
     maven("https://maven.terraformersmc.com/releases/")
-    maven("https://api.modrinth.com/maven/")
 }
 
 loom {
+    silentMojangMappingsLicense()
     runs.named("client") {
-        vmArgs("-XX:+IgnoreUnrecognizedVMOptions", "-XX:+AllowEnhancedClassRedefinition", "-XX:HotswapAgent=fatjar", "-Dfabric.debug.disableClassPathIsolation=true")
+        vmArgs("-XX:+IgnoreUnrecognizedVMOptions", "-Xmx2G", "-XX:+AllowEnhancedClassRedefinition", "-XX:HotswapAgent=fatjar", "-Dfabric.debug.disableClassPathIsolation=true")
     }
     @Suppress("UnstableApiUsage")
     mixin {
@@ -38,9 +39,6 @@ dependencies {
 
     // Root
     compileOnly(shared)
-
-    // Speed up testing
-    runtimeOnly("maven.modrinth:lazydfu:0.1.3")
 }
 
 tasks.withType<JavaCompile> {
@@ -62,4 +60,15 @@ tasks.withType<ProcessResources> {
 tasks.withType<Jar> {
     from(rootDir.resolve("LICENSE"))
     from(rootDir.resolve("GPL"))
+    manifest {
+        attributes(
+                "Specification-Title" to "In-Game Account Switcher",
+                "Specification-Version" to project.version,
+                "Specification-Vendor" to "The_Fireplace, VidTu",
+                "Implementation-Title" to "IAS-Fabric-1.20.4",
+                "Implementation-Version" to project.version,
+                "Implementation-Vendor" to "VidTu",
+                "MixinConfigs" to "ias.mixins.json"
+        )
+    }
 }

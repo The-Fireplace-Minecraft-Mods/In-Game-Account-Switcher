@@ -56,7 +56,7 @@ public final class IAS {
     /**
      * Template for {@link #userAgent}.
      */
-    private static final String USER_AGENT_TEMPLATE = "IAS/%s (%s; %s %s; Minecraft %s; Java %s)";
+    private static final String USER_AGENT_TEMPLATE = "IAS/%s (Session: %s; Loader: %s %s; Minecraft %s; Java %s)";
 
     /**
      * IAS executor.

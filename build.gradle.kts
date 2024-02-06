@@ -6,7 +6,7 @@ java.sourceCompatibility = JavaVersion.VERSION_17
 java.targetCompatibility = JavaVersion.VERSION_17
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 group = "ru.vidtu.ias"
-base.archivesName = "IAS-Commons"
+base.archivesName = "IAS-Root"
 
 repositories {
     mavenCentral()
@@ -25,4 +25,15 @@ tasks.withType<JavaCompile> {
 tasks.withType<Jar> {
     from(rootDir.resolve("LICENSE"))
     from(rootDir.resolve("GPL"))
+    manifest {
+        attributes(
+                "Specification-Title" to "In-Game Account Switcher",
+                "Specification-Version" to project.version,
+                "Specification-Vendor" to "The_Fireplace, VidTu",
+                "Implementation-Title" to "IAS-Root",
+                "Implementation-Version" to project.version,
+                "Implementation-Vendor" to "VidTu",
+                "MixinConfigs" to "ias.mixins.json"
+        )
+    }
 }

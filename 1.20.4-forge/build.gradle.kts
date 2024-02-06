@@ -6,15 +6,28 @@ java.sourceCompatibility = JavaVersion.VERSION_17
 java.targetCompatibility = JavaVersion.VERSION_17
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 group = "ru.vidtu.ias"
-base.archivesName = "IAS-1.20.4"
+base.archivesName = "IAS-Forge-1.20.4"
+evaluationDependsOn(":1.20.4")
+val shared = project(":1.20.4")
 
 loom {
     silentMojangMappingsLicense()
+    forge {
+        mixinConfigs = setOf("ias.mixins.json")
+    }
+    runs.named("client") {
+        vmArgs("-XX:+IgnoreUnrecognizedVMOptions", "-Xmx2G", "-XX:+AllowEnhancedClassRedefinition", "-XX:HotswapAgent=fatjar", "-Dfabric.debug.disableClassPathIsolation=true")
+    }
+    @Suppress("UnstableApiUsage")
+    mixin {
+        defaultRefmapName = "ias.mixins.refmap.json"
+    }
 }
 
 repositories {
     mavenCentral()
-    maven("https://repo.spongepowered.org/repository/maven-public/")
+    maven("https://maven.architectury.dev/")
+    maven("https://maven.minecraftforge.net/")
 }
 
 dependencies {
@@ -22,23 +35,25 @@ dependencies {
     minecraft("com.mojang:minecraft:1.20.4")
     mappings(loom.officialMojangMappings())
 
-    // Mixin
-    compileOnly(libs.mixin)
+    // Forge
+    forge("net.minecraftforge:forge:1.20.4-49.0.27")
 
     // Root
-    compileOnlyApi(rootProject)
+    compileOnly(shared)
 }
 
 tasks.withType<JavaCompile> {
     source(rootProject.sourceSets.main.get().java)
+    source(shared.sourceSets.main.get().java)
     options.encoding = "UTF-8"
     options.release.set(17)
 }
 
 tasks.withType<ProcessResources> {
     from(rootProject.sourceSets.main.get().resources)
+    from(shared.sourceSets.main.get().resources)
     inputs.property("version", project.version)
-    filesMatching("fabric.mod.json") {
+    filesMatching("META-INF/mods.toml") {
         expand("version" to project.version)
     }
 }
@@ -51,7 +66,7 @@ tasks.withType<Jar> {
                 "Specification-Title" to "In-Game Account Switcher",
                 "Specification-Version" to project.version,
                 "Specification-Vendor" to "The_Fireplace, VidTu",
-                "Implementation-Title" to "IAS-1.20.4",
+                "Implementation-Title" to "IAS-Forge-1.20.4",
                 "Implementation-Version" to project.version,
                 "Implementation-Vendor" to "VidTu",
                 "MixinConfigs" to "ias.mixins.json"
