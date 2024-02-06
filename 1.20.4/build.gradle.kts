@@ -14,9 +14,14 @@ repositories {
 }
 
 dependencies {
+    // Minecraft
     minecraft("com.mojang:minecraft:1.20.4")
     mappings(loom.officialMojangMappings())
-    compileOnly("org.spongepowered:mixin:0.8.5")
+
+    // Mixin
+    compileOnly(libs.mixin)
+
+    // Root
     compileOnlyApi(rootProject)
 }
 

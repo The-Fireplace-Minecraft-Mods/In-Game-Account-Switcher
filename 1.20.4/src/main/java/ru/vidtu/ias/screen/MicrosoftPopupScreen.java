@@ -147,8 +147,7 @@ final class MicrosoftPopupScreen extends Screen implements MSAuthServer.CreateHa
 
                 // Rebuild the UI.
                 this.init(this.minecraft, this.width, this.height);
-            });
-            this.password.secure = true;
+            }, true);
             this.password.setHint(Component.translatable("ias.password.hint").withStyle(ChatFormatting.DARK_GRAY));
             this.password.setFormatter((s, i) -> FormattedCharSequence.forward("*".repeat(s.length()), Style.EMPTY));
             this.password.setMaxLength(32);

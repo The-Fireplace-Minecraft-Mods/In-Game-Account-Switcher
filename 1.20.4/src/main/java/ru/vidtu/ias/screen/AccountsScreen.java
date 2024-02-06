@@ -37,52 +37,42 @@ public final class AccountsScreen extends Screen {
     /**
      * Parent screen, {@code null} if none.
      */
-    final Screen parent;
+    private final Screen parent;
 
     /**
      * Search widget.
      */
-    EditBox search;
+    private EditBox search;
 
     /**
      * Account list widget.
      */
-    AccountList list;
+    private AccountList list;
 
     /**
      * Player skin widget.
      */
-    PlayerSkinWidget skin;
+    private PlayerSkinWidget skin;
 
     /**
      * Login button.
      */
-    Button login;
+    private Button login;
 
     /**
      * Offline login button.
      */
-    Button offlineLogin;
+    private Button offlineLogin;
 
     /**
      * Edit button.
      */
-    Button edit;
+    private Button edit;
 
     /**
      * Edit button.
      */
-    Button delete;
-
-    /**
-     * Add button.
-     */
-    Button add;
-
-    /**
-     * Back button.
-     */
-    Button back;
+    private Button delete;
 
     /**
      * Creates a new screen.
@@ -128,28 +118,31 @@ public final class AccountsScreen extends Screen {
 
         // Add offline login button.
         this.offlineLogin = Button.builder(Component.translatable("ias.accounts.offlineLogin"), btn -> this.list.login(false))
-                .bounds(this.width / 2 - 50 - 100 - 4, this.height - 24, 100, 20).build();
+                .bounds(this.width / 2 - 50 - 100 - 4, this.height - 24, 100, 20)
+                .build();
         this.addRenderableWidget(this.offlineLogin);
 
         // Add edit button.
         this.edit = Button.builder(Component.translatable("ias.accounts.edit"), btn -> this.list.edit())
-                .bounds(this.width / 2 - 50, this.height - 24 - 24, 100, 20).build();
+                .bounds(this.width / 2 - 50, this.height - 24 - 24, 100, 20)
+                .build();
         this.addRenderableWidget(this.edit);
 
         // Add delete button.
         this.delete = Button.builder(Component.translatable("ias.accounts.delete"), btn -> this.list.delete(!Screen.hasShiftDown()))
-                .bounds(this.width / 2 - 50, this.height - 24, 100, 20).build();
+                .bounds(this.width / 2 - 50, this.height - 24, 100, 20)
+                .build();
         this.addRenderableWidget(this.delete);
 
         // Add edit button.
-        this.add = Button.builder(Component.translatable("ias.accounts.add"), btn -> this.list.add())
-                .bounds(this.width / 2 + 50 + 4, this.height - 24 - 24, 100, 20).build();
-        this.addRenderableWidget(this.add);
+        this.addRenderableWidget(Button.builder(Component.translatable("ias.accounts.add"), btn -> this.list.add())
+                .bounds(this.width / 2 + 50 + 4, this.height - 24 - 24, 100, 20)
+                .build());
 
         // Add delete button.
-        this.back = Button.builder(CommonComponents.GUI_BACK, btn -> this.minecraft.setScreen(this.parent))
-                .bounds(this.width / 2 + 50 + 4, this.height - 24, 100, 20).build();
-        this.addRenderableWidget(this.back);
+        this.addRenderableWidget(Button.builder(CommonComponents.GUI_BACK, btn -> this.minecraft.setScreen(this.parent))
+                .bounds(this.width / 2 + 50 + 4, this.height - 24, 100, 20)
+                .build());
 
         // Add account list.
         if (this.list != null) {
@@ -184,6 +177,15 @@ public final class AccountsScreen extends Screen {
     }
 
     /**
+     * Gets the search.
+     *
+     * @return Search widget
+     */
+    EditBox search() {
+        return this.search;
+    }
+
+    /**
      * Updates the selected entry.
      */
     void updateSelected() {
@@ -209,7 +211,7 @@ public final class AccountsScreen extends Screen {
         this.offlineLogin.active = this.edit.active = this.delete.active = true;
 
         // Enable online login button if we can log in.
-        if (selected.account.canLogin()) {
+        if (selected.account().canLogin()) {
             this.login.active = true;
             this.login.setTooltip(null);
         } else {

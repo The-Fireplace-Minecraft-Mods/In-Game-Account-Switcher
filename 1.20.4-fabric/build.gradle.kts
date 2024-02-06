@@ -12,15 +12,29 @@ val shared = project(":1.20.4")
 
 repositories {
     mavenCentral()
-    maven("https://api.modrinth.com/maven")
+    maven("https://maven.terraformersmc.com/releases/")
+    maven("https://api.modrinth.com/maven/")
+}
+
+loom.runs.named("client") {
+    vmArgs("-XX:+AllowEnhancedClassRedefinition", "-XX:HotswapAgent=fatjar", "-Dfabric.debug.disableClassPathIsolation=true")
 }
 
 dependencies {
+    // Minecraft
     minecraft("com.mojang:minecraft:1.20.4")
     mappings(loom.officialMojangMappings())
-    modImplementation("net.fabricmc:fabric-loader:0.15.6")
+
+    // Fabric
+    modImplementation(libs.fabric.loader)
     modImplementation("net.fabricmc.fabric-api:fabric-api:0.95.4+1.20.4")
+    modImplementation("com.terraformersmc:modmenu:9.0.0")
+
+    // Root
     compileOnly(shared)
+
+    // Speed up testing
+    runtimeOnly("maven.modrinth:lazydfu:0.1.3")
 }
 
 tasks.withType<JavaCompile> {

@@ -57,7 +57,7 @@ final class AccountList extends ObjectSelectionList<AccountEntry> {
     /**
      * Parent screen.
      */
-    final AccountsScreen screen;
+    private final AccountsScreen screen;
 
     /**
      * Creates a new accounts list widget.
@@ -71,7 +71,7 @@ final class AccountList extends ObjectSelectionList<AccountEntry> {
     AccountList(AccountsScreen screen, Minecraft minecraft, int width, int height, int offset, int item) {
         super(minecraft, width, height, offset, item);
         this.screen = screen;
-        this.update(this.screen.search.getValue());
+        this.update(this.screen.search().getValue());
     }
 
     @Override
@@ -139,7 +139,7 @@ final class AccountList extends ObjectSelectionList<AccountEntry> {
         // Skip if nothing is selected.
         AccountEntry selected = this.getSelected();
         if (selected == null) return;
-        Account account = selected.account;
+        Account account = selected.account();
 
         // Check if we should log in online.
         if (online && account.canLogin()) {
@@ -160,7 +160,7 @@ final class AccountList extends ObjectSelectionList<AccountEntry> {
 
         // Login offline.
         Account.LoginData data = new Account.LoginData(account.name(), account.uuid(), "ias:offline", false);
-        login.success(data);
+        login.success(data, false);
     }
 
     void edit() {
@@ -182,11 +182,17 @@ final class AccountList extends ObjectSelectionList<AccountEntry> {
             } else {
                 IASStorage.accounts.set(index, account);
             }
-            IAS.saveStorageSafe();
-            IAS.disclaimersStorage();
+
+            // Save storage.
+            try {
+                IAS.disclaimersStorage();
+                IAS.saveStorage();
+            } catch (Throwable t) {
+                LOGGER.error("IAS: Unable to save storage.", t);
+            }
 
             // Update the list.
-            this.update(this.screen.search.getValue());
+            this.update(this.screen.search().getValue());
         }));
     }
 
@@ -200,14 +206,23 @@ final class AccountList extends ObjectSelectionList<AccountEntry> {
         // Skip if nothing is selected.
         AccountEntry selected = this.getSelected();
         if (selected == null) return;
-        Account account = selected.account;
+        Account account = selected.account();
 
         // Skip confirmation if shift is pressed.
         if (!confirm) {
+            // Remove.
             IASStorage.accounts.remove(account);
-            IAS.saveStorageSafe();
-            IAS.disclaimersStorage();
-            this.update(this.screen.search.getValue());
+
+            // Save storage.
+            try {
+                IAS.disclaimersStorage();
+                IAS.saveStorage();
+            } catch (Throwable t) {
+                LOGGER.error("IAS: Unable to save storage.", t);
+            }
+
+            // Update.
+            this.update(this.screen.search().getValue());
             return;
         }
 
@@ -215,9 +230,17 @@ final class AccountList extends ObjectSelectionList<AccountEntry> {
         this.minecraft.setScreen(new DeletePopupScreen(this.screen, account, () -> {
             // Delete if confirmed.
             IASStorage.accounts.removeIf(Predicate.isEqual(account));
-            IAS.saveStorageSafe();
-            IAS.disclaimersStorage();
-            this.update(this.screen.search.getValue());
+
+            // Save storage.
+            try {
+                IAS.disclaimersStorage();
+                IAS.saveStorage();
+            } catch (Throwable t) {
+                LOGGER.error("IAS: Unable to save storage.", t);
+            }
+
+            // Update.
+            this.update(this.screen.search().getValue());
         }));
     }
 
@@ -229,14 +252,20 @@ final class AccountList extends ObjectSelectionList<AccountEntry> {
             // Set to this.
             this.minecraft.setScreen(this.screen);
 
-            // Add the account and save it.
+            // Add the account.
             IASStorage.accounts.removeIf(Predicate.isEqual(account));
             IASStorage.accounts.add(account);
-            IAS.saveStorageSafe();
-            IAS.disclaimersStorage();
+
+            // Save storage.
+            try {
+                IAS.disclaimersStorage();
+                IAS.saveStorage();
+            } catch (Throwable t) {
+                LOGGER.error("IAS: Unable to save storage.", t);
+            }
 
             // Update the list.
-            this.update(this.screen.search.getValue());
+            this.update(this.screen.search().getValue());
         }));
     }
 
@@ -248,7 +277,7 @@ final class AccountList extends ObjectSelectionList<AccountEntry> {
      */
     PlayerSkin skin(AccountEntry entry) {
         // Get and return the skin if already stored.
-        UUID uuid = entry.account.uuid();
+        UUID uuid = entry.account().uuid();
         PlayerSkin skin = SKINS.get(uuid);
         if (skin != null) return skin;
 

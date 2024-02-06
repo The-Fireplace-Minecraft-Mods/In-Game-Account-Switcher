@@ -20,6 +20,7 @@
 package ru.vidtu.ias.utils;
 
 import java.util.Locale;
+import java.util.regex.Pattern;
 
 /**
  * Simple math expression parser. Used for configuration.
@@ -30,6 +31,11 @@ import java.util.Locale;
  * @see <a href="https://stackoverflow.com/a/26227947">stackoverflow.com/a/26227947</a>
  */
 public final class Expression {
+    /**
+     * Space pattern for removing all spaces.
+     */
+    public static final Pattern SPACE_PATTERN = Pattern.compile("\\s+");
+
     /**
      * Current expression.
      */
@@ -51,7 +57,7 @@ public final class Expression {
      * @param expression Expression string
      */
     public Expression(String expression) {
-        this.expression = expression;
+        this.expression = SPACE_PATTERN.matcher(expression).replaceAll("");
     }
 
     /**
@@ -223,8 +229,51 @@ public final class Expression {
                     .replace("%width%", Integer.toString(width))
                     .replace("%height%", Integer.toString(height)));
         } catch (Throwable ignored) {
-            // Return null;
+            // Invalid.
             return null;
+        }
+    }
+
+    /**
+     * Gets the position validity color.
+     * <ul>
+     *     <li>Empty and null expressions will return GRAY.</li>
+     *     <li>Valid expressions will return almost-WHITE. (one current vanilla uses with EditBoxes)</li>
+     *     <li>Out-of-bounds (for current window) expressions will return YELLOW.</li>
+     *     <li>Invalid expressions (infinite, NaN, or too big to be an int) will return ORANGE.</li>
+     *     <li>Unparseable expressions will return RED.</li>
+     * </ul>
+     *
+     * @param expression Target expression
+     * @param width      Target width
+     * @param height     Target height
+     * @param x          Whether this is X and not Y
+     * @return Position expression validity color
+     */
+    public static int positionValidityColor(String expression, int width, int height, boolean x) {
+        try {
+            // Null/empty are GRAY.
+            if (expression == null || expression.isBlank()) return 0xFF_80_80_80;
+
+            // Calculate.
+            double value = parse(expression.toLowerCase(Locale.ROOT)
+                    .replace("%width%", Integer.toString(width))
+                    .replace("%height%", Integer.toString(height)));
+
+            // Check for invalid. (ORANGE)
+            if (!Double.isFinite(value) || value < Integer.MIN_VALUE || value > Integer.MAX_VALUE) return 0xFF_FF_80_00;
+            int rounded = (int) value;
+
+            // Check for OOB. (YELLOW)
+            if (rounded < 0) return 0xFF_FF_FF_00;
+            int bound = x ? width : height;
+            if (value > bound) return 0xFF_FF_FF_00;
+
+            // Valid.
+            return 0xFF_E0_E0_E0;
+        } catch (Throwable ignored) {
+            // Invalid.
+            return 0xFF_FF_00_00;
         }
     }
 }

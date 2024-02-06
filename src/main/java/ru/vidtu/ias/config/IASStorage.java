@@ -135,28 +135,6 @@ public final class IASStorage {
     }
 
     /**
-     * Loads the storage, suppressing and logging any errors.
-     *
-     * @param path Game directory
-     * @return Whether the config has been loaded without errors
-     */
-    public static boolean loadSafe(Path path) {
-        try {
-            // Try to load config.
-            load(path);
-
-            // Return success.
-            return true;
-        } catch (Throwable t) {
-            // Log it.
-            LOGGER.error("IAS: Unable to load IAS storage.", t);
-
-            // Return fail.
-            return false;
-        }
-    }
-
-    /**
      * Loads the config.
      *
      * @param path Game directory
@@ -197,28 +175,6 @@ public final class IASStorage {
         } catch (Throwable t) {
             // Rethrow.
             throw new RuntimeException("Unable to load IAS storage.", t);
-        }
-    }
-
-    /**
-     * Saves the config, suppressing and logging any errors.
-     *
-     * @param path Game directory
-     * @return Whether the config has been saved without errors
-     */
-    public static boolean saveSafe(Path path) {
-        try {
-            // Try to load config.
-            save(path);
-
-            // Return success.
-            return true;
-        } catch (Throwable t) {
-            // Log it.
-            LOGGER.error("IAS: Unable to save IAS storage.", t);
-
-            // Return fail.
-            return false;
         }
     }
 

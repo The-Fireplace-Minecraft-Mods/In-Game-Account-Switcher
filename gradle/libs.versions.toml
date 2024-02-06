@@ -1,0 +1,7 @@
+[versions]
+fabric-loader = "0.15.6"
+mixin = "0.8.5"
+
+[libraries]
+fabric-loader = { module = "net.fabricmc:fabric-loader", version.ref = "fabric-loader" }
+mixin = { module = "org.spongepowered:mixin", version.ref = "mixin" }

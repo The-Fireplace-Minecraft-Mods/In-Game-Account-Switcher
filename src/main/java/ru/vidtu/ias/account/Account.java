@@ -169,9 +169,10 @@ public sealed interface Account permits OfflineAccount, MicrosoftAccount {
         /**
          * Called when an authentication has performed successfully.
          *
-         * @param data Auth data
+         * @param data    Auth data
+         * @param changed Whether the storage has been modified and may require saving
          */
-        void success(LoginData data);
+        void success(LoginData data, boolean changed);
 
         /**
          * Called when an authentication has failed.

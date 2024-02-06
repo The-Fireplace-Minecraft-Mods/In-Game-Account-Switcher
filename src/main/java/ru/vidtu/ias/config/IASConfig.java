@@ -28,6 +28,7 @@ import java.lang.reflect.Modifier;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.util.Objects;
 
 /**
  * IAS config.
@@ -68,9 +69,9 @@ public final class IASConfig {
     public static String titleTextY = null;
 
     /**
-     * Alignment for title screen text, {@link TextAlign#CENTER} by default.
+     * Alignment for title screen text, {@link TextAlign#LEFT} by default.
      */
-    public static TextAlign titleTextAlign = TextAlign.CENTER;
+    public static TextAlign titleTextAlign = TextAlign.LEFT;
 
     /**
      * Whether the title screen button is enabled, {@code true} by default.
@@ -103,9 +104,9 @@ public final class IASConfig {
     public static String serversTextY = null;
 
     /**
-     * Alignment for servers screen text, {@link TextAlign#CENTER} by default.
+     * Alignment for servers screen text, {@link TextAlign#LEFT} by default.
      */
-    public static TextAlign serversTextAlign = TextAlign.CENTER;
+    public static TextAlign serversTextAlign = TextAlign.LEFT;
 
     /**
      * Whether the servers screen button is enabled, {@code false} by default.
@@ -133,32 +134,15 @@ public final class IASConfig {
     public static boolean nickWarns = true;
 
     /**
+     * Allow unexpected pigs to show up.
+     */
+    public static boolean unexpectedPigs = true;
+
+    /**
      * Creates a new config for GSON.
      */
     private IASConfig() {
         // Private
-    }
-
-    /**
-     * Loads the config, suppressing and logging any errors.
-     *
-     * @param path Config directory (not file)
-     * @return Whether the config has been loaded without errors
-     */
-    public static boolean loadSafe(Path path) {
-        try {
-            // Try to load config.
-            load(path);
-
-            // Return success.
-            return true;
-        } catch (Throwable t) {
-            // Log it.
-            LOGGER.error("IAS: Unable to load IAS config.", t);
-
-            // Return fail.
-            return false;
-        }
     }
 
     /**
@@ -183,31 +167,13 @@ public final class IASConfig {
 
             // Hacky JSON reading.
             GSON.fromJson(value, IASConfig.class);
+
+            // NPE protection.
+            titleTextAlign = Objects.requireNonNullElse(titleTextAlign, TextAlign.LEFT);
+            serversTextAlign = Objects.requireNonNullElse(serversTextAlign, TextAlign.LEFT);
         } catch (Throwable t) {
             // Rethrow.
             throw new RuntimeException("Unable to load IAS config.", t);
-        }
-    }
-
-    /**
-     * Saves the config, suppressing and logging any errors.
-     *
-     * @param path Config directory (not file)
-     * @return Whether the config has been saved without errors
-     */
-    public static boolean saveSafe(Path path) {
-        try {
-            // Try to load config.
-            save(path);
-
-            // Return success.
-            return true;
-        } catch (Throwable t) {
-            // Log it.
-            LOGGER.error("IAS: Unable to save IAS config.", t);
-
-            // Return fail.
-            return false;
         }
     }
 

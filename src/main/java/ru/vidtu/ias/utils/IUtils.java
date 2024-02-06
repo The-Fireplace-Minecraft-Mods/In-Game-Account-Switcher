@@ -29,7 +29,7 @@ import java.util.function.Predicate;
  *
  * @author VidTu
  */
-public class IUtils {
+public final class IUtils {
     /**
      * An instance of this class cannot be created.
      *

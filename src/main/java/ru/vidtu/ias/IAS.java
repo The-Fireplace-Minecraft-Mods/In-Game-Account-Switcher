@@ -49,7 +49,7 @@ public final class IAS {
     private static final Logger LOGGER = LoggerFactory.getLogger("IAS");
 
     /**
-     * Session. Used in {@link #USER_AGENT_TEMPLATE}
+     * Random session. Used in {@link #USER_AGENT_TEMPLATE}.
      */
     private static final UUID SESSION = UUID.randomUUID();
 
@@ -99,13 +99,25 @@ public final class IAS {
         configDirectory = configPath;
 
         // Write the disclaimers.
-        disclaimersStorage();
+        try {
+            disclaimersStorage();
+        } catch (Throwable t) {
+            LOGGER.error("IAS: Unable to write disclaimers.", t);
+        }
 
         // Read the config.
-        loadConfigSafe();
+        try {
+            loadConfig();
+        } catch (Throwable t) {
+            LOGGER.error("IAS: Unable to load IAS config.", t);
+        }
 
         // Read the storage.
-        loadStorageSafe();
+        try {
+            loadStorage();
+        } catch (Throwable t) {
+            LOGGER.error("IAS: Unable to load IAS storage.", t);
+        }
 
         // Create the executor.
         executor = Executors.newSingleThreadScheduledExecutor(r -> new Thread(r, "IAS Executor Thread"));
@@ -177,30 +189,12 @@ public final class IAS {
     }
 
     /**
-     * Delegates to {@link IASConfig#loadSafe(Path)} with {@link #configDirectory}.
-     *
-     * @return Whether the config has been loaded without errors
-     */
-    public static boolean loadConfigSafe() {
-        return IASConfig.loadSafe(configDirectory);
-    }
-
-    /**
      * Delegates to {@link IASConfig#load(Path)} with {@link #configDirectory}.
      *
      * @throws RuntimeException If unable to load the config
      */
     public static void loadConfig() {
         IASConfig.load(configDirectory);
-    }
-
-    /**
-     * Delegates to {@link IASConfig#saveSafe(Path)} with {@link #configDirectory}.
-     *
-     * @return Whether the config has been saved without errors
-     */
-    public static boolean saveConfigSafe() {
-        return IASConfig.saveSafe(configDirectory);
     }
 
     /**
@@ -213,30 +207,12 @@ public final class IAS {
     }
 
     /**
-     * Delegates to {@link IASStorage#loadSafe(Path)} with {@link #gameDirectory}.
-     *
-     * @return Whether the storage has been loaded without errors
-     */
-    public static boolean loadStorageSafe() {
-        return IASStorage.loadSafe(gameDirectory);
-    }
-
-    /**
      * Delegates to {@link IASStorage#load(Path)} with {@link #gameDirectory}.
      *
      * @throws RuntimeException If unable to load the storage
      */
     public static void loadStorage() {
         IASStorage.load(gameDirectory);
-    }
-
-    /**
-     * Delegates to {@link IASStorage#saveSafe(Path)} with {@link #gameDirectory}.
-     *
-     * @return Whether the storage has been saved without errors
-     */
-    public static boolean saveStorageSafe() {
-        return IASStorage.saveSafe(gameDirectory);
     }
 
     /**

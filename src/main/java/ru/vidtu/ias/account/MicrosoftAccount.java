@@ -182,6 +182,7 @@ public final class MicrosoftAccount implements Account {
             Holder<Crypt> crypt = new Holder<>();
             Holder<String> access = new Holder<>();
             Holder<String> refresh = new Holder<>();
+            Holder<Boolean> changed = new Holder<>(false);
 
             // Read the crypt.
             CompletableFuture<Crypt> future;
@@ -334,6 +335,7 @@ public final class MicrosoftAccount implements Account {
 
                             // Flush it.
                             this.data = byteOut.toByteArray();
+                            changed.set(true);
                         } catch (Throwable t) {
                             throw new RuntimeException("Unable to encrypt the tokens.", t);
                         }
@@ -351,8 +353,13 @@ public final class MicrosoftAccount implements Account {
                 if (profile == null) return;
 
                 // Authentication successful, refresh the profile.
-                this.uuid = profile.uuid();
-                this.name = profile.name();
+                UUID uuid = profile.uuid();
+                String name = profile.name();
+                if (!this.uuid.equals(uuid) || !this.name.equals(name)) {
+                    this.uuid = profile.uuid();
+                    this.name = profile.name();
+                    changed.set(true);
+                }
 
                 // Log it and display progress.
                 LOGGER.info("IAS: Successful login as {}", profile);
@@ -360,7 +367,7 @@ public final class MicrosoftAccount implements Account {
 
                 // Create and return the data.
                 LoginData login = new LoginData(this.name, this.uuid, access.get(), true);
-                handler.success(login);
+                handler.success(login, changed.get());
             }, IAS.executor()).exceptionallyAsync(t -> {
                 // Handle error.
                 handler.error(new RuntimeException("Unable to login as MS account", t));

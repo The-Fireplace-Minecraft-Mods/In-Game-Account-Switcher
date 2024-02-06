@@ -41,22 +41,22 @@ final class AccountEntry extends ObjectSelectionList.Entry<AccountEntry> {
     /**
      * Minecraft instance.
      */
-    final Minecraft minecraft;
+    private final Minecraft minecraft;
 
     /**
      * Parent list.
      */
-    final AccountList list;
+    private final AccountList list;
 
     /**
      * IAS account.
      */
-    final Account account;
+    private final Account account;
 
     /**
      * Last click time.
      */
-    long clicked = Util.getMillis();
+    private long clicked = Util.getMillis();
 
     /**
      * Creates a new account list entry widget.
@@ -102,6 +102,15 @@ final class AccountEntry extends ObjectSelectionList.Entry<AccountEntry> {
     @NotNull
     public Component getNarration() {
         return Component.literal(this.account.name());
+    }
+
+    /**
+     * Gets the account.
+     *
+     * @return IAS account
+     */
+    Account account() {
+        return this.account;
     }
 
     @Override

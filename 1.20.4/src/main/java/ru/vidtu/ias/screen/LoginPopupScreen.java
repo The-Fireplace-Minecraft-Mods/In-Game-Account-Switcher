@@ -30,6 +30,7 @@ import net.minecraft.network.chat.Style;
 import net.minecraft.util.FormattedCharSequence;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.vidtu.ias.IAS;
 import ru.vidtu.ias.IASMinecraft;
 import ru.vidtu.ias.account.Account;
 import ru.vidtu.ias.account.MicrosoftAccount;
@@ -121,8 +122,7 @@ final class LoginPopupScreen extends Screen implements Account.LoginHandler {
 
                 // Complete the future.
                 this.passFuture.complete(this.password.getValue());
-            });
-            this.password.secure = true;
+            }, true);
             this.password.setHint(Component.translatable("ias.password.hint").withStyle(ChatFormatting.DARK_GRAY));
             this.password.setFormatter((s, i) -> FormattedCharSequence.forward("*".repeat(s.length()), Style.EMPTY));
             this.password.setMaxLength(32);
@@ -270,7 +270,7 @@ final class LoginPopupScreen extends Screen implements Account.LoginHandler {
     }
 
     @Override
-    public void success(Account.LoginData data) {
+    public void success(Account.LoginData data, boolean changed) {
         // Bruh.
         assert this.minecraft != null;
 
@@ -294,6 +294,17 @@ final class LoginPopupScreen extends Screen implements Account.LoginHandler {
 
         // Log in.
         this.stage(MicrosoftAccount.SERVICES);
+
+        // Save storage.
+        if (changed) {
+            try {
+                IAS.disclaimersStorage();
+                IAS.saveStorage();
+            } catch (Throwable t) {
+                LOGGER.error("IAS: Unable to save storage.", t);
+            }
+        }
+
         IASMinecraft.account(this.minecraft, data).thenRunAsync(() -> {
             // Skip if not current screen.
             if (this != this.minecraft.screen) return;

@@ -25,6 +25,9 @@
   "entrypoints": {
     "client": [
       "ru.vidtu.ias.IASFabric"
+    ],
+    "modmenu": [
+      "ru.vidtu.ias.IASModMenu"
     ]
   },
   "mixins": [
@@ -32,7 +35,7 @@
   ],
   "depends": {
     "fabricloader": ">=0.15.0",
-    "minecraft": "~1.20.4",
+    "minecraft": ">=1.20.3 <=1.20.4",
     "fabric-api": "*"
   },
   "recommends": {

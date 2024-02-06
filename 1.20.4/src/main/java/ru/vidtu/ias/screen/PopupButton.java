@@ -35,37 +35,37 @@ final class PopupButton extends Button {
     /**
      * Button red color.
      */
-    float red = 1.0F;
+    private float red = 1.0F;
 
     /**
      * Button green color.
      */
-    float green = 1.0F;
+    private float green = 1.0F;
 
     /**
      * Button blue color.
      */
-    float blue = 1.0F;
+    private float blue = 1.0F;
 
     /**
      * Button interpolating red color.
      */
-    float currentRed = 1.0F;
+    private float currentRed = 1.0F;
 
     /**
      * Button interpolating green color.
      */
-    float currentGreen = 1.0F;
+    private float currentGreen = 1.0F;
 
     /**
      * Button interpolating blue color.
      */
-    float currentBlue = 1.0F;
+    private float currentBlue = 1.0F;
 
     /**
      * Button color multiplier.
      */
-    float multiplier = 1.0F;
+    private float multiplier = 1.0F;
 
     /**
      * Creates a new button.
@@ -85,17 +85,14 @@ final class PopupButton extends Button {
     /**
      * Sets the button color.
      *
-     * @param red Button R
+     * @param red   Button R
      * @param green Button G
-     * @param blue Button B
-     * @return {@code this}
+     * @param blue  Button B
      */
-    @SuppressWarnings("UnusedReturnValue") // <- Chain helper.
-    PopupButton color(float red, float green, float blue) {
+    void color(float red, float green, float blue) {
         this.red = red;
         this.green = green;
         this.blue = blue;
-        return this;
     }
 
     @Override

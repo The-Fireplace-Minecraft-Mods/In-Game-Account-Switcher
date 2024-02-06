@@ -37,12 +37,12 @@ final class PopupBox extends EditBox {
     /**
      * Enter action.
      */
-    final Runnable enterAction;
+    private final Runnable enterAction;
 
     /**
      * Whether to prevent copying.
      */
-    boolean secure;
+    private final boolean secure;
 
     /**
      * Creates a new box.
@@ -55,10 +55,12 @@ final class PopupBox extends EditBox {
      * @param inherit     Previous box, if any
      * @param title       Box title
      * @param enterAction Action on enter key
+     * @param secure      Whether to prevent copying
      */
-    PopupBox(Font font, int x, int y, int width, int height, PopupBox inherit, Component title, Runnable enterAction) {
+    PopupBox(Font font, int x, int y, int width, int height, PopupBox inherit, Component title, Runnable enterAction, boolean secure) {
         super(font, x, y, width, height, inherit, title);
         this.enterAction = enterAction;
+        this.secure = secure;
     }
 
     @Override
