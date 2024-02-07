@@ -47,7 +47,10 @@
         "modmenu.modrinth": "https://modrinth.com/mod/in-game-account-switcher",
         "modmenu.curseforge": "https://curseforge.com/minecraft/mc-mods/in-game-account-switcher",
         "modmenu.github_releases": "https://github.com/The-Fireplace-Minecraft-Mods/In-Game-Account-Switcher/releases",
-        "modmenu.discord": "https://discord.gg/TpU2nEkSPk"
+        "modmenu.discord": "https://discord.gg/TpU2nEkSPk",
+        "ias.help.crypt": "https://github.com/The-Fireplace-Minecraft-Mods/In-Game-Account-Switcher/blob/main/docs/CRYPT.md",
+        "ias.help.errors": "https://github.com/The-Fireplace-Minecraft-Mods/In-Game-Account-Switcher/blob/main/docs/ERRORS.md",
+        "ias.help.stolen": "https://github.com/The-Fireplace-Minecraft-Mods/In-Game-Account-Switcher/blob/main/docs/STOLEN.md"
       }
     }
   }

@@ -38,7 +38,7 @@
   "ias.error.query": "Empty response was received. Probably, you've opened the 127.0.0.1/localhost link directly in your browser, instead of opening it via the provided link or you're using old browser or unsupported browser plugins/extensions. See the log files and/or game console for technical details. While we have tried to remove any sensitive data, you should *NOT* publish your logs.",
   "ias.error.cancel": "Access was denied. You've probably cancelled the authentication. See the log files and/or game console for technical details. While we have tried to remove any sensitive data, you should *NOT* publish your logs.",
   "ias.error.decrypt": "Unable to decrypt local account data. You've probably entered an invalid password or changed your hardware key. Try removing and re-adding the account. See the log files and/or game console for technical details. While we have tried to remove any sensitive data, you should *NOT* publish your logs.",
-  "ias.error.noXbox": "Your Microsoft account don't have an Xbox account linked. Most likely, this account doesn't own a copy of the game. Try adding this account again or into the official launcher. See the log files and/or game console for technical details. While we have tried to remove any sensitive data, you should *NOT* publish your logs.",
+  "ias.error.noXbox": "Your Microsoft account doesn't have an Xbox account linked. Most likely, this account doesn't own a copy of the game. Try adding this account again or into the official launcher. See the log files and/or game console for technical details. While we have tried to remove any sensitive data, you should *NOT* publish your logs.",
   "ias.error.xboxAvailable": "Xbox Live is not available for this region. Try adding this account again or into the official launcher. See the log files and/or game console for technical details. While we have tried to remove any sensitive data, you should *NOT* publish your logs.",
   "ias.error.xboxAdult": "Your Xbox account needs to be linked to or verified by an adult (parent/guardian). Try adding this account again or into the official launcher. See the log files and/or game console for technical details. While we have tried to remove any sensitive data, you should *NOT* publish your logs.",
   "ias.error.noProfile": "Your Xbox account doesn't have a Minecraft profile. Most likely, this account doesn't own a copy of the game or you didn't set up the profile for the Xbox Game Pass. Try adding this account again or into the official launcher to set up the profile. See the log files and/or game console for technical details. While we have tried to remove any sensitive data, you should *NOT* publish your logs.",
@@ -112,6 +112,9 @@
   "ias.nick.long": "Your (too long) nick '%s' may cause some servers to prevent you from joining.",
   "ias.nick.chars": "Your nick '%s' (containing invalid characters) may cause some servers to prevent you from joining.",
   "ias.bar": "%s (Account: %s)",
+  "ias.help.crypt": "What is Crypt, why it exists, which should I use?",
+  "ias.help.errors": "Common Authentication Errors",
+  "ias.help.stolen": "How to combat account stealing?",
   "modmenu.descriptionTranslation.ias": "Allows you to change which account you are signed in to in-game without restarting Minecraft.",
   "modmenu.summaryTranslation.ias": "Allows you to change your account in-game."
 }

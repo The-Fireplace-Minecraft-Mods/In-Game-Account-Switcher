@@ -182,7 +182,7 @@ final class AccountEntry extends ObjectSelectionList.Entry<AccountEntry> {
 
         // Login on double click.
         if (Util.getMillis() - this.clicked < 250L) {
-            this.list.login(Screen.hasShiftDown());
+            this.list.login(!Screen.hasShiftDown());
         }
 
         // Set time for double click.
