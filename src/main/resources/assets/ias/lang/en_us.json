@@ -1,7 +1,9 @@
 {
   "ias.title": "Current Account: %s",
-  "ias.disclaimer.title": "Security Disclaimer",
-  "ias.disclaimer.text": "Within your game folder '%s' a sub-folder named '%s' has been created. DO NOT SEND THIS SUB-FOLDER TO ANYONE. If you did send this folder to anyone, follow the steps described in the 'READ_ME_IMPORTANT.txt' file in that sub-folder.",
+  "ias.disclaimer.title": "In-Game Account Switcher: Security Disclaimer",
+  "ias.disclaimer.text": "Within your game folder a sub-folder named '_IAS_ACCOUNTS_DO_NOT_SEND_TO_ANYONE' has been created. DO NOT SEND THIS SUB-FOLDER TO ANYONE, EVEN IF THEY'RE SAYING THEY ARE THE DEVELOPERS OF THIS MOD. If you did send this folder to anyone, follow the steps described in the 'READ_ME_IMPORTANT.txt' file in that sub-folder or the guidelines on the mod's page. You can also look at the mod's page to understand what is Crypt, why it's needed and how to ensure your account/token is safe.",
+  "ias.disabled.title": "In-Game Account Switcher: Disabled",
+  "ias.disabled.text": "This version is the mod has been disabled due to vulnerabilities or other critical problems. See the mod's page for more info. You won't be able to use current version of the mod.",
   "ias.accounts": "In-Game Account Switcher Accounts",
   "ias.accounts.search": "Search...",
   "ias.accounts.login": "Login",

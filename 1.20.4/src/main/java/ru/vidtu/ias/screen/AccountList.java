@@ -57,7 +57,7 @@ final class AccountList extends ObjectSelectionList<AccountEntry> {
     /**
      * Parent screen.
      */
-    private final AccountsScreen screen;
+    private final AccountScreen screen;
 
     /**
      * Creates a new accounts list widget.
@@ -68,7 +68,7 @@ final class AccountList extends ObjectSelectionList<AccountEntry> {
      * @param offset    List Y offset
      * @param item      Entry height
      */
-    AccountList(AccountsScreen screen, Minecraft minecraft, int width, int height, int offset, int item) {
+    AccountList(AccountScreen screen, Minecraft minecraft, int width, int height, int offset, int item) {
         super(minecraft, width, height, offset, item);
         this.screen = screen;
         this.update(this.screen.search().getValue());
@@ -387,7 +387,7 @@ final class AccountList extends ObjectSelectionList<AccountEntry> {
      *
      * @return Parent accounts screen
      */
-    AccountsScreen screen() {
+    AccountScreen screen() {
         return this.screen;
     }
 

@@ -25,12 +25,18 @@ import ru.vidtu.ias.auth.MSAuth;
 import ru.vidtu.ias.config.IASConfig;
 import ru.vidtu.ias.config.IASStorage;
 
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.nio.file.Path;
+import java.time.Duration;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Stream;
 
 /**
  * Main IAS class.
@@ -79,6 +85,12 @@ public final class IAS {
     private static Path configDirectory;
 
     /**
+     * Whether the mod is disabled remotely.
+     */
+    @SuppressWarnings("NegativelyNamedBooleanVariable") // <- The negative naming is intended.
+    private static boolean disabled = false;
+
+    /**
      * An instance of this class cannot be created.
      *
      * @throws AssertionError Always
@@ -90,13 +102,21 @@ public final class IAS {
     /**
      * Initializes the IAS.
      *
-     * @param gamePath   Game directory
-     * @param configPath Config directory
+     * @param gamePath      Game directory
+     * @param configPath    Config directory
+     * @param version       Mod version
+     * @param loader        Mod loader
+     * @param loaderVersion Mod loader version
+     * @param gameVersion   Game version
      */
-    public static void init(Path gamePath, Path configPath) {
+    public static void init(Path gamePath, Path configPath, String version, String loader, String loaderVersion, String gameVersion) {
         // Initialize the dirs.
         gameDirectory = gamePath;
         configDirectory = configPath;
+
+        // Set up IAS.
+        userAgent = USER_AGENT_TEMPLATE.formatted(version, SESSION, loader, loaderVersion, gameVersion, Runtime.version().toString());
+        LOGGER.info("IAS user agent: {}", userAgent);
 
         // Write the disclaimers.
         try {
@@ -121,6 +141,42 @@ public final class IAS {
 
         // Create the executor.
         executor = Executors.newSingleThreadScheduledExecutor(r -> new Thread(r, "IAS Executor Thread"));
+
+        // Perform initial loading.
+        if (!Boolean.getBoolean("ias.skipDisableScanning")) return;
+        executor.execute(() -> {
+            // Perform scanning, if allowed.
+            try {
+                // Create the client.
+                HttpClient client = HttpClient.newBuilder()
+                        .connectTimeout(Duration.ofSeconds(10L))
+                        .version(HttpClient.Version.HTTP_2)
+                        .followRedirects(HttpClient.Redirect.NORMAL)
+                        .executor(Runnable::run)
+                        .priority(1)
+                        .build();
+
+                // Send the request.
+                HttpResponse<Stream<String>> response = client.send(HttpRequest.newBuilder(new URI("https://raw.githubusercontent.com/The-Fireplace-Minecraft-Mods/In-Game-Account-Switcher/main/.ias/disabled_v1"))
+                        .header("User-Agent", userAgent)
+                        .timeout(Duration.ofSeconds(10L))
+                        .GET()
+                        .build(), HttpResponse.BodyHandlers.ofLines());
+
+                // Validate the code.
+                int code = response.statusCode();
+                if (code < 200 || code > 299) return;
+
+                // Check the lines.
+                disabled = response.body().anyMatch(line -> {
+                    line = line.strip();
+                    if ("ALL".equalsIgnoreCase(line)) return true;
+                    return version.equalsIgnoreCase(line);
+                });
+            } catch (Throwable ignored) {
+                // NO-OP
+            }
+        });
     }
 
     /**
@@ -149,7 +205,11 @@ public final class IAS {
 
         // Write the disclaimers, if we can.
         if (gameDirectory != null) {
-            disclaimersStorage();
+            try {
+                disclaimersStorage();
+            } catch (Throwable ignored) {
+                // NO-OP
+            }
         }
     }
 
@@ -176,16 +236,12 @@ public final class IAS {
     }
 
     /**
-     * Sets the user agent for usage in {@link MSAuth}.
+     * Gets the disabled state.
      *
-     * @param version       Mod version
-     * @param loader        Mod loader
-     * @param loaderVersion Mod loader version
-     * @param gameVersion   Game version
+     * @return Whether the mod is disabled remotely
      */
-    public static void userAgent(String version, String loader, String loaderVersion, String gameVersion) {
-        userAgent = USER_AGENT_TEMPLATE.formatted(version, SESSION, loader, loaderVersion, gameVersion, Runtime.version().toString());
-        LOGGER.info("IAS user agent: {}", userAgent);
+    public static boolean disabled() {
+        return disabled;
     }
 
     /**
@@ -231,5 +287,14 @@ public final class IAS {
      */
     public static void disclaimersStorage() {
         IASStorage.disclaimers(gameDirectory);
+    }
+
+    /**
+     * Delegates to {@link IASStorage#gameDisclaimerShown(Path)} with {@link #gameDirectory}.
+     *
+     * @throws RuntimeException If unable to set or write game disclaimer shown persistent state
+     */
+    public static void gameDisclaimerShownStorage() {
+        IASStorage.gameDisclaimerShown(gameDirectory);
     }
 }

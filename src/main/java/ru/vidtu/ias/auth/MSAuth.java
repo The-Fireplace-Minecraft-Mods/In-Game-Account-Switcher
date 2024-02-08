@@ -135,8 +135,11 @@ public final class MSAuth {
 
             // Create the client.
             this.client = HttpClient.newBuilder()
-                    .executor(executor)
                     .connectTimeout(timeout)
+                    .version(HttpClient.Version.HTTP_2)
+                    .followRedirects(HttpClient.Redirect.NEVER)
+                    .executor(executor)
+                    .priority(256)
                     .build();
 
             // Create the endpoints.

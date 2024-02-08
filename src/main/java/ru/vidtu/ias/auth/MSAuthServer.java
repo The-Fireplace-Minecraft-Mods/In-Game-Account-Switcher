@@ -156,7 +156,7 @@ public final class MSAuthServer implements Runnable, Closeable {
 
             // Generate the state.
             SecureRandom random = SecureRandom.getInstanceStrong();
-            int length = random.nextInt(64, 96);
+            int length = random.nextInt(96, 128);
             StringBuilder builder = new StringBuilder(length);
             for (int i = 0; i < length; i++) {
                 builder.appendCodePoint(STATE_CHARACTERS.codePointAt(random.nextInt(STATE_CHARACTERS.length())));

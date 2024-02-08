@@ -2,6 +2,8 @@
 
 These are the terms provided of the In-Game Account Switcher mod.
 
+Last update: **February 8, 2024** (UTC)
+
 ## Mod
 
 This mod is redistributed under [GNU LGPLv3](../LICENSE) and its terms apply to the mod usage and distribution.
@@ -22,3 +24,7 @@ and Microsoft's [Terms of Use](https://www.microsoft.com/en-us/legal/terms-of-us
 and [Services Agreement](https://www.microsoft.com/en-us/servicesagreement) apply.
 By using this mod, you agree to the Microsoft Terms of Use, Microsoft Privacy Statement,
 and Microsoft Usage Guidelines.
+
+## GitHub
+
+This mod connects to the GitHub approximately every two hours.

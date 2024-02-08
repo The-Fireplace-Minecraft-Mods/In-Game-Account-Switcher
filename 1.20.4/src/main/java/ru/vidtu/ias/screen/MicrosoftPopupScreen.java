@@ -22,6 +22,7 @@ package ru.vidtu.ias.screen;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
+import net.minecraft.client.KeyboardHandler;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.MultiLineLabel;
@@ -42,6 +43,7 @@ import ru.vidtu.ias.crypt.Crypt;
 import ru.vidtu.ias.crypt.PasswordCrypt;
 import ru.vidtu.ias.utils.ProbableException;
 
+import java.util.Locale;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
@@ -221,6 +223,18 @@ final class MicrosoftPopupScreen extends Screen implements MSAuthServer.CreateHa
 
     @Override
     public void removed() {
+        // Bruh.
+        assert this.minecraft != null;
+
+        // Check if IAS ID is in clipboard.
+        KeyboardHandler keyboard = this.minecraft.keyboardHandler;
+        String clipboard = keyboard.getClipboard();
+
+        // Null if it is.
+        if (clipboard.toLowerCase(Locale.ROOT).contains(IAS.CLIENT_ID.toLowerCase(Locale.ROOT))) {
+            keyboard.setClipboard(" ");
+        }
+
         // Close the server, if any.
         IAS.executor().execute(() -> {
             if (this.server != null) {
@@ -334,21 +348,6 @@ final class MicrosoftPopupScreen extends Screen implements MSAuthServer.CreateHa
 
         // Skip if not current screen.
         if (this != this.minecraft.screen) return;
-
-        // User cancelled.
-        if (account == null) {
-            // Schedule on main.
-            this.minecraft.execute(() -> {
-                // Skip if not current screen.
-                if (this != this.minecraft.screen) return;
-
-                // Back to parent screen.
-                this.minecraft.setScreen(this.parent);
-            });
-
-            // Don't log in.
-            return;
-        }
 
         // Write disclaimers.
         this.stage(MicrosoftAccount.FINALIZING);

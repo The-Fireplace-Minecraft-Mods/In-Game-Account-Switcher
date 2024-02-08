@@ -91,7 +91,7 @@ public final class HardwareCrypt implements Crypt {
         try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             // Generate and write salt.
             SecureRandom random = SecureRandom.getInstanceStrong();
-            byte[] salt = new byte[256];
+            byte[] salt = new byte[128];
             random.nextBytes(salt);
             out.write(salt);
 
@@ -119,9 +119,9 @@ public final class HardwareCrypt implements Crypt {
     public byte[] decrypt(byte[] encrypted) {
         try (ByteArrayInputStream in = new ByteArrayInputStream(encrypted)) {
             // Read the salt.
-            byte[] salt = new byte[256];
+            byte[] salt = new byte[128];
             int read = in.read(salt);
-            if (read != 256) {
+            if (read != 128) {
                 throw new EOFException("Not enough salt bytes: " + read);
             }
 

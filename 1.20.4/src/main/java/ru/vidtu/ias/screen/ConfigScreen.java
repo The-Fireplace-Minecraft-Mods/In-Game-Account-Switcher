@@ -26,6 +26,7 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Checkbox;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.gui.screens.AlertScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.CommonComponents;
@@ -120,6 +121,13 @@ public final class ConfigScreen extends Screen {
     protected void init() {
         // Bruh.
         assert this.minecraft != null;
+
+        // Disabled check.
+        if (IAS.disabled()) {
+            this.minecraft.setScreen(new AlertScreen(this::onClose, Component.translatable("ias.disabled.title").withStyle(ChatFormatting.RED),
+                    Component.translatable("ias.disabled.text"), CommonComponents.GUI_BACK, true));
+            return;
+        }
 
         // Title Text.
         Checkbox box = Checkbox.builder(Component.translatable("ias.config.titleText"), this.font)

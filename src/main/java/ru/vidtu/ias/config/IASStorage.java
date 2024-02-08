@@ -28,6 +28,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.nio.file.Files;
+import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
@@ -96,6 +97,11 @@ public final class IASStorage {
     public static List<Account> accounts = new ArrayList<>(0);
 
     /**
+     * Whether the game disclaimer was shown.
+     */
+    public static boolean gameDisclaimerShown = false;
+
+    /**
      * An instance of this class cannot be created.
      *
      * @throws AssertionError Always
@@ -126,7 +132,7 @@ public final class IASStorage {
                 // Write the disclaimer.
                 Files.writeString(file, DISCLAIMER, StandardOpenOption.CREATE,
                         StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE,
-                        StandardOpenOption.SYNC, StandardOpenOption.DSYNC);
+                        StandardOpenOption.SYNC, StandardOpenOption.DSYNC, LinkOption.NOFOLLOW_LINKS);
             }
         } catch (Throwable t) {
             // Rethrow.
@@ -143,13 +149,16 @@ public final class IASStorage {
     public static void load(Path path) {
         try {
             // Get the file.
-            Path file = path.resolve("_IAS_ACCOUNTS_DO_NOT_SEND_TO_ANYONE/.hidden/accounts_v1.do_not_send_to_anyone");
+            Path folder = path.resolve("_IAS_ACCOUNTS_DO_NOT_SEND_TO_ANYONE/.hidden");
+            Path file = folder.resolve("accounts_v1.do_not_send_to_anyone");
+            gameDisclaimerShown = Files.isRegularFile(folder.resolve("game_disclaimer_shown"), LinkOption.NOFOLLOW_LINKS);
 
             // Skip if it doesn't exist.
-            if (!Files.isRegularFile(file)) {
+            if (!Files.isRegularFile(file, LinkOption.NOFOLLOW_LINKS)) {
                 save(path);
                 return;
             }
+            file = file.toRealPath(LinkOption.NOFOLLOW_LINKS);
 
             // Read the data.
             byte[] data = Files.readAllBytes(file);
@@ -216,14 +225,14 @@ public final class IASStorage {
 
             // Try to make folder hidden on Windows. (already hidden by name on UNIX-like)
             try {
-                Files.setAttribute(file.getParent(), "dos:hidden", true);
+                Files.setAttribute(file.getParent(), "dos:hidden", true, LinkOption.NOFOLLOW_LINKS);
             } catch (Throwable ignored) {
                 // Ignored
             }
 
             // Try to make folder EXTRA hidden on Windows. (already hidden by name on UNIX-like)
             try {
-                Files.setAttribute(file.getParent(), "dos:system", true);
+                Files.setAttribute(file.getParent(), "dos:system", true, LinkOption.NOFOLLOW_LINKS);
             } catch (Throwable ignored) {
                 // Ignored
             }
@@ -231,10 +240,31 @@ public final class IASStorage {
             // Write the data.
             Files.write(file, data, StandardOpenOption.CREATE,
                     StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE,
-                    StandardOpenOption.SYNC, StandardOpenOption.DSYNC);
+                    StandardOpenOption.SYNC, StandardOpenOption.DSYNC, LinkOption.NOFOLLOW_LINKS);
         } catch (Throwable t) {
             // Rethrow.
             throw new RuntimeException("Unable to save IAS storage.", t);
+        }
+    }
+
+    /**
+     * Sets the {@link #gameDisclaimerShown} to {@code true} and writes the persistent state file.
+     *
+     * @param path Game directory
+     * @throws RuntimeException If unable to set or write game disclaimer shown persistent state
+     */
+    public static void gameDisclaimerShown(Path path) {
+        try {
+            // Set the parameter.
+            gameDisclaimerShown = true;
+
+            // Create the file.
+            Path file = path.resolve("_IAS_ACCOUNTS_DO_NOT_SEND_TO_ANYONE/.hidden/game_disclaimer_shown");
+            Files.createDirectories(file.getParent());
+            Files.createFile(file);
+        } catch (Throwable t) {
+            // Rethrow.
+            throw new RuntimeException("Unable to mark game disclaimer as shown.", t);
         }
     }
 }

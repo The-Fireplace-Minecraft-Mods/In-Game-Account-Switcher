@@ -50,7 +50,7 @@ import org.slf4j.LoggerFactory;
 import ru.vidtu.ias.account.Account;
 import ru.vidtu.ias.config.IASConfig;
 import ru.vidtu.ias.mixins.MinecraftAccessor;
-import ru.vidtu.ias.screen.AccountsScreen;
+import ru.vidtu.ias.screen.AccountScreen;
 import ru.vidtu.ias.utils.Expression;
 import ru.vidtu.ias.utils.IUtils;
 
@@ -123,10 +123,7 @@ public final class IASMinecraft {
         LOGGER.info("IAS: Booting up... (version: {}, loader: {}, loader version: {}, game version: {})", modVersion, loader, loaderVersion, gameVersion);
 
         // Initialize the IAS.
-        IAS.init(gameDir, configDir);
-
-        // Set the UA.
-        IAS.userAgent(modVersion, loader, loaderVersion, gameVersion);
+        IAS.init(gameDir, configDir, modVersion, loader, loaderVersion, gameVersion);
     }
 
     /**
@@ -175,7 +172,7 @@ public final class IASMinecraft {
             }
 
             // Add the button.
-            ImageButton button = new ImageButton(x, y, 20, 20, BUTTON, btn -> minecraft.setScreen(new AccountsScreen(screen)), Component.literal("In-Game Account Switcher"));
+            ImageButton button = new ImageButton(x, y, 20, 20, BUTTON, btn -> minecraft.setScreen(new AccountScreen(screen)), Component.literal("In-Game Account Switcher"));
             button.setTooltip(Tooltip.create(button.getMessage()));
             button.setTooltipDelay(250);
             buttonAdder.accept(button);
@@ -219,7 +216,7 @@ public final class IASMinecraft {
             }
 
             // Add the button.
-            ImageButton button = new ImageButton(x, y, 20, 20, BUTTON, btn -> minecraft.setScreen(new AccountsScreen(screen)), Component.literal("In-Game Account Switcher"));
+            ImageButton button = new ImageButton(x, y, 20, 20, BUTTON, btn -> minecraft.setScreen(new AccountScreen(screen)), Component.literal("In-Game Account Switcher"));
             button.setTooltip(Tooltip.create(button.getMessage()));
             button.setTooltipDelay(250);
             buttonAdder.accept(button);

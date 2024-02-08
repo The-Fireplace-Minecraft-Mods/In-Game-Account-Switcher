@@ -27,14 +27,24 @@ import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.PlayerSkinWidget;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.navigation.CommonInputs;
+import net.minecraft.client.gui.screens.AlertScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.DefaultPlayerSkin;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import org.lwjgl.glfw.GLFW;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import ru.vidtu.ias.IAS;
 import ru.vidtu.ias.account.Account;
+import ru.vidtu.ias.config.IASStorage;
 
-public final class AccountsScreen extends Screen {
+public final class AccountScreen extends Screen {
+    /**
+     * Logger for this class.
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger("IAS/AccountScreen");
+
     /**
      * Parent screen, {@code null} if none.
      */
@@ -80,7 +90,7 @@ public final class AccountsScreen extends Screen {
      *
      * @param parent Parent screen, {@code null} if none
      */
-    public AccountsScreen(Screen parent) {
+    public AccountScreen(Screen parent) {
         super(Component.translatable("ias.accounts"));
         this.parent = parent;
     }
@@ -89,6 +99,30 @@ public final class AccountsScreen extends Screen {
     protected void init() {
         // Bruh.
         assert this.minecraft != null;
+
+        // Disabled check.
+        if (IAS.disabled()) {
+            this.minecraft.setScreen(new AlertScreen(this::onClose, Component.translatable("ias.disabled.title").withStyle(ChatFormatting.RED),
+                    Component.translatable("ias.disabled.text"), CommonComponents.GUI_BACK, true));
+            return;
+        }
+
+        // Disclaimer.
+        if (!IASStorage.gameDisclaimerShown) {
+            this.minecraft.setScreen(new AlertScreen(() -> {
+                // Save disclaimer.
+                try {
+                    IAS.gameDisclaimerShownStorage();
+                } catch (Throwable t) {
+                    LOGGER.error("Unable to set or write game disclaimer state.", t);
+                }
+
+                // Set screen.
+                this.minecraft.setScreen(this);
+            }, Component.translatable("ias.disclaimer.title").withStyle(ChatFormatting.YELLOW),
+                    Component.translatable("ias.disclaimer.text"), CommonComponents.GUI_CONTINUE, false));
+            return;
+        }
 
         // Add search widget.
         this.search = new EditBox(this.font, this.width / 2 - 75, 11, 150, 20, this.search, Component.translatable("ias.accounts.search"));
@@ -287,7 +321,7 @@ public final class AccountsScreen extends Screen {
 
     @Override
     public String toString() {
-        return "AccountsScreen{" +
+        return "AccountScreen{" +
                 "list=" + this.list +
                 '}';
     }
