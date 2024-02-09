@@ -25,8 +25,10 @@ import net.minecraft.client.User;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.ObjectSelectionList;
 import net.minecraft.client.gui.components.PlayerFaceRenderer;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
 import net.minecraft.client.resources.PlayerSkin;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
@@ -61,6 +63,14 @@ final class AccountEntry extends ObjectSelectionList.Entry<AccountEntry> {
             new ResourceLocation("ias", "down_plain"),
             new ResourceLocation("ias", "down_disabled"),
             new ResourceLocation("ias", "down_focus")
+    );
+
+    /**
+     * Warning sprites.
+     */
+    private static final WidgetSprites WARNING = new WidgetSprites(
+            new ResourceLocation("ias", "warning_off"),
+            new ResourceLocation("ias", "warning_on")
     );
 
     /**
@@ -131,8 +141,17 @@ final class AccountEntry extends ObjectSelectionList.Entry<AccountEntry> {
         @SuppressWarnings("ConstantValue") // <- Mods break user non-nullness.
         int color = user != null && this.account.is(user.getProfileId(), user.getName()) ? 0xFF_00_FF_00 : 0xFF_FF_FF_FF;
 
-        // Render the name.
+        // Render name.
         graphics.drawString(this.minecraft.font, this.account.name(), x + 10, y, color);
+
+        // Render warning if insecure.
+        if (this.account.insecure()) {
+            boolean warning = (System.nanoTime() / 1_000_000_000L) % 2L == 0;
+            graphics.blitSprite(warning ? WARNING.enabled() : WARNING.enabledFocused(), x - 6, y - 1, 2, 10);
+            if (mouseX >= x - 10 && mouseX <= x && mouseY >= y && mouseY <= y + height) {
+                this.list.screen().setTooltipForNextRenderPass(Tooltip.create(Component.translatable("ias.accounts.tip.insecure")), DefaultTooltipPositioner.INSTANCE, true);
+            }
+        }
 
         // Render only for focused, selected or hovered.
         if (this.equals(this.list.getFocused()) || this.equals(this.list.getSelected())) {

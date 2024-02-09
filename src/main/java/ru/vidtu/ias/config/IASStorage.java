@@ -33,6 +33,7 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.InflaterInputStream;
 
@@ -172,14 +173,12 @@ public final class IASStorage {
                 // Read all accounts.
                 for (int i = 0; i < length; i++) {
                     // Read typed.
-                    Account account = Account.readTyped(in);
-
-                    // Add the account.
-                    list.add(account);
+                    list.add(Account.readTyped(in));
                 }
 
                 // Flush the list.
-                accounts = list;
+                accounts.addAll(list);
+                accounts = accounts.stream().distinct().collect(Collectors.toCollection(ArrayList::new));
             }
         } catch (Throwable t) {
             // Rethrow.
@@ -204,10 +203,10 @@ public final class IASStorage {
                  DeflaterOutputStream defOut = new DeflaterOutputStream(byteOut);
                  DataOutputStream out = new DataOutputStream(defOut)) {
                 // Capture the list.
-                List<Account> list = List.copyOf(accounts);
+                Account[] list = accounts.toArray(Account[]::new);
 
                 // Write the length.
-                out.writeShort(list.size());
+                out.writeShort(list.length);
 
                 // Write the accounts.
                 for (Account account : list) {

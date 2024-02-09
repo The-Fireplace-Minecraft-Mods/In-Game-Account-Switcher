@@ -29,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.vidtu.ias.IAS;
 import ru.vidtu.ias.account.Account;
+import ru.vidtu.ias.account.OfflineAccount;
 import ru.vidtu.ias.config.IASStorage;
 
 import java.util.Locale;
@@ -159,7 +160,8 @@ final class AccountList extends ObjectSelectionList<AccountEntry> {
         this.minecraft.setScreen(login);
 
         // Login offline.
-        Account.LoginData data = new Account.LoginData(account.name(), account.uuid(), "ias:offline", false);
+        String name = account.name();
+        Account.LoginData data = new Account.LoginData(name, OfflineAccount.uuid(name), "ias:offline", false);
         login.success(data, false);
     }
 

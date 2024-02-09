@@ -125,6 +125,11 @@ public final class MicrosoftAccount implements Account {
     public static final Logger LOGGER = LoggerFactory.getLogger("IAS/MicrosoftAccount");
 
     /**
+     * Whether the account is insecurely stored.
+     */
+    private final boolean insecure;
+
+    /**
      * Account UUID.
      */
     private UUID uuid;
@@ -142,14 +147,21 @@ public final class MicrosoftAccount implements Account {
     /**
      * Creates a new Microsoft account.
      *
-     * @param uuid Account UUID
-     * @param name Account name
-     * @param data Encrypted account data
+     * @param insecure Whether the account is insecurely stored
+     * @param uuid     Account UUID
+     * @param name     Account name
+     * @param data     Encrypted account data
      */
-    public MicrosoftAccount(UUID uuid, String name, byte[] data) {
+    public MicrosoftAccount(boolean insecure, UUID uuid, String name, byte[] data) {
+        this.insecure = insecure;
         this.uuid = uuid;
         this.name = name;
         this.data = data;
+    }
+
+    @Override
+    public String type() {
+        return "ias:microsoft_v1";
     }
 
     @Override
@@ -171,6 +183,11 @@ public final class MicrosoftAccount implements Account {
     public boolean canLogin() {
         // Online accounts should be loggable.
         return true;
+    }
+
+    @Override
+    public boolean insecure() {
+        return this.insecure;
     }
 
     @Override
@@ -311,14 +328,16 @@ public final class MicrosoftAccount implements Account {
                         handler.stage(ENCRYPTING);
 
                         // Write the tokens.
+                        String accessMem = access.get();
+                        String refreshMem = refresh.get();
                         byte[] unencrypted;
-                        try (ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
+                        try (ByteArrayOutputStream byteOut = new ByteArrayOutputStream(accessMem.length() + refreshMem.length() + 4);
                              DataOutputStream out = new DataOutputStream(byteOut)) {
                             // Write the access token.
-                            out.writeUTF(access.get());
+                            out.writeUTF(accessMem);
 
                             // Write the refresh token.
-                            out.writeUTF(refresh.get());
+                            out.writeUTF(refreshMem);
 
                             // Flush it.
                             unencrypted = byteOut.toByteArray();
@@ -327,7 +346,7 @@ public final class MicrosoftAccount implements Account {
                         }
 
                         // Encrypt the tokens.
-                        try (ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
+                        try (ByteArrayOutputStream byteOut = new ByteArrayOutputStream(unencrypted.length + 32);
                              DataOutputStream out = new DataOutputStream(byteOut)) {
                             // Encrypt.
                             byte[] encrypted = crypt.get().encrypt(unencrypted);
@@ -412,6 +431,9 @@ public final class MicrosoftAccount implements Account {
 
     @Override
     public void write(DataOutput out) throws IOException {
+        // Write the insecure.
+        out.writeBoolean(this.insecure);
+
         // Write the UUID.
         out.writeLong(this.uuid.getMostSignificantBits());
         out.writeLong(this.uuid.getLeastSignificantBits());
@@ -432,6 +454,9 @@ public final class MicrosoftAccount implements Account {
      * @throws IOException On I/O error
      */
     public static MicrosoftAccount read(DataInput in) throws IOException {
+        // Read the insecure.
+        boolean insecure = in.readBoolean();
+
         // Read the UUID.
         UUID uuid = new UUID(in.readLong(), in.readLong());
 
@@ -444,6 +469,6 @@ public final class MicrosoftAccount implements Account {
         in.readFully(data);
 
         // Create and return.
-        return new MicrosoftAccount(uuid, name, data);
+        return new MicrosoftAccount(insecure, uuid, name, data);
     }
 }

@@ -17,6 +17,7 @@
   "ias.accounts.tip.type": "Тип",
   "ias.accounts.tip.type.offline": "Оффлайн",
   "ias.accounts.tip.type.microsoft": "Microsoft",
+  "ias.accounts.tip.insecure": "Этот аккаунт использует небезопасную конфигурацию хранения (для вещей типа шифра) и является целью для кражи. Нажмите 'Изменить' и измените параметры хранения на безопасные.",
   "ias.login": "Вход",
   "ias.login.initializing": "Инициализация...",
   "ias.login.server": "Запуск сервера...",

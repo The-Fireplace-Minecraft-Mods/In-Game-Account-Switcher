@@ -23,16 +23,50 @@ import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
  * Offline account instance.
  *
- * @param uuid Account UUID
- * @param name Account name
  * @author VidTu
  */
-public record OfflineAccount(UUID uuid, String name) implements Account {
+public final class OfflineAccount implements Account {
+    /**
+     * Account name.
+     */
+    private final String name;
+
+    /**
+     * Account UUID.
+     */
+    private final UUID uuid;
+
+    /**
+     * Creates a new offline account.
+     *
+     * @param name Offline account name
+     */
+    public OfflineAccount(String name) {
+        this.name = name;
+        this.uuid = uuid(name);
+    }
+
+    @Override
+    public UUID uuid() {
+        return this.uuid;
+    }
+
+    @Override
+    public String name() {
+        return this.name;
+    }
+
+    @Override
+    public String type() {
+        return "ias:offline_v1";
+    }
+
     @Override
     public String typeTipKey() {
         return "ias.accounts.tip.type.offline";
@@ -41,6 +75,11 @@ public record OfflineAccount(UUID uuid, String name) implements Account {
     @Override
     public boolean canLogin() {
         // Offline account can be logged in only via offline.
+        return false;
+    }
+
+    @Override
+    public boolean insecure() {
         return false;
     }
 
@@ -58,12 +97,28 @@ public record OfflineAccount(UUID uuid, String name) implements Account {
      */
     @Override
     public void write(DataOutput out) throws IOException {
-        // Write the UUID.
-        out.writeLong(this.uuid.getMostSignificantBits());
-        out.writeLong(this.uuid.getLeastSignificantBits());
-
         // Write the name.
         out.writeUTF(this.name);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (!(obj instanceof OfflineAccount that)) return false;
+        return Objects.equals(this.name, that.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.name);
+    }
+
+    @Override
+    public String toString() {
+        return "OfflineAccount{" +
+                "name='" + this.name + '\'' +
+                ", uuid=" + this.uuid +
+                '}';
     }
 
     /**
@@ -74,24 +129,20 @@ public record OfflineAccount(UUID uuid, String name) implements Account {
      * @throws IOException On I/O error
      */
     public static OfflineAccount read(DataInput in) throws IOException {
-        // Read the UUID.
-        UUID uuid = new UUID(in.readLong(), in.readLong());
-
         // Read the name.
         String name = in.readUTF();
 
         // Create and return.
-        return new OfflineAccount(uuid, name);
+        return new OfflineAccount(name);
     }
 
     /**
-     * Creates an offline account with UUID matching the offline UUID convention.
+     * Creates a conventional offline UUID from name.
      *
-     * @param name Offline account name
-     * @return Created offline account
+     * @param name Target name
+     * @return Created conventional offline UUID
      */
-    public static OfflineAccount create(String name) {
-        UUID uuid = UUID.nameUUIDFromBytes(("OfflinePlayer:" + name).getBytes(StandardCharsets.UTF_8));
-        return new OfflineAccount(uuid, name);
+    public static UUID uuid(String name) {
+        return UUID.nameUUIDFromBytes(("OfflinePlayer:" + name).getBytes(StandardCharsets.UTF_8));
     }
 }

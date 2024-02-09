@@ -39,12 +39,44 @@ public final class GSONUtils {
     }
 
     /**
+     * Gets the boolean value from the JSON object.
+     *
+     * @param json Target object
+     * @param key  Target key
+     * @return Read boolean
+     * @throws JsonParseException If there was no boolean by that key, was a non-boolean element by that key, or if the json or the key is {@code null}
+     */
+    public static boolean getBooleanOrThrow(JsonObject json, String key) {
+        try {
+            return json.get(key).getAsBoolean();
+        } catch (Throwable t) {
+            throw new JsonParseException("Expected to have boolean '" + key + "': " + json, t);
+        }
+    }
+
+    /**
+     * Gets the int value from the JSON object.
+     *
+     * @param json Target object
+     * @param key  Target key
+     * @return Read int
+     * @throws JsonParseException If there was no int by that key, was a non-int element by that key, or if the json or the key is {@code null}
+     */
+    public static int getIntOrThrow(JsonObject json, String key) {
+        try {
+            return json.get(key).getAsInt();
+        } catch (Throwable t) {
+            throw new JsonParseException("Expected to have int '" + key + "': " + json, t);
+        }
+    }
+
+    /**
      * Gets the long value from the JSON object.
      *
      * @param json Target object
      * @param key  Target key
      * @return Read long
-     * @throws JsonParseException If there was no long by that key, was a non-int element by that key, or if the json or the key is {@code null}
+     * @throws JsonParseException If there was no long by that key, was a non-long element by that key, or if the json or the key is {@code null}
      */
     public static long getLongOrThrow(JsonObject json, String key) {
         try {

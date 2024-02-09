@@ -443,4 +443,9 @@ public final class ConfigScreen extends Screen {
             pose.popPose();
         }
     }
+
+    @Override
+    public String toString() {
+        return "ConfigScreen{}";
+    }
 }

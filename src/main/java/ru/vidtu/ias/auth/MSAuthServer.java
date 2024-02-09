@@ -93,7 +93,7 @@ public final class MSAuthServer implements Runnable, Closeable {
     /**
      * Code obfuscation pattern.
      */
-    private static final Pattern CODE_OBFUSCATE_PATTERN = Pattern.compile("code=[^&]*");
+    private static final Pattern CODE_OBFUSCATE_PATTERN = Pattern.compile("code=[^&]*", Pattern.CASE_INSENSITIVE);
 
     /**
      * Logger for this class.
@@ -532,7 +532,7 @@ public final class MSAuthServer implements Runnable, Closeable {
                 this.handler.stage(MicrosoftAccount.FINALIZING);
 
                 // Create and return the data.
-                MicrosoftAccount account = new MicrosoftAccount(uuid, name, data.get());
+                MicrosoftAccount account = new MicrosoftAccount(this.crypt.insecure(), uuid, name, data.get());
                 this.handler.success(account);
             }, IAS.executor()).exceptionallyAsync(t -> {
                 // Handle error.

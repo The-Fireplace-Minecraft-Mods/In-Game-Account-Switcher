@@ -87,6 +87,12 @@ public final class HardwareCrypt implements Crypt {
     }
 
     @Override
+    public boolean insecure() {
+        // Hopefully.
+        return false;
+    }
+
+    @Override
     public byte[] encrypt(byte[] decrypted) {
         try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             // Generate and write salt.

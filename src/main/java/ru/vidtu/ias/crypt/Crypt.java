@@ -41,6 +41,13 @@ import java.util.function.Supplier;
  */
 public sealed interface Crypt permits DummyCrypt, HardwareCrypt, PasswordCrypt {
     /**
+     * Gets whether this crypt is insecure.
+     *
+     * @return Whether this crypt is insecure
+     */
+    boolean insecure();
+
+    /**
      * Encrypts the value.
      *
      * @param decrypted Decrypted data

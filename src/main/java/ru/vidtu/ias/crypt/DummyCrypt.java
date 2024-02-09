@@ -42,6 +42,11 @@ public final class DummyCrypt implements Crypt {
     }
 
     @Override
+    public boolean insecure() {
+        return true;
+    }
+
+    @Override
     public byte[] encrypt(byte[] decrypted) {
         return decrypted;
     }

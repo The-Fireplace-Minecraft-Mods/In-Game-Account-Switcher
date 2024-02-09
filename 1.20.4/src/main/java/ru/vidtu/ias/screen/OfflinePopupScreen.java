@@ -128,7 +128,7 @@ public final class OfflinePopupScreen extends Screen {
         if (value.isBlank()) return;
 
         // Create and accept.
-        this.handler.accept(OfflineAccount.create(value));
+        this.handler.accept(new OfflineAccount(value));
     }
 
     /**

@@ -45,6 +45,11 @@ public final class PasswordCrypt implements Crypt {
     }
 
     @Override
+    public boolean insecure() {
+        return false;
+    }
+
+    @Override
     public byte[] encrypt(byte[] decrypted) {
         try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             // Generate and write salt.

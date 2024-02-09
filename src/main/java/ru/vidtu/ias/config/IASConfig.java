@@ -21,8 +21,11 @@ package ru.vidtu.ias.config;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.vidtu.ias.config.migrator.Migrator;
+import ru.vidtu.ias.utils.GSONUtils;
 
 import java.lang.reflect.Modifier;
 import java.nio.file.Files;
@@ -47,11 +50,6 @@ public final class IASConfig {
      * Logger for this class.
      */
     public static final Logger LOGGER = LoggerFactory.getLogger("IAS/IASConfig");
-
-    /**
-     * For future config versions.
-     */
-    public static boolean skipMigration = false;
 
     /**
      * Whether the title screen text is enabled, {@code true} by default.
@@ -159,7 +157,7 @@ public final class IASConfig {
     public static void load(Path path) {
         try {
             // Get the file.
-            Path file = path.resolve("ias_v9.json");
+            Path file = path.resolve("ias.json");
 
             // Skip if it doesn't exist.
             if (!Files.isRegularFile(file)) {
@@ -170,16 +168,28 @@ public final class IASConfig {
             // Read the file.
             String value = Files.readString(file);
 
-            // Hacky JSON reading.
-            GSON.fromJson(value, IASConfig.class);
+            // Read JSON.
+            JsonObject json = GSON.fromJson(value, JsonObject.class);
+            int version = json.has("version") ? GSONUtils.getIntOrThrow(json, "version") : 1;
+            Migrator migrator = Migrator.fromVersion(version);
 
-            // NPE protection.
-            titleTextAlign = Objects.requireNonNullElse(titleTextAlign, TextAlign.LEFT);
-            serversTextAlign = Objects.requireNonNullElse(serversTextAlign, TextAlign.LEFT);
+            // Load migrated.
+            if (migrator != null) {
+                migrator.load(json);
+                save(path);
+                return;
+            }
+
+            // Hacky JSON reading.
+            GSON.fromJson(json, IASConfig.class);
         } catch (Throwable t) {
             // Rethrow.
             throw new RuntimeException("Unable to load IAS config.", t);
         }
+
+        // NPE protection.
+        titleTextAlign = Objects.requireNonNullElse(titleTextAlign, TextAlign.LEFT);
+        serversTextAlign = Objects.requireNonNullElse(serversTextAlign, TextAlign.LEFT);
     }
 
     /**
@@ -191,11 +201,15 @@ public final class IASConfig {
     public static void save(Path path) {
         try {
             // Get the file.
-            Path file = path.resolve("ias_v9.json");
+            Path file = path.resolve("ias.json");
 
             // Hacky JSON writing.
             @SuppressWarnings("InstantiationOfUtilityClass") // <- Hack.
-            String value = GSON.toJson(new IASConfig());
+            JsonObject json = (JsonObject) GSON.toJsonTree(new IASConfig());
+
+            // Write JSON.
+            json.addProperty("version", 3);
+            String value = GSON.toJson(json);
 
             // Create parent directories.
             Files.createDirectories(file.getParent());

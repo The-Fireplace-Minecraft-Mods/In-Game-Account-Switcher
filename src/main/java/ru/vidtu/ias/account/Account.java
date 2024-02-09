@@ -32,6 +32,13 @@ import java.util.concurrent.CompletableFuture;
  */
 public sealed interface Account permits OfflineAccount, MicrosoftAccount {
     /**
+     * Gets the account type.
+     *
+     * @return Account storage type
+     */
+    String type();
+
+    /**
      * Gets the account type translation tip key.
      *
      * @return Account type translation key
@@ -71,6 +78,13 @@ public sealed interface Account permits OfflineAccount, MicrosoftAccount {
     boolean canLogin();
 
     /**
+     * Gets the insecure state.
+     *
+     * @return Whether the account is insecurely stored
+     */
+    boolean insecure();
+
+    /**
      * Starts the authentication process for this account.
      *
      * @param handler Login handler
@@ -92,17 +106,9 @@ public sealed interface Account permits OfflineAccount, MicrosoftAccount {
      * @throws IOException              On I/O error
      * @throws IllegalArgumentException On unknown account type
      */
-    @SuppressWarnings("ChainOfInstanceofChecks") // <- Sealed.
     static void writeTyped(DataOutput out, Account account) throws IOException {
         // Get the account type.
-        String type;
-        if (account instanceof OfflineAccount) {
-            type = "ias:offline_v1";
-        } else if (account instanceof MicrosoftAccount) {
-            type = "ias:microsoft_v1";
-        } else {
-            throw new IllegalArgumentException("Unknown account type: " + account + " (" + (account != null ? account.getClass() : null) + ")");
-        }
+        String type = account.type();
 
         // Write the type.
         out.writeUTF(type);

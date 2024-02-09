@@ -19,12 +19,15 @@ the Minecraft EULA and Minecraft Usage Guidelines.
 ## Microsoft
 
 This mod uses [Microsoft](https://microsoft.com/) authentication system,
-and Microsoft's [Terms of Use](https://www.microsoft.com/en-us/legal/terms-of-use),
-[Privacy Statement](https://privacy.microsoft.com/en-us/privacystatement),
-and [Services Agreement](https://www.microsoft.com/en-us/servicesagreement) apply.
+and Microsoft's [Terms of Use](https://www.microsoft.com/legal/terms-of-use),
+[Privacy Statement](https://privacy.microsoft.com/privacystatement),
+and [Services Agreement](https://www.microsoft.com/servicesagreement) apply.
 By using this mod, you agree to the Microsoft Terms of Use, Microsoft Privacy Statement,
 and Microsoft Usage Guidelines.
 
 ## GitHub
 
-This mod connects to the GitHub approximately every two hours.
+This mod connects to [GitHub](https://github.com/) on startup to check for prohibited versions,
+and GitHub's [Terms of Service](https://github.com/terms) and
+[Privacy Policy](https://docs.github.com/site-policy/privacy-policies/github-general-privacy-statement)
+apply. By using this mod, you agree to the GitHub Terms of Service and GitHub Privacy Policy.
