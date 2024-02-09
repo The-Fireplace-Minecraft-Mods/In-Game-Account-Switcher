@@ -43,3 +43,8 @@ critical enough not to be disclosed publicly, please, report it as described in 
 
 ![image](https://i.imgur.com/DX06VoG.png)
 ![image](https://i.imgur.com/5hiQ6Om.png)
+
+## Credits
+
+Thanks to the [wiki.vg/Microsoft_Authentication_Scheme](https://wiki.vg/Microsoft_Authentication_Scheme)
+page for providing useful information about Microsoft authentication.

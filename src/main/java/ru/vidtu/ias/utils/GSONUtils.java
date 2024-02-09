@@ -19,6 +19,7 @@
 
 package ru.vidtu.ias.utils;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
@@ -29,6 +30,11 @@ import com.google.gson.JsonParseException;
  * @author VidTu
  */
 public final class GSONUtils {
+    /**
+     * Shared GSON instance.
+     */
+    public static final Gson GSON = new Gson();
+
     /**
      * An instance of this class cannot be created.
      *

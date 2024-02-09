@@ -19,11 +19,12 @@
 
 package ru.vidtu.ias.account;
 
+import ru.vidtu.ias.auth.handlers.LoginHandler;
+
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * Parent interface for all accounts.
@@ -137,61 +138,4 @@ public sealed interface Account permits OfflineAccount, MicrosoftAccount {
         };
     }
 
-    /**
-     * Data provided for {@link Account} for authentication in-game.
-     *
-     * @param name   Player name
-     * @param uuid   Player UUID
-     * @param token  Session access token
-     * @param online Whether the account type is online
-     * @author VidTu
-     */
-    record LoginData(String name, UUID uuid, String token, boolean online) {
-        @Override
-        public String toString() {
-            return "LoginData{" +
-                    "name='" + this.name + '\'' +
-                    ", uuid=" + this.uuid +
-                    ", token=[TOKEN]" +
-                    ", online=" + this.online +
-                    '}';
-        }
-    }
-
-    /**
-     * Handler for logins.
-     *
-     * @author VidTu
-     * @apiNote All methods in this class can be called from another thread
-     */
-    interface LoginHandler {
-        /**
-         * Changes the authentication stage.
-         *
-         * @param stage New auth stage translation key
-         */
-        void stage(String stage);
-
-        /**
-         * Requests an encryption password.
-         *
-         * @return Future that will complete with password string on password enter, with {@code null} on cancel, exceptionally on error
-         */
-        CompletableFuture<String> password();
-
-        /**
-         * Called when an authentication has performed successfully.
-         *
-         * @param data    Auth data
-         * @param changed Whether the storage has been modified and may require saving
-         */
-        void success(LoginData data, boolean changed);
-
-        /**
-         * Called when an authentication has failed.
-         *
-         * @param error Failure reason
-         */
-        void error(Throwable error);
-    }
 }

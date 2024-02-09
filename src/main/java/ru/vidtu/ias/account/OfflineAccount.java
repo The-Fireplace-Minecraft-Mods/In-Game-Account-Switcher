@@ -19,6 +19,8 @@
 
 package ru.vidtu.ias.account;
 
+import ru.vidtu.ias.auth.handlers.LoginHandler;
+
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;

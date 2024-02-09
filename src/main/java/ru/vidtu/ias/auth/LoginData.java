@@ -17,50 +17,29 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
 
-package ru.vidtu.ias.config;
+package ru.vidtu.ias.auth;
+
+import ru.vidtu.ias.account.Account;
+
+import java.util.UUID;
 
 /**
- * Text alignment.
+ * Data provided for {@link Account} for authentication in-game.
  *
+ * @param name   Player name
+ * @param uuid   Player UUID
+ * @param token  Session access token
+ * @param online Whether the account type is online
  * @author VidTu
  */
-public enum TextAlign {
-    /**
-     * Text is left-aligned.
-     */
-    LEFT("ias.config.textAlign.left"),
-
-    /**
-     * Text is center-aligned.
-     */
-    CENTER("ias.config.textAlign.center"),
-
-    /**
-     * Text is right-aligned.
-     */
-    RIGHT("ias.config.textAlign.right");
-
-    /**
-     * Alignment translation key.
-     */
-    private final String key;
-
-    /**
-     * Creates a new alignment.
-     *
-     * @param key Alignment translation key
-     */
-    TextAlign(String key) {
-        this.key = key;
-    }
-
-    /**
-     * Gets the translation key.
-     *
-     * @return Translation key
-     */
+public record LoginData(String name, UUID uuid, String token, boolean online) {
     @Override
     public String toString() {
-        return this.key;
+        return "LoginData{" +
+                "name='" + this.name + '\'' +
+                ", uuid=" + this.uuid +
+                ", token=[TOKEN]" +
+                ", online=" + this.online +
+                '}';
     }
 }

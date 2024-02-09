@@ -17,44 +17,44 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
 
-package ru.vidtu.ias.utils;
+package ru.vidtu.ias.utils.exceptions;
 
 import java.util.Collections;
 import java.util.IdentityHashMap;
 import java.util.Set;
 
 /**
- * A runtime exception with "probable" user-friendly message.
+ * A runtime exception indicating repolling intention.
  *
  * @author VidTu
  */
-public final class ProbableException extends RuntimeException {
+public final class DevicePendingException extends RuntimeException {
     /**
      * Creates a new exception.
      *
-     * @param key Message translation key
+     * @param message Target message
      */
-    public ProbableException(String key) {
-        super(key);
+    public DevicePendingException(String message) {
+        super(message);
     }
 
     /**
      * Creates a new exception.
      *
-     * @param key   Message translation key
-     * @param cause Suppressed exception cause
+     * @param message Target message
+     * @param cause   Suppressed exception cause
      */
-    public ProbableException(String key, Throwable cause) {
-        super(key, cause);
+    public DevicePendingException(String message, Throwable cause) {
+        super(message, cause);
     }
 
     /**
-     * Gets the probable exception from the causal chain.
+     * Gets whether the pending exception is in the causal chain.
      *
      * @param root Causal chain root exception
-     * @return First probable exception in the causal chain, {@code null} if none, causal loop detected, or causal stack is too big
+     * @return Whether the pending exception is in the causal chain
      */
-    public static ProbableException probableCause(Throwable root) {
+    public static boolean hasPending(Throwable root) {
         // Causal loop detection set.
         Set<Throwable> dejaVu = Collections.newSetFromMap(new IdentityHashMap<>(8));
 
@@ -63,14 +63,14 @@ public final class ProbableException extends RuntimeException {
             // Break if null (reached the end) or loop detected.
             if (root == null || !dejaVu.add(root)) break;
 
-            // Return if probable exception.
-            if (root instanceof ProbableException prob) return prob;
+            // Return if pending exception.
+            if (root instanceof DevicePendingException) return true;
 
             // Next cause.
             root = root.getCause();
         }
 
         // Not found. (or reached the 256 limit)
-        return null;
+        return false;
     }
 }

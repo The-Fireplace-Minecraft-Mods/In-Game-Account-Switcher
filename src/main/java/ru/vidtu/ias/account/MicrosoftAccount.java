@@ -22,11 +22,13 @@ package ru.vidtu.ias.account;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.vidtu.ias.IAS;
-import ru.vidtu.ias.auth.MSAuth;
+import ru.vidtu.ias.auth.LoginData;
+import ru.vidtu.ias.auth.handlers.LoginHandler;
+import ru.vidtu.ias.auth.microsoft.MSAuth;
 import ru.vidtu.ias.crypt.Crypt;
 import ru.vidtu.ias.utils.Holder;
 import ru.vidtu.ias.utils.IUtils;
-import ru.vidtu.ias.utils.ProbableException;
+import ru.vidtu.ias.utils.exceptions.FriendlyException;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -38,7 +40,6 @@ import java.io.IOException;
 import java.net.NoRouteToHostException;
 import java.net.http.HttpTimeoutException;
 import java.nio.channels.UnresolvedAddressException;
-import java.time.Duration;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -63,6 +64,11 @@ public final class MicrosoftAccount implements Account {
      * Link has been open in browser.
      */
     public static final String BROWSER = "ias.login.link";
+
+    /**
+     * Link has been open in browser.
+     */
+    public static final String CLIENT_BROWSER = "ias.login.linkClient";
 
     /**
      * Processing response.
@@ -193,12 +199,12 @@ public final class MicrosoftAccount implements Account {
     @Override
     public void login(LoginHandler handler) {
         try {
+            // Skip if cancelled.
+            if (handler.cancelled()) return;
+
             // Log it and display progress.
             LOGGER.info("IAS: Logging (Microsoft) as {}/{}", this.uuid, this.name);
             handler.stage(INITIALIZING);
-
-            // Create the authenticator.
-            MSAuth auth = new MSAuth(IAS.userAgent(), IAS.CLIENT_ID, null, Duration.ofSeconds(15L), IAS.executor());
 
             // Value holders.
             Holder<Crypt> crypt = new Holder<>();
@@ -220,14 +226,8 @@ public final class MicrosoftAccount implements Account {
 
             // Decrypt.
             future.thenApplyAsync(value -> {
-                // Crypt was cancelled.
-                if (value == null) {
-                    // Log it.
-                    LOGGER.info("IAS: Crypt was cancelled.");
-
-                    // Return cancel.
-                    return null;
-                }
+                // Skip if cancelled.
+                if (value == null || handler.cancelled()) return null;
 
                 // Log it and display progress.
                 LOGGER.info("IAS: Decrypting tokens...");
@@ -240,7 +240,7 @@ public final class MicrosoftAccount implements Account {
                 return value.decrypt(crypted);
             }, IAS.executor()).thenApplyAsync(value -> {
                 // Skip if cancelled.
-                if (value == null) return false;
+                if (value == null || handler.cancelled()) return false;
 
                 // Read the decrypted data into tokens.
                 try (ByteArrayInputStream byteIn = new ByteArrayInputStream(value);
@@ -264,21 +264,27 @@ public final class MicrosoftAccount implements Account {
                 }
             }, IAS.executor()).thenComposeAsync(value -> {
                 // Skip if cancelled.
-                if (!value) return CompletableFuture.completedFuture(null);
+                if (!value || handler.cancelled()) return CompletableFuture.completedFuture(null);
 
                 // Log it and display progress.
                 LOGGER.info("IAS: Converting MCA to MCP... (stored)");
                 handler.stage(MCA_TO_MCP);
 
                 // Convert MCA to MCP.
-                return auth.mcaToMcp(access.get()).exceptionallyComposeAsync(original -> {
+                return MSAuth.mcaToMcp(access.get()).exceptionallyComposeAsync(original -> {
+                    // Skip if cancelled.
+                    if (handler.cancelled()) return CompletableFuture.completedFuture(null);
+
                     // Log it and display progress.
                     LOGGER.warn("IAS: MCA is (probably) expired. Refreshing...");
                     LOGGER.info("IAS: Converting MSR to MSA/MSR...");
                     handler.stage(MSR_TO_MSA_MSR);
 
                     // Convert MSR to MSA/MSR.
-                    return auth.msrToMsaMsr(refresh.get()).thenComposeAsync(ms -> {
+                    return MSAuth.msrToMsaMsr(refresh.get()).thenComposeAsync(ms -> {
+                        // Skip if cancelled.
+                        if (ms == null || handler.cancelled()) return CompletableFuture.completedFuture(null);
+
                         // Update the refresh token.
                         refresh.set(ms.refresh());
 
@@ -287,22 +293,31 @@ public final class MicrosoftAccount implements Account {
                         handler.stage(MSA_TO_XBL);
 
                         // Convert MSA to XBL.
-                        return auth.msaToXbl(ms.access());
+                        return MSAuth.msaToXbl(ms.access());
                     }, IAS.executor()).thenComposeAsync(xbl -> {
+                        // Skip if cancelled.
+                        if (xbl == null || handler.cancelled()) return CompletableFuture.completedFuture(null);
+
                         // Log it and display progress.
                         LOGGER.info("IAS: Converting XBL to XSTS...");
                         handler.stage(XBL_TO_XSTS);
 
                         // Convert XBL to XSTS.
-                        return auth.xblToXsts(xbl.token(), xbl.hash());
+                        return MSAuth.xblToXsts(xbl.token(), xbl.hash());
                     }, IAS.executor()).thenComposeAsync(xsts -> {
+                        // Skip if cancelled.
+                        if (xsts == null || handler.cancelled()) return CompletableFuture.completedFuture(null);
+
                         // Log it and display progress.
                         LOGGER.info("IAS: Converting XSTS to MCA...");
                         handler.stage(XSTS_TO_MCA);
 
                         // Convert XSTS to MCA.
-                        return auth.xstsToMca(xsts.token(), xsts.hash());
+                        return MSAuth.xstsToMca(xsts.token(), xsts.hash());
                     }, IAS.executor()).thenComposeAsync(token -> {
+                        // Skip if cancelled.
+                        if (token == null || handler.cancelled()) return CompletableFuture.completedFuture(null);
+
                         // Update the access token.
                         access.set(token);
 
@@ -311,18 +326,21 @@ public final class MicrosoftAccount implements Account {
                         handler.stage(MCA_TO_MCP);
 
                         // Convert MCA to MCP.
-                        return auth.mcaToMcp(token);
+                        return MSAuth.mcaToMcp(token);
                     }, IAS.executor()).exceptionallyAsync(t -> {
                         t.addSuppressed(original);
 
                         // Probable case - no internet connection.
                         if (IUtils.anyInCausalChain(t, err -> err instanceof UnresolvedAddressException || err instanceof NoRouteToHostException || err instanceof HttpTimeoutException)) {
-                            throw new ProbableException("ias.error.connect", t);
+                            throw new FriendlyException("Unable to connect to MSR servers.", t, "ias.error.connect");
                         }
 
                         // Handle error.
                         throw new RuntimeException("Unable to perform MSR auth.", t);
                     }, IAS.executor()).thenApplyAsync(profile -> {
+                        // Skip if cancelled.
+                        if (profile == null || handler.cancelled()) return null;
+
                         // Log it and display progress.
                         LOGGER.info("IAS: Encrypting tokens...");
                         handler.stage(ENCRYPTING);
@@ -373,8 +391,8 @@ public final class MicrosoftAccount implements Account {
                     }, IAS.executor());
                 }, IAS.executor());
             }, IAS.executor()).thenAcceptAsync(profile -> {
-                // Skip if null.
-                if (profile == null) return;
+                // Skip if cancelled.
+                if (profile == null || handler.cancelled()) return;
 
                 // Authentication successful, refresh the profile.
                 UUID uuid = profile.uuid();

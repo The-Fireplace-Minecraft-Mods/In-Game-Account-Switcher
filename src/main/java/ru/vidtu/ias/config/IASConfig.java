@@ -26,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.vidtu.ias.config.migrator.Migrator;
 import ru.vidtu.ias.utils.GSONUtils;
+import ru.vidtu.ias.utils.IUtils;
 
 import java.lang.reflect.Modifier;
 import java.nio.file.Files;
@@ -142,6 +143,11 @@ public final class IASConfig {
     public static boolean barNick = false;
 
     /**
+     * Current HTTP server mode.
+     */
+    public static ServerMode server = ServerMode.AVAILABLE;
+
+    /**
      * Creates a new config for GSON.
      */
     private IASConfig() {
@@ -190,6 +196,7 @@ public final class IASConfig {
         // NPE protection.
         titleTextAlign = Objects.requireNonNullElse(titleTextAlign, TextAlign.LEFT);
         serversTextAlign = Objects.requireNonNullElse(serversTextAlign, TextAlign.LEFT);
+        server = Objects.requireNonNullElse(server, ServerMode.AVAILABLE);
     }
 
     /**
@@ -222,5 +229,18 @@ public final class IASConfig {
             // Rethrow.
             throw new RuntimeException("Unable to save IAS config.", t);
         }
+    }
+
+    /**
+     * Gets whether to use server auth for MS.
+     *
+     * @return Whether to use server auth for MS
+     */
+    public static boolean useServerAuth() {
+        return switch (server) {
+            case ALWAYS -> true;
+            case NEVER -> false;
+            case AVAILABLE -> IUtils.canUseSunServer();
+        };
     }
 }

@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 import ru.vidtu.ias.IAS;
 import ru.vidtu.ias.account.Account;
 import ru.vidtu.ias.account.OfflineAccount;
+import ru.vidtu.ias.auth.LoginData;
 import ru.vidtu.ias.config.IASStorage;
 
 import java.util.Locale;
@@ -161,7 +162,7 @@ final class AccountList extends ObjectSelectionList<AccountEntry> {
 
         // Login offline.
         String name = account.name();
-        Account.LoginData data = new Account.LoginData(name, OfflineAccount.uuid(name), "ias:offline", false);
+        LoginData data = new LoginData(name, OfflineAccount.uuid(name), "ias:offline", false);
         login.success(data, false);
     }
 

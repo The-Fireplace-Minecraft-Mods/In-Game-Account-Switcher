@@ -19,38 +19,40 @@
 
 package ru.vidtu.ias.config;
 
+import ru.vidtu.ias.utils.IUtils;
+
 /**
- * Text alignment.
+ * HTTP server mode.
  *
  * @author VidTu
  */
-public enum TextAlign {
+public enum ServerMode {
     /**
-     * Text is left-aligned.
+     * Always use HTTP server, never use Microsoft device auth.
      */
-    LEFT("ias.config.textAlign.left"),
+    ALWAYS("ias.config.server.always"),
 
     /**
-     * Text is center-aligned.
+     * Use HTTP server if {@link IUtils#canUseSunServer()}, otherwise use Microsoft device auth.
      */
-    CENTER("ias.config.textAlign.center"),
+    AVAILABLE("ias.config.server.available"),
 
     /**
-     * Text is right-aligned.
+     * Never use HTTP server, always use Microsoft device auth.
      */
-    RIGHT("ias.config.textAlign.right");
+    NEVER("ias.config.server.never");
 
     /**
-     * Alignment translation key.
+     * Mode translation key.
      */
     private final String key;
 
     /**
-     * Creates a new alignment.
+     * Creates a new mode.
      *
-     * @param key Alignment translation key
+     * @param key Mode translation key
      */
-    TextAlign(String key) {
+    ServerMode(String key) {
         this.key = key;
     }
 

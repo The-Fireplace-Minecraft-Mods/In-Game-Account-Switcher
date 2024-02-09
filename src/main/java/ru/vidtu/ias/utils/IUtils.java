@@ -19,8 +19,22 @@
 
 package ru.vidtu.ias.utils;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.InetSocketAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.security.SecureRandom;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HexFormat;
 import java.util.IdentityHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Random;
 import java.util.Set;
 import java.util.function.Predicate;
 
@@ -90,5 +104,141 @@ public final class IUtils {
 
         // Not found. (or reached the 256 limit)
         return false;
+    }
+
+    /**
+     * Gets whether the HTTP server provided by Sun exists in this Java implementation.
+     * <p>
+     * The server authentication method is the most convenient, but the server is located in
+     * the {@code com.sun} package and in the internal module, so it might not be present in all Java
+     * implementations and/or inbound firewall configurations. Because of this, we also add an
+     * alternative authentication method, which is less convenient, but should be supported on
+     * all Java platforms and inbound firewall configs.
+     *
+     * @return The presence of the HTTP server
+     * @implNote This method might block for the first call
+     */
+    public static boolean canUseSunServer() {
+        return SunServerAvailability.AVAILABLE;
+    }
+
+    /**
+     * Lazily-initialized holder for value returned by {@link #canUseSunServer()}.
+     */
+    private static final class SunServerAvailability {
+        /**
+         * Whether the Sun server is available.
+         */
+        private static final boolean AVAILABLE;
+
+        static {
+            // Lazy init.
+            Logger logger = LoggerFactory.getLogger("IAS/IUtils/SunServerAvailability");
+            logger.info("IAS: Testing Sun HTTP server availability...");
+            boolean available;
+            try {
+                // Check for class presence.
+                Class.forName("com.sun.net.httpserver.HttpServer");
+                logger.info("IAS: Sun HTTP server class found, testing firewall by binding TCP server.");
+
+                // Create the socket.
+                try (ServerSocket server = new ServerSocket();
+                     Socket client = new Socket()) {
+                    // Set up timeouts.
+                    server.setSoTimeout(1000);
+
+                    // Try to bind it.
+                    bindToSupportedPort(server);
+                    logger.info("IAS: TCP server bound, connecting...");
+
+                    // Try to connect.
+                    int port = server.getLocalPort();
+                    client.setSoTimeout(1000);
+                    client.setTcpNoDelay(true);
+                    client.connect(new InetSocketAddress(port), 1000);
+                    logger.info("IAS: Connected to TCP server, trying to exchange data bidirectionally.");
+
+                    // Try to exchange some random data.
+                    try (Socket accepted = server.accept();
+                         InputStream clientIn = client.getInputStream();
+                         OutputStream clientOut = client.getOutputStream();
+                         InputStream serverIn = accepted.getInputStream();
+                         OutputStream serverOut = accepted.getOutputStream()) {
+
+                        // Server-to-client.
+                        Random random = new SecureRandom();
+                        byte[] data = new byte[256];
+                        random.nextBytes(data);
+                        serverOut.write(data);
+                        serverOut.flush();
+                        byte[] read = clientIn.readNBytes(256);
+
+                        // Something in the way.
+                        if (!Arrays.equals(data, read)) {
+                            throw new IllegalStateException("S2C data doesn't match, sent " + HexFormat.of().formatHex(data) + ", got " + HexFormat.of().formatHex(read));
+                        }
+
+                        // Client-to-server.
+                        random.nextBytes(data);
+                        clientOut.write(data);
+                        clientOut.flush();
+                        read = serverIn.readNBytes(256);
+
+                        // Something in the way.
+                        if (!Arrays.equals(data, read)) {
+                            throw new IllegalStateException("C2S data doesn't match, sent " + HexFormat.of().formatHex(data) + ", got " + HexFormat.of().formatHex(read));
+                        }
+                    }
+
+                    // Success.
+                    logger.info("IAS: Exchanged TCP data, setting Sun server as available...");
+                    available = true;
+                }
+            } catch (Throwable t) {
+                // Log.
+                logger.warn("IAS: Sun server is not available or is not accessible.", t);
+                available = false;
+            }
+            AVAILABLE = available;
+        }
+
+        /**
+         * Bind the server to any supported port.
+         *
+         * @param socket Socket to bind
+         * @throws RuntimeException If unable to bind
+         */
+        private static void bindToSupportedPort(ServerSocket socket) {
+            // Any thrown exceptions.
+            List<RuntimeException> thrown = new LinkedList<>();
+
+            // Note that this port range MUST be declared in Microsoft valid
+            // redirect URIs, so using any port won't work. I did register some
+            // ports in the UI.
+            for (int port = 59125; port <= 59135; port++) {
+                try {
+                    // Try to bind.
+                    socket.bind(new InetSocketAddress(port), 0);
+                    return;
+                } catch (Throwable t) {
+                    // Add to thrown exceptions.
+                    thrown.add(new RuntimeException("Unable to bind: " + port, t));
+                }
+            }
+
+            // Rethrow all errors.
+            RuntimeException holder = new RuntimeException("Unable to bind to any port.");
+            thrown.forEach(holder::addSuppressed);
+            throw holder;
+        }
+
+        /**
+         * An instance of this class cannot be created.
+         *
+         * @throws AssertionError Always
+         */
+        private SunServerAvailability() {
+            throw new AssertionError("No instances.");
+        }
     }
 }

@@ -36,6 +36,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.vidtu.ias.IAS;
 import ru.vidtu.ias.config.IASConfig;
+import ru.vidtu.ias.config.ServerMode;
 import ru.vidtu.ias.config.TextAlign;
 import ru.vidtu.ias.utils.Expression;
 
@@ -366,6 +367,21 @@ public final class ConfigScreen extends Screen {
                 .build();
         box.setTooltipDelay(250);
         this.addRenderableWidget(box);
+
+        // Sun Server.
+        Button button = Button.builder(CommonComponents.optionNameValue(Component.translatable("ias.config.server"), Component.translatable(IASConfig.server.toString())), btn -> {
+            // Update the value.
+            IASConfig.server = switch (IASConfig.server) {
+                case ALWAYS -> ServerMode.AVAILABLE;
+                case AVAILABLE -> ServerMode.NEVER;
+                case NEVER -> ServerMode.ALWAYS;
+            };
+
+            // Set the message.
+            btn.setMessage(CommonComponents.optionNameValue(Component.translatable("ias.config.server"), Component.translatable(IASConfig.server.toString())));
+        }).bounds(9 + box.getWidth(), 116, 200, 20).tooltip(Tooltip.create(Component.translatable("ias.config.server.tip"))).build();
+        button.setTooltipDelay(250);
+        this.addRenderableWidget(button);
 
         // Nick Warns.
         box = Checkbox.builder(Component.translatable("ias.config.nickWarns"), this.font)

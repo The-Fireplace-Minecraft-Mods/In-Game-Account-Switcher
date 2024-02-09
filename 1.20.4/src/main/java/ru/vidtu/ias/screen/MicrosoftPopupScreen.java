@@ -38,10 +38,13 @@ import org.slf4j.LoggerFactory;
 import ru.vidtu.ias.IAS;
 import ru.vidtu.ias.account.Account;
 import ru.vidtu.ias.account.MicrosoftAccount;
-import ru.vidtu.ias.auth.MSAuthServer;
+import ru.vidtu.ias.auth.handlers.CreateHandler;
+import ru.vidtu.ias.auth.microsoft.MSAuthClient;
+import ru.vidtu.ias.auth.microsoft.MSAuthServer;
+import ru.vidtu.ias.config.IASConfig;
 import ru.vidtu.ias.crypt.Crypt;
 import ru.vidtu.ias.crypt.PasswordCrypt;
-import ru.vidtu.ias.utils.ProbableException;
+import ru.vidtu.ias.utils.exceptions.FriendlyException;
 
 import java.util.Locale;
 import java.util.Objects;
@@ -54,7 +57,7 @@ import java.util.function.Supplier;
  *
  * @author VidTu
  */
-final class MicrosoftPopupScreen extends Screen implements MSAuthServer.CreateHandler {
+final class MicrosoftPopupScreen extends Screen implements CreateHandler {
     /**
      * Logger for this class.
      */
@@ -81,6 +84,11 @@ final class MicrosoftPopupScreen extends Screen implements MSAuthServer.CreateHa
     private Crypt crypt;
 
     /**
+     * MS auth client.
+     */
+    private MSAuthClient client;
+
+    /**
      * MS auth server.
      */
     private MSAuthServer server;
@@ -89,7 +97,7 @@ final class MicrosoftPopupScreen extends Screen implements MSAuthServer.CreateHa
      * Current stage.
      */
     @SuppressWarnings("FieldAccessedSynchronizedAndUnsynchronized") // <- toString()
-    private Component stage = Component.translatable(MicrosoftAccount.INITIALIZING);
+    private Component stage = Component.translatable(MicrosoftAccount.INITIALIZING).withStyle(ChatFormatting.YELLOW);
 
     /**
      * Current stage label.
@@ -114,6 +122,15 @@ final class MicrosoftPopupScreen extends Screen implements MSAuthServer.CreateHa
         this.parent = parent;
         this.handler = handler;
         this.crypt = crypt;
+    }
+
+    @Override
+    public boolean cancelled() {
+        // Bruh.
+        assert this.minecraft != null;
+
+        // Cancelled if no longer displayed.
+        return this != this.minecraft.screen;
     }
 
     @Override
@@ -171,11 +188,53 @@ final class MicrosoftPopupScreen extends Screen implements MSAuthServer.CreateHa
         }
 
         // Try to open the server.
-        this.server();
+        IAS.executor().execute(() -> {
+            if (IASConfig.useServerAuth()) {
+                this.server();
+            } else {
+                this.client();
+            }
+        });
     }
 
     /**
-     * Create the server.
+     * Creates the client.
+     */
+    private void client() {
+        try {
+            // Bruh.
+            assert this.minecraft != null;
+
+            // Skip if can't.
+            if (this.crypt == null || this.server != null || this.client != null) return;
+
+            // Create the server.
+            this.client = new MSAuthClient(this.crypt, this);
+
+            // Run the client.
+            this.client.start().thenAcceptAsync(auth -> {
+                // Log it and display progress.
+                LOGGER.info("IAS: Opening client link...");
+                this.stage(MicrosoftAccount.CLIENT_BROWSER,
+                        Component.literal(auth.uri().toString()).withStyle(ChatFormatting.GOLD),
+                        Component.literal(auth.user()).withStyle(ChatFormatting.GOLD));
+
+                // Copy and open link.
+                Util.getPlatform().openUri(auth.uri().toString());
+                this.minecraft.keyboardHandler.setClipboard(auth.user());
+            }, this.minecraft).exceptionally(t -> {
+                // Handle error.
+                this.error(new RuntimeException("Unable to handle client.", t));
+                return null;
+            });
+        } catch (Throwable t) {
+            // Handle error.
+            this.error(new RuntimeException("Unable to create client.", t));
+        }
+    }
+
+    /**
+     * Creates the server.
      */
     private void server() {
         try {
@@ -183,7 +242,7 @@ final class MicrosoftPopupScreen extends Screen implements MSAuthServer.CreateHa
             assert this.minecraft != null;
 
             // Skip if can't.
-            if (this.crypt == null || this.server != null) return;
+            if (this.crypt == null || this.server != null || this.client != null) return;
 
             // Create the server.
             this.server = new MSAuthServer(I18n.get("ias.login.done"), this.crypt, this);
@@ -194,7 +253,7 @@ final class MicrosoftPopupScreen extends Screen implements MSAuthServer.CreateHa
                 this.server.run();
             }, IAS.executor()).thenRunAsync(() -> {
                 // Log it and display progress.
-                LOGGER.info("IAS: Opening link...");
+                LOGGER.info("IAS: Opening server link...");
                 this.stage(MicrosoftAccount.BROWSER);
 
                 // Copy and open link.
@@ -235,10 +294,18 @@ final class MicrosoftPopupScreen extends Screen implements MSAuthServer.CreateHa
             keyboard.setClipboard(" ");
         }
 
-        // Close the server, if any.
+        // Close off-thread.
         IAS.executor().execute(() -> {
+            // Close the client, if any.
+            if (this.client != null) {
+                this.client.close();
+                this.client = null;
+            }
+
+            // Close the server, if any.
             if (this.server != null) {
                 this.server.close();
+                this.server = null;
             }
         });
     }
@@ -316,7 +383,7 @@ final class MicrosoftPopupScreen extends Screen implements MSAuthServer.CreateHa
     }
 
     @Override
-    public void stage(String stage) {
+    public void stage(String stage, Object... args) {
         // Bruh.
         assert this.minecraft != null;
 
@@ -334,7 +401,7 @@ final class MicrosoftPopupScreen extends Screen implements MSAuthServer.CreateHa
         }
 
         // Flush the stage.
-        Component component = Component.translatable(stage).withStyle(ChatFormatting.YELLOW);
+        Component component = Component.translatable(stage, args).withStyle(ChatFormatting.YELLOW);
         synchronized (this.lock) {
             this.stage = component;
             this.label = null;
@@ -374,8 +441,8 @@ final class MicrosoftPopupScreen extends Screen implements MSAuthServer.CreateHa
         if (this != this.minecraft.screen) return;
 
         // Flush the stage.
-        ProbableException probable = ProbableException.probableCause(error);
-        String key = probable != null ? Objects.requireNonNullElse(probable.getMessage(), "ias.error") : "ias.error";
+        FriendlyException probable = FriendlyException.friendlyInChain(error);
+        String key = probable != null ? probable.key() : "ias.error";
         Component component = Component.translatable(key).withStyle(ChatFormatting.RED);
         synchronized (this.lock) {
             this.stage = component;
@@ -386,7 +453,9 @@ final class MicrosoftPopupScreen extends Screen implements MSAuthServer.CreateHa
     @Override
     public String toString() {
         return "MicrosoftPopupScreen{" +
-                ", crypt=" + this.crypt +
+                "crypt=" + this.crypt +
+                ", client=" + this.client +
+                ", server=" + this.server +
                 ", stage=" + this.stage +
                 ", label=" + this.label +
                 '}';

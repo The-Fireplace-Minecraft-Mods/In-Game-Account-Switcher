@@ -17,7 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
 
-package ru.vidtu.ias.auth;
+package ru.vidtu.ias.auth.microsoft;
 
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpServer;
@@ -25,10 +25,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.vidtu.ias.IAS;
 import ru.vidtu.ias.account.MicrosoftAccount;
+import ru.vidtu.ias.auth.handlers.CreateHandler;
+import ru.vidtu.ias.config.IASConfig;
 import ru.vidtu.ias.crypt.Crypt;
 import ru.vidtu.ias.utils.Holder;
 import ru.vidtu.ias.utils.IUtils;
-import ru.vidtu.ias.utils.ProbableException;
+import ru.vidtu.ias.utils.exceptions.FriendlyException;
 
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
@@ -42,7 +44,6 @@ import java.net.http.HttpTimeoutException;
 import java.nio.channels.UnresolvedAddressException;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
-import java.time.Duration;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -83,7 +84,7 @@ public final class MSAuthServer implements Runnable, Closeable {
     /**
      * Random state.
      */
-    private static final String STATE_CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    private static final String STATE_CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.-_";
 
     /**
      * Data extraction pattern.
@@ -171,6 +172,9 @@ public final class MSAuthServer implements Runnable, Closeable {
     @Override
     public void run() {
         try {
+            // Stop if cancelled.
+            if (this.handler.cancelled()) return;
+
             // Log it and display progress.
             LOGGER.info("IAS: Booting up local HTTP server...");
             this.handler.stage(MicrosoftAccount.SERVER);
@@ -208,7 +212,9 @@ public final class MSAuthServer implements Runnable, Closeable {
 
                         // Read and replace the page data.
                         String page = new String(in.readAllBytes(), StandardCharsets.UTF_8);
-                        page = page.replace("%%ias_message%%", this.doneMessage);
+                        page = page
+                                .replace("%%ias_icon%%", IASConfig.unexpectedPigs ? "🐷👍" : "✅")
+                                .replace("%%ias_message%%", this.doneMessage);
                         data = page.getBytes(StandardCharsets.UTF_8);
                     }
 
@@ -273,7 +279,9 @@ public final class MSAuthServer implements Runnable, Closeable {
 
                         // Read and replace the page data.
                         String page = new String(in.readAllBytes(), StandardCharsets.UTF_8);
-                        page = page.replace("%%ias_message%%", this.doneMessage);
+                        page = page
+                                .replace("%%ias_icon%%", IASConfig.unexpectedPigs ? "🐷👍" : "✅")
+                                .replace("%%ias_message%%", this.doneMessage);
                         data = page.getBytes(StandardCharsets.UTF_8);
                     }
 
@@ -314,6 +322,9 @@ public final class MSAuthServer implements Runnable, Closeable {
                 }
             });
 
+            // Stop if cancelled.
+            if (this.handler.cancelled()) return;
+
             // Start the server.
             this.bindToSupportedPort();
             this.server.start();
@@ -329,7 +340,7 @@ public final class MSAuthServer implements Runnable, Closeable {
             }
 
             // Rethrow.
-            throw new RuntimeException("Unable to start the server: " + this.server, t);
+            throw new RuntimeException("Unable to start the server.", t);
         }
     }
 
@@ -345,7 +356,7 @@ public final class MSAuthServer implements Runnable, Closeable {
         // Note that this port range MUST be declared in Microsoft valid
         // redirect URIs, so using any port won't work. I did register some
         // ports in the UI.
-        for (int port = 59125; port <= 59129; port++) {
+        for (int port = 59125; port <= 59135; port++) {
             try {
                 // Try to bind.
                 this.server.bind(new InetSocketAddress(port), 0);
@@ -361,7 +372,7 @@ public final class MSAuthServer implements Runnable, Closeable {
         }
 
         // Rethrow all errors.
-        RuntimeException holder = new RuntimeException("Unable to bind to any port: " + this.server);
+        RuntimeException holder = new RuntimeException("Unable to bind to any port.");
         thrown.forEach(holder::addSuppressed);
         throw holder;
     }
@@ -384,15 +395,15 @@ public final class MSAuthServer implements Runnable, Closeable {
      */
     private void auth(URI uri) {
         try {
+            // Stop if cancelled.
+            if (this.handler.cancelled()) return;
+
             // Log it and display progress.
             LOGGER.info("IAS: Processing response...");
             this.handler.stage(MicrosoftAccount.PROCESSING);
 
             // Extract the query.
             String query = uri.getQuery();
-
-            // Create the authenticator.
-            MSAuth auth = new MSAuth(IAS.userAgent(), IAS.CLIENT_ID, REDIRECT_URI.formatted(this.port), Duration.ofSeconds(15L), IAS.executor());
 
             // Value holders.
             Holder<String> access = new Holder<>();
@@ -401,19 +412,22 @@ public final class MSAuthServer implements Runnable, Closeable {
 
             // Extract the MSAC.
             CompletableFuture.supplyAsync(() -> {
+                // Stop if cancelled.
+                if (this.handler.cancelled()) return null;
+
                 // Log it and display progress.
                 LOGGER.info("IAS: Extracting MSAC from query...");
 
                 // Probable case - direct URL.
                 if (query == null) {
-                    throw new ProbableException("ias.error.query");
+                    throw new FriendlyException("Null query.", "ias.error.query");
                 }
 
                 // Probable case - User aborted the auth.
                 if (query.toLowerCase(Locale.ROOT).contains("access_denied")) {
                     // Throw, suppressing possible another code location.
-                    throw new ProbableException("ias.error.cancel", new IllegalStateException("Invalid query: " + CODE_OBFUSCATE_PATTERN.matcher(query)
-                            .replaceAll("code=[CODE]")));
+                    throw new FriendlyException("Invalid query (access denied): " + CODE_OBFUSCATE_PATTERN.matcher(query)
+                            .replaceAll("code=[CODE]"), "ias.error.cancel");
                 }
 
                 // Query won't start with code. Weird query.
@@ -433,13 +447,19 @@ public final class MSAuthServer implements Runnable, Closeable {
                 // Extract the MSAC.
                 return matcher.group(1);
             }, IAS.executor()).thenComposeAsync(code -> {
+                // Stop if cancelled.
+                if (code == null || this.handler.cancelled()) return CompletableFuture.completedFuture(null);
+
                 // Log it and display progress.
                 LOGGER.info("IAS: Converting MSAC to MSA/MSR...");
                 this.handler.stage(MicrosoftAccount.MSAC_TO_MSA_MSR);
 
                 // Convert MSAC to MSA/MSR.
-                return auth.msacToMsaMsr(code);
+                return MSAuth.msacToMsaMsr(code, REDIRECT_URI.formatted(this.port));
             }, IAS.executor()).thenComposeAsync(ms -> {
+                // Stop if cancelled.
+                if (ms == null || this.handler.cancelled()) return CompletableFuture.completedFuture(null);
+
                 // Update the refresh token.
                 refresh.set(ms.refresh());
 
@@ -448,22 +468,31 @@ public final class MSAuthServer implements Runnable, Closeable {
                 this.handler.stage(MicrosoftAccount.MSA_TO_XBL);
 
                 // Convert MSA to XBL.
-                return auth.msaToXbl(ms.access());
+                return MSAuth.msaToXbl(ms.access());
             }, IAS.executor()).thenComposeAsync(xbl -> {
+                // Stop if cancelled.
+                if (xbl == null || this.handler.cancelled()) return CompletableFuture.completedFuture(null);
+
                 // Log it and display progress.
                 LOGGER.info("IAS: Converting XBL to XSTS...");
                 this.handler.stage(MicrosoftAccount.XBL_TO_XSTS);
 
                 // Convert XBL to XSTS.
-                return auth.xblToXsts(xbl.token(), xbl.hash());
+                return MSAuth.xblToXsts(xbl.token(), xbl.hash());
             }, IAS.executor()).thenComposeAsync(xsts -> {
+                // Stop if cancelled.
+                if (xsts == null || this.handler.cancelled()) return CompletableFuture.completedFuture(null);
+
                 // Log it and display progress.
                 LOGGER.info("IAS: Converting XSTS to MCA...");
                 this.handler.stage(MicrosoftAccount.XSTS_TO_MCA);
 
                 // Convert XSTS to MCA.
-                return auth.xstsToMca(xsts.token(), xsts.hash());
+                return MSAuth.xstsToMca(xsts.token(), xsts.hash());
             }, IAS.executor()).thenComposeAsync(token -> {
+                // Stop if cancelled.
+                if (token == null || this.handler.cancelled()) return CompletableFuture.completedFuture(null);
+
                 // Update the access token.
                 access.set(token);
 
@@ -472,16 +501,19 @@ public final class MSAuthServer implements Runnable, Closeable {
                 this.handler.stage(MicrosoftAccount.MCA_TO_MCP);
 
                 // Convert MCA to MCP.
-                return auth.mcaToMcp(token);
+                return MSAuth.mcaToMcp(token);
             }, IAS.executor()).exceptionallyAsync(t -> {
                 // Probable case - no internet connection.
                 if (IUtils.anyInCausalChain(t, err -> err instanceof UnresolvedAddressException || err instanceof NoRouteToHostException || err instanceof HttpTimeoutException)) {
-                    throw new ProbableException("ias.error.connect", t);
+                    throw new FriendlyException("Unable to connect to MS servers.", t,  "ias.error.connect");
                 }
 
                 // Handle error.
                 throw new RuntimeException("Unable to perform MS auth.", t);
             }, IAS.executor()).thenApplyAsync(profile -> {
+                // Stop if cancelled.
+                if (profile == null || this.handler.cancelled()) return null;
+
                 // Log it and display progress.
                 LOGGER.info("IAS: Encrypting tokens...");
                 this.handler.stage(MicrosoftAccount.ENCRYPTING);
@@ -523,6 +555,9 @@ public final class MSAuthServer implements Runnable, Closeable {
                 // Return the profile as-is.
                 return profile;
             }, IAS.executor()).thenAcceptAsync(profile -> {
+                // Stop if cancelled.
+                if (profile == null || this.handler.cancelled()) return;
+
                 // Authentication successful, refresh the profile.
                 UUID uuid = profile.uuid();
                 String name = profile.name();
@@ -565,34 +600,5 @@ public final class MSAuthServer implements Runnable, Closeable {
                 "crypt=" + this.crypt +
                 ", port=" + this.port +
                 '}';
-    }
-
-    /**
-     * Handler for creating accounts.
-     *
-     * @author VidTu
-     * @apiNote All methods in this class can be called from another thread
-     */
-    public interface CreateHandler {
-        /**
-         * Changes the authentication stage.
-         *
-         * @param stage New auth stage translation key
-         */
-        void stage(String stage);
-
-        /**
-         * Called when an authentication has performed successfully.
-         *
-         * @param account Created account
-         */
-        void success(MicrosoftAccount account);
-
-        /**
-         * Called when an authentication has failed.
-         *
-         * @param error Failure reason
-         */
-        void error(Throwable error);
     }
 }

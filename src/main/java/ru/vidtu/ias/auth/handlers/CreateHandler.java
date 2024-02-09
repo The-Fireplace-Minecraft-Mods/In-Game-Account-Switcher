@@ -17,50 +17,43 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
 
-package ru.vidtu.ias.config;
+package ru.vidtu.ias.auth.handlers;
+
+import ru.vidtu.ias.account.MicrosoftAccount;
 
 /**
- * Text alignment.
+ * Handler for creating accounts.
  *
  * @author VidTu
+ * @apiNote All methods in this class can be called from another thread
  */
-public enum TextAlign {
+public interface CreateHandler {
     /**
-     * Text is left-aligned.
-     */
-    LEFT("ias.config.textAlign.left"),
-
-    /**
-     * Text is center-aligned.
-     */
-    CENTER("ias.config.textAlign.center"),
-
-    /**
-     * Text is right-aligned.
-     */
-    RIGHT("ias.config.textAlign.right");
-
-    /**
-     * Alignment translation key.
-     */
-    private final String key;
-
-    /**
-     * Creates a new alignment.
+     * Gets the cancelled state.
      *
-     * @param key Alignment translation key
+     * @return Whether the authentication is cancelled
      */
-    TextAlign(String key) {
-        this.key = key;
-    }
+    boolean cancelled();
 
     /**
-     * Gets the translation key.
+     * Changes the authentication stage.
      *
-     * @return Translation key
+     * @param stage New auth stage translation key
+     * @param args  New auth stage translation args
      */
-    @Override
-    public String toString() {
-        return this.key;
-    }
+    void stage(String stage, Object... args);
+
+    /**
+     * Called when an authentication has performed successfully.
+     *
+     * @param account Created account
+     */
+    void success(MicrosoftAccount account);
+
+    /**
+     * Called when an authentication has failed.
+     *
+     * @param error Failure reason
+     */
+    void error(Throwable error);
 }

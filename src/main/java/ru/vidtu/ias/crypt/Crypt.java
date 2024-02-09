@@ -19,7 +19,8 @@
 
 package ru.vidtu.ias.crypt;
 
-import ru.vidtu.ias.utils.ProbableException;
+import ru.vidtu.ias.IAS;
+import ru.vidtu.ias.utils.exceptions.FriendlyException;
 
 import javax.crypto.AEADBadTagException;
 import javax.crypto.Cipher;
@@ -81,7 +82,7 @@ public sealed interface Crypt permits DummyCrypt, HardwareCrypt, PasswordCrypt {
             return switch (type) {
                 case "ias:dummy_crypt_v1" -> CompletableFuture.completedFuture(DummyCrypt.INSTANCE);
                 case "ias:hardware_crypt_v1" -> CompletableFuture.completedFuture(HardwareCrypt.INSTANCE);
-                case "ias:password_crypt_v1" -> password.get().thenApplyAsync(pass -> pass == null ? null : new PasswordCrypt(pass));
+                case "ias:password_crypt_v1" -> password.get().thenApplyAsync(pass -> pass == null ? null : new PasswordCrypt(pass), IAS.executor());
                 default -> CompletableFuture.failedFuture(new IllegalArgumentException("Unknown crypt type: " + type));
             };
         } catch (Throwable t) {
@@ -168,7 +169,7 @@ public sealed interface Crypt permits DummyCrypt, HardwareCrypt, PasswordCrypt {
                 return cipher.doFinal(encrypted);
             } catch (AEADBadTagException e) {
                 // Probable case - bad password.
-                throw new ProbableException("ias.error.decrypt", e);
+                throw new FriendlyException("Unable to do AES final decrypt.", e, "ias.error.decrypt");
             }
         } catch (Throwable t) {
             // Rethrow.

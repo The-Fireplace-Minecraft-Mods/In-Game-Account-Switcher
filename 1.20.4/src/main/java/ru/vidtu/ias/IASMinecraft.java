@@ -47,7 +47,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.vidtu.ias.account.Account;
+import ru.vidtu.ias.auth.LoginData;
 import ru.vidtu.ias.config.IASConfig;
 import ru.vidtu.ias.mixins.MinecraftAccessor;
 import ru.vidtu.ias.screen.AccountScreen;
@@ -297,7 +297,7 @@ public final class IASMinecraft {
      * @param data      Login data
      * @return Future for logging in
      */
-    public static CompletableFuture<Void> account(Minecraft minecraft, Account.LoginData data) {
+    public static CompletableFuture<Void> account(Minecraft minecraft, LoginData data) {
         // Check if not in-game.
         LOGGER.info("IAS: Received login request: {}", data);
         if (minecraft.player != null || minecraft.level != null || minecraft.getConnection() != null ||

@@ -32,9 +32,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.vidtu.ias.IAS;
 import ru.vidtu.ias.IASMinecraft;
-import ru.vidtu.ias.account.Account;
 import ru.vidtu.ias.account.MicrosoftAccount;
-import ru.vidtu.ias.utils.ProbableException;
+import ru.vidtu.ias.auth.LoginData;
+import ru.vidtu.ias.auth.handlers.LoginHandler;
+import ru.vidtu.ias.utils.exceptions.FriendlyException;
 
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
@@ -45,7 +46,7 @@ import java.util.function.Supplier;
  *
  * @author VidTu
  */
-final class LoginPopupScreen extends Screen implements Account.LoginHandler {
+final class LoginPopupScreen extends Screen implements LoginHandler {
     /**
      * Logger for this class.
      */
@@ -91,6 +92,15 @@ final class LoginPopupScreen extends Screen implements Account.LoginHandler {
     LoginPopupScreen(Screen parent) {
         super(Component.translatable("ias.login"));
         this.parent = parent;
+    }
+
+    @Override
+    public boolean cancelled() {
+        // Bruh.
+        assert this.minecraft != null;
+
+        // Cancelled if no longer displayed.
+        return this != this.minecraft.screen;
     }
 
     @Override
@@ -226,7 +236,7 @@ final class LoginPopupScreen extends Screen implements Account.LoginHandler {
     }
 
     @Override
-    public void stage(String stage) {
+    public void stage(String stage, Object... args) {
         // Bruh.
         assert this.minecraft != null;
 
@@ -234,7 +244,7 @@ final class LoginPopupScreen extends Screen implements Account.LoginHandler {
         if (this != this.minecraft.screen) return;
 
         // Flush the stage.
-        Component component = Component.translatable(stage).withStyle(ChatFormatting.YELLOW);
+        Component component = Component.translatable(stage, args).withStyle(ChatFormatting.YELLOW);
         synchronized (this.lock) {
             this.stage = component;
             this.label = null;
@@ -270,7 +280,7 @@ final class LoginPopupScreen extends Screen implements Account.LoginHandler {
     }
 
     @Override
-    public void success(Account.LoginData data, boolean changed) {
+    public void success(LoginData data, boolean changed) {
         // Bruh.
         assert this.minecraft != null;
 
@@ -332,8 +342,8 @@ final class LoginPopupScreen extends Screen implements Account.LoginHandler {
         if (this != this.minecraft.screen) return;
 
         // Flush the stage.
-        ProbableException probable = ProbableException.probableCause(error);
-        String key = probable != null ? Objects.requireNonNullElse(probable.getMessage(), "ias.error") : "ias.error";
+        FriendlyException probable = FriendlyException.friendlyInChain(error);
+        String key = probable != null ? probable.key() : "ias.error";
         Component component = Component.translatable(key).withStyle(ChatFormatting.RED);
         synchronized (this.lock) {
             this.stage = component;

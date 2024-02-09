@@ -21,7 +21,7 @@ package ru.vidtu.ias;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.vidtu.ias.auth.MSAuth;
+import ru.vidtu.ias.auth.microsoft.MSAuth;
 import ru.vidtu.ias.config.IASConfig;
 import ru.vidtu.ias.config.IASStorage;
 
@@ -48,6 +48,11 @@ public final class IAS {
      * IAS static Microsoft application ID.
      */
     public static final String CLIENT_ID = "54fd49e4-2103-4044-9603-2b028c814ec3";
+
+    /**
+     * Request timeout.
+     */
+    public static final Duration TIMEOUT = Duration.ofSeconds(Long.getLong("ias.timeout", 15L));
 
     /**
      * Logger for this class.
@@ -149,7 +154,7 @@ public final class IAS {
             try {
                 // Create the client.
                 HttpClient client = HttpClient.newBuilder()
-                        .connectTimeout(Duration.ofSeconds(10L))
+                        .connectTimeout(TIMEOUT)
                         .version(HttpClient.Version.HTTP_2)
                         .followRedirects(HttpClient.Redirect.NORMAL)
                         .executor(Runnable::run)
@@ -157,9 +162,10 @@ public final class IAS {
                         .build();
 
                 // Send the request.
-                HttpResponse<Stream<String>> response = client.send(HttpRequest.newBuilder(new URI("https://raw.githubusercontent.com/The-Fireplace-Minecraft-Mods/In-Game-Account-Switcher/main/.ias/disabled_v1"))
+                HttpResponse<Stream<String>> response = client.send(HttpRequest.newBuilder()
+                        .uri(new URI("https://raw.githubusercontent.com/The-Fireplace-Minecraft-Mods/In-Game-Account-Switcher/main/.ias/disabled_v1"))
                         .header("User-Agent", userAgent)
-                        .timeout(Duration.ofSeconds(10L))
+                        .timeout(TIMEOUT)
                         .GET()
                         .build(), HttpResponse.BodyHandlers.ofLines());
 
