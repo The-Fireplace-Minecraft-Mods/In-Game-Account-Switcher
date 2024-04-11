@@ -1,5 +1,5 @@
 plugins {
-    id("dev.architectury.loom") version "1.5-SNAPSHOT"
+    id("dev.architectury.loom") version "1.6-SNAPSHOT"
 }
 
 java.sourceCompatibility = JavaVersion.VERSION_17
@@ -36,7 +36,7 @@ dependencies {
     mappings(loom.officialMojangMappings())
 
     // Forge
-    forge("net.minecraftforge:forge:1.20.4-49.0.27")
+    forge("net.minecraftforge:forge:1.20.4-49.0.39")
 
     // Root
     compileOnly(shared)

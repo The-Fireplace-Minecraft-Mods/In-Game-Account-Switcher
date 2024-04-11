@@ -1,5 +1,5 @@
 plugins {
-    id("dev.architectury.loom") version "1.5-SNAPSHOT"
+    id("dev.architectury.loom") version "1.6-SNAPSHOT"
 }
 
 java.sourceCompatibility = JavaVersion.VERSION_17
@@ -34,7 +34,7 @@ dependencies {
 
     // Fabric
     modImplementation(libs.fabric.loader)
-    modImplementation("net.fabricmc.fabric-api:fabric-api:0.95.4+1.20.4")
+    modImplementation("net.fabricmc.fabric-api:fabric-api:0.96.11+1.20.4")
     modImplementation("com.terraformersmc:modmenu:9.0.0")
 
     // Root
