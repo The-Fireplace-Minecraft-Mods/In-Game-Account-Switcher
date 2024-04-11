@@ -148,10 +148,13 @@ public final class IAS {
         executor = Executors.newSingleThreadScheduledExecutor(r -> new Thread(r, "IAS Executor Thread"));
 
         // Perform initial loading.
-        if (!Boolean.getBoolean("ias.skipDisableScanning")) return;
-        executor.execute(() -> {
+        if (Boolean.getBoolean("ias.skipDisableScanning")) return;
+        executor.scheduleWithFixedDelay(() -> {
             // Perform scanning, if allowed.
             try {
+                // Skip if not allowed or already disabled.
+                if (disabled || Boolean.getBoolean("ias.skipDisableScanning")) return;
+
                 // Create the client.
                 HttpClient client = HttpClient.newBuilder()
                         .connectTimeout(TIMEOUT)
@@ -176,13 +179,12 @@ public final class IAS {
                 // Check the lines.
                 disabled = response.body().anyMatch(line -> {
                     line = line.strip();
-                    if ("ALL".equalsIgnoreCase(line)) return true;
-                    return version.equalsIgnoreCase(line);
+                    return "ALL".equalsIgnoreCase(line) || version.equalsIgnoreCase(line);
                 });
             } catch (Throwable ignored) {
                 // NO-OP
             }
-        });
+        }, 3L, 3L, TimeUnit.HOURS);
     }
 
     /**

@@ -42,7 +42,6 @@ import ru.vidtu.ias.screen.ConfigScreen;
  *
  * @author VidTu
  */
-@SuppressWarnings("MethodMayBeStatic") // <- Event API.
 @Mod("ias")
 public final class IASForge {
     @SuppressWarnings("ThisEscapedInObjectConstruction") // <- Minecraft Forge API.
