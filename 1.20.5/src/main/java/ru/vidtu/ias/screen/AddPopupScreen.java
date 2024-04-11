@@ -25,21 +25,18 @@ import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
-import org.lwjgl.glfw.GLFW;
 import ru.vidtu.ias.account.Account;
-import ru.vidtu.ias.config.IASConfig;
-import ru.vidtu.ias.crypt.DummyCrypt;
-import ru.vidtu.ias.crypt.HardwareCrypt;
 
+import java.time.Duration;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /**
- * Microsoft crypt type popup screen.
+ * Add popup screen.
  *
  * @author VidTu
  */
-final class MicrosoftCryptPopupScreen extends Screen {
+final class AddPopupScreen extends Screen {
     /**
      * Parent screen.
      */
@@ -51,18 +48,14 @@ final class MicrosoftCryptPopupScreen extends Screen {
     private final Consumer<Account> handler;
 
     /**
-     * No encryption.
-     */
-    private PopupButton plain;
-
-    /**
      * Creates a new add screen.
      *
      * @param parent  Parent screen
+     * @param edit    Whether the account is
      * @param handler Account handler
      */
-    MicrosoftCryptPopupScreen(Screen parent, Consumer<Account> handler) {
-        super(Component.translatable("ias.microsoft"));
+    AddPopupScreen(Screen parent, boolean edit, Consumer<Account> handler) {
+        super(Component.translatable(edit ? "ias.edit" : "ias.add"));
         this.parent = parent;
         this.handler = handler;
     }
@@ -77,37 +70,24 @@ final class MicrosoftCryptPopupScreen extends Screen {
             this.parent.init(this.minecraft, this.width, this.height);
         }
 
-        // Add password button.
-        PopupButton button = new PopupButton(this.width / 2 - 75, this.height / 2 - 24 - 12, 150, 20,
-                Component.translatable("ias.microsoft.password"), btn -> this.minecraft.setScreen(new MicrosoftPopupScreen(this.parent, this.handler, null)), Supplier::get);
-        button.setTooltip(Tooltip.create(Component.translatable("ias.microsoft.password.tip")));
-        button.setTooltipDelay(250);
+        // Add offline button.
+        PopupButton button = new PopupButton(this.width / 2 - 75, this.height / 2 - 24, 150, 20,
+                Component.translatable("ias.add.microsoft"), btn -> this.minecraft.setScreen(new MicrosoftCryptPopupScreen(this.parent, this.handler)), Supplier::get);
+        button.setTooltip(Tooltip.create(Component.translatable("ias.add.microsoft.tip")));
+        button.setTooltipDelay(Duration.ofMillis(250L));
         button.color(0.5F, 1.0F, 0.5F, true);
         this.addRenderableWidget(button);
 
-        // Add hardware button.
-        button = new PopupButton(this.width / 2 - 75, this.height / 2 - 12, 150, 20,
-                Component.translatable("ias.microsoft.hardware"), btn -> this.minecraft.setScreen(new MicrosoftPopupScreen(this.parent, this.handler, HardwareCrypt.INSTANCE)), Supplier::get);
-        button.setTooltip(Tooltip.create(Component.translatable("ias.microsoft.hardware.tip")));
-        button.setTooltipDelay(250);
-        button.color(1.0F, 1.0F, 0.5F, true);
+        // Add offline button.
+        button = new PopupButton(this.width / 2 - 75, this.height / 2, 150, 20,
+                Component.translatable("ias.add.offline"), btn -> this.minecraft.setScreen(new OfflinePopupScreen(this.parent, this.handler)), Supplier::get);
+        button.setTooltip(Tooltip.create(Component.translatable("ias.add.offline.tip")));
+        button.setTooltipDelay(Duration.ofMillis(250L));
+        button.color(1.0F, 0.5F, 0.5F, true);
         this.addRenderableWidget(button);
 
-        // Add plain button.
-        this.plain = new PopupButton(this.width / 2 - 75, this.height / 2 + 12, 150, 20,
-                Component.translatable("ias.microsoft.plain"), btn -> this.minecraft.setScreen(new MicrosoftPopupScreen(this.parent, this.handler, DummyCrypt.INSTANCE)), Supplier::get);
-        if (IASConfig.allowNoCrypt) {
-            this.plain.setTooltip(Tooltip.create(Component.translatable("ias.microsoft.plain.tip.off", Component.translatable("key.keyboard.left.alt"), GLFW.glfwGetKeyName(GLFW.GLFW_KEY_Y, GLFW.GLFW_KEY_UNKNOWN))));
-        } else {
-            this.plain.setTooltip(Tooltip.create(Component.translatable("ias.microsoft.plain.tip.no")));
-        }
-        this.plain.setTooltipDelay(250);
-        this.plain.color(1.0F, 0.5F, 0.5F, true);
-        this.plain.active = false;
-        this.addRenderableWidget(this.plain);
-
         // Add cancel button.
-        this.addRenderableWidget(new PopupButton(this.width / 2 - 75, this.height / 2 + 79 - 22, 150, 20,
+        this.addRenderableWidget(new PopupButton(this.width / 2 - 75, this.height / 2 + 49 - 22, 150, 20,
                 CommonComponents.GUI_CANCEL, btn -> this.onClose(), Supplier::get));
     }
 
@@ -131,7 +111,7 @@ final class MicrosoftCryptPopupScreen extends Screen {
         // Render the title.
         pose.pushPose();
         pose.scale(2.0F, 2.0F, 2.0F);
-        graphics.drawCenteredString(this.font, this.title, this.width / 4, this.height / 4 - 79 / 2, 0xFF_FF_FF_FF);
+        graphics.drawCenteredString(this.font, this.title, this.width / 4, this.height / 4 - 49 / 2, 0xFF_FF_FF_FF);
         pose.popPose();
     }
 
@@ -151,9 +131,9 @@ final class MicrosoftCryptPopupScreen extends Screen {
         // Render "form".
         int centerX = this.width / 2;
         int centerY = this.height / 2;
-        graphics.fill(centerX - 80, centerY - 80, centerX + 80, centerY + 80, 0xF8_20_20_30);
-        graphics.fill(centerX - 79, centerY - 81, centerX + 79, centerY - 80, 0xF8_20_20_30);
-        graphics.fill(centerX - 79, centerY + 80, centerX + 79, centerY + 81, 0xF8_20_20_30);
+        graphics.fill(centerX - 80, centerY - 50, centerX + 80, centerY + 50, 0xF8_20_20_30);
+        graphics.fill(centerX - 79, centerY - 51, centerX + 79, centerY - 50, 0xF8_20_20_30);
+        graphics.fill(centerX - 79, centerY + 50, centerX + 79, centerY + 51, 0xF8_20_20_30);
     }
 
     @Override
@@ -166,24 +146,7 @@ final class MicrosoftCryptPopupScreen extends Screen {
     }
 
     @Override
-    public boolean keyPressed(int key, int scan, int mods) {
-        // Enable plain.
-        if (key == GLFW.GLFW_KEY_Y && IASConfig.allowNoCrypt && this.plain != null && !this.plain.isActive() && Screen.hasAltDown()) {
-            // Activate button.
-            this.plain.active = true;
-
-            // Recolor button and update tooltip.
-            this.plain.setTooltip(Tooltip.create(Component.translatable("ias.microsoft.plain.tip.on")));
-            this.plain.setTooltipDelay(250);
-            this.plain.color(1.0F, 0.25F, 0.25F, false);
-        }
-
-        // Pass-through.
-        return super.keyPressed(key, scan, mods);
-    }
-
-    @Override
     public String toString() {
-        return "MicrosoftCryptPopupScreen{}";
+        return "AddPopupScreen{}";
     }
 }

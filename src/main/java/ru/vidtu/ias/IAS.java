@@ -190,7 +190,6 @@ public final class IAS {
     /**
      * Closes the IAS.
      */
-    @SuppressWarnings("VariableNotUsedInsideIf") // <- Used in declared methods.
     public static void close() {
         // Shutdown the executor.
         shutdown:

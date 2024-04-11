@@ -129,7 +129,6 @@ final class DeletePopupScreen extends Screen {
         this.label.renderCentered(graphics, this.width / 2, (this.height - this.label.getLineCount() * 9) / 2 - 4);
     }
 
-    @SuppressWarnings("VariableNotUsedInsideIf") // <- Background choosing.
     @Override
     public void renderBackground(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
         // Bruh.
@@ -139,10 +138,8 @@ final class DeletePopupScreen extends Screen {
         if (this.parent != null) {
             // Render gradient.
             graphics.fill(0, 0, this.width, this.height, 0x80_00_00_00);
-        } else if (this.minecraft.level != null) {
-            this.renderTransparentBackground(graphics);
         } else {
-            this.renderDirtBackground(graphics);
+            super.renderBackground(graphics, mouseX, mouseY, delta);
         }
 
         // Render "form".

@@ -21,41 +21,54 @@ package ru.vidtu.ias.screen;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.MultiLineLabel;
 import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.gui.navigation.CommonInputs;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import ru.vidtu.ias.account.Account;
 
-import java.util.function.Consumer;
+import java.time.Duration;
 import java.util.function.Supplier;
 
 /**
- * Add popup screen.
+ * Delete confirmation screen.
  *
  * @author VidTu
  */
-final class AddPopupScreen extends Screen {
+final class DeletePopupScreen extends Screen {
     /**
      * Parent screen.
      */
     private final Screen parent;
 
     /**
-     * Account handler.
+     * Confirmation prompt.
      */
-    private final Consumer<Account> handler;
+    private final Component prompt;
 
     /**
-     * Creates a new add screen.
+     * Callback handler.
+     */
+    private final Runnable handler;
+
+    /**
+     * Confirmation prompt label.
+     */
+    private MultiLineLabel label;
+
+    /**
+     * Creates a new delete confirmation screen.
      *
      * @param parent  Parent screen
-     * @param edit    Whether the account is
-     * @param handler Account handler
+     * @param account Account to delete
+     * @param handler Callback handler
      */
-    AddPopupScreen(Screen parent, boolean edit, Consumer<Account> handler) {
-        super(Component.translatable(edit ? "ias.edit" : "ias.add"));
+    DeletePopupScreen(Screen parent, Account account, Runnable handler) {
+        super(Component.translatable("ias.delete"));
         this.parent = parent;
+        this.prompt = Component.translatable("ias.delete.confirm", account.name());
         this.handler = handler;
     }
 
@@ -69,25 +82,25 @@ final class AddPopupScreen extends Screen {
             this.parent.init(this.minecraft, this.width, this.height);
         }
 
-        // Add offline button.
-        PopupButton button = new PopupButton(this.width / 2 - 75, this.height / 2 - 24, 150, 20,
-                Component.translatable("ias.add.microsoft"), btn -> this.minecraft.setScreen(new MicrosoftCryptPopupScreen(this.parent, this.handler)), Supplier::get);
-        button.setTooltip(Tooltip.create(Component.translatable("ias.add.microsoft.tip")));
-        button.setTooltipDelay(250);
-        button.color(0.5F, 1.0F, 0.5F, true);
-        this.addRenderableWidget(button);
+        // Add delete button.
+        PopupButton button = new PopupButton(this.width / 2 - 75, this.height / 2 + 49 - 22, 74, 20, this.title, btn -> {
+            // Delete.
+            this.handler.run();
 
-        // Add offline button.
-        button = new PopupButton(this.width / 2 - 75, this.height / 2, 150, 20,
-                Component.translatable("ias.add.offline"), btn -> this.minecraft.setScreen(new OfflinePopupScreen(this.parent, this.handler)), Supplier::get);
-        button.setTooltip(Tooltip.create(Component.translatable("ias.add.offline.tip")));
-        button.setTooltipDelay(250);
+            // Close.
+            this.onClose();
+        }, Supplier::get);
+        button.setTooltip(Tooltip.create(Component.translatable("ias.delete.hint", Component.translatable("key.keyboard.left.shift"))));
+        button.setTooltipDelay(Duration.ofMillis(250L));
         button.color(1.0F, 0.5F, 0.5F, true);
         this.addRenderableWidget(button);
 
         // Add cancel button.
-        this.addRenderableWidget(new PopupButton(this.width / 2 - 75, this.height / 2 + 49 - 22, 150, 20,
+        this.addRenderableWidget(new PopupButton(this.width / 2 + 1, this.height / 2 + 49 - 22, 74, 20,
                 CommonComponents.GUI_CANCEL, btn -> this.onClose(), Supplier::get));
+
+        // Build label.
+        this.label = MultiLineLabel.create(this.font, this.prompt, 150);
     }
 
     @Override
@@ -112,6 +125,9 @@ final class AddPopupScreen extends Screen {
         pose.scale(2.0F, 2.0F, 2.0F);
         graphics.drawCenteredString(this.font, this.title, this.width / 4, this.height / 4 - 49 / 2, 0xFF_FF_FF_FF);
         pose.popPose();
+
+        // Render the prompt.
+        this.label.renderCentered(graphics, this.width / 2, (this.height - this.label.getLineCount() * 9) / 2 - 4);
     }
 
     @Override
@@ -136,6 +152,21 @@ final class AddPopupScreen extends Screen {
     }
 
     @Override
+    public boolean keyPressed(int key, int scan, int mods) {
+        // Enter to confirm.
+        if (CommonInputs.selected(key)) {
+            // Delete.
+            this.handler.run();
+
+            // Close.
+            this.onClose();
+            return true;
+        }
+
+        return super.keyPressed(key, scan, mods);
+    }
+
+    @Override
     public void onClose() {
         // Bruh.
         assert this.minecraft != null;
@@ -146,6 +177,6 @@ final class AddPopupScreen extends Screen {
 
     @Override
     public String toString() {
-        return "AddPopupScreen{}";
+        return "DeletePopupScreen{}";
     }
 }

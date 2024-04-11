@@ -31,6 +31,7 @@ import ru.vidtu.ias.account.Account;
 import ru.vidtu.ias.account.OfflineAccount;
 import ru.vidtu.ias.config.IASConfig;
 
+import java.time.Duration;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -150,7 +151,7 @@ public final class OfflinePopupScreen extends Screen {
 
             // Tooltip.
             this.done.setTooltip(Tooltip.create(Component.translatable("ias.offline.nick.blank")));
-            this.done.setTooltipDelay(-1);
+            this.done.setTooltipDelay(Duration.ZERO);
 
             // Update color.
             this.done.color(1.0F, 0.5F, 0.5F, instant);
@@ -176,7 +177,7 @@ public final class OfflinePopupScreen extends Screen {
 
             // Tooltip.
             this.done.setTooltip(Tooltip.create(Component.translatable("ias.offline.nick.short", Component.translatable("key.keyboard.left.alt"))));
-            this.done.setTooltipDelay(-1);
+            this.done.setTooltipDelay(Duration.ZERO);
 
             // Don't process.
             return;
@@ -195,7 +196,7 @@ public final class OfflinePopupScreen extends Screen {
 
             // Tooltip.
             this.done.setTooltip(Tooltip.create(Component.translatable("ias.offline.nick.long", Component.translatable("key.keyboard.left.alt"))));
-            this.done.setTooltipDelay(-1);
+            this.done.setTooltipDelay(Duration.ZERO);
 
             // Don't process.
             return;
@@ -219,7 +220,7 @@ public final class OfflinePopupScreen extends Screen {
 
             // Tooltip.
             this.done.setTooltip(Tooltip.create(Component.translatable("ias.offline.nick.chars", Character.toString(c), Component.translatable("key.keyboard.left.alt"))));
-            this.done.setTooltipDelay(-1);
+            this.done.setTooltipDelay(Duration.ZERO);
 
             // Don't process.
             return;
