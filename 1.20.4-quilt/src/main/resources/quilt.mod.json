@@ -36,9 +36,9 @@
         "reason": "In-Game Account Switcher works only with Minecraft 1.20.3 or 1.20.4."
       },
       {
-        "id": "fabric-api",
-        "versions": ">=0.96.0",
-        "reason": "In-Game Account Switcher requires Fabric API to add its button into the GUI."
+        "id": "quilted_fabric_api",
+        "versions": "*",
+        "reason": "In-Game Account Switcher requires Quilted Fabric API (QFAPI) and Quilt Standard Libraries (QSL) to add its button into the GUI."
       },
       {
         "id": "modmenu",
@@ -53,7 +53,7 @@
       }
     ],
     "entrypoints": {
-      "client": "ru.vidtu.ias.IASQuilt",
+      "client_init": "ru.vidtu.ias.IASQuilt",
       "modmenu": "ru.vidtu.ias.IASModMenu"
     }
   },

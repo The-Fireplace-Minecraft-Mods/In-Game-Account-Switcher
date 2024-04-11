@@ -19,54 +19,45 @@
 
 package ru.vidtu.ias;
 
-import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
-import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
-import net.fabricmc.fabric.api.client.screen.v1.Screens;
-import net.fabricmc.loader.api.FabricLoader;
-import net.fabricmc.loader.api.ModContainer;
-import net.fabricmc.loader.api.Version;
-import net.fabricmc.loader.api.metadata.ModMetadata;
-import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.screens.TitleScreen;
-import net.minecraft.client.gui.screens.multiplayer.JoinMultiplayerScreen;
+import org.jetbrains.annotations.NotNull;
+import org.quiltmc.loader.api.ModContainer;
+import org.quiltmc.loader.api.ModMetadata;
+import org.quiltmc.loader.api.QuiltLoader;
+import org.quiltmc.loader.api.Version;
+import org.quiltmc.qsl.base.api.entrypoint.client.ClientModInitializer;
+import org.quiltmc.qsl.lifecycle.api.client.event.ClientLifecycleEvents;
+import org.quiltmc.qsl.screen.api.client.ScreenEvents;
 
 /**
  * Main IAS class for Quilt.
  *
  * @author VidTu
  */
-@SuppressWarnings("deprecation") // <- QSL is not out for 1.20.4.
 public final class IASQuilt implements ClientModInitializer {
     @Override
-    public void onInitializeClient() {
+    public void onInitializeClient(@NotNull ModContainer mod) {
         // Create the UA and initialize.
-        String modVersion = FabricLoader.getInstance().getModContainer("ias")
-                .map(ModContainer::getMetadata)
-                .map(ModMetadata::getVersion)
-                .map(Version::getFriendlyString)
+        String modVersion = mod.metadata().version().raw();
+        String loaderVersion = QuiltLoader.getModContainer("quilt_loader")
+                .map(ModContainer::metadata)
+                .map(ModMetadata::version)
+                .map(Version::raw)
                 .orElse("UNKNOWN");
-        String loaderVersion = FabricLoader.getInstance().getModContainer("quilt_loader")
-                .map(ModContainer::getMetadata)
-                .map(ModMetadata::getVersion)
-                .map(Version::getFriendlyString)
-                .orElse("UNKNOWN");
-        IASMinecraft.init(FabricLoader.getInstance().getGameDir(), FabricLoader.getInstance().getConfigDir(), "Quilt", modVersion, loaderVersion);
+        IASMinecraft.init(QuiltLoader.getGameDir(), QuiltLoader.getConfigDir(), "Quilt", modVersion, loaderVersion);
 
         // Register closer.
-        ClientLifecycleEvents.CLIENT_STOPPING.register(client -> IAS.close());
+        ClientLifecycleEvents.STOPPING.register(client -> IAS.close());
 
         // Register screen handlers.
-        ScreenEvents.AFTER_INIT.register((client, screen, width, height) -> {
+        ScreenEvents.AFTER_INIT.register((screen, client, firstInit) -> {
             // Init.
-            IASMinecraft.onInit(client, screen, Screens.getButtons(screen)::add);
+            IASMinecraft.onInit(client, screen, screen.getButtons()::add);
+        });
 
-            // Register drawer.
-            if (screen instanceof TitleScreen || screen instanceof JoinMultiplayerScreen) {
-                // Draw.
-                Font font = client.font;
-                ScreenEvents.afterRender(screen).register((scr, graphics, mouseX, mouseY, delta) -> IASMinecraft.onDraw(scr, font, graphics));
-            }
+        // Register drawer.
+        ScreenEvents.AFTER_RENDER.register((screen, graphics, mouseX, mouseY, tickDelta) -> {
+            // Draw.
+            IASMinecraft.onDraw(screen, screen.getClient().font, graphics);
         });
     }
 }
