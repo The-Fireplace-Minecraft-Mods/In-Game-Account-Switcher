@@ -9,8 +9,8 @@
       "description": "Allows you to change which account you are signed in to in-game without restarting Minecraft.",
       "license": "LGPL-3.0-or-later",
       "contributors": {
-        "The_Fireplace": "Original Mod Author",
         "VidTu": "Current Maintainer",
+        "The_Fireplace": "Original Mod Author",
         "The_BrainStone": "Contributor",
         "2xsaiko": "Contributor",
         "Elvm": "Contributor"

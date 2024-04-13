@@ -64,7 +64,7 @@ tasks.withType<Jar> {
         attributes(
                 "Specification-Title" to "In-Game Account Switcher",
                 "Specification-Version" to project.version,
-                "Specification-Vendor" to "The_Fireplace, VidTu",
+                "Specification-Vendor" to "VidTu",
                 "Implementation-Title" to "IAS-Fabric-1.20.5",
                 "Implementation-Version" to project.version,
                 "Implementation-Vendor" to "VidTu",

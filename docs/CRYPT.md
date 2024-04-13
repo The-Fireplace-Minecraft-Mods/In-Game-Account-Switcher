@@ -44,7 +44,7 @@ This *WON'T* protect you from any malware or accidental sharing.
 
 ## Technical Details
 
-No crypt accounts are stored as-is so there are no too much to say about them.
+No crypt accounts are stored as-is so there is not too much to say about them.
 Both password and hardware encryption uses this encryption/decryption method.
 
 1. Read (or create if hardware) the password.

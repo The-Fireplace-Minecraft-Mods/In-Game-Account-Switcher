@@ -3,7 +3,7 @@
 These page describes common errors with authentication. If the specific advice doesn't help, try either deleting and
 adding the account again into the mod or logging in via vanilla launcher.
 
-If this page doesn't help you, feel free to ask for help via [Discord]().
+If this page doesn't help you, feel free to ask for help via [Discord](https://discord.gg/TpU2nEkSPk).
 
 ### Unable to connect to Microsoft authentication servers...
 
