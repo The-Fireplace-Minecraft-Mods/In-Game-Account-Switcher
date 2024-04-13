@@ -34,7 +34,7 @@ dependencies {
 
     // Fabric
     modImplementation(libs.fabric.loader)
-    modImplementation("net.fabricmc.fabric-api:fabric-api:0.96.11+1.20.4")
+    modImplementation("net.fabricmc.fabric-api:fabric-api:0.97.0+1.20.4")
     modImplementation("com.terraformersmc:modmenu:9.0.0")
 
     // Root

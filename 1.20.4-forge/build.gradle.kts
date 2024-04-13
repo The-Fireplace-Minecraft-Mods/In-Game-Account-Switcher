@@ -36,7 +36,7 @@ dependencies {
     mappings(loom.officialMojangMappings())
 
     // Forge
-    forge("net.minecraftforge:forge:1.20.4-49.0.39")
+    forge("net.minecraftforge:forge:1.20.4-49.0.41")
 
     // Root
     compileOnly(shared)
