@@ -48,7 +48,7 @@ No crypt accounts are stored as-is so there is not too much to say about them.
 Both password and hardware encryption uses this encryption/decryption method.
 
 1. Read (or create if hardware) the password.
-2. Hash it using `PBKDF2WithHmacSHA512` with 500_000 iterations, 2048 bits (256 bytes) of salt to 256 bits (32 bytes) key.
+2. Hash it using `PBKDF2WithHmacSHA512` with 500_000 iterations, 1024 bits (128 bytes) of salt to 256 bits (32 bytes) key.
 3. Encrypt/decrypt it using `AES/GCM/NoPadding` with 128 bits (16 bytes) of IV and 128 bits (16 bytes) of authentication tag.
 4. Done.
 
