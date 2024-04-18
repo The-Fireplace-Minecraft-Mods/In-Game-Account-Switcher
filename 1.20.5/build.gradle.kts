@@ -19,7 +19,7 @@ repositories {
 
 dependencies {
     // Minecraft
-    minecraft("com.mojang:minecraft:1.20.5-pre4")
+    minecraft("com.mojang:minecraft:1.20.5-rc1")
     mappings(loom.officialMojangMappings())
 
     // Mixin
