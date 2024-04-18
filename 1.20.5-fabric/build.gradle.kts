@@ -29,12 +29,12 @@ loom {
 
 dependencies {
     // Minecraft
-    minecraft("com.mojang:minecraft:1.20.5-pre1")
+    minecraft("com.mojang:minecraft:1.20.5-pre4")
     mappings(loom.officialMojangMappings())
 
     // Fabric
     modImplementation(libs.fabric.loader)
-    modImplementation("net.fabricmc.fabric-api:fabric-api:0.96.15+1.20.5")
+    modImplementation("net.fabricmc.fabric-api:fabric-api:0.97.3+1.20.5")
     modImplementation("com.terraformersmc:modmenu:10.0.0-alpha.3")
 
     // Root

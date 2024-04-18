@@ -1,5 +1,5 @@
 [versions]
-fabric-loader = "0.15.9"
+fabric-loader = "0.15.10"
 mixin = "0.8.5"
 quilt-loader = "0.24.0"
 

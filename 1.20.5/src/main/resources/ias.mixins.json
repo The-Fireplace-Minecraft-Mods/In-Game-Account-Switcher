@@ -1,7 +1,7 @@
 {
   "required": true,
   "minVersion": "0.8",
-  "compatibilityLevel": "JAVA_17",
+  "compatibilityLevel": "JAVA_21",
   "package": "ru.vidtu.ias.mixins",
   "refmap": "ias.mixins.refmap.json",
   "client": [

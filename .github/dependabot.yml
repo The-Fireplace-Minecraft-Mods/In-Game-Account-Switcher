@@ -10,6 +10,58 @@ updates:
       interval: daily
     ignore:
       - dependency-name: "*minecraft*"
-      - dependency-name: "*fabric*"
-      - dependency-name: "*quilt*"
+      - dependency-name: "*fabric-api*"
+      - dependency-name: "*quilted-fabric-api*"
       - dependency-name: "*forge*"
+      - dependency-name: "*neoforge*"
+      - dependency-name: "*modmenu*"
+  - package-ecosystem: gradle
+    directory: '/1.20.4'
+    schedule:
+      interval: daily
+    ignore:
+      - dependency-name: "*minecraft*"
+  - package-ecosystem: gradle
+    directory: '/1.20.4-fabric'
+    schedule:
+      interval: daily
+    ignore:
+      - dependency-name: "*minecraft*"
+      - dependency-name: "*fabric-api*"
+      - dependency-name: "*modmenu*"
+  - package-ecosystem: gradle
+    directory: '/1.20.4-forge'
+    schedule:
+      interval: daily
+    ignore:
+      - dependency-name: "*minecraft*"
+      - dependency-name: "*forge*"
+  - package-ecosystem: gradle
+    directory: '/1.20.4-neoforge'
+    schedule:
+      interval: daily
+    ignore:
+      - dependency-name: "*minecraft*"
+      - dependency-name: "*neoforge*"
+  - package-ecosystem: gradle
+    directory: '/1.20.4-quilt'
+    schedule:
+      interval: daily
+    ignore:
+      - dependency-name: "*minecraft*"
+      - dependency-name: "*quilted-fabric-api*"
+      - dependency-name: "*modmenu*"
+  - package-ecosystem: gradle
+    directory: '/1.20.5'
+    schedule:
+      interval: daily
+    ignore:
+      - dependency-name: "*minecraft*"
+  - package-ecosystem: gradle
+    directory: '/1.20.5-fabric'
+    schedule:
+      interval: daily
+    ignore:
+      - dependency-name: "*minecraft*"
+      - dependency-name: "*fabric-api*"
+      - dependency-name: "*modmenu*"
