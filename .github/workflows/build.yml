@@ -1,0 +1,31 @@
+name: 'Build'
+on: [ pull_request, push, workflow_dispatch ]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Checkout'
+        uses: actions/checkout@v4
+      - name: 'Validate Gradle wrapper'
+        uses: gradle/actions/wrapper-validation@v3
+      - name: 'Setup JDK'
+        uses: actions/setup-java@v4
+        with:
+          java-version: 21
+          distribution: 'temurin'
+      - name: 'Make wrapper executable'
+        run: 'chmod +x ./gradlew'
+      - name: 'Setup Gradle'
+        uses: gradle/actions/setup-gradle@v3
+      - name: 'Build'
+        run: './gradlew -Dorg.gradle.daemon=false build --no-daemon'
+      - name: 'Upload artifacts'
+        uses: actions/upload-artifact@v4
+        with:
+          name: 'Artifacts'
+          path: |
+            1.20.4-fabric/build/libs/
+            1.20.4-quilt/build/libs/
+            1.20.4-forge/build/libs/
+            1.20.4-neoforge/build/libs/
+            1.20.5-fabric/build/libs/
