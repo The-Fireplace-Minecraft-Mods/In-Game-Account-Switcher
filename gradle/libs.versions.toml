@@ -1,7 +1,7 @@
 [versions]
 fabric-loader = "0.15.10"
 mixin = "0.8.5"
-quilt-loader = "0.24.0"
+quilt-loader = "0.25.0"
 
 [libraries]
 fabric-loader = { module = "net.fabricmc:fabric-loader", version.ref = "fabric-loader" }
