@@ -33,7 +33,7 @@ dependencies {
     minecraft("com.mojang:minecraft:1.20.4")
     mappings(loom.officialMojangMappings())
 
-    // Fabric
+    // Quilt
     modImplementation(libs.quilt.loader)
     modImplementation("org.quiltmc.quilted-fabric-api:quilted-fabric-api:9.0.0-alpha.8+0.97.0-1.20.4")
     modImplementation("com.terraformersmc:modmenu:9.0.0")
