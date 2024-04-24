@@ -24,7 +24,7 @@ config="ias.mixins.json"
 [[dependencies.ias]]
 modId = "neoforge"
 type = "required"
-versionRange = "20.5"
+versionRange = "20.5.0-beta,[20.5,20.6)"
 ordering = "NONE"
 side = "CLIENT"
 
