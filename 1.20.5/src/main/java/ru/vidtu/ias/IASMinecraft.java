@@ -130,6 +130,7 @@ public final class IASMinecraft {
     /**
      * Called on title screen initialization.
      *
+     * @param minecraft   Minecraft instance
      * @param screen      Target screen
      * @param buttonAdder Adder function
      */

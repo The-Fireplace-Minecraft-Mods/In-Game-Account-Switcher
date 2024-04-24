@@ -34,6 +34,7 @@ dependencies {
     mappings(loom.officialMojangMappings())
 
     // Quilt
+    modImplementation(libs.mixin) // <- Future me, test if this is still needed
     modImplementation(libs.quilt.loader)
     modImplementation("net.fabricmc.fabric-api:fabric-api:0.97.6+1.20.5")
     modImplementation("com.terraformersmc:modmenu:10.0.0-beta.1")
