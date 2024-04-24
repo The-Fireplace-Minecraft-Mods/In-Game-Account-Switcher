@@ -182,19 +182,19 @@ public final class MSAuthServer implements Runnable, Closeable {
             // Create the root handler.
             this.server.createContext("/", ex -> {
                 try {
+                    // Close if already requested.
+                    if (this.once) {
+                        LOGGER.debug("IAS: Closed non-once HTTP request to '/'.");
+                        ex.close();
+                        return;
+                    }
+
                     // Log it.
                     LOGGER.info("IAS: Requested HTTP to '/'.");
 
                     // Close and ignore if not localhost.
                     if (!ex.getRemoteAddress().getAddress().isLoopbackAddress()) {
                         LOGGER.warn("IAS: Closed not loopback HTTP request to '/'.");
-                        ex.close();
-                        return;
-                    }
-                    
-                    // Close if already requested.
-                    if (this.once) {
-                        LOGGER.warn("IAS: Closed non-once HTTP request to '/'.");
                         ex.close();
                         return;
                     }
