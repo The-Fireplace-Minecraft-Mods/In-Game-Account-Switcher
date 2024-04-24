@@ -161,7 +161,7 @@ public final class IASMinecraft {
                         int x1 = le.getX() - 4;
                         int y1 = le.getY() - 4;
                         int x2 = x1 + le.getWidth() + 8;
-                        int y2 = x2 + le.getHeight() + 8;
+                        int y2 = y1 + le.getHeight() + 8;
                         if (x < x1 || y < y1 || (x + 20) > x2 || (y + 20) > y2) continue;
 
                         // Otherwise move.
@@ -205,7 +205,7 @@ public final class IASMinecraft {
                         int x1 = le.getX() - 4;
                         int y1 = le.getY() - 4;
                         int x2 = x1 + le.getWidth() + 8;
-                        int y2 = x2 + le.getHeight() + 8;
+                        int y2 = y1 + le.getHeight() + 8;
                         if (x < x1 || y < y1 || (x + 20) > x2 || (y + 20) > y2) continue;
 
                         // Otherwise move.
