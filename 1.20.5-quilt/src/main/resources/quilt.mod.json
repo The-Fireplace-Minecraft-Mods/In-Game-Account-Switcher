@@ -32,8 +32,8 @@
       },
       {
         "id": "minecraft",
-        "versions": "1.20.5-rc.3",
-        "reason": "In-Game Account Switcher works only with Minecraft 1.20.5-rc3."
+        "versions": "1.20.5",
+        "reason": "In-Game Account Switcher works only with Minecraft 1.20.5."
       },
       {
         "id": "fabric-api",

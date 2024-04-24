@@ -6,25 +6,31 @@ java.sourceCompatibility = JavaVersion.VERSION_21
 java.targetCompatibility = JavaVersion.VERSION_21
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 group = "ru.vidtu.ias"
-base.archivesName = "IAS-Fabric-1.20.5"
+base.archivesName = "IAS-NeoForge-1.20.5"
 evaluationDependsOn(":1.20.5")
 val shared = project(":1.20.5")
 
-repositories {
-    mavenCentral()
-    maven("https://maven.fabricmc.net/")
-    maven("https://maven.terraformersmc.com/releases/")
-}
-
 loom {
     silentMojangMappingsLicense()
+    neoForge {
+         // Empty
+    }
     runs.named("client") {
         vmArgs("-XX:+IgnoreUnrecognizedVMOptions", "-Xmx2G", "-XX:+AllowEnhancedClassRedefinition", "-XX:HotswapAgent=fatjar", "-Dfabric.debug.disableClassPathIsolation=true")
+        programArgs("--mixin", "ias.mixins.json")
     }
     @Suppress("UnstableApiUsage")
     mixin {
+        useLegacyMixinAp = true
         defaultRefmapName = "ias.mixins.refmap.json"
     }
+}
+
+repositories {
+    mavenCentral()
+    maven("https://maven.architectury.dev/")
+    maven("https://maven.neoforged.net/releases/")
+    maven("https://maven.minecraftforge.net/")
 }
 
 dependencies {
@@ -32,10 +38,8 @@ dependencies {
     minecraft("com.mojang:minecraft:1.20.5")
     mappings(loom.officialMojangMappings())
 
-    // Fabric
-    modImplementation(libs.fabric.loader)
-    modImplementation("net.fabricmc.fabric-api:fabric-api:0.97.6+1.20.5")
-    modImplementation("com.terraformersmc:modmenu:10.0.0-beta.1")
+    // NeoForge
+    neoForge("net.neoforged:neoforge:20.5.0-beta")
 
     // Root
     compileOnly(shared)
@@ -52,7 +56,7 @@ tasks.withType<ProcessResources> {
     from(rootProject.sourceSets.main.get().resources)
     from(shared.sourceSets.main.get().resources)
     inputs.property("version", project.version)
-    filesMatching("fabric.mod.json") {
+    filesMatching("META-INF/mods.toml") {
         expand("version" to project.version)
     }
 }
@@ -65,7 +69,7 @@ tasks.withType<Jar> {
                 "Specification-Title" to "In-Game Account Switcher",
                 "Specification-Version" to project.version,
                 "Specification-Vendor" to "VidTu",
-                "Implementation-Title" to "IAS-Fabric-1.20.5",
+                "Implementation-Title" to "IAS-NeoForge-1.20.5",
                 "Implementation-Version" to project.version,
                 "Implementation-Vendor" to "VidTu",
                 "MixinConfigs" to "ias.mixins.json"

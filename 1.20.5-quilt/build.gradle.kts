@@ -30,13 +30,13 @@ loom {
 
 dependencies {
     // Minecraft
-    minecraft("com.mojang:minecraft:1.20.5-rc3")
+    minecraft("com.mojang:minecraft:1.20.5")
     mappings(loom.officialMojangMappings())
 
     // Quilt
     modImplementation(libs.quilt.loader)
-    modImplementation("net.fabricmc.fabric-api:fabric-api:0.97.5+1.20.5")
-    modImplementation("com.terraformersmc:modmenu:10.0.0-alpha.3")
+    modImplementation("net.fabricmc.fabric-api:fabric-api:0.97.6+1.20.5")
+    modImplementation("com.terraformersmc:modmenu:10.0.0-beta.1")
 
     // Root
     compileOnly(shared)
