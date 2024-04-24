@@ -67,8 +67,7 @@ tasks.withType<Jar> {
                 "Specification-Vendor" to "VidTu",
                 "Implementation-Title" to "IAS-Fabric-1.20.4",
                 "Implementation-Version" to project.version,
-                "Implementation-Vendor" to "VidTu",
-                "MixinConfigs" to "ias.mixins.json"
+                "Implementation-Vendor" to "VidTu"
         )
     }
 }
