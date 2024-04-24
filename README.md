@@ -5,10 +5,8 @@ without having to restart Minecraft.
 
 ## Dependencies
 
-**Fabric**: [Fabric API](https://modrinth.com/mod/fabric-api) (Required), [Mod Menu](https://modrinth.com/mod/modmenu) (
-Optional)  
-**Quilt**: [QFAPI/QSL](https://modrinth.com/mod/qsl) (Required), [Mod Menu](https://modrinth.com/mod/modmenu) (
-Optional)  
+**Fabric**: [Fabric API](https://modrinth.com/mod/fabric-api) (Required), [Mod Menu](https://modrinth.com/mod/modmenu) (Optional)  
+**Quilt**: [QFAPI/QSL](https://modrinth.com/mod/qsl) (Required), [Mod Menu](https://modrinth.com/mod/modmenu) (Optional)  
 **Forge**: (none)  
 **NeoForge**: (none)
 
@@ -25,7 +23,7 @@ Optional)
 **A**: Forge, Fabric, Quilt, NeoForge.
 
 **Q**: Which versions are supported?  
-**A**: Minecraft 1.20.4. There may be a backport to older versions in the future.
+**A**: Minecraft 1.20.4 and 1.20.5. There may be a backport to older versions (1.20.2, 1.20.1, 1.19.4, 1.19.2, 1.18.2) in the future.
 
 **Q**: Do I need Fabric API or Quilt Standard Libraries?  
 **A**: Yes, you'll need Fabric API for Fabric and QFAPI/QSL for Quilt.
