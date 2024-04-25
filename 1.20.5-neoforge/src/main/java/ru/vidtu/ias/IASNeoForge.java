@@ -66,7 +66,7 @@ public final class IASNeoForge {
                 .map(IModInfo::getVersion)
                 .map(ArtifactVersion::toString)
                 .orElse("UNKNOWN");
-        IASMinecraft.init(FMLPaths.GAMEDIR.get(), FMLPaths.GAMEDIR.get(), "NeoForge", modVersion, loaderVersion);
+        IASMinecraft.init(FMLPaths.GAMEDIR.get(), FMLPaths.CONFIGDIR.get(), "NeoForge", modVersion, loaderVersion);
     }
 
     // Register closer.
