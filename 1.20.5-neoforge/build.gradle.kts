@@ -39,7 +39,7 @@ dependencies {
     mappings(loom.officialMojangMappings())
 
     // NeoForge
-    neoForge("net.neoforged:neoforge:20.5.0-beta")
+    neoForge("net.neoforged:neoforge:20.5.3-beta")
 
     // Root
     compileOnly(shared)
