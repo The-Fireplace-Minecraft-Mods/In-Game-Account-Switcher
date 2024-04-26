@@ -61,6 +61,7 @@ final class PopupBox extends EditBox {
         super(font, x, y, width, height, inherit, title);
         this.enterAction = enterAction;
         this.secure = secure;
+        this.setBordered(false);
     }
 
     @Override

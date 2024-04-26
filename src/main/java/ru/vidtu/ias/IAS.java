@@ -145,7 +145,7 @@ public final class IAS {
         }
 
         // Create the executor.
-        executor = Executors.newSingleThreadScheduledExecutor(r -> new Thread(r, "IAS Executor Thread"));
+        executor = Executors.newSingleThreadScheduledExecutor(r -> new Thread(r, "IAS"));
 
         // Perform initial loading.
         if (Boolean.getBoolean("ias.skipDisableScanning")) return;

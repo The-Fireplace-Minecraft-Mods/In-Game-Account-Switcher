@@ -1,0 +1,6 @@
+- Finish backporting to 1.20.1.
+- Backport to 1.19.4, 1.18.2.
+- Possibly backport to 1.20.2 and 1.19.2.
+- Disallow empty/blank passwords for pass crypt.
+- Move hint about not using account password as crypt password below the field.
+- An option to disable crypt password echoing. (fully disable instead of replacing with "*")

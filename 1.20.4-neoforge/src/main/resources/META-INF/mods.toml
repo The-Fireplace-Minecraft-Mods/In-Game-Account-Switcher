@@ -24,6 +24,7 @@ config="ias.mixins.json"
 [[dependencies.ias]]
 modId = "neoforge"
 type = "required"
+mandatory = true
 versionRange = "[20.3,20.5)"
 ordering = "NONE"
 side = "CLIENT"
@@ -31,6 +32,7 @@ side = "CLIENT"
 [[dependencies.ias]]
 modId = "minecraft"
 type = "required"
+mandatory = true
 versionRange = "[1.20.3,1.20.4]"
 ordering = "NONE"
 side = "CLIENT"

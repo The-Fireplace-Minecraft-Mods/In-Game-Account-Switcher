@@ -20,13 +20,15 @@ Allows you to change which account you are signed in to in-game without restarti
 
 [[dependencies.ias]]
 modId = "forge"
+type = "required"
 mandatory = true
-versionRange = "[49,)"
+versionRange = "[49,50)"
 ordering = "NONE"
 side = "CLIENT"
 
 [[dependencies.ias]]
 modId = "minecraft"
+type = "required"
 mandatory = true
 versionRange = "[1.20.3,1.20.4]"
 ordering = "NONE"

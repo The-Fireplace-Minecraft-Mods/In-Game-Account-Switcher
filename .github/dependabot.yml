@@ -24,6 +24,47 @@ updates:
       - dependency-name: "*minecraft*"
       - dependency-name: "*architectury.loom*"
   - package-ecosystem: gradle
+    directory: '/1.20.1-fabric'
+    schedule:
+      interval: daily
+    ignore:
+      - dependency-name: "*minecraft*"
+      - dependency-name: "*fabric-api*"
+      - dependency-name: "*modmenu*"
+      - dependency-name: "*architectury.loom*"
+  - package-ecosystem: gradle
+    directory: '/1.20.1-forge'
+    schedule:
+      interval: daily
+    ignore:
+      - dependency-name: "*minecraft*"
+      - dependency-name: "*forge*"
+      - dependency-name: "*architectury.loom*"
+  - package-ecosystem: gradle
+    directory: '/1.20.1-neoforge'
+    schedule:
+      interval: daily
+    ignore:
+      - dependency-name: "*minecraft*"
+      - dependency-name: "*neoforge*"
+      - dependency-name: "*architectury.loom*"
+  - package-ecosystem: gradle
+    directory: '/1.20.1-quilt'
+    schedule:
+      interval: daily
+    ignore:
+      - dependency-name: "*minecraft*"
+      - dependency-name: "*quilted-fabric-api*"
+      - dependency-name: "*modmenu*"
+      - dependency-name: "*architectury.loom*"
+  - package-ecosystem: gradle
+    directory: '/1.20.4'
+    schedule:
+      interval: daily
+    ignore:
+      - dependency-name: "*minecraft*"
+      - dependency-name: "*architectury.loom*"
+  - package-ecosystem: gradle
     directory: '/1.20.4-fabric'
     schedule:
       interval: daily
@@ -65,6 +106,24 @@ updates:
       - dependency-name: "*minecraft*"
   - package-ecosystem: gradle
     directory: '/1.20.5-fabric'
+    schedule:
+      interval: daily
+    ignore:
+      - dependency-name: "*minecraft*"
+      - dependency-name: "*fabric-api*"
+      - dependency-name: "*modmenu*"
+      - dependency-name: "*architectury.loom*"
+  - package-ecosystem: gradle
+    directory: '/1.20.5-neoforge'
+    schedule:
+      interval: daily
+    ignore:
+      - dependency-name: "*minecraft*"
+      - dependency-name: "*fabric-api*"
+      - dependency-name: "*modmenu*"
+      - dependency-name: "*architectury.loom*"
+  - package-ecosystem: gradle
+    directory: '/1.20.5-quilt'
     schedule:
       interval: daily
     ignore:

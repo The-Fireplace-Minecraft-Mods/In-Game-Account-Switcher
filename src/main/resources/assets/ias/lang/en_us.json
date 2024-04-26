@@ -17,7 +17,7 @@
   "ias.accounts.tip.type": "Type",
   "ias.accounts.tip.type.offline": "Offline",
   "ias.accounts.tip.type.microsoft": "Microsoft",
-  "ias.accounts.tip.insecure": "This account is using insecure storage configuration (for things like Crypt) and is subject to compromising Click 'Edit' and change it to use secure properties.",
+  "ias.accounts.tip.insecure": "This account is using insecure storage configuration (for things like Crypt) and is subject to compromising. Click 'Edit' and change it to use secure properties.",
   "ias.login": "Login",
   "ias.login.initializing": "Initializing...",
   "ias.login.server": "Starting server...",

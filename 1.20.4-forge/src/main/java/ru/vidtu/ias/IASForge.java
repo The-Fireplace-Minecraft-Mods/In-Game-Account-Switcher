@@ -46,9 +46,15 @@ import ru.vidtu.ias.screen.ConfigScreen;
 public final class IASForge {
     @SuppressWarnings("ThisEscapedInObjectConstruction") // <- Minecraft Forge API.
     public IASForge() {
+        // New versions don't need the NeoForge/Forge difference check, because
+        // packages are different. The newest NeoForge version also
+        // change its location to "neoforge.mods.toml" from "mods.toml".
+
         // Not sure how long the Forge does have the "clientSideOnly" field in the TOML,
         // so I'll do an additional exception check here.
-        if (FMLEnvironment.dist != Dist.CLIENT) return;
+        if (FMLEnvironment.dist != Dist.CLIENT) {
+            throw new UnsupportedOperationException("IAS: You've tried to load the In-Game Account Switcher mod on a server. This won't work.");
+        }
 
         // Register events.
         MinecraftForge.EVENT_BUS.register(this);

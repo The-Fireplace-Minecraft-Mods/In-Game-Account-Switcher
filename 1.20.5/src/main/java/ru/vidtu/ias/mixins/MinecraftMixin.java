@@ -37,8 +37,17 @@ import ru.vidtu.ias.config.IASConfig;
  */
 @SuppressWarnings("DollarSignInName") // <- Mixin.
 @Mixin(Minecraft.class)
-public abstract class MinecraftMixin {
+public final class MinecraftMixin {
     @Shadow @Final private User user;
+
+    /**
+     * An instance of this class cannot be created.
+     *
+     * @throws AssertionError Always
+     */
+    private MinecraftMixin() {
+        throw new AssertionError("No instances.");
+    }
 
     @Inject(method = "createTitle", at = @At("RETURN"), cancellable = true)
     private void ias$createTitle$return(CallbackInfoReturnable<String> cir) {

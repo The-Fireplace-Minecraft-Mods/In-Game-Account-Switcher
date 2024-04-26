@@ -207,7 +207,7 @@ public final class MSAuthServer implements Runnable, Closeable {
 
                     // Get the auth page.
                     byte[] data;
-                    try (InputStream in = MSAuthServer.class.getResourceAsStream("/auth.html")) {
+                    try (InputStream in = MSAuthServer.class.getResourceAsStream("/ias_auth.html")) {
                         Objects.requireNonNull(in, "Auth page is null.");
 
                         // Read and replace the page data.
@@ -274,7 +274,7 @@ public final class MSAuthServer implements Runnable, Closeable {
 
                     // Get the auth page.
                     byte[] data;
-                    try (InputStream in = MSAuthServer.class.getResourceAsStream("/auth.html")) {
+                    try (InputStream in = MSAuthServer.class.getResourceAsStream("/ias_auth.html")) {
                         Objects.requireNonNull(in, "Auth page is null.");
 
                         // Read and replace the page data.

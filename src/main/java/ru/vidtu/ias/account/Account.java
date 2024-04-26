@@ -61,17 +61,6 @@ public sealed interface Account permits OfflineAccount, MicrosoftAccount {
     String name();
 
     /**
-     * Gets whether the UUID and name equal to this account UUID and name.
-     *
-     * @param uuid Target UUID
-     * @param name Target name
-     * @return Whether the profile is equal to this account
-     */
-    default boolean is(UUID uuid, String name) {
-        return this.uuid().equals(uuid) && this.name().equals(name);
-    }
-
-    /**
      * Whether the player can log in into this account.
      *
      * @return Whether the {@link #login(LoginHandler)} is appropriate
@@ -103,7 +92,8 @@ public sealed interface Account permits OfflineAccount, MicrosoftAccount {
     /**
      * Writes the account type and account to the output.
      *
-     * @param out Target output
+     * @param out     Target output
+     * @param account Target account
      * @throws IOException              On I/O error
      * @throws IllegalArgumentException On unknown account type
      */

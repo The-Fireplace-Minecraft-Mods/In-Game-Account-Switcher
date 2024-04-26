@@ -138,8 +138,18 @@ final class AccountEntry extends ObjectSelectionList.Entry<AccountEntry> {
 
         // Get the name color.
         User user = this.minecraft.getUser();
-        @SuppressWarnings("ConstantValue") // <- Mods break user non-nullness.
-        int color = user != null && this.account.is(user.getProfileId(), user.getName()) ? 0xFF_00_FF_00 : 0xFF_FF_FF_FF;
+        int color;
+        // Mods break user non-nullness.
+        //noinspection ConstantValue
+        if (user == null || !this.account.name().equalsIgnoreCase(user.getName())) {
+            color = 0xFF_FF_FF_FF;
+        } else if (this.account.uuid().equals(user.getProfileId())) {
+            color = 0xFF_00_FF_00;
+        } else if (this.account.name().equals(user.getName())) {
+            color = 0xFF_FF_FF_00;
+        } else {
+            color = 0xFF_FF_80_00;
+        }
 
         // Render name.
         graphics.drawString(this.minecraft.font, this.account.name(), x + 10, y, color);
@@ -183,20 +193,23 @@ final class AccountEntry extends ObjectSelectionList.Entry<AccountEntry> {
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        int right = this.list.getRowRight();
+        // Swap if selected.
+        if (this.equals(this.list.getFocused()) || this.equals(this.list.getSelected())) {
+            int right = this.list.getRowRight();
 
-        // Up widget.
-        int upX = right - 28;
-        if (mouseX >= upX && mouseX <= upX + 11) {
-            this.list.swapUp(this);
-            return true;
-        }
+            // Up widget.
+            int upX = right - 28;
+            if (mouseX >= upX && mouseX <= upX + 11) {
+                this.list.swapUp(this);
+                return true;
+            }
 
-        // Down widget.
-        int downX = right - 15;
-        if (mouseX >= downX && mouseX <= downX + 11) {
-            this.list.swapDown(this);
-            return true;
+            // Down widget.
+            int downX = right - 15;
+            if (mouseX >= downX && mouseX <= downX + 11) {
+                this.list.swapDown(this);
+                return true;
+            }
         }
 
         // Login on double click.
