@@ -17,7 +17,7 @@ updates:
       - dependency-name: "*modmenu*"
       - dependency-name: "*architectury.loom*"
   - package-ecosystem: gradle
-    directory: '/1.20.4'
+    directory: '/1.20.1'
     schedule:
       interval: daily
     ignore:
