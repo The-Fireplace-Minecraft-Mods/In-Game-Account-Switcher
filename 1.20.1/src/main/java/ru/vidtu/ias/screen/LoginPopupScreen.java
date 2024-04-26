@@ -35,6 +35,7 @@ import ru.vidtu.ias.IASMinecraft;
 import ru.vidtu.ias.account.MicrosoftAccount;
 import ru.vidtu.ias.auth.LoginData;
 import ru.vidtu.ias.auth.handlers.LoginHandler;
+import ru.vidtu.ias.config.IASConfig;
 import ru.vidtu.ias.utils.exceptions.FriendlyException;
 
 import java.util.Objects;
@@ -83,6 +84,11 @@ final class LoginPopupScreen extends Screen implements LoginHandler {
      * Password future.
      */
     private CompletableFuture<String> passFuture;
+
+    /**
+     * Crypt password tip.
+     */
+    private MultiLineLabel cryptPasswordTip;
 
     /**
      * Creates a new login screen.
@@ -136,7 +142,7 @@ final class LoginPopupScreen extends Screen implements LoginHandler {
                 this.passFuture.complete(value);
             }, true);
             this.password.setHint(Component.translatable("ias.password.hint").withStyle(ChatFormatting.DARK_GRAY));
-            this.password.setFormatter((s, i) -> FormattedCharSequence.forward("*".repeat(s.length()), Style.EMPTY));
+            this.password.setFormatter((s, i) -> IASConfig.passwordEchoing ? FormattedCharSequence.forward("*".repeat(s.length()), Style.EMPTY) : FormattedCharSequence.EMPTY);
             this.password.setMaxLength(32);
             this.addRenderableWidget(this.password);
 
@@ -153,6 +159,9 @@ final class LoginPopupScreen extends Screen implements LoginHandler {
             button.active = !this.password.getValue().isBlank();
             this.addRenderableWidget(button);
             this.password.setResponder(value -> button.active = !value.isBlank());
+
+            // Create tip.
+            this.cryptPasswordTip = MultiLineLabel.create(this.font, Component.translatable("ias.password.tip"), 320);
         }
     }
 
@@ -203,8 +212,12 @@ final class LoginPopupScreen extends Screen implements LoginHandler {
         pose.popPose();
 
         // Render password OR label.
-        if (this.passFuture != null && this.password != null) {
+        if (this.passFuture != null && this.password != null && this.cryptPasswordTip != null) {
             graphics.drawCenteredString(this.font, this.password.getMessage(), this.width / 2, this.height / 2 - 10 - 5, 0xFF_FF_FF_FF);
+            pose.pushPose();
+            pose.scale(0.5F, 0.5F, 0.5F);
+            this.cryptPasswordTip.renderCentered(graphics, this.width, this.height + 40, 10, 0xFF_FF_FF_00);
+            pose.popPose();
         } else {
             // Synchronize to prevent funny things.
             synchronized (this.lock) {
@@ -279,6 +292,7 @@ final class LoginPopupScreen extends Screen implements LoginHandler {
             // Remove future on completion.
             this.passFuture = null;
             this.password = null;
+            this.cryptPasswordTip = null;
 
             // Redraw.
             this.init(this.minecraft, this.width, this.height);

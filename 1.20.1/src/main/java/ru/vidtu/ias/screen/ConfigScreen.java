@@ -22,7 +22,6 @@ package ru.vidtu.ias.screen;
 import com.mojang.blaze3d.vertex.PoseStack;
 import it.unimi.dsi.fastutil.booleans.BooleanConsumer;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
@@ -369,6 +368,12 @@ public final class ConfigScreen extends Screen {
         // Nick Warns.
         box = new CallbackCheckbox(this.font, 5, 140, Component.translatable("ias.config.nickWarns"), IASConfig.nickWarns, value -> IASConfig.nickWarns = value);
         box.setTooltip(Tooltip.create(Component.translatable("ias.config.nickWarns.tip")));
+        box.setTooltipDelay(250);
+        this.addRenderableWidget(box);
+
+        // Password Echoing.
+        box = new CallbackCheckbox(this.font, 10 + box.getWidth(), 140, Component.translatable("ias.config.passwordEchoing"), IASConfig.passwordEchoing, value -> IASConfig.passwordEchoing = value);
+        box.setTooltip(Tooltip.create(Component.translatable("ias.config.passwordEchoing.tip")));
         box.setTooltipDelay(250);
         this.addRenderableWidget(box);
 

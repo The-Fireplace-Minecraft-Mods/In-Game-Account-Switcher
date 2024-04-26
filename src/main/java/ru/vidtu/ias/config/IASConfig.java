@@ -148,6 +148,11 @@ public final class IASConfig {
     public static ServerMode server = ServerMode.AVAILABLE;
 
     /**
+     * Crypt password echoing.
+     */
+    public static boolean passwordEchoing = true;
+
+    /**
      * Creates a new config for GSON.
      */
     private IASConfig() {

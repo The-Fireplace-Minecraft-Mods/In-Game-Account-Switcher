@@ -111,6 +111,11 @@ final class MicrosoftPopupScreen extends Screen implements CreateHandler {
     private PopupBox password;
 
     /**
+     * Crypt password tip.
+     */
+    private MultiLineLabel cryptPasswordTip;
+
+    /**
      * Creates a new login screen.
      *
      * @param parent  Parent screen
@@ -165,12 +170,13 @@ final class MicrosoftPopupScreen extends Screen implements CreateHandler {
                 // Complete the future.
                 this.crypt = new PasswordCrypt(value);
                 this.password = null;
+                this.cryptPasswordTip = null;
 
                 // Rebuild the UI.
                 this.init(this.minecraft, this.width, this.height);
             }, true);
             this.password.setHint(Component.translatable("ias.password.hint").withStyle(ChatFormatting.DARK_GRAY));
-            this.password.setFormatter((s, i) -> FormattedCharSequence.forward("*".repeat(s.length()), Style.EMPTY));
+            this.password.setFormatter((s, i) -> IASConfig.passwordEchoing ? FormattedCharSequence.forward("*".repeat(s.length()), Style.EMPTY) : null);
             this.password.setMaxLength(32);
             this.addRenderableWidget(this.password);
 
@@ -184,6 +190,7 @@ final class MicrosoftPopupScreen extends Screen implements CreateHandler {
                 // Complete the future.
                 this.crypt = new PasswordCrypt(value);
                 this.password = null;
+                this.cryptPasswordTip = null;
 
                 // Rebuild the UI.
                 this.init(this.minecraft, this.width, this.height);
@@ -191,6 +198,9 @@ final class MicrosoftPopupScreen extends Screen implements CreateHandler {
             enterPassword.active = !this.password.getValue().isBlank();
             this.addRenderableWidget(enterPassword);
             this.password.setResponder(value -> enterPassword.active = !value.isBlank());
+
+            // Create tip.
+            this.cryptPasswordTip = MultiLineLabel.create(this.font, Component.translatable("ias.password.tip"), 320);
         }
 
         // Try to open the server.
@@ -341,8 +351,12 @@ final class MicrosoftPopupScreen extends Screen implements CreateHandler {
         pose.popPose();
 
         // Render password OR label.
-        if (this.crypt == null && this.password != null) {
+        if (this.crypt == null && this.password != null && this.cryptPasswordTip != null) {
             graphics.drawCenteredString(this.font, this.password.getMessage(), this.width / 2, this.height / 2 - 10 - 5, 0xFF_FF_FF_FF);
+            pose.pushPose();
+            pose.scale(0.5F, 0.5F, 0.5F);
+            this.cryptPasswordTip.renderCentered(graphics, this.width, this.height + 40, 10, 0xFF_FF_FF_00);
+            pose.popPose();
         } else {
             // Synchronize to prevent funny things.
             synchronized (this.lock) {

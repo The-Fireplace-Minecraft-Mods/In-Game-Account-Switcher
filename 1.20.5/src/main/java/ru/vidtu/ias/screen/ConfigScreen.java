@@ -394,6 +394,16 @@ public final class ConfigScreen extends Screen {
         box.setTooltipDelay(Duration.ofMillis(250L));
         this.addRenderableWidget(box);
 
+        // Password Echoing.
+        box = Checkbox.builder(Component.translatable("ias.config.passwordEchoing"), this.font)
+                .pos(10 + box.getWidth(), 140)
+                .selected(IASConfig.passwordEchoing)
+                .onValueChange((cb, value) -> IASConfig.passwordEchoing = value)
+                .tooltip(Tooltip.create(Component.translatable("ias.config.passwordEchoing.tip")))
+                .build();
+        box.setTooltipDelay(Duration.ofMillis(250L));
+        this.addRenderableWidget(box);
+
         // Unexpected Pigs.
         box = Checkbox.builder(Component.translatable("ias.config.unexpectedPigs"), this.font)
                 .pos(5, 164)
