@@ -33,7 +33,7 @@ import org.lwjgl.glfw.GLFW;
  *
  * @author VidTu
  */
-final class PopupBox extends EditBox {
+public final class PopupBox extends EditBox {
     /**
      * Enter action.
      */
@@ -61,7 +61,6 @@ final class PopupBox extends EditBox {
         super(font, x, y, width, height, inherit, title);
         this.enterAction = enterAction;
         this.secure = secure;
-        this.setBordered(false);
     }
 
     @Override

@@ -159,9 +159,11 @@ final class MicrosoftPopupScreen extends Screen implements CreateHandler {
             this.password = new PopupBox(this.font, this.width / 2 - 100, this.height / 2 - 10 + 5, 178, 20, this.password, Component.translatable("ias.password"), () -> {
                 // Prevent NPE, just in case.
                 if (this.password == null || this.crypt != null) return;
+                String value = this.password.getValue();
+                if (value.isBlank()) return;
 
                 // Complete the future.
-                this.crypt = new PasswordCrypt(this.password.getValue());
+                this.crypt = new PasswordCrypt(value);
                 this.password = null;
 
                 // Rebuild the UI.
@@ -176,15 +178,19 @@ final class MicrosoftPopupScreen extends Screen implements CreateHandler {
             Button enterPassword = new PopupButton(this.width / 2 - 100 + 180, this.height / 2 - 10 + 5, 20, 20, Component.literal(">>"), btn -> {
                 // Prevent NPE, just in case.
                 if (this.password == null || this.crypt != null) return;
+                String value = this.password.getValue();
+                if (value.isBlank()) return;
 
                 // Complete the future.
-                this.crypt = new PasswordCrypt(this.password.getValue());
+                this.crypt = new PasswordCrypt(value);
                 this.password = null;
 
                 // Rebuild the UI.
                 this.init(this.minecraft, this.width, this.height);
             }, Supplier::get);
+            enterPassword.active = !this.password.getValue().isBlank();
             this.addRenderableWidget(enterPassword);
+            this.password.setResponder(value -> enterPassword.active = !value.isBlank());
         }
 
         // Try to open the server.
@@ -269,6 +275,13 @@ final class MicrosoftPopupScreen extends Screen implements CreateHandler {
             // Handle error.
             this.error(new RuntimeException("Unable to create server.", t));
         }
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+        if (this.password == null) return;
+        this.password.tick();
     }
 
     @Override

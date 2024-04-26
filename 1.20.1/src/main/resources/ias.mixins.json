@@ -5,6 +5,7 @@
   "package": "ru.vidtu.ias.mixins",
   "refmap": "ias.mixins.refmap.json",
   "client": [
+    "EditBoxMixin",
     "MinecraftAccessor",
     "MinecraftMixin"
   ],

@@ -41,6 +41,9 @@ public final class PasswordCrypt implements Crypt {
      * @param password Encryption password
      */
     public PasswordCrypt(String password) {
+        if (password.isBlank()) {
+            throw new IllegalArgumentException("Password is blank.");
+        }
         this.password = password;
     }
 

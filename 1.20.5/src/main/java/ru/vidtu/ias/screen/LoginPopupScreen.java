@@ -129,9 +129,11 @@ final class LoginPopupScreen extends Screen implements LoginHandler {
             this.password = new PopupBox(this.font, this.width / 2 - 100, this.height / 2 - 10 + 5, 178, 20, this.password, Component.translatable("ias.password"), () -> {
                 // Prevent NPE, just in case.
                 if (this.passFuture == null || this.password == null) return;
+                String value = this.password.getValue();
+                if (value.isBlank()) return;
 
                 // Complete the future.
-                this.passFuture.complete(this.password.getValue());
+                this.passFuture.complete(value);
             }, true);
             this.password.setHint(Component.translatable("ias.password.hint").withStyle(ChatFormatting.DARK_GRAY));
             this.password.setFormatter((s, i) -> FormattedCharSequence.forward("*".repeat(s.length()), Style.EMPTY));
@@ -139,13 +141,18 @@ final class LoginPopupScreen extends Screen implements LoginHandler {
             this.addRenderableWidget(this.password);
 
             // Add enter password button.
-            this.addRenderableWidget(new PopupButton(this.width / 2 - 100 + 180, this.height / 2 - 10 + 5, 20, 20, Component.literal(">>"), btn -> {
+            PopupButton button = new PopupButton(this.width / 2 - 100 + 180, this.height / 2 - 10 + 5, 20, 20, Component.literal(">>"), btn -> {
                 // Prevent NPE, just in case.
                 if (this.passFuture == null || this.password == null) return;
+                String value = this.password.getValue();
+                if (value.isBlank()) return;
 
                 // Complete the future.
-                this.passFuture.complete(this.password.getValue());
-            }, Supplier::get));
+                this.passFuture.complete(value);
+            }, Supplier::get);
+            button.active = !this.password.getValue().isBlank();
+            this.addRenderableWidget(button);
+            this.password.setResponder(value -> button.active = !value.isBlank());
         }
     }
 

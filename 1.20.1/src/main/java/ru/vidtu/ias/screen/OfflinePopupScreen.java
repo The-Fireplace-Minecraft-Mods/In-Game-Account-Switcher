@@ -233,6 +233,12 @@ public final class OfflinePopupScreen extends Screen {
     }
 
     @Override
+    public void tick() {
+        super.tick();
+        this.name.tick();
+    }
+
+    @Override
     public boolean keyPressed(int key, int scan, int mods) {
         boolean res = super.keyPressed(key, scan, mods);
         if (key == GLFW.GLFW_KEY_LEFT_ALT || key == GLFW.GLFW_KEY_RIGHT_ALT) {
