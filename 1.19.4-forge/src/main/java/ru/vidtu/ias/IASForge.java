@@ -19,7 +19,6 @@
 
 package ru.vidtu.ias;
 
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.ConfigScreenHandler;
@@ -39,27 +38,14 @@ import org.apache.maven.artifact.versioning.ArtifactVersion;
 import ru.vidtu.ias.screen.ConfigScreen;
 
 /**
- * Main IAS class for NeoForge.
+ * Main IAS class for Forge.
  *
  * @author VidTu
  */
 @Mod("ias")
-public final class IASNeoForge {
+public final class IASForge {
     @SuppressWarnings("ThisEscapedInObjectConstruction") // <- Minecraft Forge API.
-    public IASNeoForge() {
-        // Check for plain Forge.
-        boolean allowOnForge = Boolean.getBoolean("ias.allowNeoForgeVersionOnForge");
-        if (!allowOnForge) {
-            String forgeModName = ModList.get().getModContainerById("forge")
-                    .map(ModContainer::getModInfo)
-                    .map(IModInfo::getDisplayName)
-                    .orElse("UNKNOWN");
-            boolean isProbablyMcForge = "forge".equalsIgnoreCase(forgeModName);
-            if (isProbablyMcForge) {
-                throw new IllegalStateException("IAS: You've tried to use NeoForge version of the In-Game Account Switcher mod with plain Forge. This is not supported. The IAS mod has its own separate Forge version, use that one. If you still want to use NeoForge version on Forge without any support, add '-Dias.allowNeoForgeVersionOnForge=true' to your game JVM start-up flags.");
-            }
-        }
-
+    public IASForge() {
         // Not sure how long the Forge does have the "clientSideOnly" field in the TOML,
         // so I'll do an additional exception check here.
         if (FMLEnvironment.dist != Dist.CLIENT) {
@@ -70,7 +56,7 @@ public final class IASNeoForge {
         MinecraftForge.EVENT_BUS.register(this);
 
         // Register various display tests and config hooks.
-        ModLoadingContext.get().registerExtensionPoint(IExtensionPoint.DisplayTest.class, () -> new IExtensionPoint.DisplayTest(() -> "", (version, server) -> true));
+        ModLoadingContext.get().registerDisplayTest(IExtensionPoint.DisplayTest.IGNORE_ALL_VERSION);
         ModLoadingContext.get().registerExtensionPoint(ConfigScreenHandler.ConfigScreenFactory.class, () -> new ConfigScreenHandler.ConfigScreenFactory((minecraft, screen) -> new ConfigScreen(screen)));
 
         // Create the UA and initialize.
@@ -79,12 +65,12 @@ public final class IASNeoForge {
                 .map(IModInfo::getVersion)
                 .map(ArtifactVersion::toString)
                 .orElse("UNKNOWN");
-        String loaderVersion = ModList.get().getModContainerById("neoforge")
+        String loaderVersion = ModList.get().getModContainerById("forge")
                 .map(ModContainer::getModInfo)
                 .map(IModInfo::getVersion)
                 .map(ArtifactVersion::toString)
                 .orElse("UNKNOWN");
-        IASMinecraft.init(FMLPaths.GAMEDIR.get(), FMLPaths.CONFIGDIR.get(), "NeoForge", modVersion, loaderVersion);
+        IASMinecraft.init(FMLPaths.GAMEDIR.get(), FMLPaths.CONFIGDIR.get(), "Forge", modVersion, loaderVersion);
     }
 
     // Register closer.
@@ -107,6 +93,6 @@ public final class IASNeoForge {
     public void onScreenDraw(ScreenEvent.Render.Post event) {
         // Draw.
         Screen screen = event.getScreen();
-        IASMinecraft.onDraw(screen, screen.getMinecraft().font, event.getGuiGraphics());
+        IASMinecraft.onDraw(screen, screen.getMinecraft().font, event.getPoseStack());
     }
 }

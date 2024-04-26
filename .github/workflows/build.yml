@@ -27,6 +27,9 @@ jobs:
         with:
           name: 'Artifacts'
           path: |
+            1.19.4-fabric/build/libs/
+            1.19.4-quilt/build/libs/
+            1.19.4-forge/build/libs/
             1.20.1-fabric/build/libs/
             1.20.1-quilt/build/libs/
             1.20.1-forge/build/libs/
