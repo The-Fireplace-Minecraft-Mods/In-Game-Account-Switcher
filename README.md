@@ -23,9 +23,9 @@ without having to restart Minecraft.
 **A**: Forge, Fabric, Quilt, NeoForge.
 
 **Q**: Which versions are supported?  
-**A**: Minecraft 1.20.1, 1.20.4, 1.20.5. There may be a port to other versions (1.20.2, 1.19.4, 1.19.2, 1.18.2) in the
-future. There's little to no chance newer version of this mod will be ported to versions prior to 1.18 (e.g. 1.16.5,
-1.12.2, 1.8.9), due to its reliance on Java 17.
+**A**: Minecraft 1.18.2, 1.19.4, 1.20.1, 1.20.3, 1.20.4, 1.20.5, 1.20.6. There may be a port to other versions (1.20.2,
+1.19.2) in the future. There's little to no chance newer version of this mod will be ported to versions prior to 1.18
+(e.g. 1.16.5, 1.12.2, 1.8.9), due to its reliance on Java 17 code.
 
 **Q**: Do I need Fabric API or Quilt Standard Libraries?  
 **A**: Yes, you'll need Fabric API for Fabric and QFAPI/QSL for Quilt.

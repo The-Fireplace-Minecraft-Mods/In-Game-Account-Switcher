@@ -35,11 +35,11 @@ repositories {
 
 dependencies {
     // Minecraft
-    minecraft("com.mojang:minecraft:1.20.5")
+    minecraft("com.mojang:minecraft:1.20.6")
     mappings(loom.officialMojangMappings())
 
     // NeoForge
-    neoForge("net.neoforged:neoforge:20.5.21-beta")
+    neoForge("net.neoforged:neoforge:20.6.2-beta")
 
     // Root
     compileOnly(shared)

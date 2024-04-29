@@ -170,13 +170,13 @@ updates:
       - dependency-name: "*modmenu*"
       - dependency-name: "*architectury.loom*"
   - package-ecosystem: gradle
-    directory: '/1.20.5'
+    directory: '/1.20.6'
     schedule:
       interval: daily
     ignore:
       - dependency-name: "*minecraft*"
   - package-ecosystem: gradle
-    directory: '/1.20.5-fabric'
+    directory: '/1.20.6-fabric'
     schedule:
       interval: daily
     ignore:
@@ -185,7 +185,7 @@ updates:
       - dependency-name: "*modmenu*"
       - dependency-name: "*architectury.loom*"
   - package-ecosystem: gradle
-    directory: '/1.20.5-neoforge'
+    directory: '/1.20.6-neoforge'
     schedule:
       interval: daily
     ignore:
@@ -193,7 +193,7 @@ updates:
       - dependency-name: "*neoforge*"
       - dependency-name: "*architectury.loom*"
   - package-ecosystem: gradle
-    directory: '/1.20.5-quilt'
+    directory: '/1.20.6-quilt'
     schedule:
       interval: daily
     ignore:
