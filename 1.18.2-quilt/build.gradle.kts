@@ -6,43 +6,44 @@ java.sourceCompatibility = JavaVersion.VERSION_17
 java.targetCompatibility = JavaVersion.VERSION_17
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 group = "ru.vidtu.ias"
-base.archivesName = "IAS-NeoForge-1.20.1"
-evaluationDependsOn(":1.20.1")
-val shared = project(":1.20.1")
+base.archivesName = "IAS-Quilt-1.18.2"
+evaluationDependsOn(":1.18.2")
+val shared = project(":1.18.2")
+
+repositories {
+    mavenCentral()
+    maven("https://maven.quiltmc.org/repository/release/")
+    maven("https://maven.fabricmc.net/")
+    maven("https://maven.terraformersmc.com/releases/")
+    maven("https://api.modrinth.com/maven/")
+}
 
 loom {
     silentMojangMappingsLicense()
-    forge { // <- NeoForge in 1.20.1 is a fork of Forge, so we're using Forge platform.
-         // Empty
-    }
     runs.named("client") {
         vmArgs("-XX:+IgnoreUnrecognizedVMOptions", "-Xmx2G", "-XX:+AllowEnhancedClassRedefinition", "-XX:HotswapAgent=fatjar", "-Dfabric.debug.disableClassPathIsolation=true")
-        programArgs("--mixin", "ias.mixins.json")
     }
     @Suppress("UnstableApiUsage")
     mixin {
-        useLegacyMixinAp = true
         defaultRefmapName = "ias.mixins.refmap.json"
     }
 }
 
-repositories {
-    mavenCentral()
-    maven("https://maven.architectury.dev/")
-    maven("https://maven.neoforged.net/releases/")
-    maven("https://maven.minecraftforge.net/")
-}
-
 dependencies {
     // Minecraft
-    minecraft("com.mojang:minecraft:1.20.1")
+    minecraft("com.mojang:minecraft:1.18.2")
     mappings(loom.officialMojangMappings())
 
-    // NeoForge
-    forge("net.neoforged:forge:1.20.1-47.1.105") // <- NeoForge in 1.20.1 is a fork of Forge, so we're using Forge platform.
+    // Quilt
+    modImplementation(libs.quilt.loader)
+    modImplementation("org.quiltmc.quilted-fabric-api:quilted-fabric-api:1.0.0-beta.28+0.67.0-1.18.2")
+    modImplementation("com.terraformersmc:modmenu:3.2.5")
 
     // Root
     compileOnly(shared)
+
+    // Testing
+    runtimeOnly("maven.modrinth:lazydfu:0.1.2")
 }
 
 tasks.withType<JavaCompile> {
@@ -56,7 +57,7 @@ tasks.withType<ProcessResources> {
     from(rootProject.sourceSets.main.get().resources)
     from(shared.sourceSets.main.get().resources)
     inputs.property("version", project.version)
-    filesMatching("META-INF/mods.toml") {
+    filesMatching("quilt.mod.json") {
         expand("version" to project.version)
     }
 }
@@ -69,10 +70,9 @@ tasks.withType<Jar> {
                 "Specification-Title" to "In-Game Account Switcher",
                 "Specification-Version" to project.version,
                 "Specification-Vendor" to "VidTu",
-                "Implementation-Title" to "IAS-NeoForge-1.20.1",
+                "Implementation-Title" to "IAS-Quilt-1.18.2",
                 "Implementation-Version" to project.version,
-                "Implementation-Vendor" to "VidTu",
-                "MixinConfigs" to "ias.mixins.json"
+                "Implementation-Vendor" to "VidTu"
         )
     }
 }

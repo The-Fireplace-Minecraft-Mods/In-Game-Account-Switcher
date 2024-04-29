@@ -1,0 +1,58 @@
+{
+  "schemaVersion": 1,
+  "id": "ias",
+  "version": "${version}",
+  "name": "In-Game Account Switcher",
+  "description": "Allows you to change which account you are signed in to in-game without restarting Minecraft.",
+  "authors": [
+    "VidTu"
+  ],
+  "contributors": [
+    "The_Fireplace",
+    "The_BrainStone",
+    "2xsaiko",
+    "Elvm"
+  ],
+  "contact": {
+    "homepage": "https://modrinth.com/mod/in-game-account-switcher",
+    "sources": "https://github.com/The-Fireplace-Minecraft-Mods/In-Game-Account-Switcher",
+    "issues": "https://github.com/The-Fireplace-Minecraft-Mods/In-Game-Account-Switcher/issues",
+    "discord": "https://discord.gg/TpU2nEkSPk"
+  },
+  "license": "LGPL-3.0-or-later",
+  "icon": "ias.png",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "ru.vidtu.ias.IASFabric"
+    ],
+    "modmenu": [
+      "ru.vidtu.ias.IASModMenu"
+    ]
+  },
+  "mixins": [
+    "ias.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.15.0",
+    "minecraft": ">=1.20.5 <=1.20.6",
+    "fabric-api": ">=0.97.0",
+    "java": ">=21"
+  },
+  "recommends": {
+    "modmenu": ">=10.0.0"
+  },
+  "custom": {
+    "modmenu": {
+      "links": {
+        "modmenu.modrinth": "https://modrinth.com/mod/in-game-account-switcher",
+        "modmenu.curseforge": "https://curseforge.com/minecraft/mc-mods/in-game-account-switcher",
+        "modmenu.github_releases": "https://github.com/The-Fireplace-Minecraft-Mods/In-Game-Account-Switcher/releases",
+        "modmenu.discord": "https://discord.gg/TpU2nEkSPk",
+        "ias.help.crypt": "https://github.com/The-Fireplace-Minecraft-Mods/In-Game-Account-Switcher/blob/main/docs/CRYPT.md",
+        "ias.help.errors": "https://github.com/The-Fireplace-Minecraft-Mods/In-Game-Account-Switcher/blob/main/docs/ERRORS.md",
+        "ias.help.stolen": "https://github.com/The-Fireplace-Minecraft-Mods/In-Game-Account-Switcher/blob/main/docs/STOLEN.md"
+      }
+    }
+  }
+}

@@ -8,7 +8,7 @@ clientSideOnly = true
 modId = "ias"
 version = "${version}"
 displayName = "In-Game Account Switcher"
-updateJSONURL = "https://raw.githubusercontent.com/The-Fireplace-Minecraft-Mods/In-Game-Account-Switcher/main/updater-neoforge.json"
+updateJSONURL = "https://raw.githubusercontent.com/The-Fireplace-Minecraft-Mods/In-Game-Account-Switcher/main/updater-forge.json"
 displayURL = "https://modrinth.com/mod/in-game-account-switcher"
 logoFile = "ias.png"
 credits = "The_Fireplace, The_BrainStone, 2xsaiko, Elvm"
@@ -18,14 +18,11 @@ description = '''
 Allows you to change which account you are signed in to in-game without restarting Minecraft.
 '''
 
-[[mixins]]
-config="ias.mixins.json"
-
 [[dependencies.ias]]
-modId = "neoforge"
+modId = "forge"
 type = "required"
 mandatory = true
-versionRange = "[20.3,20.5)"
+versionRange = "[40,41)"
 ordering = "NONE"
 side = "CLIENT"
 
@@ -33,6 +30,6 @@ side = "CLIENT"
 modId = "minecraft"
 type = "required"
 mandatory = true
-versionRange = "[1.20.3,1.20.4]"
+versionRange = "1.18.2"
 ordering = "NONE"
 side = "CLIENT"

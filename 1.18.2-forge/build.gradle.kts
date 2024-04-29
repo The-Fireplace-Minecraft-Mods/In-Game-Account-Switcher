@@ -6,22 +6,20 @@ java.sourceCompatibility = JavaVersion.VERSION_17
 java.targetCompatibility = JavaVersion.VERSION_17
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 group = "ru.vidtu.ias"
-base.archivesName = "IAS-NeoForge-1.20.1"
-evaluationDependsOn(":1.20.1")
-val shared = project(":1.20.1")
+base.archivesName = "IAS-Forge-1.18.2"
+evaluationDependsOn(":1.18.2")
+val shared = project(":1.18.2")
 
 loom {
     silentMojangMappingsLicense()
-    forge { // <- NeoForge in 1.20.1 is a fork of Forge, so we're using Forge platform.
-         // Empty
+    forge {
+        mixinConfigs = setOf("ias.mixins.json")
     }
     runs.named("client") {
         vmArgs("-XX:+IgnoreUnrecognizedVMOptions", "-Xmx2G", "-XX:+AllowEnhancedClassRedefinition", "-XX:HotswapAgent=fatjar", "-Dfabric.debug.disableClassPathIsolation=true")
-        programArgs("--mixin", "ias.mixins.json")
     }
     @Suppress("UnstableApiUsage")
     mixin {
-        useLegacyMixinAp = true
         defaultRefmapName = "ias.mixins.refmap.json"
     }
 }
@@ -29,17 +27,16 @@ loom {
 repositories {
     mavenCentral()
     maven("https://maven.architectury.dev/")
-    maven("https://maven.neoforged.net/releases/")
     maven("https://maven.minecraftforge.net/")
 }
 
 dependencies {
     // Minecraft
-    minecraft("com.mojang:minecraft:1.20.1")
+    minecraft("com.mojang:minecraft:1.18.2")
     mappings(loom.officialMojangMappings())
 
-    // NeoForge
-    forge("net.neoforged:forge:1.20.1-47.1.105") // <- NeoForge in 1.20.1 is a fork of Forge, so we're using Forge platform.
+    // Forge
+    forge("net.minecraftforge:forge:1.18.2-40.2.18")
 
     // Root
     compileOnly(shared)
@@ -69,7 +66,7 @@ tasks.withType<Jar> {
                 "Specification-Title" to "In-Game Account Switcher",
                 "Specification-Version" to project.version,
                 "Specification-Vendor" to "VidTu",
-                "Implementation-Title" to "IAS-NeoForge-1.20.1",
+                "Implementation-Title" to "IAS-Forge-1.18.2",
                 "Implementation-Version" to project.version,
                 "Implementation-Vendor" to "VidTu",
                 "MixinConfigs" to "ias.mixins.json"

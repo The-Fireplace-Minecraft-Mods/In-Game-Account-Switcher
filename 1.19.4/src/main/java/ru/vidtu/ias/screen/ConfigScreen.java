@@ -20,11 +20,8 @@
 package ru.vidtu.ias.screen;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import it.unimi.dsi.fastutil.booleans.BooleanConsumer;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.components.Checkbox;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.AlertScreen;
@@ -39,6 +36,7 @@ import ru.vidtu.ias.IAS;
 import ru.vidtu.ias.config.IASConfig;
 import ru.vidtu.ias.config.ServerMode;
 import ru.vidtu.ias.config.TextAlign;
+import ru.vidtu.ias.legacy.LegacyCheckbox;
 import ru.vidtu.ias.utils.Expression;
 
 import java.util.Objects;
@@ -132,7 +130,7 @@ public final class ConfigScreen extends Screen {
         }
 
         // Title Text.
-        CallbackCheckbox box = new CallbackCheckbox(this.font, 5, 20, Component.translatable("ias.config.titleText"), IASConfig.titleText, value -> {
+        LegacyCheckbox box = new LegacyCheckbox(this.font, 5, 20, Component.translatable("ias.config.titleText"), IASConfig.titleText, value -> {
             IASConfig.titleText = value;
             this.titleTextX.active = value;
             this.titleTextY.active = value;
@@ -194,7 +192,7 @@ public final class ConfigScreen extends Screen {
         this.addRenderableWidget(this.titleTextAlign);
 
         // Title Button.
-        box = new CallbackCheckbox(this.font, 5, 44, Component.translatable("ias.config.titleButton"), IASConfig.titleButton, value -> {
+        box = new LegacyCheckbox(this.font, 5, 44, Component.translatable("ias.config.titleButton"), IASConfig.titleButton, value -> {
             IASConfig.titleButton = value;
             this.titleButtonX.active = value;
             this.titleButtonY.active = value;
@@ -238,7 +236,7 @@ public final class ConfigScreen extends Screen {
         this.addRenderableWidget(this.titleButtonY);
 
         // Servers Text.
-        box = new CallbackCheckbox(this.font, 5, 68, Component.translatable("ias.config.serversText"), IASConfig.serversText, value -> {
+        box = new LegacyCheckbox(this.font, 5, 68, Component.translatable("ias.config.serversText"), IASConfig.serversText, value -> {
             IASConfig.serversText = value;
             this.serversTextX.active = value;
             this.serversTextY.active = value;
@@ -300,7 +298,7 @@ public final class ConfigScreen extends Screen {
         this.addRenderableWidget(this.serversTextAlign);
 
         // Servers Button.
-        box = new CallbackCheckbox(this.font, 5, 92, Component.translatable("ias.config.serversButton"), IASConfig.serversButton, value -> {
+        box = new LegacyCheckbox(this.font, 5, 92, Component.translatable("ias.config.serversButton"), IASConfig.serversButton, value -> {
             IASConfig.serversButton = value;
             this.serversButtonX.active = value;
             this.serversButtonY.active = value;
@@ -344,7 +342,7 @@ public final class ConfigScreen extends Screen {
         this.addRenderableWidget(this.serversButtonY);
 
         // No Crypt Button.
-        box = new CallbackCheckbox(this.font, 5, 116, Component.translatable("ias.config.allowNoCrypt"), IASConfig.allowNoCrypt, value -> IASConfig.allowNoCrypt = value);
+        box = new LegacyCheckbox(this.font, 5, 116, Component.translatable("ias.config.allowNoCrypt"), IASConfig.allowNoCrypt, value -> IASConfig.allowNoCrypt = value);
         box.setTooltip(Tooltip.create(Component.translatable("ias.config.allowNoCrypt.tip")));
         box.setTooltipDelay(250);
         this.addRenderableWidget(box);
@@ -365,19 +363,19 @@ public final class ConfigScreen extends Screen {
         this.addRenderableWidget(button);
 
         // Nick Warns.
-        box = new CallbackCheckbox(this.font, 5, 140, Component.translatable("ias.config.nickWarns"), IASConfig.nickWarns, value -> IASConfig.nickWarns = value);
+        box = new LegacyCheckbox(this.font, 5, 140, Component.translatable("ias.config.nickWarns"), IASConfig.nickWarns, value -> IASConfig.nickWarns = value);
         box.setTooltip(Tooltip.create(Component.translatable("ias.config.nickWarns.tip")));
         box.setTooltipDelay(250);
         this.addRenderableWidget(box);
 
         // Password Echoing.
-        box = new CallbackCheckbox(this.font, 10 + box.getWidth(), 140, Component.translatable("ias.config.passwordEchoing"), IASConfig.passwordEchoing, value -> IASConfig.passwordEchoing = value);
+        box = new LegacyCheckbox(this.font, 10 + box.getWidth(), 140, Component.translatable("ias.config.passwordEchoing"), IASConfig.passwordEchoing, value -> IASConfig.passwordEchoing = value);
         box.setTooltip(Tooltip.create(Component.translatable("ias.config.passwordEchoing.tip")));
         box.setTooltipDelay(250);
         this.addRenderableWidget(box);
 
         // Unexpected Pigs.
-        box = new CallbackCheckbox(this.font, 5, 164, Component.translatable("ias.config.unexpectedPigs"), IASConfig.unexpectedPigs, value -> {
+        box = new LegacyCheckbox(this.font, 5, 164, Component.translatable("ias.config.unexpectedPigs"), IASConfig.unexpectedPigs, value -> {
             IASConfig.unexpectedPigs = value;
             this.minecraft.getSoundManager().play(SimpleSoundInstance.forUI(value ? SoundEvents.PIG_AMBIENT : SoundEvents.PIG_DEATH, 1.0F));
         });
@@ -386,7 +384,7 @@ public final class ConfigScreen extends Screen {
         this.addRenderableWidget(box);
 
         // Bar Name.
-        box = new CallbackCheckbox(this.font, 5, 188, Component.translatable("ias.config.barNick"), IASConfig.barNick, value -> {
+        box = new LegacyCheckbox(this.font, 5, 188, Component.translatable("ias.config.barNick"), IASConfig.barNick, value -> {
             IASConfig.barNick = value;
             this.minecraft.updateTitle();
         });
@@ -438,38 +436,5 @@ public final class ConfigScreen extends Screen {
     @Override
     public String toString() {
         return "ConfigScreen{}";
-    }
-
-    /**
-     * Checkbox with a callback.
-     *
-     * @author Vidtu
-     */
-    private static final class CallbackCheckbox extends Checkbox {
-        /**
-         * Check callback.
-         */
-        private final BooleanConsumer callback;
-
-        /**
-         * Creates a new check callback.
-         *
-         * @param font Target font
-         * @param x        Target X
-         * @param y        Target Y
-         * @param label    Checkbox label
-         * @param check    Checkbox check status
-         * @param callback Checkbox check callback
-         */
-        private CallbackCheckbox(Font font, int x, int y, Component label, boolean check, BooleanConsumer callback) {
-            super(x, y, font.width(label) + 24, 20, label, check);
-            this.callback = callback;
-        }
-
-        @Override
-        public void onPress() {
-            super.onPress();
-            this.callback.accept(this.selected());
-        }
     }
 }
