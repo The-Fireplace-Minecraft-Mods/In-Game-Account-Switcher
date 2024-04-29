@@ -16,6 +16,7 @@ updates:
       - dependency-name: "*neoforge*"
       - dependency-name: "*modmenu*"
       - dependency-name: "*architectury.loom*"
+      - dependency-name: "*lazydfu*"
   - package-ecosystem: gradle
     directory: '/1.18.2'
     schedule:
@@ -23,6 +24,7 @@ updates:
     ignore:
       - dependency-name: "*minecraft*"
       - dependency-name: "*architectury.loom*"
+      - dependency-name: "*lazydfu*"
   - package-ecosystem: gradle
     directory: '/1.18.2-fabric'
     schedule:
@@ -32,6 +34,7 @@ updates:
       - dependency-name: "*fabric-api*"
       - dependency-name: "*modmenu*"
       - dependency-name: "*architectury.loom*"
+      - dependency-name: "*lazydfu*"
   - package-ecosystem: gradle
     directory: '/1.18.2-forge'
     schedule:
@@ -40,6 +43,7 @@ updates:
       - dependency-name: "*minecraft*"
       - dependency-name: "*forge*"
       - dependency-name: "*architectury.loom*"
+      - dependency-name: "*lazydfu*"
   - package-ecosystem: gradle
     directory: '/1.18.2-quilt'
     schedule:
@@ -49,6 +53,7 @@ updates:
       - dependency-name: "*quilted-fabric-api*"
       - dependency-name: "*modmenu*"
       - dependency-name: "*architectury.loom*"
+      - dependency-name: "*lazydfu*"
   - package-ecosystem: gradle
     directory: '/1.19.4'
     schedule:
