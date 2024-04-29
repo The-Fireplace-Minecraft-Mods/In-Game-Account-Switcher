@@ -43,7 +43,7 @@ dependencies {
     compileOnly(shared)
 
     // Testing
-    runtimeOnly("maven.modrinth:lazydfu:0.1.2")
+    runtimeOnly("maven.modrinth:lazydfu:0.1.3")
 }
 
 tasks.withType<JavaCompile> {
