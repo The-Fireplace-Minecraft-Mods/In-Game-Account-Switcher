@@ -45,6 +45,14 @@ import java.util.function.Predicate;
  */
 public final class IUtils {
     /**
+     * Ports to try binding to.
+     * Not everything is allowed, this should be edited in MS Entra manually.
+     */
+    private static final int[] TRY_BIND_PORTS = {59125, 59126, 59127, 59128, 59129, 59130, 59131,
+            59132, 59133, 59134, 59135, 1234, 1235, 1236, 1237, 80, 8080, 19364, 19365, 19366, 27930,
+            27931, 27932, 27933, 27934, 42069};
+
+    /**
      * An instance of this class cannot be created.
      *
      * @throws AssertionError Always
@@ -120,6 +128,15 @@ public final class IUtils {
      */
     public static boolean canUseSunServer() {
         return SunServerAvailability.AVAILABLE;
+    }
+
+    /**
+     * Gets the ports to try and bind to.
+     *
+     * @return A copy of ports that can be tried to be bound to
+     */
+    public static int[] tryBindPorts() {
+        return TRY_BIND_PORTS.clone();
     }
 
     /**
@@ -215,7 +232,7 @@ public final class IUtils {
             // Note that this port range MUST be declared in Microsoft valid
             // redirect URIs, so using any port won't work. I did register some
             // ports in the UI.
-            for (int port = 59125; port <= 59135; port++) {
+            for (int port : TRY_BIND_PORTS) {
                 try {
                     // Try to bind.
                     socket.bind(new InetSocketAddress(port), 0);

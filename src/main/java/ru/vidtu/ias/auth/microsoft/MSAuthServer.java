@@ -356,7 +356,7 @@ public final class MSAuthServer implements Runnable, Closeable {
         // Note that this port range MUST be declared in Microsoft valid
         // redirect URIs, so using any port won't work. I did register some
         // ports in the UI.
-        for (int port = 59125; port <= 59135; port++) {
+        for (int port : IUtils.tryBindPorts()) {
             try {
                 // Try to bind.
                 this.server.bind(new InetSocketAddress(port), 0);
