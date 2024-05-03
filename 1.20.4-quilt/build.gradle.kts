@@ -20,7 +20,13 @@ repositories {
 loom {
     silentMojangMappingsLicense()
     runs.named("client") {
-        vmArgs("-XX:+IgnoreUnrecognizedVMOptions", "-Xmx2G", "-XX:+AllowEnhancedClassRedefinition", "-XX:HotswapAgent=fatjar", "-Dfabric.debug.disableClassPathIsolation=true")
+        vmArgs(
+            "-XX:+IgnoreUnrecognizedVMOptions",
+            "-Xmx2G",
+            "-XX:+AllowEnhancedClassRedefinition",
+            "-XX:HotswapAgent=fatjar",
+            "-Dfabric.debug.disableClassPathIsolation=true"
+        )
     }
     @Suppress("UnstableApiUsage")
     mixin {
@@ -46,7 +52,7 @@ tasks.withType<JavaCompile> {
     source(rootProject.sourceSets.main.get().java)
     source(shared.sourceSets.main.get().java)
     options.encoding = "UTF-8"
-    options.release.set(17)
+    options.release = 17
 }
 
 tasks.withType<ProcessResources> {
@@ -63,12 +69,12 @@ tasks.withType<Jar> {
     from(rootDir.resolve("GPL"))
     manifest {
         attributes(
-                "Specification-Title" to "In-Game Account Switcher",
-                "Specification-Version" to project.version,
-                "Specification-Vendor" to "VidTu",
-                "Implementation-Title" to "IAS-Quilt-1.20.4",
-                "Implementation-Version" to project.version,
-                "Implementation-Vendor" to "VidTu"
+            "Specification-Title" to "In-Game Account Switcher",
+            "Specification-Version" to project.version,
+            "Specification-Vendor" to "VidTu",
+            "Implementation-Title" to "IAS-Quilt-1.20.4",
+            "Implementation-Version" to project.version,
+            "Implementation-Vendor" to "VidTu"
         )
     }
 }

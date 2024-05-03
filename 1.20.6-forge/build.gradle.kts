@@ -2,22 +2,19 @@ plugins {
     id("dev.architectury.loom") version "1.6-SNAPSHOT"
 }
 
-java.sourceCompatibility = JavaVersion.VERSION_17
-java.targetCompatibility = JavaVersion.VERSION_17
-java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+java.sourceCompatibility = JavaVersion.VERSION_21
+java.targetCompatibility = JavaVersion.VERSION_21
+java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 group = "ru.vidtu.ias"
-base.archivesName = "IAS-Fabric-1.20.1"
-evaluationDependsOn(":1.20.1")
-val shared = project(":1.20.1")
-
-repositories {
-    mavenCentral()
-    maven("https://maven.fabricmc.net/")
-    maven("https://maven.terraformersmc.com/releases/")
-}
+base.archivesName = "IAS-Forge-1.20.6"
+evaluationDependsOn(":1.20.6")
+val shared = project(":1.20.6")
 
 loom {
     silentMojangMappingsLicense()
+    forge {
+        mixinConfigs = setOf("ias.mixins.json")
+    }
     runs.named("client") {
         vmArgs(
             "-XX:+IgnoreUnrecognizedVMOptions",
@@ -33,15 +30,19 @@ loom {
     }
 }
 
+repositories {
+    mavenCentral()
+    maven("https://maven.architectury.dev/")
+    maven("https://maven.minecraftforge.net/")
+}
+
 dependencies {
     // Minecraft
-    minecraft("com.mojang:minecraft:1.20.1")
+    minecraft("com.mojang:minecraft:1.20.6")
     mappings(loom.officialMojangMappings())
 
-    // Fabric
-    modImplementation(libs.fabric.loader)
-    modImplementation("net.fabricmc.fabric-api:fabric-api:0.92.1+1.20.1")
-    modImplementation("com.terraformersmc:modmenu:7.2.2")
+    // Forge
+    forge("net.minecraftforge:forge:1.20.6-50.0.4")
 
     // Root
     compileOnly(shared)
@@ -51,14 +52,14 @@ tasks.withType<JavaCompile> {
     source(rootProject.sourceSets.main.get().java)
     source(shared.sourceSets.main.get().java)
     options.encoding = "UTF-8"
-    options.release = 17
+    options.release = 21
 }
 
 tasks.withType<ProcessResources> {
     from(rootProject.sourceSets.main.get().resources)
     from(shared.sourceSets.main.get().resources)
     inputs.property("version", project.version)
-    filesMatching("fabric.mod.json") {
+    filesMatching("META-INF/mods.toml") {
         expand("version" to project.version)
     }
 }
@@ -71,7 +72,7 @@ tasks.withType<Jar> {
             "Specification-Title" to "In-Game Account Switcher",
             "Specification-Version" to project.version,
             "Specification-Vendor" to "VidTu",
-            "Implementation-Title" to "IAS-Fabric-1.20.1",
+            "Implementation-Title" to "IAS-Forge-1.20.6",
             "Implementation-Version" to project.version,
             "Implementation-Vendor" to "VidTu"
         )

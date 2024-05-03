@@ -46,7 +46,7 @@ tasks.withType<JavaCompile> {
     source(rootProject.sourceSets.main.get().java)
     source(shared.sourceSets.main.get().java)
     options.encoding = "UTF-8"
-    options.release.set(17)
+    options.release = 17
 }
 
 tasks.withType<ProcessResources> {

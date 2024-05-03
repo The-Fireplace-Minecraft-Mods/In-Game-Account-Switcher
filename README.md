@@ -13,11 +13,16 @@ without having to restart Minecraft.
 ## FAQ
 
 **Q**: I need help, have some questions, or something else.  
-**A**: You can look at the docs for [Crypt](docs/CRYPT.md), [Stolen Accounts](/docs/STOLEN.md),
-[Common Errors](docs/ERRORS.md), or you can join the [Discord server](https://discord.gg/TpU2nEkSPk).
+**A**: You can look at the docs for
+[Crypt](https://github.com/The-Fireplace-Minecraft-Mods/In-Game-Account-Switcher/blob/main/docs/CRYPT.md),
+[Stolen Accounts](https://github.com/The-Fireplace-Minecraft-Mods/In-Game-Account-Switcher/blob/main/docs/STOLEN.md),
+[Common Errors](https://github.com/The-Fireplace-Minecraft-Mods/In-Game-Account-Switcher/blob/main/docs/ERRORS.md),
+or you can join the [Discord server](https://discord.gg/TpU2nEkSPk).
 
 **Q**: Where can I download this mod?  
-**A**: [Modrinth](https://modrinth.com/mod/in-game-account-switcher), [CurseForge](https://www.curseforge.com/minecraft/mc-mods/in-game-account-switcher), [GitHub](https://github.com/The-Fireplace-Minecraft-Mods/In-Game-Account-Switcher).
+**A**: [Modrinth](https://modrinth.com/mod/in-game-account-switcher),
+[CurseForge](https://www.curseforge.com/minecraft/mc-mods/in-game-account-switcher),
+[GitHub](https://github.com/The-Fireplace-Minecraft-Mods/In-Game-Account-Switcher).
 
 **Q**: Which mod loaders are supported?  
 **A**: Forge, Fabric, Quilt, NeoForge.
@@ -37,7 +42,8 @@ under [GNU LGPLv3](https://github.com/The-Fireplace-Minecraft-Mods/In-Game-Accou
 **Q**: I found a bug.  
 **A**: Report it [here](https://github.com/The-Fireplace-Minecraft-Mods/In-Game-Account-Switcher/issues). If you are
 not sure if this is a bug, you can join the [Discord](https://discord.gg/TpU2nEkSPk). If you think this bug is
-critical enough not to be disclosed publicly, please, report it as described in the [security policy](SECURITY.md).
+critical enough not to be disclosed publicly, please, report it as described in the
+[security policy](https://github.com/The-Fireplace-Minecraft-Mods/In-Game-Account-Switcher/blob/main/SECURITY.md).
 
 ## Screenshots
 
