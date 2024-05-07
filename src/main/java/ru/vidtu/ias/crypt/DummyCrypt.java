@@ -42,6 +42,16 @@ public final class DummyCrypt implements Crypt {
     }
 
     @Override
+    public String type() {
+        return "ias:dummy_crypt_v1";
+    }
+
+    @Override
+    public Crypt migrate() {
+        return null;
+    }
+
+    @Override
     public boolean insecure() {
         return true;
     }

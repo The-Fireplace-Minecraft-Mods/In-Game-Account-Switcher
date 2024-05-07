@@ -19,10 +19,6 @@
 
 package ru.vidtu.ias.utils.exceptions;
 
-import java.util.Collections;
-import java.util.IdentityHashMap;
-import java.util.Set;
-
 /**
  * A runtime exception indicating repolling intention.
  *
@@ -46,31 +42,5 @@ public final class DevicePendingException extends RuntimeException {
      */
     public DevicePendingException(String message, Throwable cause) {
         super(message, cause);
-    }
-
-    /**
-     * Gets whether the pending exception is in the causal chain.
-     *
-     * @param root Causal chain root exception
-     * @return Whether the pending exception is in the causal chain
-     */
-    public static boolean hasPending(Throwable root) {
-        // Causal loop detection set.
-        Set<Throwable> dejaVu = Collections.newSetFromMap(new IdentityHashMap<>(8));
-
-        // 256 is the (arbitrarily-chosen) limit for causal stack.
-        for (int i = 0; i < 256; i++) {
-            // Break if null (reached the end) or loop detected.
-            if (root == null || !dejaVu.add(root)) break;
-
-            // Return if pending exception.
-            if (root instanceof DevicePendingException) return true;
-
-            // Next cause.
-            root = root.getCause();
-        }
-
-        // Not found. (or reached the 256 limit)
-        return false;
     }
 }

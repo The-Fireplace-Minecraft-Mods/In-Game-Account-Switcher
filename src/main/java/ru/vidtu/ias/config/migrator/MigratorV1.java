@@ -95,7 +95,7 @@ final class MigratorV1 implements Migrator {
                              DataOutputStream out = new DataOutputStream(byteOut)) {
                             DummyCrypt crypt = DummyCrypt.INSTANCE;
                             byte[] encrypted = crypt.encrypt(unencrypted);
-                            Crypt.encrypt(out, crypt);
+                            out.writeUTF(crypt.type());
                             out.write(encrypted);
                             data = byteOut.toByteArray();
                         }

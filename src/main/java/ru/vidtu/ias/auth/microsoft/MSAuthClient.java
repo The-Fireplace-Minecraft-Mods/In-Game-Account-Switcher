@@ -145,7 +145,7 @@ public final class MSAuthClient implements Closeable {
                 ms = MSAuth.dacToMsaMsr(this.auth.device());
             } catch (Throwable t) {
                 // Pending exception, ignore.
-                if (DevicePendingException.hasPending(t)) {
+                if (IUtils.anyInCausalChain(t, DevicePendingException.class::isInstance)) {
                     return;
                 }
 
@@ -251,10 +251,8 @@ public final class MSAuthClient implements Closeable {
                     // Encrypt.
                     byte[] encrypted = this.crypt.encrypt(unencrypted);
 
-                    // Write type.
-                    Crypt.encrypt(out, this.crypt);
-
                     // Write data.
+                    out.writeUTF(this.crypt.type());
                     out.write(encrypted);
 
                     // Flush it.

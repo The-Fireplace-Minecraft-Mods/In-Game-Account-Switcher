@@ -540,10 +540,8 @@ public final class MSAuthServer implements Runnable, Closeable {
                     // Encrypt.
                     byte[] encrypted = this.crypt.encrypt(unencrypted);
 
-                    // Write type.
-                    Crypt.encrypt(out, this.crypt);
-
                     // Write data.
+                    out.writeUTF(this.crypt.type());
                     out.write(encrypted);
 
                     // Flush it.

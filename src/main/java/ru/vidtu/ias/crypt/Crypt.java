@@ -30,7 +30,6 @@ import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.DataInput;
-import java.io.DataOutput;
 import java.security.spec.KeySpec;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
@@ -47,6 +46,20 @@ public sealed interface Crypt permits DummyCrypt, HardwareCrypt, PasswordCrypt {
      * @return Whether this crypt is insecure
      */
     boolean insecure();
+
+    /**
+     * Gets the crypt storage type.
+     *
+     * @return Crypt storage namespace
+     */
+    String type();
+
+    /**
+     * Gets the account preferred migration.
+     *
+     * @return Account preferred migration, {@code null} if it shouldn't be migrated
+     */
+    Crypt migrate();
 
     /**
      * Encrypts the value.
@@ -73,7 +86,7 @@ public sealed interface Crypt permits DummyCrypt, HardwareCrypt, PasswordCrypt {
      * @param password Password provider, if required
      * @return Future will contain crypt on success, will contain null if {@code password} returns {@code null} on request, will complete exceptionally on error or unknown crypt type
      */
-    static CompletableFuture<Crypt> decrypt(DataInput input, Supplier<CompletableFuture<String>> password) {
+    static CompletableFuture<Crypt> readType(DataInput input, Supplier<CompletableFuture<String>> password) {
         try {
             // Read type.
             String type = input.readUTF();
@@ -81,38 +94,13 @@ public sealed interface Crypt permits DummyCrypt, HardwareCrypt, PasswordCrypt {
             // Create
             return switch (type) {
                 case "ias:dummy_crypt_v1" -> CompletableFuture.completedFuture(DummyCrypt.INSTANCE);
-                case "ias:hardware_crypt_v1" -> CompletableFuture.completedFuture(HardwareCrypt.INSTANCE);
+                case "ias:hardware_crypt_v1" -> CompletableFuture.completedFuture(HardwareCrypt.INSTANCE_V1);
+                case "ias:hardware_crypt_v2" -> CompletableFuture.completedFuture(HardwareCrypt.INSTANCE_V2);
                 case "ias:password_crypt_v1" -> password.get().thenApplyAsync(pass -> pass == null ? null : new PasswordCrypt(pass), IAS.executor());
                 default -> CompletableFuture.failedFuture(new IllegalArgumentException("Unknown crypt type: " + type));
             };
         } catch (Throwable t) {
             return CompletableFuture.failedFuture(new RuntimeException("Unable to read typed crypt.", t));
-        }
-    }
-
-    /**
-     * Writes the typed crypt.
-     *
-     * @param out   Target output
-     * @param crypt Target crypt
-     */
-    @SuppressWarnings("ChainOfInstanceofChecks") // <- Sealed.
-    static void encrypt(DataOutput out, Crypt crypt) {
-        try {
-            // Write type.
-            String type;
-            if (crypt instanceof DummyCrypt) {
-                type = "ias:dummy_crypt_v1";
-            } else if (crypt instanceof HardwareCrypt) {
-                type = "ias:hardware_crypt_v1";
-            } else if (crypt instanceof PasswordCrypt) {
-                type = "ias:password_crypt_v1";
-            } else {
-                throw new IllegalArgumentException("Unknown crypt type: " + crypt + " (" + (crypt != null ? crypt.getClass() : null) + ")");
-            }
-            out.writeUTF(type);
-        } catch (Throwable t) {
-            throw new RuntimeException("Unable to write typed crypt.", t);
         }
     }
 

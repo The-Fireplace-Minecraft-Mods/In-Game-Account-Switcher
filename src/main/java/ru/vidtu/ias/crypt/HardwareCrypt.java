@@ -35,6 +35,7 @@ import java.net.SocketException;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.util.Base64;
+import java.util.HexFormat;
 import java.util.List;
 import java.util.Objects;
 
@@ -45,11 +46,14 @@ import java.util.Objects;
  */
 public final class HardwareCrypt implements Crypt {
     /**
-     * Shared "hardware ID" crypt.
-     *
-     * @apiNote Use {@link #equals(Object)} for comparison
+     * Shared "hardware ID" crypt version 2.
      */
-    public static final HardwareCrypt INSTANCE = new HardwareCrypt();
+    public static final HardwareCrypt INSTANCE_V2 = new HardwareCrypt(2, "ias:hardware_crypt_v2", null);
+
+    /**
+     * Shared "hardware ID" crypt version 1.
+     */
+    public static final HardwareCrypt INSTANCE_V1 = new HardwareCrypt(1, "ias:hardware_crypt_v1", INSTANCE_V2);
 
     /**
      * Logger for this class.
@@ -78,12 +82,41 @@ public final class HardwareCrypt implements Crypt {
             "user.language", "user.variant", "minecraft.inGameAccountSwitcher.veryNerdySystemProperty");
 
     /**
+     * Hardware crypt version.
+     */
+    private final int version;
+
+    /**
+     * Hardware crypt type.
+     */
+    private final String type;
+
+    /**
+     * Hardware crypt migration.
+     */
+    private final HardwareCrypt migrate;
+
+    /**
      * Creates a new "hardware ID" crypt.
      *
-     * @see #INSTANCE
+     * @param version Crypt version
+     * @param type    Crypt type
+     * @param migrate Crypt migration, {@code null} if it shouldn't be migrated
      */
-    private HardwareCrypt() {
-        // Private
+    private HardwareCrypt(int version, String type, HardwareCrypt migrate) {
+        this.version = version;
+        this.type = type;
+        this.migrate = migrate;
+    }
+
+    @Override
+    public String type() {
+        return this.type;
+    }
+
+    @Override
+    public HardwareCrypt migrate() {
+        return this.migrate;
     }
 
     @Override
@@ -107,7 +140,7 @@ public final class HardwareCrypt implements Crypt {
             out.write(iv);
 
             // Generate the password.
-            String pwd = hardwarePassword();
+            String pwd = this.hardwarePassword();
 
             // Encrypt and write the data.
             byte[] data = Crypt.pbkdfAesEncrypt(decrypted, pwd, salt, iv);
@@ -139,7 +172,7 @@ public final class HardwareCrypt implements Crypt {
             }
 
             // Generate the password.
-            String pwd = hardwarePassword();
+            String pwd = this.hardwarePassword();
 
             // Read the data.
             byte[] data = in.readAllBytes();
@@ -173,7 +206,7 @@ public final class HardwareCrypt implements Crypt {
      * @return Created password
      * @throws RuntimeException If unable to create the password
      */
-    private static String hardwarePassword() {
+    private String hardwarePassword() {
         try {
             // Calculate the "hardware ID".
             try (ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
@@ -313,17 +346,23 @@ public final class HardwareCrypt implements Crypt {
                         out.writeLong(diskSize);
                     }
 
-                    // Extract GraphicsCard[] data.
-                    // Not using version - can be a driver.
-                    for (Object card : cards) {
-                        String cardName = (String) cardNameMethod.invoke(card);
-                        String cardId = (String) cardIdMethod.invoke(card);
-                        String cardVendor = (String) cardVendorMethod.invoke(card);
-                        long cardRam = (long) cardRamMethod.invoke(card);
-                        out.write(cardName.getBytes(StandardCharsets.UTF_8));
-                        out.write(cardId.getBytes(StandardCharsets.UTF_8));
-                        out.write(cardVendor.getBytes(StandardCharsets.UTF_8));
-                        out.writeLong(cardRam);
+                    // Not using graphics card data in V2, because
+                    // OSHI changed it video card data on Windows:
+                    // https://github.com/oshi/oshi/pull/2533
+                    // and this is bumped between 1.20.4 and 1.20.5.
+                    if (this.version < 2) {
+                        // Extract GraphicsCard[] data.
+                        // Not using version - can be a driver.
+                        for (Object card : cards) {
+                            String cardName = (String) cardNameMethod.invoke(card);
+                            String cardId = (String) cardIdMethod.invoke(card);
+                            String cardVendor = (String) cardVendorMethod.invoke(card);
+                            long cardRam = (long) cardRamMethod.invoke(card);
+                            out.write(cardName.getBytes(StandardCharsets.UTF_8));
+                            out.write(cardId.getBytes(StandardCharsets.UTF_8));
+                            out.write(cardVendor.getBytes(StandardCharsets.UTF_8));
+                            out.writeLong(cardRam);
+                        }
                     }
                 } catch (Throwable t) {
                     // Log into trace. (disabled for MOST users)

@@ -48,6 +48,16 @@ public final class PasswordCrypt implements Crypt {
     }
 
     @Override
+    public String type() {
+        return "ias:password_crypt_v1";
+    }
+
+    @Override
+    public Crypt migrate() {
+        return null;
+    }
+
+    @Override
     public boolean insecure() {
         return false;
     }

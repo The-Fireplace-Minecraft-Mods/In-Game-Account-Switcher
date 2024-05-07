@@ -210,7 +210,7 @@ public final class MicrosoftAccount implements Account {
             Holder<Crypt> crypt = new Holder<>();
             Holder<String> access = new Holder<>();
             Holder<String> refresh = new Holder<>();
-            Holder<Boolean> changed = new Holder<>(false);
+            Holder<Boolean> recrypt = new Holder<>(false);
 
             // Read the crypt.
             CompletableFuture<Crypt> future;
@@ -218,7 +218,7 @@ public final class MicrosoftAccount implements Account {
             try (ByteArrayInputStream byteIn = new ByteArrayInputStream(this.data);
                  DataInputStream in = new DataInputStream(byteIn)) {
                 // Read and process the crypt.
-                future = Crypt.decrypt(in, handler::password);
+                future = Crypt.readType(in, handler::password);
 
                 // Crypted data.
                 crypted = in.readAllBytes();
@@ -233,11 +233,18 @@ public final class MicrosoftAccount implements Account {
                 LOGGER.info("IAS: Decrypting tokens...");
                 handler.stage(DECRYPTING);
 
-                // Set the crypt.
-                crypt.set(value);
-
                 // Decrypt.
-                return value.decrypt(crypted);
+                byte[] data = value.decrypt(crypted);
+
+                // Migrate and set the crypt.
+                Crypt migrate = value.migrate();
+                if (migrate != null) {
+                    crypt.set(migrate);
+                    recrypt.set(true);
+                }
+
+                // Continue.
+                return data;
             }, IAS.executor()).thenApplyAsync(value -> {
                 // Skip if cancelled.
                 if (value == null || handler.cancelled()) return false;
@@ -279,6 +286,9 @@ public final class MicrosoftAccount implements Account {
                     LOGGER.warn("IAS: MCA is (probably) expired. Refreshing...");
                     LOGGER.info("IAS: Converting MSR to MSA/MSR...");
                     handler.stage(MSR_TO_MSA_MSR);
+
+                    // Require recrypting data.
+                    recrypt.set(true);
 
                     // Convert MSR to MSA/MSR.
                     return MSAuth.msrToMsaMsr(refresh.get()).thenComposeAsync(ms -> {
@@ -337,53 +347,6 @@ public final class MicrosoftAccount implements Account {
 
                         // Handle error.
                         throw new RuntimeException("Unable to perform MSR auth.", t);
-                    }, IAS.executor()).thenApplyAsync(profile -> {
-                        // Skip if cancelled.
-                        if (profile == null || handler.cancelled()) return null;
-
-                        // Log it and display progress.
-                        LOGGER.info("IAS: Encrypting tokens...");
-                        handler.stage(ENCRYPTING);
-
-                        // Write the tokens.
-                        String accessMem = access.get();
-                        String refreshMem = refresh.get();
-                        byte[] unencrypted;
-                        try (ByteArrayOutputStream byteOut = new ByteArrayOutputStream(accessMem.length() + refreshMem.length() + 4);
-                             DataOutputStream out = new DataOutputStream(byteOut)) {
-                            // Write the access token.
-                            out.writeUTF(accessMem);
-
-                            // Write the refresh token.
-                            out.writeUTF(refreshMem);
-
-                            // Flush it.
-                            unencrypted = byteOut.toByteArray();
-                        } catch (Throwable t) {
-                            throw new RuntimeException("Unable to write the tokens.", t);
-                        }
-
-                        // Encrypt the tokens.
-                        try (ByteArrayOutputStream byteOut = new ByteArrayOutputStream(unencrypted.length + 32);
-                             DataOutputStream out = new DataOutputStream(byteOut)) {
-                            // Encrypt.
-                            byte[] encrypted = crypt.get().encrypt(unencrypted);
-
-                            // Write type.
-                            Crypt.encrypt(out, crypt.get());
-
-                            // Write data.
-                            out.write(encrypted);
-
-                            // Flush it.
-                            this.data = byteOut.toByteArray();
-                            changed.set(true);
-                        } catch (Throwable t) {
-                            throw new RuntimeException("Unable to encrypt the tokens.", t);
-                        }
-
-                        // Return the profile as-is.
-                        return profile;
                     }, IAS.executor()).exceptionallyAsync(t -> {
                         // Rethrow. (adding original)
                         t.addSuppressed(original);
@@ -394,13 +357,57 @@ public final class MicrosoftAccount implements Account {
                 // Skip if cancelled.
                 if (profile == null || handler.cancelled()) return;
 
+                // Re-encrypt if required.
+                boolean saveStorage = false;
+                if (recrypt.get()) {
+                    // Log it and display progress.
+                    LOGGER.info("IAS: Encrypting tokens...");
+                    handler.stage(ENCRYPTING);
+
+                    // Write the tokens.
+                    String accessMem = access.get();
+                    String refreshMem = refresh.get();
+                    byte[] unencrypted;
+                    try (ByteArrayOutputStream byteOut = new ByteArrayOutputStream(accessMem.length() + refreshMem.length() + 4);
+                         DataOutputStream out = new DataOutputStream(byteOut)) {
+                        // Write the access token.
+                        out.writeUTF(accessMem);
+
+                        // Write the refresh token.
+                        out.writeUTF(refreshMem);
+
+                        // Flush it.
+                        unencrypted = byteOut.toByteArray();
+                    } catch (Throwable t) {
+                        throw new RuntimeException("Unable to write the tokens.", t);
+                    }
+
+                    // Encrypt the tokens.
+                    try (ByteArrayOutputStream byteOut = new ByteArrayOutputStream(unencrypted.length + 32);
+                         DataOutputStream out = new DataOutputStream(byteOut)) {
+                        // Encrypt.
+                        Crypt val = crypt.get();
+                        byte[] encrypted = val.encrypt(unencrypted);
+
+                        // Write data.
+                        out.writeUTF(val.type());
+                        out.write(encrypted);
+
+                        // Flush it.
+                        this.data = byteOut.toByteArray();
+                        saveStorage = true;
+                    } catch (Throwable t) {
+                        throw new RuntimeException("Unable to encrypt the tokens.", t);
+                    }
+                }
+
                 // Authentication successful, refresh the profile.
                 UUID uuid = profile.uuid();
                 String name = profile.name();
                 if (!this.uuid.equals(uuid) || !this.name.equals(name)) {
                     this.uuid = profile.uuid();
                     this.name = profile.name();
-                    changed.set(true);
+                    saveStorage = true;
                 }
 
                 // Log it and display progress.
@@ -409,7 +416,7 @@ public final class MicrosoftAccount implements Account {
 
                 // Create and return the data.
                 LoginData login = new LoginData(this.name, this.uuid, access.get(), true);
-                handler.success(login, changed.get());
+                handler.success(login, saveStorage);
             }, IAS.executor()).exceptionallyAsync(t -> {
                 // Handle error.
                 handler.error(new RuntimeException("Unable to login as MS account", t));
@@ -432,10 +439,10 @@ public final class MicrosoftAccount implements Account {
 
     @Override
     public int hashCode() {
-        int result = 1;
-        result = 31 * result + Objects.hashCode(this.uuid);
-        result = 31 * result + Objects.hashCode(this.name);
-        return result;
+        int hash = 1;
+        hash = 31 * hash + Objects.hashCode(this.uuid);
+        hash = 31 * hash + Objects.hashCode(this.name);
+        return hash;
     }
 
     @Override
