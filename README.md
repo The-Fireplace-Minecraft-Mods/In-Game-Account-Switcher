@@ -14,9 +14,11 @@ without having to restart Minecraft.
 
 **Q**: I need help, have some questions, or something else.  
 **A**: You can look at the docs for
+[Terms and Privacy](https://github.com/The-Fireplace-Minecraft-Mods/In-Game-Account-Switcher/blob/main/docs/TERMS.md),
 [Crypt](https://github.com/The-Fireplace-Minecraft-Mods/In-Game-Account-Switcher/blob/main/docs/CRYPT.md),
 [Stolen Accounts](https://github.com/The-Fireplace-Minecraft-Mods/In-Game-Account-Switcher/blob/main/docs/STOLEN.md),
 [Common Errors](https://github.com/The-Fireplace-Minecraft-Mods/In-Game-Account-Switcher/blob/main/docs/ERRORS.md),
+[Secure Log Sharing](https://github.com/The-Fireplace-Minecraft-Mods/In-Game-Account-Switcher/blob/main/docs/LOG_SHARING.md),
 or you can join the [Discord server](https://discord.gg/TpU2nEkSPk).
 
 **Q**: Where can I download this mod?  
