@@ -45,7 +45,7 @@ dependencies {
     mappings(loom.officialMojangMappings())
 
     // NeoForge
-    neoForge("net.neoforged:neoforge:20.6.2-beta") // TODO: Update after https://github.com/architectury/architectury-loom/pull/209
+    neoForge("net.neoforged:neoforge:20.6.63-beta")
 
     // Root
     compileOnly(shared)
