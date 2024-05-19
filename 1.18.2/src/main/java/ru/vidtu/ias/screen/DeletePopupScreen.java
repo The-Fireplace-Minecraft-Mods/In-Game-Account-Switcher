@@ -25,20 +25,30 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
+import org.jetbrains.annotations.NotNull;
 import org.lwjgl.glfw.GLFW;
 import ru.vidtu.ias.account.Account;
+import ru.vidtu.ias.legacy.LastPassRenderCallback;
 import ru.vidtu.ias.legacy.LegacyTooltip;
+
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Delete confirmation screen.
  *
  * @author VidTu
  */
-final class DeletePopupScreen extends Screen {
+final class DeletePopupScreen extends Screen implements LastPassRenderCallback {
     /**
      * Parent screen.
      */
     private final Screen parent;
+
+    /**
+     * Last pass callbacks list.
+     */
+    private final List<Runnable> lastPass = new LinkedList<>();
 
     /**
      * Confirmation prompt.
@@ -123,6 +133,12 @@ final class DeletePopupScreen extends Screen {
 
         // Render the prompt.
         this.label.renderCentered(pose, this.width / 2, (this.height - this.label.getLineCount() * 9) / 2 - 4);
+
+        // Last pass.
+        for (Runnable callback : this.lastPass) {
+            callback.run();
+        }
+        this.lastPass.clear();
     }
 
     @Override
@@ -168,6 +184,11 @@ final class DeletePopupScreen extends Screen {
 
         // Close to parent.
         this.minecraft.setScreen(this.parent);
+    }
+
+    @Override
+    public void lastPass(@NotNull Runnable callback) {
+        this.lastPass.add(callback);
     }
 
     @Override

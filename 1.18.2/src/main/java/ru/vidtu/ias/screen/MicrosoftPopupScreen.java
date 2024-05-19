@@ -20,8 +20,6 @@
 package ru.vidtu.ias.screen;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.text2speech.Narrator;
-import com.mojang.util.UUIDTypeAdapter;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.client.KeyboardHandler;
@@ -37,6 +35,7 @@ import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.util.FormattedCharSequence;
+import org.jetbrains.annotations.NotNull;
 import org.lwjgl.glfw.GLFW;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,21 +48,23 @@ import ru.vidtu.ias.auth.microsoft.MSAuthServer;
 import ru.vidtu.ias.config.IASConfig;
 import ru.vidtu.ias.crypt.Crypt;
 import ru.vidtu.ias.crypt.PasswordCrypt;
+import ru.vidtu.ias.legacy.LastPassRenderCallback;
 import ru.vidtu.ias.legacy.LegacyTooltip;
 import ru.vidtu.ias.utils.exceptions.FriendlyException;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 /**
  * Microsoft popup screen.
  *
  * @author VidTu
  */
-final class MicrosoftPopupScreen extends Screen implements CreateHandler {
+final class MicrosoftPopupScreen extends Screen implements CreateHandler, LastPassRenderCallback {
     /**
      * Logger for this class.
      */
@@ -73,6 +74,11 @@ final class MicrosoftPopupScreen extends Screen implements CreateHandler {
      * Parent screen.
      */
     private final Screen parent;
+
+    /**
+     * Last pass callbacks list.
+     */
+    private final List<Runnable> lastPass = new LinkedList<>();
 
     /**
      * Synchronization lock.
@@ -388,6 +394,12 @@ final class MicrosoftPopupScreen extends Screen implements CreateHandler {
                 this.label.renderCentered(pose, this.width / 2, (this.height - this.label.getLineCount() * 9) / 2 - 4, 9, 0xFF_FF_FF_FF);
             }
         }
+
+        // Last pass.
+        for (Runnable callback : this.lastPass) {
+            callback.run();
+        }
+        this.lastPass.clear();
     }
 
     @Override
@@ -477,6 +489,11 @@ final class MicrosoftPopupScreen extends Screen implements CreateHandler {
             this.stage = component;
             this.label = null;
         }
+    }
+
+    @Override
+    public void lastPass(@NotNull Runnable callback) {
+        this.lastPass.add(callback);
     }
 
     @Override

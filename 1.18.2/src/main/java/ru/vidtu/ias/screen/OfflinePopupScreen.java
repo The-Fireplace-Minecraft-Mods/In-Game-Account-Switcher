@@ -25,12 +25,16 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
+import org.jetbrains.annotations.NotNull;
 import org.lwjgl.glfw.GLFW;
 import ru.vidtu.ias.account.Account;
 import ru.vidtu.ias.account.OfflineAccount;
 import ru.vidtu.ias.config.IASConfig;
+import ru.vidtu.ias.legacy.LastPassRenderCallback;
 import ru.vidtu.ias.legacy.LegacyTooltip;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.function.Consumer;
 
 /**
@@ -38,11 +42,16 @@ import java.util.function.Consumer;
  *
  * @author VidTu
  */
-public final class OfflinePopupScreen extends Screen {
+public final class OfflinePopupScreen extends Screen implements LastPassRenderCallback {
     /**
      * Parent screen.
      */
     private final Screen parent;
+
+    /**
+     * Last pass callbacks list.
+     */
+    private final List<Runnable> lastPass = new LinkedList<>();
 
     /**
      * Account handler.
@@ -279,6 +288,12 @@ public final class OfflinePopupScreen extends Screen {
         if (this.name != null) {
             drawCenteredString(pose, this.font, this.name.getMessage(), this.width / 2, this.height / 2 - 10 - 5, 0xFF_FF_FF_FF);
         }
+
+        // Last pass.
+        for (Runnable callback : this.lastPass) {
+            callback.run();
+        }
+        this.lastPass.clear();
     }
 
     @Override
@@ -309,6 +324,11 @@ public final class OfflinePopupScreen extends Screen {
 
         // Close to parent.
         this.minecraft.setScreen(this.parent);
+    }
+
+    @Override
+    public void lastPass(@NotNull Runnable callback) {
+        this.lastPass.add(callback);
     }
 
     @Override

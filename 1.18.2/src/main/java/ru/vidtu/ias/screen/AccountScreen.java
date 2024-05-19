@@ -28,18 +28,23 @@ import net.minecraft.client.gui.screens.AlertScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.TranslatableComponent;
+import org.jetbrains.annotations.NotNull;
 import org.lwjgl.glfw.GLFW;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.vidtu.ias.IAS;
 import ru.vidtu.ias.account.Account;
 import ru.vidtu.ias.config.IASStorage;
+import ru.vidtu.ias.legacy.LastPassRenderCallback;
 import ru.vidtu.ias.legacy.LegacyEditBox;
 import ru.vidtu.ias.legacy.LegacyTooltip;
 import ru.vidtu.ias.legacy.Skin;
 import ru.vidtu.ias.legacy.SkinWidget;
 
-public final class AccountScreen extends Screen {
+import java.util.LinkedList;
+import java.util.List;
+
+public final class AccountScreen extends Screen implements LastPassRenderCallback {
     /**
      * Logger for this class.
      */
@@ -49,6 +54,11 @@ public final class AccountScreen extends Screen {
      * Parent screen, {@code null} if none.
      */
     private final Screen parent;
+
+    /**
+     * Last pass callbacks list.
+     */
+    private final List<Runnable> lastPass = new LinkedList<>();
 
     /**
      * Search widget.
@@ -203,6 +213,12 @@ public final class AccountScreen extends Screen {
 
         // Render title.
         drawCenteredString(pose, this.font, this.title, this.width / 2, 1, 0xFF_FF_FF_FF);
+
+        // Last pass.
+        for (Runnable callback : this.lastPass) {
+            callback.run();
+        }
+        this.lastPass.clear();
     }
 
     @Override
@@ -316,6 +332,11 @@ public final class AccountScreen extends Screen {
 
         // Not handled.
         return false;
+    }
+
+    @Override
+    public void lastPass(@NotNull Runnable callback) {
+        this.lastPass.add(callback);
     }
 
     @Override

@@ -29,7 +29,6 @@ import ru.vidtu.ias.account.OfflineAccount;
 import ru.vidtu.ias.config.IASConfig;
 import ru.vidtu.ias.config.IASStorage;
 import ru.vidtu.ias.config.TextAlign;
-import ru.vidtu.ias.crypt.Crypt;
 import ru.vidtu.ias.crypt.DummyCrypt;
 import ru.vidtu.ias.utils.GSONUtils;
 

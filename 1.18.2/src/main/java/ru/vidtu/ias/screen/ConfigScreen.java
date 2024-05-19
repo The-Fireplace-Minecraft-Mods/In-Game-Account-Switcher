@@ -28,17 +28,21 @@ import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.sounds.SoundEvents;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.vidtu.ias.IAS;
 import ru.vidtu.ias.config.IASConfig;
 import ru.vidtu.ias.config.ServerMode;
 import ru.vidtu.ias.config.TextAlign;
+import ru.vidtu.ias.legacy.LastPassRenderCallback;
 import ru.vidtu.ias.legacy.LegacyCheckbox;
-import ru.vidtu.ias.legacy.LegacyTooltip;
 import ru.vidtu.ias.legacy.LegacyEditBox;
+import ru.vidtu.ias.legacy.LegacyTooltip;
 import ru.vidtu.ias.utils.Expression;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -46,7 +50,7 @@ import java.util.Objects;
  *
  * @author VidTu
  */
-public final class ConfigScreen extends Screen {
+public final class ConfigScreen extends Screen implements LastPassRenderCallback {
     /**
      * Logger for this class.
      */
@@ -56,6 +60,11 @@ public final class ConfigScreen extends Screen {
      * Parent screen, {@code null} if none.
      */
     private final Screen parent;
+
+    /**
+     * Last pass callbacks list.
+     */
+    private final List<Runnable> lastPass = new LinkedList<>();
 
     /**
      * Title text X.
@@ -374,10 +383,21 @@ public final class ConfigScreen extends Screen {
         // Render current mouse pos if alt is held.
         if (Screen.hasAltDown()) {
             pose.pushPose();
-            pose.translate(0.0F, 0.0F, 2.0F);
+            pose.translate(0.0F, 0.0F, 100.0F);
             this.renderTooltip(pose, new TranslatableComponent("ias.config.mousePos", mouseX, mouseY), mouseX, mouseY);
             pose.popPose();
         }
+
+        // Last pass.
+        for (Runnable callback : this.lastPass) {
+            callback.run();
+        }
+        this.lastPass.clear();
+    }
+
+    @Override
+    public void lastPass(@NotNull Runnable callback) {
+        this.lastPass.add(callback);
     }
 
     @Override

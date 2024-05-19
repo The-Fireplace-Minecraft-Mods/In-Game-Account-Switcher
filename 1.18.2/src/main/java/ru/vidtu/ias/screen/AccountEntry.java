@@ -27,7 +27,6 @@ import net.minecraft.client.User;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.components.ObjectSelectionList;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
@@ -101,10 +100,7 @@ final class AccountEntry extends ObjectSelectionList.Entry<AccountEntry> {
         // Render tooltip.
         if (hovered) {
             if ((System.nanoTime() - this.lastFree) >= 500_000_000L) {
-                pose.pushPose();
-                pose.translate(0.0D, 0.0D, 100.0D);
-                this.list.screen().renderTooltip(pose, this.tooltip, mouseX, mouseY);
-                pose.popPose();
+                this.list.screen().lastPass(() -> this.list.screen().renderTooltip(pose, this.tooltip, mouseX, mouseY));
             }
         } else {
             this.lastFree = System.nanoTime();
@@ -114,6 +110,7 @@ final class AccountEntry extends ObjectSelectionList.Entry<AccountEntry> {
         Skin skin = this.list.skin(this);
         RenderSystem.enableTexture();
         RenderSystem.setShaderTexture(0, skin.skin());
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         GuiComponent.blit(pose, x, y, 8, 8, 8.0F, 8, 8, 8, 64, 64);
         GuiComponent.blit(pose, x, y, 8, 8, 40.0F, 8, 8, 8, 64, 64);
 
@@ -140,9 +137,10 @@ final class AccountEntry extends ObjectSelectionList.Entry<AccountEntry> {
             boolean warning = (System.nanoTime() / 1_000_000_000L) % 2L == 0;
             RenderSystem.enableTexture();
             RenderSystem.setShaderTexture(0, IASMinecraft.SPRITE);
+            RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
             this.list.screen().blit(pose, x - 6, y - 1, 31, warning ? 10 : 0, 2, 10);
             if (mouseX >= x - 10 && mouseX <= x && mouseY >= y && mouseY <= y + height) {
-                this.list.screen().renderTooltip(pose, new TranslatableComponent("ias.accounts.tip.insecure"), mouseX, mouseY);
+                this.list.screen().lastPass(() -> this.list.screen().renderTooltip(pose, new TranslatableComponent("ias.accounts.tip.insecure"), mouseX, mouseY));
             }
         }
 
@@ -151,6 +149,7 @@ final class AccountEntry extends ObjectSelectionList.Entry<AccountEntry> {
             // Bind.
             RenderSystem.enableTexture();
             RenderSystem.setShaderTexture(0, IASMinecraft.SPRITE);
+            RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 
             // Render up widget.
             int upV;

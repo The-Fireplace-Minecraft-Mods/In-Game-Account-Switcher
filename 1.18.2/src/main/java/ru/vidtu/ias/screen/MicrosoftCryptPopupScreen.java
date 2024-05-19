@@ -23,26 +23,34 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.TranslatableComponent;
+import org.jetbrains.annotations.NotNull;
 import org.lwjgl.glfw.GLFW;
 import ru.vidtu.ias.account.Account;
 import ru.vidtu.ias.config.IASConfig;
 import ru.vidtu.ias.crypt.DummyCrypt;
 import ru.vidtu.ias.crypt.HardwareCrypt;
+import ru.vidtu.ias.legacy.LastPassRenderCallback;
 import ru.vidtu.ias.legacy.LegacyTooltip;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 /**
  * Microsoft crypt type popup screen.
  *
  * @author VidTu
  */
-final class MicrosoftCryptPopupScreen extends Screen {
+final class MicrosoftCryptPopupScreen extends Screen implements LastPassRenderCallback {
     /**
      * Parent screen.
      */
     private final Screen parent;
+
+    /**
+     * Last pass callbacks list.
+     */
+    private final List<Runnable> lastPass = new LinkedList<>();
 
     /**
      * Account handler.
@@ -134,6 +142,12 @@ final class MicrosoftCryptPopupScreen extends Screen {
         pose.scale(2.0F, 2.0F, 2.0F);
         drawCenteredString(pose, this.font, this.title, this.width / 4, this.height / 4 - 79 / 2, 0xFF_FF_FF_FF);
         pose.popPose();
+
+        // Last pass.
+        for (Runnable callback : this.lastPass) {
+            callback.run();
+        }
+        this.lastPass.clear();
     }
 
     @Override
@@ -180,6 +194,11 @@ final class MicrosoftCryptPopupScreen extends Screen {
 
         // Pass-through.
         return super.keyPressed(key, scan, mods);
+    }
+
+    @Override
+    public void lastPass(@NotNull Runnable callback) {
+        this.lastPass.add(callback);
     }
 
     @Override

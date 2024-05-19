@@ -111,7 +111,11 @@ public final class LegacyTooltip implements Button.OnTooltip {
 
         // Render if hovered long enough.
         if ((Util.getMillis() - this.lastFree) < this.delay) return;
-        this.screen.renderTooltip(pose, this.tooltip, mouseX, mouseY);
+        if (this.screen instanceof LastPassRenderCallback callback) {
+            callback.lastPass(() -> this.screen.renderTooltip(pose, this.tooltip, mouseX, mouseY));
+        } else {
+            this.screen.renderTooltip(pose, this.tooltip, mouseX, mouseY);
+        }
     }
 
     /**
