@@ -35,6 +35,7 @@ import net.minecraft.client.gui.components.toasts.SystemToast;
 import net.minecraft.client.gui.components.toasts.ToastComponent;
 import net.minecraft.client.gui.layouts.LayoutElement;
 import net.minecraft.client.gui.screens.ConnectScreen;
+import net.minecraft.client.gui.screens.GenericMessageScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.TitleScreen;
 import net.minecraft.client.gui.screens.multiplayer.JoinMultiplayerScreen;
@@ -45,6 +46,7 @@ import net.minecraft.client.multiplayer.chat.report.ReportingContext;
 import net.minecraft.client.telemetry.ClientTelemetryManager;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.vidtu.ias.auth.LoginData;
@@ -125,6 +127,23 @@ public final class IASMinecraft {
 
         // Initialize the IAS.
         IAS.init(gameDir, configDir, modVersion, loader, loaderVersion, gameVersion);
+    }
+
+    /**
+     * Closes the IAS.
+     *
+     * @param minecraft Minecraft instance4
+     */
+    public static void close(@NotNull Minecraft minecraft) {
+        // Set screen.
+        Screen prevScreen = minecraft.screen;
+        minecraft.forceSetScreen(new GenericMessageScreen(Component.translatable("ias.closing")));
+
+        // Unload.
+        IAS.close();
+
+        // Unset screen.
+        minecraft.forceSetScreen(prevScreen);
     }
 
     /**

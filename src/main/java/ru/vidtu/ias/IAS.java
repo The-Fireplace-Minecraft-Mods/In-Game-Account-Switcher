@@ -195,13 +195,21 @@ public final class IAS {
         shutdown:
         try {
             if (executor == null) break shutdown;
+            LOGGER.info("IAS: Shutting down IAS executor.");
             executor.shutdown();
-            if (executor.awaitTermination(30L, TimeUnit.SECONDS)) break shutdown;
+            if (executor.awaitTermination(30L, TimeUnit.SECONDS)) {
+                LOGGER.info("IAS: IAS executor shut down.");
+                break shutdown;
+            }
             LOGGER.warn("IAS: Unable to shutdown IAS executor. Shutting down forcefully...");
             executor.shutdownNow();
-            if (executor.awaitTermination(30L, TimeUnit.SECONDS)) break shutdown;
+            if (executor.awaitTermination(30L, TimeUnit.SECONDS)) {
+                LOGGER.info("IAS: IAS executor shut down forcefully.");
+                break shutdown;
+            }
             LOGGER.error("IAS: Unable to shutdown IAS executor forcefully.");
         } catch (InterruptedException e) {
+            LOGGER.error("IAS: IAS executor interrupted while shutting down. Shutting down forcefully...", e);
             executor.shutdownNow();
             Thread.currentThread().interrupt();
         }

@@ -77,7 +77,7 @@ public final class IASForge {
 //    @SubscribeEvent
 //    public void onShutDown(GameShuttingDownEvent event) {
 //        // Close.
-//        IAS.close();
+//        IASMinecraft.close();
 //    }
 
     // Register screen handlers.

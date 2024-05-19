@@ -59,7 +59,7 @@ public final class IASFabric implements ClientModInitializer {
         IASMinecraft.init(FabricLoader.getInstance().getGameDir(), FabricLoader.getInstance().getConfigDir(), "Fabric", modVersion, loaderVersion);
 
         // Register closer.
-        ClientLifecycleEvents.CLIENT_STOPPING.register(client -> IAS.close());
+        ClientLifecycleEvents.CLIENT_STOPPING.register(IASMinecraft::close);
 
         // Register screen handlers.
         ScreenEvents.AFTER_INIT.register((client, screen, width, height) -> {

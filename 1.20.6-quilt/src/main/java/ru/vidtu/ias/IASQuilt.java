@@ -53,7 +53,7 @@ public final class IASQuilt implements ClientModInitializer {
         IASMinecraft.init(QuiltLoader.getGameDir(), QuiltLoader.getConfigDir(), "Quilt", modVersion, loaderVersion);
 
         // Register closer.
-        ClientLifecycleEvents.CLIENT_STOPPING.register(client -> IAS.close());
+        ClientLifecycleEvents.CLIENT_STOPPING.register(IASMinecraft::close);
 
         // Register screen handlers.
         ScreenEvents.AFTER_INIT.register((client, screen, width, height) -> {
