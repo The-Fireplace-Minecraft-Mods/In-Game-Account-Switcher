@@ -37,6 +37,11 @@ import org.lwjgl.glfw.GLFW;
  */
 public final class PopupBox extends EditBox {
     /**
+     * A font of IAS.
+     */
+    private final Font iasFont;
+
+    /**
      * Enter action.
      */
     private final Runnable enterAction;
@@ -45,6 +50,11 @@ public final class PopupBox extends EditBox {
      * Whether to prevent copying.
      */
     private final boolean secure;
+
+    /**
+     * Box hint.
+     */
+    private final Component hint;
 
     /**
      * Creates a new box.
@@ -58,11 +68,15 @@ public final class PopupBox extends EditBox {
      * @param title       Box title
      * @param enterAction Action on enter key
      * @param secure      Whether to prevent copying
+     * @param hint        Box hint, {@code null} if none
      */
-    PopupBox(Font font, int x, int y, int width, int height, PopupBox inherit, Component title, Runnable enterAction, boolean secure) {
+    PopupBox(Font font, int x, int y, int width, int height, PopupBox inherit, Component title,
+             Runnable enterAction, boolean secure, Component hint) {
         super(font, x, y, width, height, inherit, title);
+        this.iasFont = font;
         this.enterAction = enterAction;
         this.secure = secure;
+        this.hint = hint;
     }
 
     @Override
@@ -80,6 +94,11 @@ public final class PopupBox extends EditBox {
 
         // Render other.
         super.renderButton(pose, mouseX, mouseY, delta);
+
+        // Render hint.
+        if (this.hint != null && this.getValue().isEmpty() && !this.isFocused()) {
+            this.iasFont.drawShadow(pose, this.hint, this.x + 4, this.y + (this.height - 8) / 2, -1);
+        }
     }
 
     @Override
@@ -116,7 +135,7 @@ public final class PopupBox extends EditBox {
     @Override
     public String toString() {
         return "PopupBox{" +
-                ", secure=" + this.secure +
+                "secure=" + this.secure +
                 '}';
     }
 }

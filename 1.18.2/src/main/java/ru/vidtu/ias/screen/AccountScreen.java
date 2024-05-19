@@ -34,6 +34,7 @@ import org.slf4j.LoggerFactory;
 import ru.vidtu.ias.IAS;
 import ru.vidtu.ias.account.Account;
 import ru.vidtu.ias.config.IASStorage;
+import ru.vidtu.ias.legacy.LegacyEditBox;
 import ru.vidtu.ias.legacy.LegacyTooltip;
 import ru.vidtu.ias.legacy.Skin;
 import ru.vidtu.ias.legacy.SkinWidget;
@@ -129,9 +130,7 @@ public final class AccountScreen extends Screen {
         }
 
         // Add search widget.
-        this.search = new EditBox(this.font, this.width / 2 - 75, 11, 150, 20, this.search, new TranslatableComponent("ias.accounts.search"));
-        // FIXME
-        //this.search.setHint(this.search.getMessage().copy().withStyle(ChatFormatting.DARK_GRAY));
+        this.search = new LegacyEditBox(this.font, this.width / 2 - 75, 11, 150, 20, this.search, new TranslatableComponent("ias.accounts.search"), LegacyTooltip.EMPTY, new TranslatableComponent("ias.accounts.search").withStyle(ChatFormatting.DARK_GRAY));
         this.addRenderableWidget(this.search);
 
         // Add skin renderer.

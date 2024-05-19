@@ -141,9 +141,7 @@ public final class ConfigScreen extends Screen {
         this.addRenderableWidget(box);
 
         // Title Text X.
-        this.titleTextX = new LegacyEditBox(this.font, 9 + box.getWidth(), 20, 75, 20, this.titleTextX, new TranslatableComponent("ias.config.titleText.x"), new LegacyTooltip(this, this.font, new TranslatableComponent("ias.config.titleText.x.tip", new TranslatableComponent("key.keyboard.left.alt")), 250));
-        // FIXME
-//        this.titleTextX.setHint(this.titleTextX.getMessage().copy().withStyle(ChatFormatting.DARK_GRAY));
+        this.titleTextX = new LegacyEditBox(this.font, 9 + box.getWidth(), 20, 75, 20, this.titleTextX, new TranslatableComponent("ias.config.titleText.x"), new LegacyTooltip(this, this.font, new TranslatableComponent("ias.config.titleText.x.tip", new TranslatableComponent("key.keyboard.left.alt")), 250), new TranslatableComponent("ias.config.titleText.x").withStyle(ChatFormatting.DARK_GRAY));
         this.titleTextX.active = box.selected();
         this.titleTextX.setEditable(box.selected());
         this.titleTextX.setMaxLength(128);
@@ -156,9 +154,7 @@ public final class ConfigScreen extends Screen {
         this.addRenderableWidget(this.titleTextX);
 
         // Title Text Y.
-        this.titleTextY = new LegacyEditBox(this.font, 88 + box.getWidth(), 20, 75, 20, this.titleTextY, new TranslatableComponent("ias.config.titleText.y"), new LegacyTooltip(this, this.font, new TranslatableComponent("ias.config.titleText.y.tip", new TranslatableComponent("key.keyboard.left.alt")), 250));
-        // FIXME
-//        this.titleTextY.setHint(this.titleTextY.getMessage().copy().withStyle(ChatFormatting.DARK_GRAY));
+        this.titleTextY = new LegacyEditBox(this.font, 88 + box.getWidth(), 20, 75, 20, this.titleTextY, new TranslatableComponent("ias.config.titleText.y"), new LegacyTooltip(this, this.font, new TranslatableComponent("ias.config.titleText.y.tip", new TranslatableComponent("key.keyboard.left.alt")), 250), new TranslatableComponent("ias.config.titleText.y").withStyle(ChatFormatting.DARK_GRAY));
         this.titleTextY.active = box.selected();
         this.titleTextY.setEditable(box.selected());
         this.titleTextY.setMaxLength(128);
@@ -194,9 +190,7 @@ public final class ConfigScreen extends Screen {
         this.addRenderableWidget(box);
 
         // Title Button X.
-        this.titleButtonX = new LegacyEditBox(this.font, 9 + box.getWidth(), 44, 75, 20, this.titleButtonX, new TranslatableComponent("ias.config.titleButton.x"), new LegacyTooltip(this, this.font, new TranslatableComponent("ias.config.titleButton.x.tip", new TranslatableComponent("key.keyboard.left.alt")), 250));
-        // FIXME
-//        this.titleButtonX.setHint(this.titleButtonX.getMessage().copy().withStyle(ChatFormatting.DARK_GRAY));
+        this.titleButtonX = new LegacyEditBox(this.font, 9 + box.getWidth(), 44, 75, 20, this.titleButtonX, new TranslatableComponent("ias.config.titleButton.x"), new LegacyTooltip(this, this.font, new TranslatableComponent("ias.config.titleButton.x.tip", new TranslatableComponent("key.keyboard.left.alt")), 250), new TranslatableComponent("ias.config.titleButton.x").withStyle(ChatFormatting.DARK_GRAY));
         this.titleButtonX.active = box.selected();
         this.titleButtonX.setEditable(box.selected());
         this.titleButtonX.setMaxLength(128);
@@ -209,9 +203,7 @@ public final class ConfigScreen extends Screen {
         this.addRenderableWidget(this.titleButtonX);
 
         // Title Button Y.
-        this.titleButtonY = new LegacyEditBox(this.font, 88 + box.getWidth(), 44, 75, 20, this.titleButtonY, new TranslatableComponent("ias.config.titleButton.y"), new LegacyTooltip(this, this.font, new TranslatableComponent("ias.config.titleButton.y.tip", new TranslatableComponent("key.keyboard.left.alt")), 250));
-        // FIXME
-//        this.titleButtonY.setHint(this.titleButtonY.getMessage().copy().withStyle(ChatFormatting.DARK_GRAY));
+        this.titleButtonY = new LegacyEditBox(this.font, 88 + box.getWidth(), 44, 75, 20, this.titleButtonY, new TranslatableComponent("ias.config.titleButton.y"), new LegacyTooltip(this, this.font, new TranslatableComponent("ias.config.titleButton.y.tip", new TranslatableComponent("key.keyboard.left.alt")), 250), new TranslatableComponent("ias.config.titleButton.y").withStyle(ChatFormatting.DARK_GRAY));
         this.titleButtonY.active = box.selected();
         this.titleButtonY.setEditable(box.selected());
         this.titleButtonY.setMaxLength(128);
@@ -235,9 +227,7 @@ public final class ConfigScreen extends Screen {
         this.addRenderableWidget(box);
 
         // Servers Text X.
-        this.serversTextX = new LegacyEditBox(this.font, 9 + box.getWidth(), 68, 75, 20, this.serversTextX, new TranslatableComponent("ias.config.serversText.x"), new LegacyTooltip(this, this.font, new TranslatableComponent("ias.config.serversText.x.tip", new TranslatableComponent("key.keyboard.left.alt")), 250));
-        // FIXME
-//        this.serversTextX.setHint(this.serversTextX.getMessage().copy().withStyle(ChatFormatting.DARK_GRAY));
+        this.serversTextX = new LegacyEditBox(this.font, 9 + box.getWidth(), 68, 75, 20, this.serversTextX, new TranslatableComponent("ias.config.serversText.x"), new LegacyTooltip(this, this.font, new TranslatableComponent("ias.config.serversText.x.tip", new TranslatableComponent("key.keyboard.left.alt")), 250), new TranslatableComponent("ias.config.serversText.x").withStyle(ChatFormatting.DARK_GRAY));
         this.serversTextX.active = box.selected();
         this.serversTextX.setEditable(box.selected());
         this.serversTextX.setMaxLength(128);
@@ -250,9 +240,7 @@ public final class ConfigScreen extends Screen {
         this.addRenderableWidget(this.serversTextX);
 
         // Servers Text Y.
-        this.serversTextY = new LegacyEditBox(this.font, 88 + box.getWidth(), 68, 75, 20, this.serversTextY, new TranslatableComponent("ias.config.serversText.y"), new LegacyTooltip(this, this.font, new TranslatableComponent("ias.config.serversText.y.tip", new TranslatableComponent("key.keyboard.left.alt")), 250));
-        // FIXME
-//        this.serversTextY.setHint(this.serversTextY.getMessage().copy().withStyle(ChatFormatting.DARK_GRAY));
+        this.serversTextY = new LegacyEditBox(this.font, 88 + box.getWidth(), 68, 75, 20, this.serversTextY, new TranslatableComponent("ias.config.serversText.y"), new LegacyTooltip(this, this.font, new TranslatableComponent("ias.config.serversText.y.tip", new TranslatableComponent("key.keyboard.left.alt")), 250), new TranslatableComponent("ias.config.serversText.y").withStyle(ChatFormatting.DARK_GRAY));
         this.serversTextY.active = box.selected();
         this.serversTextY.setEditable(box.selected());
         this.serversTextY.setMaxLength(128);
@@ -288,9 +276,7 @@ public final class ConfigScreen extends Screen {
         this.addRenderableWidget(box);
 
         // Servers Button X.
-        this.serversButtonX = new LegacyEditBox(this.font, 9 + box.getWidth(), 92, 75, 20, this.serversButtonX, new TranslatableComponent("ias.config.serversButton.x"), new LegacyTooltip(this, this.font, new TranslatableComponent("ias.config.serversButton.x.tip", new TranslatableComponent("key.keyboard.left.alt")), 250));
-        // FIXME
-//        this.serversButtonX.setHint(this.serversButtonX.getMessage().copy().withStyle(ChatFormatting.DARK_GRAY));
+        this.serversButtonX = new LegacyEditBox(this.font, 9 + box.getWidth(), 92, 75, 20, this.serversButtonX, new TranslatableComponent("ias.config.serversButton.x"), new LegacyTooltip(this, this.font, new TranslatableComponent("ias.config.serversButton.x.tip", new TranslatableComponent("key.keyboard.left.alt")), 250), new TranslatableComponent("ias.config.serversButton.x").withStyle(ChatFormatting.DARK_GRAY));
         this.serversButtonX.active = box.selected();
         this.serversButtonX.setEditable(box.selected());
         this.serversButtonX.setMaxLength(128);
@@ -303,9 +289,7 @@ public final class ConfigScreen extends Screen {
         this.addRenderableWidget(this.serversButtonX);
 
         // Servers Button Y.
-        this.serversButtonY = new LegacyEditBox(this.font, 88 + box.getWidth(), 92, 75, 20, this.serversButtonY, new TranslatableComponent("ias.config.serversButton.y"), new LegacyTooltip(this, this.font, new TranslatableComponent("ias.config.serversButton.y.tip", new TranslatableComponent("key.keyboard.left.alt")), 250));
-        // FIXME
-//        this.serversButtonY.setHint(this.serversButtonY.getMessage().copy().withStyle(ChatFormatting.DARK_GRAY));
+        this.serversButtonY = new LegacyEditBox(this.font, 88 + box.getWidth(), 92, 75, 20, this.serversButtonY, new TranslatableComponent("ias.config.serversButton.y"), new LegacyTooltip(this, this.font, new TranslatableComponent("ias.config.serversButton.y.tip", new TranslatableComponent("key.keyboard.left.alt")), 250), new TranslatableComponent("ias.config.serversButton.y").withStyle(ChatFormatting.DARK_GRAY));
         this.serversButtonY.active = box.selected();
         this.serversButtonY.setEditable(box.selected());
         this.serversButtonY.setMaxLength(128);

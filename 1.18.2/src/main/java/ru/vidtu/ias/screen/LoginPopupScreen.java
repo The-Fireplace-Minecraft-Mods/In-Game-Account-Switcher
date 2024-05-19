@@ -146,9 +146,7 @@ final class LoginPopupScreen extends Screen implements LoginHandler {
 
                 // Complete the future.
                 this.passFuture.complete(value);
-            }, true);
-            // FIXME
-//            this.password.setHint(new TranslatableComponent("ias.password.hint").withStyle(ChatFormatting.DARK_GRAY));
+            }, true, new TranslatableComponent("ias.password.hint").withStyle(ChatFormatting.DARK_GRAY));
             this.password.setFormatter((s, i) -> IASConfig.passwordEchoing ? FormattedCharSequence.forward("*".repeat(s.length()), Style.EMPTY) : FormattedCharSequence.EMPTY);
             this.password.setMaxLength(32);
             this.addRenderableWidget(this.password);

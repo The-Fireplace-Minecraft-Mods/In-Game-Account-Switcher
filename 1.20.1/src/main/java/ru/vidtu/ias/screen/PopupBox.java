@@ -114,7 +114,7 @@ public final class PopupBox extends EditBox {
     @Override
     public String toString() {
         return "PopupBox{" +
-                ", secure=" + this.secure +
+                "secure=" + this.secure +
                 '}';
     }
 }

@@ -32,9 +32,19 @@ import org.jetbrains.annotations.Nullable;
  */
 public final class LegacyEditBox extends EditBox {
     /**
+     * A font of IAS.
+     */
+    private final Font iasFont;
+
+    /**
      * Box tooltip.
      */
     private final LegacyTooltip tooltip;
+
+    /**
+     * Box hint.
+     */
+    private final Component hint;
 
     /**
      * Creates a new edit box.
@@ -47,15 +57,22 @@ public final class LegacyEditBox extends EditBox {
      * @param inherit   Box inheriting
      * @param component Box title
      * @param tooltip   Box tooltip
+     * @param hint      Box hint, {@code null} if none
      */
-    public LegacyEditBox(Font font, int x, int y, int width, int height, @Nullable EditBox inherit, Component component, LegacyTooltip tooltip) {
+    public LegacyEditBox(Font font, int x, int y, int width, int height, @Nullable EditBox inherit, Component component,
+                         LegacyTooltip tooltip, Component hint) {
         super(font, x, y, width, height, inherit, component);
+        this.iasFont = font;
         this.tooltip = tooltip;
+        this.hint = hint;
     }
 
     @Override
     public void renderButton(PoseStack pose, int mouseX, int mouseY, float delta) {
         super.renderButton(pose, mouseX, mouseY, delta);
+        if (this.hint != null && this.getValue().isEmpty() && !this.isFocused()) {
+            this.iasFont.drawShadow(pose, this.hint, this.x + 4, this.y + (this.height - 8) / 2, -1);
+        }
         this.tooltip.render(this, pose, mouseX, mouseY);
     }
 }

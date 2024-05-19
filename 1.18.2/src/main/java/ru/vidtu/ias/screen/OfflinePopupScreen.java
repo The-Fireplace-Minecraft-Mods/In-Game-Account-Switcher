@@ -20,8 +20,10 @@
 package ru.vidtu.ias.screen;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import org.lwjgl.glfw.GLFW;
 import ru.vidtu.ias.account.Account;
@@ -85,15 +87,9 @@ public final class OfflinePopupScreen extends Screen {
         }
 
         // Add name box.
-        this.name = new PopupBox(this.font, this.width / 2 - 75, this.height / 2 - 10 + 5, 148, 20, this.name, new TranslatableComponent("ias.offline.nick"), this::done, false);
+        //noinspection StringConcatenationMissingWhitespace
+        this.name = new PopupBox(this.font, this.width / 2 - 75, this.height / 2 - 10 + 5, 148, 20, this.name, new TranslatableComponent("ias.offline.nick"), this::done, false, new TextComponent(IASConfig.unexpectedPigs ? ("Boar" + this.hashCode()) : "Steve").withStyle(ChatFormatting.DARK_GRAY));
         this.name.setMaxLength(16);
-        if (IASConfig.unexpectedPigs) {
-            // FIXME
-            //noinspection StringConcatenationMissingWhitespace
-//            this.name.setHint(new TextComponent("Boar" + this.hashCode()).withStyle(ChatFormatting.DARK_GRAY));
-        } else {
-//            this.name.setHint(new TextComponent("Steve").withStyle(ChatFormatting.DARK_GRAY));
-        }
         this.addRenderableWidget(this.name);
 
         // Add done button.
