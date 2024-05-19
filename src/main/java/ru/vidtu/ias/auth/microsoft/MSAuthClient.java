@@ -295,7 +295,7 @@ public final class MSAuthClient implements Closeable {
     public void close() {
         // Cancel any task.
         if (this.task != null) {
-            this.task.cancel(true);
+            this.task.cancel(false);
             this.task = null;
             LOGGER.info("IAS: HTTP polling stopped.");
         }

@@ -1,6 +1,6 @@
 [versions]
 fabric-loader = "0.15.11"
-mixin = "0.8.5"
+mixin = "0.8.6"
 quilt-loader = "0.25.0"
 
 [libraries]
