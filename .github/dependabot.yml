@@ -55,6 +55,39 @@ updates:
       - dependency-name: "*architectury.loom*"
       - dependency-name: "*lazydfu*"
   - package-ecosystem: gradle
+    directory: '/1.19.2'
+    schedule:
+      interval: daily
+    ignore:
+      - dependency-name: "*minecraft*"
+      - dependency-name: "*architectury.loom*"
+  - package-ecosystem: gradle
+    directory: '/1.19.2-fabric'
+    schedule:
+      interval: daily
+    ignore:
+      - dependency-name: "*minecraft*"
+      - dependency-name: "*fabric-api*"
+      - dependency-name: "*modmenu*"
+      - dependency-name: "*architectury.loom*"
+  - package-ecosystem: gradle
+    directory: '/1.19.2-forge'
+    schedule:
+      interval: daily
+    ignore:
+      - dependency-name: "*minecraft*"
+      - dependency-name: "*forge*"
+      - dependency-name: "*architectury.loom*"
+  - package-ecosystem: gradle
+    directory: '/1.19.2-quilt'
+    schedule:
+      interval: daily
+    ignore:
+      - dependency-name: "*minecraft*"
+      - dependency-name: "*quilted-fabric-api*"
+      - dependency-name: "*modmenu*"
+      - dependency-name: "*architectury.loom*"
+  - package-ecosystem: gradle
     directory: '/1.19.4'
     schedule:
       interval: daily
@@ -121,6 +154,47 @@ updates:
       - dependency-name: "*architectury.loom*"
   - package-ecosystem: gradle
     directory: '/1.20.1-quilt'
+    schedule:
+      interval: daily
+    ignore:
+      - dependency-name: "*minecraft*"
+      - dependency-name: "*quilted-fabric-api*"
+      - dependency-name: "*modmenu*"
+      - dependency-name: "*architectury.loom*"
+  - package-ecosystem: gradle
+    directory: '/1.20.2'
+    schedule:
+      interval: daily
+    ignore:
+      - dependency-name: "*minecraft*"
+      - dependency-name: "*architectury.loom*"
+  - package-ecosystem: gradle
+    directory: '/1.20.2-fabric'
+    schedule:
+      interval: daily
+    ignore:
+      - dependency-name: "*minecraft*"
+      - dependency-name: "*fabric-api*"
+      - dependency-name: "*modmenu*"
+      - dependency-name: "*architectury.loom*"
+  - package-ecosystem: gradle
+    directory: '/1.20.2-forge'
+    schedule:
+      interval: daily
+    ignore:
+      - dependency-name: "*minecraft*"
+      - dependency-name: "*forge*"
+      - dependency-name: "*architectury.loom*"
+  - package-ecosystem: gradle
+    directory: '/1.20.2-neoforge'
+    schedule:
+      interval: daily
+    ignore:
+      - dependency-name: "*minecraft*"
+      - dependency-name: "*neoforge*"
+      - dependency-name: "*architectury.loom*"
+  - package-ecosystem: gradle
+    directory: '/1.20.2-quilt'
     schedule:
       interval: daily
     ignore:

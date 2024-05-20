@@ -15,7 +15,9 @@ plugins {
 
 rootProject.name = "In-Game Account Switcher"
 include("1.18.2", "1.18.2-fabric", "1.18.2-quilt", "1.18.2-forge")
+include("1.19.2", "1.19.2-fabric", "1.19.2-quilt", "1.19.2-forge")
 include("1.19.4", "1.19.4-fabric", "1.19.4-quilt", "1.19.4-forge")
 include("1.20.1", "1.20.1-fabric", "1.20.1-quilt", "1.20.1-forge", "1.20.1-neoforge")
+include("1.20.2", "1.20.2-fabric", "1.20.2-quilt", "1.20.2-forge", "1.20.2-neoforge")
 include("1.20.4", "1.20.4-fabric", "1.20.4-quilt", "1.20.4-forge", "1.20.4-neoforge")
 include("1.20.6", "1.20.6-fabric", "1.20.6-quilt", "1.20.6-forge", "1.20.6-neoforge")

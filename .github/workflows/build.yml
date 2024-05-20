@@ -17,9 +17,6 @@ jobs:
         run: 'chmod +x ./gradlew'
       - name: 'Setup Gradle'
         uses: gradle/actions/setup-gradle@v3
-        with:
-          gradle-home-cache-includes: |
-            caches/fabric-loom
       - name: 'Build'
         run: './gradlew -Dorg.gradle.daemon=false build --no-daemon'
       - name: 'Upload artifacts'
@@ -30,6 +27,9 @@ jobs:
             1.18.2-fabric/build/libs/
             1.18.2-quilt/build/libs/
             1.18.2-forge/build/libs/
+            1.19.2-fabric/build/libs/
+            1.19.2-quilt/build/libs/
+            1.19.2-forge/build/libs/
             1.19.4-fabric/build/libs/
             1.19.4-quilt/build/libs/
             1.19.4-forge/build/libs/
@@ -37,6 +37,10 @@ jobs:
             1.20.1-quilt/build/libs/
             1.20.1-forge/build/libs/
             1.20.1-neoforge/build/libs/
+            1.20.2-fabric/build/libs/
+            1.20.2-quilt/build/libs/
+            1.20.2-forge/build/libs/
+            1.20.2-neoforge/build/libs/
             1.20.4-fabric/build/libs/
             1.20.4-quilt/build/libs/
             1.20.4-forge/build/libs/

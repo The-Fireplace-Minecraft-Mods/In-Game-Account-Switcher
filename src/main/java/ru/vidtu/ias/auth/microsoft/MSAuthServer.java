@@ -586,7 +586,7 @@ public final class MSAuthServer implements Runnable, Closeable {
     @Override
     public void close() {
         // Close the server.
-        this.server.stop(15);
+        this.server.stop(0);
 
         // Log it.
         LOGGER.info("IAS: HTTP server stopped.");

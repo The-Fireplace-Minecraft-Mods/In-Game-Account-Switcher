@@ -195,7 +195,7 @@ public final class IAS {
         shutdown:
         try {
             if (executor == null) break shutdown;
-            LOGGER.info("IAS: Shutting down IAS executor.");
+            LOGGER.info("IAS: Shutting down IAS executor...");
             executor.shutdown();
             if (executor.awaitTermination(30L, TimeUnit.SECONDS)) {
                 LOGGER.info("IAS: IAS executor shut down.");

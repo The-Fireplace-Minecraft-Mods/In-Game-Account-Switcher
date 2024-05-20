@@ -80,7 +80,7 @@ final class LoginPopupScreen extends Screen implements LoginHandler, LastPassRen
      * Current stage.
      */
     @SuppressWarnings("FieldAccessedSynchronizedAndUnsynchronized") // <- toString()
-    private Component stage = new TranslatableComponent(MicrosoftAccount.INITIALIZING);
+    private Component stage = new TranslatableComponent(MicrosoftAccount.INITIALIZING).withStyle(ChatFormatting.YELLOW);
 
     /**
      * Current stage label.
