@@ -196,12 +196,12 @@ public final class IASConfig {
         } catch (Throwable t) {
             // Rethrow.
             throw new RuntimeException("Unable to load IAS config.", t);
+        } finally {
+            // NPE protection.
+            titleTextAlign = Objects.requireNonNullElse(titleTextAlign, TextAlign.LEFT);
+            serversTextAlign = Objects.requireNonNullElse(serversTextAlign, TextAlign.LEFT);
+            server = Objects.requireNonNullElse(server, ServerMode.AVAILABLE);
         }
-
-        // NPE protection.
-        titleTextAlign = Objects.requireNonNullElse(titleTextAlign, TextAlign.LEFT);
-        serversTextAlign = Objects.requireNonNullElse(serversTextAlign, TextAlign.LEFT);
-        server = Objects.requireNonNullElse(server, ServerMode.AVAILABLE);
     }
 
     /**
