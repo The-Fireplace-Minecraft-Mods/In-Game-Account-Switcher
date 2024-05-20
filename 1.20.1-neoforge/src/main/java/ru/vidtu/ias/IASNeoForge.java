@@ -35,7 +35,6 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.forgespi.language.IModInfo;
-import net.minecraftforge.network.NetworkConstants;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import ru.vidtu.ias.screen.ConfigScreen;
 

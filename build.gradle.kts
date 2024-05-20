@@ -28,13 +28,13 @@ tasks.withType<Jar> {
     from(rootDir.resolve("NOTICE"))
     manifest {
         attributes(
-                "Specification-Title" to "In-Game Account Switcher",
-                "Specification-Version" to project.version,
-                "Specification-Vendor" to "VidTu",
-                "Implementation-Title" to "IAS-Root",
-                "Implementation-Version" to project.version,
-                "Implementation-Vendor" to "VidTu",
-                "MixinConfigs" to "ias.mixins.json"
+            "Specification-Title" to "In-Game Account Switcher",
+            "Specification-Version" to project.version,
+            "Specification-Vendor" to "VidTu",
+            "Implementation-Title" to "IAS-Root",
+            "Implementation-Version" to project.version,
+            "Implementation-Vendor" to "VidTu",
+            "MixinConfigs" to "ias.mixins.json"
         )
     }
 }

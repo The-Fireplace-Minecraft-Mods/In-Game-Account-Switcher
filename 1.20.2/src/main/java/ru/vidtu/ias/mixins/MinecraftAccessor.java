@@ -31,8 +31,6 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Mutable;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
-import java.util.concurrent.CompletableFuture;
-
 /**
  * Mixin accessor for changing session-related data in {@link Minecraft}.
  *

@@ -16,7 +16,13 @@ loom {
         mixinConfigs = setOf("ias.mixins.json")
     }
     runs.named("client") {
-        vmArgs("-XX:+IgnoreUnrecognizedVMOptions", "-Xmx2G", "-XX:+AllowEnhancedClassRedefinition", "-XX:HotswapAgent=fatjar", "-Dfabric.debug.disableClassPathIsolation=true")
+        vmArgs(
+            "-XX:+IgnoreUnrecognizedVMOptions",
+            "-Xmx2G",
+            "-XX:+AllowEnhancedClassRedefinition",
+            "-XX:HotswapAgent=fatjar",
+            "-Dfabric.debug.disableClassPathIsolation=true"
+        )
     }
     @Suppress("UnstableApiUsage")
     mixin {
@@ -64,13 +70,13 @@ tasks.withType<Jar> {
     from(rootDir.resolve("NOTICE"))
     manifest {
         attributes(
-                "Specification-Title" to "In-Game Account Switcher",
-                "Specification-Version" to project.version,
-                "Specification-Vendor" to "VidTu",
-                "Implementation-Title" to "IAS-Forge-1.19.4",
-                "Implementation-Version" to project.version,
-                "Implementation-Vendor" to "VidTu",
-                "MixinConfigs" to "ias.mixins.json"
+            "Specification-Title" to "In-Game Account Switcher",
+            "Specification-Version" to project.version,
+            "Specification-Vendor" to "VidTu",
+            "Implementation-Title" to "IAS-Forge-1.19.4",
+            "Implementation-Version" to project.version,
+            "Implementation-Vendor" to "VidTu",
+            "MixinConfigs" to "ias.mixins.json"
         )
     }
 }

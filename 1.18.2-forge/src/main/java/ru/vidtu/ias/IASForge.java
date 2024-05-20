@@ -69,16 +69,9 @@ public final class IASForge {
                 .map(IModInfo::getVersion)
                 .map(ArtifactVersion::toString)
                 .orElse("UNKNOWN");
+        IASMinecraft.hackyMixinClosing = true;
         IASMinecraft.init(FMLPaths.GAMEDIR.get(), FMLPaths.CONFIGDIR.get(), "Forge", modVersion, loaderVersion);
     }
-
-    // Register closer.
-    // FIXME
-//    @SubscribeEvent
-//    public void onShutDown(GameShuttingDownEvent event) {
-//        // Close.
-//        IASMinecraft.close();
-//    }
 
     // Register screen handlers.
     @SubscribeEvent

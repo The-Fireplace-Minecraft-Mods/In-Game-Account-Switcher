@@ -30,6 +30,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import ru.vidtu.ias.IASMinecraft;
 import ru.vidtu.ias.config.IASConfig;
@@ -67,5 +68,14 @@ public final class MinecraftMixin {
         // Modify otherwise.
         String original = cir.getReturnValue();
         cir.setReturnValue(I18n.get("ias.bar", original, this.user.getName()));
+    }
+
+    @Inject(method = "close", at = @At("HEAD"), remap = false)
+    public void ias$close$head(CallbackInfo ci) {
+        // Skip if not hacky Forge shutdown.
+        if (!IASMinecraft.hackyMixinClosing) return;
+
+        // Shut down.
+        IASMinecraft.close((Minecraft) (Object) this);
     }
 }

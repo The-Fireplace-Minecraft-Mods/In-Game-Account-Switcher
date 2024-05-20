@@ -79,6 +79,12 @@ public final class IASMinecraft {
     public static final ResourceLocation SPRITE = new ResourceLocation("ias", "textures/gui/sprite.png");
 
     /**
+     * Forge 1.18.2 doesn't have an API for game shutting down.
+     * This is Mixin'ed and this field is set to true only on Forge.
+     */
+    public static boolean hackyMixinClosing = false;
+
+    /**
      * Logger for this class.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger("IAS/IASMinecraft");
