@@ -68,6 +68,7 @@ tasks.withType<ProcessResources> {
 tasks.withType<Jar> {
     from(rootDir.resolve("LICENSE"))
     from(rootDir.resolve("GPL"))
+    from(rootDir.resolve("NOTICE"))
     manifest {
         attributes(
             "Specification-Title" to "In-Game Account Switcher",
