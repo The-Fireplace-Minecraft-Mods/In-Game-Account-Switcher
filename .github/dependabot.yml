@@ -176,6 +176,14 @@ updates:
     ignore:
       - dependency-name: "*minecraft*"
   - package-ecosystem: gradle
+    directory: '/1.20.6-forge'
+    schedule:
+      interval: daily
+    ignore:
+      - dependency-name: "*minecraft*"
+      - dependency-name: "*forge*"
+      - dependency-name: "*architectury.loom*"
+  - package-ecosystem: gradle
     directory: '/1.20.6-fabric'
     schedule:
       interval: daily
