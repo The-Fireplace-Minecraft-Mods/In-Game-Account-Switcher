@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 import ru.vidtu.ias.auth.microsoft.MSAuth;
 import ru.vidtu.ias.config.IASConfig;
 import ru.vidtu.ias.config.IASStorage;
+import ru.vidtu.ias.utils.Holder;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -35,6 +36,7 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
@@ -121,7 +123,7 @@ public final class IAS {
 
         // Set up IAS.
         userAgent = USER_AGENT_TEMPLATE.formatted(version, SESSION, loader, loaderVersion, gameVersion, Runtime.version().toString());
-        LOGGER.info("IAS user agent: {}", userAgent);
+        LOGGER.debug("IAS user agent: {}", userAgent);
 
         // Write the disclaimers.
         try {
@@ -148,12 +150,19 @@ public final class IAS {
         executor = Executors.newSingleThreadScheduledExecutor(r -> new Thread(r, "IAS"));
 
         // Perform initial loading.
-        if (Boolean.getBoolean("ias.skipDisableScanning")) return;
-        executor.scheduleWithFixedDelay(() -> {
+        if (Boolean.getBoolean("ias.skipDisableScanning")) {
+            LOGGER.debug("IAS: Skipped IAS remote scanning because system property is set.");
+            return;
+        }
+        Holder<ScheduledFuture<?>> task = new Holder<>();
+        task.set(executor.scheduleWithFixedDelay(() -> {
             // Perform scanning, if allowed.
             try {
                 // Skip if not allowed or already disabled.
-                if (disabled || Boolean.getBoolean("ias.skipDisableScanning")) return;
+                if (disabled || Boolean.getBoolean("ias.skipDisableScanning")) {
+                    LOGGER.debug("IAS: Skipped IAS remote scanning because system property is set or the mod is already disabled.");
+                    return;
+                }
 
                 // Create the client.
                 HttpClient client = HttpClient.newBuilder()
@@ -177,14 +186,27 @@ public final class IAS {
                 if (code < 200 || code > 299) return;
 
                 // Check the lines.
-                disabled = response.body().anyMatch(line -> {
+                disabled = disabled || response.body().anyMatch(line -> {
                     line = line.strip();
                     return "ALL".equalsIgnoreCase(line) || version.equalsIgnoreCase(line);
                 });
-            } catch (Throwable ignored) {
-                // NO-OP
+
+                // Return if normal.
+                if (!disabled) {
+                    LOGGER.debug("IAS: Completed remote disabling check. Not disabled.");
+                    return;
+                }
+
+                // Log and stop task if disabled.
+                LOGGER.error("IAS: The In-Game Account Switcher mod has been disabled by remote due to serious issues. Please, see the mod page for more information. ({})", version);
+                ScheduledFuture<?> actualTask = task.get();
+                if (actualTask == null) return;
+                actualTask.cancel(false);
+            } catch (Throwable t) {
+                // Log into debug.
+                LOGGER.debug("IAS: Unable to perform remote disabling check.", t);
             }
-        }, 3L, 3L, TimeUnit.HOURS);
+        }, 0L, 60L, TimeUnit.MINUTES));
     }
 
     /**
