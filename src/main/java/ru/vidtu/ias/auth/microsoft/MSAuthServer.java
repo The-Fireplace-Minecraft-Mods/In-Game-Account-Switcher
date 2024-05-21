@@ -260,14 +260,14 @@ public final class MSAuthServer implements Runnable, Closeable {
             });
 
             // Create the end handler. (safe spot)
-            this.server.createContext("/end", ex -> {
+            this.server.createContext("/end/", ex -> {
                 try {
                     // Log it.
-                    LOGGER.info("IAS: Requested HTTP to '/end'.");
+                    LOGGER.info("IAS: Requested HTTP to '/end/'.");
 
                     // Close and ignore if not localhost.
                     if (!ex.getRemoteAddress().getAddress().isLoopbackAddress()) {
-                        LOGGER.warn("IAS: Closed not loopback request to '/end'.");
+                        LOGGER.warn("IAS: Closed not loopback request to '/end/'.");
                         ex.close();
                         return;
                     }

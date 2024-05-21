@@ -117,13 +117,16 @@ public final class IAS {
      * @param gameVersion   Game version
      */
     public static void init(Path gamePath, Path configPath, String version, String loader, String loaderVersion, String gameVersion) {
+        // Log.
+        LOGGER.info("IAS: Initializing IAS...");
+
         // Initialize the dirs.
         gameDirectory = gamePath;
         configDirectory = configPath;
 
         // Set up IAS.
         userAgent = USER_AGENT_TEMPLATE.formatted(version, SESSION, loader, loaderVersion, gameVersion, Runtime.version().toString());
-        LOGGER.debug("IAS user agent: {}", userAgent);
+        LOGGER.debug("IAS: Current user agent: {}", userAgent);
 
         // Write the disclaimers.
         try {
@@ -207,12 +210,18 @@ public final class IAS {
                 LOGGER.debug("IAS: Unable to perform remote disabling check.", t);
             }
         }, 0L, 60L, TimeUnit.MINUTES));
+
+        // Log.
+        LOGGER.info("IAS: IAS has been loaded.");
     }
 
     /**
      * Closes the IAS.
      */
     public static void close() {
+        // Log.
+        LOGGER.info("IAS: Closing IAS...");
+
         // Shutdown the executor.
         shutdown:
         try {
@@ -248,6 +257,9 @@ public final class IAS {
                 // NO-OP
             }
         }
+
+        // Log.
+        LOGGER.info("IAS: IAS has been unloaded.");
     }
 
     /**

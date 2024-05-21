@@ -119,6 +119,9 @@ public final class IASStorage {
      */
     public static void disclaimers(Path path) {
         try {
+            // Log.
+            LOGGER.debug("IAS: Writing disclaimers into {}...", path);
+
             // Get the path.
             path = path.resolve("_IAS_ACCOUNTS_DO_NOT_SEND_TO_ANYONE");
 
@@ -135,6 +138,9 @@ public final class IASStorage {
                         StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE,
                         StandardOpenOption.SYNC, StandardOpenOption.DSYNC, LinkOption.NOFOLLOW_LINKS);
             }
+
+            // Log.
+            LOGGER.debug("IAS: Disclaimers ({}) written to {}.", DISCLAIMER_FILE_NAMES, path);
         } catch (Throwable t) {
             // Rethrow.
             throw new RuntimeException("Unable to write IAS disclaimers.", t);
@@ -142,13 +148,16 @@ public final class IASStorage {
     }
 
     /**
-     * Loads the config.
+     * Loads the storage.
      *
      * @param path Game directory
-     * @throws RuntimeException If unable to load the config
+     * @throws RuntimeException If unable to load the storage
      */
     public static void load(Path path) {
         try {
+            // Log.
+            LOGGER.debug("IAS: Loading storage for {}...", path);
+
             // Get the file.
             Path folder = path.resolve("_IAS_ACCOUNTS_DO_NOT_SEND_TO_ANYONE/.hidden");
             Path file = folder.resolve("accounts_v1.do_not_send_to_anyone");
@@ -156,6 +165,7 @@ public final class IASStorage {
 
             // Skip if it doesn't exist.
             if (!Files.isRegularFile(file, LinkOption.NOFOLLOW_LINKS)) {
+                LOGGER.debug("IAS: Storage not found. Saving...");
                 save(path);
                 return;
             }
@@ -185,6 +195,9 @@ public final class IASStorage {
                 accounts = accounts.stream()
                         .distinct()
                         .collect(Collectors.toCollection(ArrayList::new));
+
+                // Log.
+                LOGGER.debug("IAS: Loaded {} (currently: {}) accounts from {}.", list.size(), accounts.size(), file);
             }
         } catch (Throwable t) {
             // Rethrow.
@@ -196,10 +209,13 @@ public final class IASStorage {
      * Saves the storage.
      *
      * @param path Game directory
-     * @throws RuntimeException If unable to save the config
+     * @throws RuntimeException If unable to save the storage
      */
     public static void save(Path path) {
         try {
+            // Log.
+            LOGGER.debug("IAS: Saving storage into {}...", path);
+
             // Get the file.
             Path file = path.resolve("_IAS_ACCOUNTS_DO_NOT_SEND_TO_ANYONE/.hidden/accounts_v1.do_not_send_to_anyone");
 
@@ -246,6 +262,9 @@ public final class IASStorage {
             Files.write(file, data, StandardOpenOption.CREATE,
                     StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE,
                     StandardOpenOption.SYNC, StandardOpenOption.DSYNC, LinkOption.NOFOLLOW_LINKS);
+
+            // Log it.
+            LOGGER.debug("IAS: Saved {} accounts to {}.", accounts.size(), file);
         } catch (Throwable t) {
             // Rethrow.
             throw new RuntimeException("Unable to save IAS storage.", t);
@@ -260,6 +279,9 @@ public final class IASStorage {
      */
     public static void gameDisclaimerShown(Path path) {
         try {
+            // Log it.
+            LOGGER.debug("IAS: Marking in-game disclaimers as shown into {}...", path);
+
             // Set the parameter.
             gameDisclaimerShown = true;
 
@@ -267,6 +289,9 @@ public final class IASStorage {
             Path file = path.resolve("_IAS_ACCOUNTS_DO_NOT_SEND_TO_ANYONE/.hidden/game_disclaimer_shown");
             Files.createDirectories(file.getParent());
             Files.createFile(file);
+
+            // Log it.
+            LOGGER.debug("IAS: Marked in-game disclaimers as shown to {}.", file);
         } catch (Throwable t) {
             // Rethrow.
             throw new RuntimeException("Unable to mark game disclaimer as shown.", t);

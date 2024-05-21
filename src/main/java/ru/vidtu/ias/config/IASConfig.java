@@ -167,11 +167,15 @@ public final class IASConfig {
      */
     public static void load(Path path) {
         try {
+            // Log.
+            LOGGER.debug("IAS: Loading config for {}...", path);
+
             // Get the file.
             Path file = path.resolve("ias.json");
 
             // Skip if it doesn't exist.
             if (!Files.isRegularFile(file)) {
+                LOGGER.debug("IAS: Config not found. Saving...");
                 save(path);
                 return;
             }
@@ -182,17 +186,23 @@ public final class IASConfig {
             // Read JSON.
             JsonObject json = GSON.fromJson(value, JsonObject.class);
             int version = json.has("version") ? GSONUtils.getIntOrThrow(json, "version") : 1;
-            Migrator migrator = Migrator.fromVersion(version);
+            LOGGER.trace("IAS: Loaded config version is {}.", version);
 
-            // Load migrated.
+            // Load migrated, if any.
+            Migrator migrator = Migrator.fromVersion(version);
             if (migrator != null) {
+                LOGGER.info("IAS: Migrating old config version {} via {}.", version, migrator);
                 migrator.load(json);
+                LOGGER.info("IAS: Migrated old config.");
                 save(path);
                 return;
             }
 
             // Hacky JSON reading.
             GSON.fromJson(json, IASConfig.class);
+
+            // Log it.
+            LOGGER.debug("IAS: Config loaded.");
         } catch (Throwable t) {
             // Rethrow.
             throw new RuntimeException("Unable to load IAS config.", t);
@@ -212,6 +222,9 @@ public final class IASConfig {
      */
     public static void save(Path path) {
         try {
+            // Log.
+            LOGGER.debug("IAS: Saving config into {}...", path);
+
             // Get the file.
             Path file = path.resolve("ias.json");
 
@@ -230,6 +243,9 @@ public final class IASConfig {
             Files.writeString(file, value, StandardOpenOption.CREATE,
                     StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE,
                     StandardOpenOption.SYNC, StandardOpenOption.DSYNC);
+
+            // Log.
+            LOGGER.debug("IAS: Config saved to {}.", file);
         } catch (Throwable t) {
             // Rethrow.
             throw new RuntimeException("Unable to save IAS config.", t);

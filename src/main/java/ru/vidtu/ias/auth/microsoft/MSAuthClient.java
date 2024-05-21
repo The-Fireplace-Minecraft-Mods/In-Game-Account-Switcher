@@ -121,7 +121,7 @@ public final class MSAuthClient implements Closeable {
             // Flush the task.
             this.close();
             this.task = IAS.executor().scheduleWithFixedDelay(this::tick, interval.toMillis(), interval.toMillis(), TimeUnit.MILLISECONDS);
-            LOGGER.info("IAS: HTTP polling started.");
+            LOGGER.info("IAS: HTTP polling started with delay of {}.", interval);
 
             // Return as-is.
             return auth;
