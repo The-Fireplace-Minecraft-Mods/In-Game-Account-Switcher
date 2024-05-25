@@ -45,7 +45,7 @@ dependencies {
     mappings(loom.officialMojangMappings())
 
     // NeoForge
-    neoForge("net.neoforged:neoforge:20.6.72-beta")
+    neoForge("net.neoforged:neoforge:20.6.78-beta")
 
     // Root
     compileOnly(shared)
@@ -78,7 +78,8 @@ tasks.withType<Jar> {
             "Specification-Vendor" to "VidTu",
             "Implementation-Title" to "IAS-NeoForge-1.20.6",
             "Implementation-Version" to project.version,
-            "Implementation-Vendor" to "VidTu"
+            "Implementation-Vendor" to "VidTu",
+            "MixinConfigs" to "ias.mixins.json"
         )
     }
 }

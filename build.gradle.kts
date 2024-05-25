@@ -33,8 +33,7 @@ tasks.withType<Jar> {
             "Specification-Vendor" to "VidTu",
             "Implementation-Title" to "IAS-Root",
             "Implementation-Version" to project.version,
-            "Implementation-Vendor" to "VidTu",
-            "MixinConfigs" to "ias.mixins.json"
+            "Implementation-Vendor" to "VidTu"
         )
     }
 }

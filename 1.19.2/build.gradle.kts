@@ -8,13 +8,13 @@ java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 group = "ru.vidtu.ias"
 base.archivesName = "IAS-1.19.2"
 
-loom {
-    silentMojangMappingsLicense()
-}
-
 repositories {
     mavenCentral()
     maven("https://repo.spongepowered.org/repository/maven-public/")
+}
+
+loom {
+    silentMojangMappingsLicense()
 }
 
 dependencies {
@@ -37,10 +37,6 @@ tasks.withType<JavaCompile> {
 
 tasks.withType<ProcessResources> {
     from(rootProject.sourceSets.main.get().resources)
-    inputs.property("version", project.version)
-    filesMatching("fabric.mod.json") {
-        expand("version" to project.version)
-    }
 }
 
 tasks.withType<Jar> {

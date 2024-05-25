@@ -75,7 +75,8 @@ tasks.withType<Jar> {
             "Specification-Vendor" to "VidTu",
             "Implementation-Title" to "IAS-Forge-1.20.6",
             "Implementation-Version" to project.version,
-            "Implementation-Vendor" to "VidTu"
+            "Implementation-Vendor" to "VidTu",
+            "MixinConfigs" to "ias.mixins.json"
         )
     }
 }

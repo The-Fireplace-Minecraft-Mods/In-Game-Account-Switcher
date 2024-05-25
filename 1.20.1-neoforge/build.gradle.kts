@@ -13,7 +13,7 @@ val shared = project(":1.20.1")
 loom {
     silentMojangMappingsLicense()
     forge { // <- NeoForge in 1.20.1 is a fork of Forge, so we're using Forge platform.
-        // Empty
+        mixinConfigs = setOf("ias.mixins.json")
     }
     runs.named("client") {
         vmArgs(
