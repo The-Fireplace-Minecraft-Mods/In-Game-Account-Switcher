@@ -241,6 +241,8 @@ public final class MicrosoftAccount implements Account {
                 if (migrate != null) {
                     crypt.set(migrate);
                     recrypt.set(true);
+                } else {
+                    crypt.set(value);
                 }
 
                 // Continue.
