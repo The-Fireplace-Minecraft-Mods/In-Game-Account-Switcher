@@ -44,7 +44,7 @@ dependencies {
     mappings(loom.officialMojangMappings())
 
     // NeoForge
-    forge("net.neoforged:forge:1.20.1-47.1.105") // <- NeoForge in 1.20.1 is a fork of Forge, so we're using Forge platform.
+    forge("net.neoforged:forge:1.20.1-47.1.106") // <- NeoForge in 1.20.1 is a fork of Forge, so we're using Forge platform.
 
     // Root
     compileOnly(shared)
