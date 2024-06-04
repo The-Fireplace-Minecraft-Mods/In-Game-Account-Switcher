@@ -21,6 +21,8 @@ package ru.vidtu.ias.auth.microsoft.fields;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 import ru.vidtu.ias.auth.microsoft.MSAuth;
 import ru.vidtu.ias.utils.GSONUtils;
 
@@ -37,15 +39,17 @@ import java.util.regex.Pattern;
  * @see MSAuth#mcaToMcp(String)
  * @see MSAuth#nameToMcp(String)
  */
-public record MCProfile(UUID uuid, String name) {
+public record MCProfile(@NotNull UUID uuid, @NotNull String name) {
     /**
      * Dashless UUID pattern.
      */
+    @NotNull
     private static final Pattern UUID_DASHLESS = Pattern.compile("(\\w{8})(\\w{4})(\\w{4})(\\w{4})(\\w{12})");
 
     /**
      * Dashed UUID replacer.
      */
+    @NotNull
     private static final String UUID_DASHED = "$1-$2-$3-$4-$5";
 
     /**
@@ -55,7 +59,9 @@ public record MCProfile(UUID uuid, String name) {
      * @return Extracted MS tokens
      * @throws JsonParseException If unable to extract
      */
-    public static MCProfile fromJson(JsonObject json) {
+    @Contract(value = "_ -> new", pure = true)
+    @NotNull
+    public static MCProfile fromJson(@NotNull JsonObject json) {
         try {
             // Extract the ID and name.
             String id = GSONUtils.getStringOrThrow(json, "id");

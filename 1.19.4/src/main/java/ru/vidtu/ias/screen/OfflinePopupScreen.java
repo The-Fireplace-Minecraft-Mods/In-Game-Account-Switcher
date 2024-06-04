@@ -28,8 +28,10 @@ import net.minecraft.network.chat.Component;
 import org.lwjgl.glfw.GLFW;
 import ru.vidtu.ias.account.Account;
 import ru.vidtu.ias.account.OfflineAccount;
+import ru.vidtu.ias.auth.microsoft.MSAuth;
 import ru.vidtu.ias.config.IASConfig;
 
+import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -58,6 +60,11 @@ public final class OfflinePopupScreen extends Screen {
      * Done button.
      */
     private PopupButton done;
+
+    /**
+     * Whether the account is already being added and UI should be locked.
+     */
+    private boolean locked = false;
 
     /**
      * Creates a new add screen.
@@ -126,8 +133,36 @@ public final class OfflinePopupScreen extends Screen {
         // Don't allow blank.
         if (value.isBlank()) return;
 
+        // Check for length.
+        int length = value.length();
+        if (length < 3 || length > 16) {
+            // Don't fetch skins for invalid names.
+            this.handler.accept(new OfflineAccount(value, null));
+
+            // Don't process.
+            return;
+        }
+
+        // Check for characters.
+        for (int i = 0; i < length; i++) {
+            // Skip allowed chars.
+            int c = value.codePointAt(i);
+            if (c == '_' || c >= '0' && c <= '9' || c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z') continue;
+
+            // Don't fetch skins for invalid names.
+            this.handler.accept(new OfflineAccount(value, null));
+
+            // Don't process.
+            return;
+        }
+
         // Create and accept.
-        this.handler.accept(new OfflineAccount(value));
+        this.locked = true;
+        this.type(false);
+        MSAuth.nameToMcp(value).whenCompleteAsync((profile, throwable) -> {
+            UUID skin = profile != null ? profile.uuid() : null;
+            this.handler.accept(new OfflineAccount(value, skin));
+        }, this.minecraft);
     }
 
     /**
@@ -139,8 +174,25 @@ public final class OfflinePopupScreen extends Screen {
         // Prevent NPE.
         if (this.done == null || this.name == null) return;
 
+        // Gray out if locked.
+        if (this.locked) {
+            // Disable button.
+            this.done.active = false;
+            this.name.active = false;
+
+            // Tooltip.
+            this.done.setTooltip(null);
+
+            // Update color.
+            this.done.color(0.5F, 0.5F, 0.5F, instant);
+
+            // Don't process.
+            return;
+        }
+
         // Get the name.
         String value = this.name.getValue();
+        this.name.active = true;
 
         // Don't allow blank.
         if (value.isBlank()) {

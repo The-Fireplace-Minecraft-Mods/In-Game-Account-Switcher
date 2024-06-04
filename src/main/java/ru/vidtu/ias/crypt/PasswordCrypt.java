@@ -19,6 +19,10 @@
 
 package ru.vidtu.ias.crypt;
 
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.EOFException;
@@ -33,6 +37,7 @@ public final class PasswordCrypt implements Crypt {
     /**
      * Encryption password.
      */
+    @NotNull
     private final String password;
 
     /**
@@ -40,30 +45,37 @@ public final class PasswordCrypt implements Crypt {
      *
      * @param password Encryption password
      */
-    public PasswordCrypt(String password) {
+    @Contract(pure = true)
+    public PasswordCrypt(@NotNull String password) {
         if (password.isBlank()) {
             throw new IllegalArgumentException("Password is blank.");
         }
         this.password = password;
     }
 
+    @Contract(pure = true)
     @Override
+    @NotNull
     public String type() {
         return "ias:password_crypt_v1";
     }
 
+    @Contract(value = "-> null", pure = true)
     @Override
+    @Nullable
     public Crypt migrate() {
         return null;
     }
 
+    @Contract(value = "-> false", pure = true)
     @Override
     public boolean insecure() {
         return false;
     }
 
+    @Contract(pure = true)
     @Override
-    public byte[] encrypt(byte[] decrypted) {
+    public byte @NotNull [] encrypt(byte @NotNull [] decrypted) {
         try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             // Generate and write salt.
             SecureRandom random = SecureRandom.getInstanceStrong();
@@ -88,8 +100,9 @@ public final class PasswordCrypt implements Crypt {
         }
     }
 
+    @Contract(pure = true)
     @Override
-    public byte[] decrypt(byte[] encrypted) {
+    public byte @NotNull [] decrypt(byte @NotNull [] encrypted) {
         try (ByteArrayInputStream in = new ByteArrayInputStream(encrypted)) {
             // Read the salt.
             byte[] salt = new byte[128];
@@ -116,7 +129,9 @@ public final class PasswordCrypt implements Crypt {
         }
     }
 
+    @Contract(pure = true)
     @Override
+    @NotNull
     public String toString() {
         return "PasswordCrypt{" +
                 "password='[PASSWORD]'" +

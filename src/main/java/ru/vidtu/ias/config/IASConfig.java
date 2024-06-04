@@ -22,6 +22,8 @@ package ru.vidtu.ias.config;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.vidtu.ias.config.migrator.Migrator;
@@ -43,6 +45,7 @@ public final class IASConfig {
     /**
      * Config GSON.
      */
+    @NotNull
     private static final Gson GSON = new GsonBuilder()
             .excludeFieldsWithModifiers(Modifier.TRANSIENT, Modifier.FINAL)
             .create();
@@ -50,6 +53,7 @@ public final class IASConfig {
     /**
      * Logger for this class.
      */
+    @NotNull
     public static final Logger LOGGER = LoggerFactory.getLogger("IAS/IASConfig");
 
     /**
@@ -60,16 +64,19 @@ public final class IASConfig {
     /**
      * Custom title screen text X position, {@code null} by default.
      */
+    @Nullable
     public static String titleTextX = null;
 
     /**
      * Custom title screen text Y position, {@code null} by default.
      */
+    @Nullable
     public static String titleTextY = null;
 
     /**
      * Alignment for title screen text, {@link TextAlign#LEFT} by default.
      */
+    @Nullable
     public static TextAlign titleTextAlign = TextAlign.LEFT;
 
     /**
@@ -80,11 +87,13 @@ public final class IASConfig {
     /**
      * Custom title screen button X position, {@code null} by default.
      */
+    @Nullable
     public static String titleButtonX = null;
 
     /**
      * Custom title screen button Y position, {@code null} by default.
      */
+    @Nullable
     public static String titleButtonY = null;
 
     /**
@@ -95,16 +104,19 @@ public final class IASConfig {
     /**
      * Custom servers screen text X position, {@code null} by default.
      */
+    @Nullable
     public static String serversTextX = null;
 
     /**
      * Custom servers screen text Y position, {@code null} by default.
      */
+    @Nullable
     public static String serversTextY = null;
 
     /**
      * Alignment for servers screen text, {@link TextAlign#LEFT} by default.
      */
+    @Nullable
     public static TextAlign serversTextAlign = TextAlign.LEFT;
 
     /**
@@ -115,11 +127,13 @@ public final class IASConfig {
     /**
      * Custom servers screen button X position, {@code null} by default.
      */
+    @Nullable
     public static String serversButtonX = null;
 
     /**
      * Custom servers screen button Y position, {@code null} by default.
      */
+    @Nullable
     public static String serversButtonY = null;
 
     /**
@@ -145,6 +159,7 @@ public final class IASConfig {
     /**
      * Current HTTP server mode.
      */
+    @Nullable
     public static ServerMode server = ServerMode.AVAILABLE;
 
     /**
@@ -165,7 +180,7 @@ public final class IASConfig {
      * @param path Config directory (not file)
      * @throws RuntimeException If unable to load the config
      */
-    public static void load(Path path) {
+    public static void load(@NotNull Path path) {
         try {
             // Log.
             LOGGER.debug("IAS: Loading config for {}...", path);
@@ -220,10 +235,15 @@ public final class IASConfig {
      * @param path Config directory (not file)
      * @throws RuntimeException If unable to save the config
      */
-    public static void save(Path path) {
+    public static void save(@NotNull Path path) {
         try {
             // Log.
             LOGGER.debug("IAS: Saving config into {}...", path);
+
+            // NPE protection.
+            titleTextAlign = Objects.requireNonNullElse(titleTextAlign, TextAlign.LEFT);
+            serversTextAlign = Objects.requireNonNullElse(serversTextAlign, TextAlign.LEFT);
+            server = Objects.requireNonNullElse(server, ServerMode.AVAILABLE);
 
             // Get the file.
             Path file = path.resolve("ias.json");
@@ -258,6 +278,7 @@ public final class IASConfig {
      * @return Whether to use server auth for MS
      */
     public static boolean useServerAuth() {
+        if (server == null) return IUtils.canUseSunServer();
         return switch (server) {
             case ALWAYS -> true;
             case NEVER -> false;

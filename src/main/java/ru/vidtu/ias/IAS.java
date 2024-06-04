@@ -19,6 +19,9 @@
 
 package ru.vidtu.ias;
 
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.vidtu.ias.auth.microsoft.MSAuth;
@@ -49,46 +52,55 @@ public final class IAS {
     /**
      * IAS static Microsoft application ID.
      */
+    @NotNull
     public static final String CLIENT_ID = "54fd49e4-2103-4044-9603-2b028c814ec3";
 
     /**
      * Request timeout.
      */
+    @NotNull
     public static final Duration TIMEOUT = Duration.ofSeconds(Long.getLong("ias.timeout", 15L));
 
     /**
      * Logger for this class.
      */
+    @NotNull
     private static final Logger LOGGER = LoggerFactory.getLogger("IAS");
 
     /**
      * Random session. Used in {@link #USER_AGENT_TEMPLATE}.
      */
+    @NotNull
     private static final UUID SESSION = UUID.randomUUID();
 
     /**
      * Template for {@link #userAgent}.
      */
+    @NotNull
     private static final String USER_AGENT_TEMPLATE = "IAS/%s (Session: %s; Loader: %s %s; Minecraft %s; Java %s)";
 
     /**
      * IAS executor.
      */
-    private static ScheduledExecutorService executor = null;
+    @Nullable
+    private static ScheduledExecutorService executor;
 
     /**
      * Current IAS user agent.
      */
-    private static String userAgent = null;
+    @Nullable
+    private static String userAgent;
 
     /**
      * Current IAS game directory.
      */
+    @Nullable
     private static Path gameDirectory;
 
     /**
      * Current IAS config directory.
      */
+    @Nullable
     private static Path configDirectory;
 
     /**
@@ -102,6 +114,7 @@ public final class IAS {
      *
      * @throws AssertionError Always
      */
+    @Contract(value = "-> fail", pure = true)
     private IAS() {
         throw new AssertionError("No instances.");
     }
@@ -116,7 +129,8 @@ public final class IAS {
      * @param loaderVersion Mod loader version
      * @param gameVersion   Game version
      */
-    public static void init(Path gamePath, Path configPath, String version, String loader, String loaderVersion, String gameVersion) {
+    public static void init(@NotNull Path gamePath, @NotNull Path configPath, @NotNull String version,
+                            @NotNull String loader, @NotNull String loaderVersion, @NotNull String gameVersion) {
         // Log.
         LOGGER.info("IAS: Initializing IAS...");
 
@@ -179,7 +193,7 @@ public final class IAS {
                 // Send the request.
                 HttpResponse<Stream<String>> response = client.send(HttpRequest.newBuilder()
                         .uri(new URI("https://raw.githubusercontent.com/The-Fireplace-Minecraft-Mods/In-Game-Account-Switcher/main/.ias/disabled_v1"))
-                        .header("User-Agent", userAgent)
+                        .header("User-Agent", userAgent())
                         .timeout(TIMEOUT)
                         .GET()
                         .build(), HttpResponse.BodyHandlers.ofLines());
@@ -225,6 +239,7 @@ public final class IAS {
         // Shutdown the executor.
         shutdown:
         try {
+            ScheduledExecutorService executor = IAS.executor;
             if (executor == null) break shutdown;
             LOGGER.info("IAS: Shutting down IAS executor...");
             executor.shutdown();
@@ -268,7 +283,10 @@ public final class IAS {
      * @return IAS executor
      * @throws NullPointerException If the executor is not available
      */
+    @Contract(pure = true)
+    @NotNull
     public static ScheduledExecutorService executor() {
+        ScheduledExecutorService executor = IAS.executor;
         Objects.requireNonNull(executor, "IAS executor is not available.");
         return executor;
     }
@@ -279,7 +297,10 @@ public final class IAS {
      * @return Current {@code User-Agent} value for HTTP requests
      * @throws NullPointerException If user agent wasn't set
      */
+    @Contract(pure = true)
+    @NotNull
     public static String userAgent() {
+        String userAgent = IAS.userAgent;
         Objects.requireNonNull(userAgent, "IAS user agent is not set.");
         return userAgent;
     }
@@ -289,6 +310,7 @@ public final class IAS {
      *
      * @return Whether the mod is disabled remotely
      */
+    @Contract(pure = true)
     public static boolean disabled() {
         return disabled;
     }

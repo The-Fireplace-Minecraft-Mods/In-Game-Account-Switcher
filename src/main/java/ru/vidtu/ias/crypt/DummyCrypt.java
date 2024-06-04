@@ -19,6 +19,10 @@
 
 package ru.vidtu.ias.crypt;
 
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 /**
  * Dummy crypt.
  *
@@ -30,6 +34,7 @@ public final class DummyCrypt implements Crypt {
      *
      * @apiNote Use {@link #equals(Object)} for comparison
      */
+    @NotNull
     public static final DummyCrypt INSTANCE = new DummyCrypt();
 
     /**
@@ -37,46 +42,58 @@ public final class DummyCrypt implements Crypt {
      *
      * @see #INSTANCE
      */
+    @Contract(pure = true)
     private DummyCrypt() {
         // Private
     }
 
+    @Contract(pure = true)
     @Override
+    @NotNull
     public String type() {
         return "ias:dummy_crypt_v1";
     }
 
+    @Contract(value = "-> null", pure = true)
     @Override
+    @Nullable
     public Crypt migrate() {
         return null;
     }
 
+    @Contract(value = "-> true", pure = true)
     @Override
     public boolean insecure() {
         return true;
     }
 
+    @Contract(value = "_ -> param1", pure = true)
     @Override
-    public byte[] encrypt(byte[] decrypted) {
+    public byte @NotNull [] encrypt(byte @NotNull [] decrypted) {
         return decrypted;
     }
 
+    @Contract(value = "_ -> param1", pure = true)
     @Override
-    public byte[] decrypt(byte[] encrypted) {
+    public byte @NotNull [] decrypt(byte @NotNull [] encrypted) {
         return encrypted;
     }
 
+    @Contract(value = "null -> false", pure = true)
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(@Nullable Object obj) {
         return obj instanceof DummyCrypt;
     }
 
+    @Contract(pure = true)
     @Override
     public int hashCode() {
         return 158798543;
     }
 
+    @Contract(pure = true)
     @Override
+    @NotNull
     public String toString() {
         return "DummyCrypt{}";
     }

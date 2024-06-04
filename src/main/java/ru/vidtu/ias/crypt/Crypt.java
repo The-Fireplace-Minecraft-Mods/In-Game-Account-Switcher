@@ -19,6 +19,10 @@
 
 package ru.vidtu.ias.crypt;
 
+import com.google.errorprone.annotations.CheckReturnValue;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import ru.vidtu.ias.IAS;
 import ru.vidtu.ias.utils.exceptions.FriendlyException;
 
@@ -45,6 +49,7 @@ public sealed interface Crypt permits DummyCrypt, HardwareCrypt, PasswordCrypt {
      *
      * @return Whether this crypt is insecure
      */
+    @Contract(pure = true)
     boolean insecure();
 
     /**
@@ -52,6 +57,8 @@ public sealed interface Crypt permits DummyCrypt, HardwareCrypt, PasswordCrypt {
      *
      * @return Crypt storage namespace
      */
+    @Contract(pure = true)
+    @NotNull
     String type();
 
     /**
@@ -59,6 +66,8 @@ public sealed interface Crypt permits DummyCrypt, HardwareCrypt, PasswordCrypt {
      *
      * @return Account preferred migration, {@code null} if it shouldn't be migrated
      */
+    @Contract(pure = true)
+    @Nullable
     Crypt migrate();
 
     /**
@@ -68,7 +77,8 @@ public sealed interface Crypt permits DummyCrypt, HardwareCrypt, PasswordCrypt {
      * @return Encrypted value
      * @throws RuntimeException On encryption error
      */
-    byte[] encrypt(byte[] decrypted);
+    @Contract(pure = true)
+    byte @NotNull [] encrypt(byte @NotNull [] decrypted);
 
     /**
      * Decrypts the value.
@@ -77,16 +87,19 @@ public sealed interface Crypt permits DummyCrypt, HardwareCrypt, PasswordCrypt {
      * @return Decrypted value
      * @throws RuntimeException On decryption error
      */
-    byte[] decrypt(byte[] encrypted);
+    @Contract(pure = true)
+    byte @NotNull [] decrypt(byte @NotNull [] encrypted);
 
     /**
      * Reads the typed crypt.
      *
      * @param input    Target input
      * @param password Password provider, if required
-     * @return Future will contain crypt on success, will contain null if {@code password} returns {@code null} on request, will complete exceptionally on error or unknown crypt type
+     * @return Future will contain crypt on success, will contain {@code null} if {@code password} returns {@code null} on request, will complete exceptionally on error or unknown crypt type
      */
-    static CompletableFuture<Crypt> readType(DataInput input, Supplier<CompletableFuture<String>> password) {
+    @CheckReturnValue
+    @NotNull
+    static CompletableFuture<Crypt> readType(@NotNull DataInput input, @NotNull Supplier<CompletableFuture<String>> password) {
         try {
             // Read type.
             String type = input.readUTF();
@@ -114,7 +127,9 @@ public sealed interface Crypt permits DummyCrypt, HardwareCrypt, PasswordCrypt {
      * @return Encrypted data
      * @throws RuntimeException If unable to encrypt the data
      */
-    static byte[] pbkdfAesEncrypt(byte[] decrypted, String password, byte[] salt, byte[] iv) {
+    @Contract(pure = true)
+    static byte @NotNull [] pbkdfAesEncrypt(byte @NotNull [] decrypted, @NotNull String password,
+                                            byte @NotNull [] salt, byte @NotNull [] iv) {
         try {
             // Create the key.
             SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA512");
@@ -142,7 +157,9 @@ public sealed interface Crypt permits DummyCrypt, HardwareCrypt, PasswordCrypt {
      * @return Decrypted data
      * @throws RuntimeException If unable to decrypt the data
      */
-    static byte[] pbkdfAesDecrypt(byte[] encrypted, String password, byte[] salt, byte[] iv) {
+    @Contract(pure = true)
+    static byte @NotNull [] pbkdfAesDecrypt(byte @NotNull [] encrypted, @NotNull String password,
+                                            byte @NotNull [] salt, byte @NotNull [] iv) {
         try {
             // Create the key.
             SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA512");

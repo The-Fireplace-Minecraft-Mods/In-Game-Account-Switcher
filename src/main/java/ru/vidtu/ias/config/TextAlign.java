@@ -19,6 +19,9 @@
 
 package ru.vidtu.ias.config;
 
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+
 /**
  * Text alignment.
  *
@@ -43,6 +46,7 @@ public enum TextAlign {
     /**
      * Alignment translation key.
      */
+    @NotNull
     private final String key;
 
     /**
@@ -50,7 +54,7 @@ public enum TextAlign {
      *
      * @param key Alignment translation key
      */
-    TextAlign(String key) {
+    TextAlign(@NotNull String key) {
         this.key = key;
     }
 
@@ -59,7 +63,9 @@ public enum TextAlign {
      *
      * @return Translation key
      */
+    @Contract(pure = true)
     @Override
+    @NotNull
     public String toString() {
         return this.key;
     }

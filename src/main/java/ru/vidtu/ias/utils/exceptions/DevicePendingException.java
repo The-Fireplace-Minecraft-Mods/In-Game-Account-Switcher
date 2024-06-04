@@ -19,6 +19,10 @@
 
 package ru.vidtu.ias.utils.exceptions;
 
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 /**
  * A runtime exception indicating repolling intention.
  *
@@ -30,7 +34,8 @@ public final class DevicePendingException extends RuntimeException {
      *
      * @param message Target message
      */
-    public DevicePendingException(String message) {
+    @Contract(pure = true)
+    public DevicePendingException(@NotNull String message) {
         super(message);
     }
 
@@ -40,7 +45,8 @@ public final class DevicePendingException extends RuntimeException {
      * @param message Target message
      * @param cause   Suppressed exception cause
      */
-    public DevicePendingException(String message, Throwable cause) {
+    @Contract(pure = true)
+    public DevicePendingException(@NotNull String message, @Nullable Throwable cause) {
         super(message, cause);
     }
 }

@@ -19,6 +19,11 @@
 
 package ru.vidtu.ias.utils;
 
+import com.google.errorprone.annotations.CheckReturnValue;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.Locale;
 import java.util.regex.Pattern;
 
@@ -34,11 +39,13 @@ public final class Expression {
     /**
      * Space pattern for removing all spaces.
      */
+    @NotNull
     public static final Pattern SPACE_PATTERN = Pattern.compile("\\s+");
 
     /**
      * Current expression.
      */
+    @NotNull
     private final String expression;
 
     /**
@@ -56,7 +63,8 @@ public final class Expression {
      *
      * @param expression Expression string
      */
-    public Expression(String expression) {
+    @Contract(pure = true)
+    public Expression(@NotNull String expression) {
         this.expression = SPACE_PATTERN.matcher(expression).replaceAll("");
     }
 
@@ -66,6 +74,7 @@ public final class Expression {
      * @return Parsed expression
      * @throws IllegalStateException If expression is not valid
      */
+    @CheckReturnValue
     public double parse() {
         try {
             // Begin reading.
@@ -93,6 +102,7 @@ public final class Expression {
      *
      * @return Parsed expression
      */
+    @CheckReturnValue
     private double parseExpression() {
         double x = this.parseTerm();
         for (int i = 0; i < 64; i++) {
@@ -108,6 +118,7 @@ public final class Expression {
      *
      * @return Parsed term
      */
+    @CheckReturnValue
     private double parseTerm() {
         double x = this.parseFactor();
         for (int i = 0; i < 64; i++) {
@@ -123,6 +134,7 @@ public final class Expression {
      *
      * @return Parsed factor
      */
+    @CheckReturnValue
     private double parseFactor() {
         if (this.skipIf('+')) return +this.parseFactor(); // unary plus
         if (this.skipIf('-')) return -this.parseFactor(); // unary minus
@@ -167,6 +179,7 @@ public final class Expression {
      * @param ch Character to skip
      * @return Whether the character was skipped
      */
+    @CheckReturnValue
     private boolean skipIf(int ch) {
         // Skip all whitespaces.
         for (int i = 0; i < 1024 && Character.isWhitespace(ch); i++) {
@@ -189,7 +202,9 @@ public final class Expression {
         this.ch = this.pos < this.expression.length() ? this.expression.codePointAt(this.pos) : -1;
     }
 
+    @Contract(pure = true)
     @Override
+    @NotNull
     public String toString() {
         return "Expression{" +
                 "expression='" + this.expression + '\'' +
@@ -205,7 +220,8 @@ public final class Expression {
      * @return Parsed expression
      * @throws IllegalStateException If expression is not valid
      */
-    public static double parse(String expression) {
+    @Contract(pure = true)
+    public static double parse(@NotNull String expression) {
         Expression expr = new Expression(expression);
         return expr.parse();
     }
@@ -219,7 +235,9 @@ public final class Expression {
      * @param height     Target height
      * @return Parsed (rounded) expression or null
      */
-    public static Integer parsePosition(String expression, int width, int height) {
+    @Contract(pure = true)
+    @Nullable
+    public static Integer parsePosition(@Nullable String expression, int width, int height) {
         try {
             // Null/empty shortcut.
             if (expression == null || expression.isBlank()) return null;
@@ -250,7 +268,8 @@ public final class Expression {
      * @param x          Whether this is X and not Y
      * @return Position expression validity color
      */
-    public static int positionValidityColor(String expression, int width, int height, boolean x) {
+    @Contract(pure = true)
+    public static int positionValidityColor(@Nullable String expression, int width, int height, boolean x) {
         try {
             // Null/empty are GRAY.
             if (expression == null || expression.isBlank()) return 0xFF_80_80_80;

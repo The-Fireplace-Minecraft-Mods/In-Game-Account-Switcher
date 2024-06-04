@@ -40,6 +40,10 @@ repositories {
 }
 
 dependencies {
+    // Annotations
+    compileOnlyApi(libs.jetbrains.annotations)
+    compileOnlyApi(libs.error.prone.annotations)
+
     // Minecraft
     minecraft("com.mojang:minecraft:1.20.4")
     mappings(loom.officialMojangMappings())

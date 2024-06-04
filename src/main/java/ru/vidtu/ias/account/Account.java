@@ -19,6 +19,9 @@
 
 package ru.vidtu.ias.account;
 
+import com.google.errorprone.annotations.CheckReturnValue;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 import ru.vidtu.ias.auth.handlers.LoginHandler;
 
 import java.io.DataInput;
@@ -37,6 +40,8 @@ public sealed interface Account permits OfflineAccount, MicrosoftAccount {
      *
      * @return Account storage type
      */
+    @Contract(pure = true)
+    @NotNull
     String type();
 
     /**
@@ -44,6 +49,8 @@ public sealed interface Account permits OfflineAccount, MicrosoftAccount {
      *
      * @return Account type translation key
      */
+    @Contract(pure = true)
+    @NotNull
     String typeTipKey();
 
     /**
@@ -51,6 +58,8 @@ public sealed interface Account permits OfflineAccount, MicrosoftAccount {
      *
      * @return Account UUID
      */
+    @Contract(pure = true)
+    @NotNull
     UUID uuid();
 
     /**
@@ -58,6 +67,8 @@ public sealed interface Account permits OfflineAccount, MicrosoftAccount {
      *
      * @return Account player name
      */
+    @Contract(pure = true)
+    @NotNull
     String name();
 
     /**
@@ -65,6 +76,7 @@ public sealed interface Account permits OfflineAccount, MicrosoftAccount {
      *
      * @return Whether the {@link #login(LoginHandler)} is appropriate
      */
+    @Contract(pure = true)
     boolean canLogin();
 
     /**
@@ -72,14 +84,24 @@ public sealed interface Account permits OfflineAccount, MicrosoftAccount {
      *
      * @return Whether the account is insecurely stored
      */
+    @Contract(pure = true)
     boolean insecure();
+
+    /**
+     * Gets the skin UUID.
+     *
+     * @return Account skin UUID
+     */
+    @Contract(pure = true)
+    @NotNull
+    UUID skin();
 
     /**
      * Starts the authentication process for this account.
      *
      * @param handler Login handler
      */
-    void login(LoginHandler handler);
+    void login(@NotNull LoginHandler handler);
 
     /**
      * Writes the account to the output.
@@ -87,7 +109,7 @@ public sealed interface Account permits OfflineAccount, MicrosoftAccount {
      * @param out Target output
      * @throws IOException On I/O error
      */
-    void write(DataOutput out) throws IOException;
+    void write(@NotNull DataOutput out) throws IOException;
 
     /**
      * Writes the account type and account to the output.
@@ -97,7 +119,7 @@ public sealed interface Account permits OfflineAccount, MicrosoftAccount {
      * @throws IOException              On I/O error
      * @throws IllegalArgumentException On unknown account type
      */
-    static void writeTyped(DataOutput out, Account account) throws IOException {
+    static void writeTyped(@NotNull DataOutput out, @NotNull Account account) throws IOException {
         // Get the account type.
         String type = account.type();
 
@@ -116,13 +138,16 @@ public sealed interface Account permits OfflineAccount, MicrosoftAccount {
      * @throws IOException              On I/O error
      * @throws IllegalArgumentException On unknown account type
      */
-    static Account readTyped(DataInput in) throws IOException {
+    @CheckReturnValue
+    @NotNull
+    static Account readTyped(@NotNull DataInput in) throws IOException {
         // Read the type.
         String type = in.readUTF();
 
         // Read and return the account by type.
         return switch (type) {
-            case "ias:offline_v1" -> OfflineAccount.read(in);
+            case "ias:offline_v1" -> OfflineAccount.readV1(in);
+            case "ias:offline_v2" -> OfflineAccount.readV2(in);
             case "ias:microsoft_v1" -> MicrosoftAccount.read(in);
             default -> throw new IllegalArgumentException("Unknown account type: " + type);
         };

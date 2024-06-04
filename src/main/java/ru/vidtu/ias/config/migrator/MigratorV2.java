@@ -23,6 +23,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 import ru.vidtu.ias.account.Account;
 import ru.vidtu.ias.account.MicrosoftAccount;
 import ru.vidtu.ias.account.OfflineAccount;
@@ -35,10 +37,12 @@ import ru.vidtu.ias.utils.GSONUtils;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
+import java.util.function.Predicate;
 
 /**
  * Config migrator for config version 2.
@@ -47,7 +51,7 @@ import java.util.stream.Collectors;
  */
 final class MigratorV2 implements Migrator {
     @Override
-    public void load(JsonObject json) {
+    public void load(@NotNull JsonObject json) {
         try {
             // Second version should be second. :pig:
             int version = GSONUtils.getIntOrThrow(json, "version");
@@ -116,7 +120,7 @@ final class MigratorV2 implements Migrator {
                         String name = GSONUtils.getStringOrThrow(rawAccount, "name");
 
                         // Create.
-                        yield new OfflineAccount(name);
+                        yield new OfflineAccount(name, null);
                     }
                     default -> null;
                 };
@@ -159,9 +163,12 @@ final class MigratorV2 implements Migrator {
             IASConfig.serversButtonX = serversButtonX;
             IASConfig.serversButtonY = serversButtonY;
 
-            // Flush storage.
-            IASStorage.accounts.addAll(accounts);
-            IASStorage.accounts = IASStorage.accounts.stream().distinct().collect(Collectors.toCollection(ArrayList::new));
+            // Flush.
+            IASStorage.ACCOUNTS.addAll(accounts);
+
+            // Deduplicate.
+            Set<Account> set = new HashSet<>(IASStorage.ACCOUNTS.size());
+            IASStorage.ACCOUNTS.removeIf(Predicate.not(set::add));
         } catch (Throwable t) {
             // Rethrow.
             String redacted = OBFUSCATE_LOGS.matcher(String.valueOf(json)).replaceAll("$1[TOKEN]");
@@ -169,7 +176,9 @@ final class MigratorV2 implements Migrator {
         }
     }
 
+    @Contract(pure = true)
     @Override
+    @NotNull
     public String toString() {
         return "MigratorV2{}";
     }

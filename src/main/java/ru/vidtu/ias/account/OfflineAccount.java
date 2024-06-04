@@ -19,6 +19,10 @@
 
 package ru.vidtu.ias.account;
 
+import com.google.errorprone.annotations.CheckReturnValue;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import ru.vidtu.ias.auth.handlers.LoginHandler;
 
 import java.io.DataInput;
@@ -37,56 +41,83 @@ public final class OfflineAccount implements Account {
     /**
      * Account name.
      */
+    @NotNull
     private final String name;
 
     /**
      * Account UUID.
      */
+    @NotNull
     private final UUID uuid;
+
+    /**
+     * Account skin.
+     */
+    @NotNull
+    private final UUID skin;
 
     /**
      * Creates a new offline account.
      *
      * @param name Offline account name
+     * @param skin Skin to use, {@code null} if none
      */
-    public OfflineAccount(String name) {
+    public OfflineAccount(@NotNull String name, @Nullable UUID skin) {
         this.name = name;
         this.uuid = uuid(name);
+        this.skin = Objects.requireNonNullElse(skin, this.uuid);
     }
 
+    @Contract(pure = true)
     @Override
+    @NotNull
     public UUID uuid() {
         return this.uuid;
     }
 
+    @Contract(pure = true)
     @Override
+    @NotNull
     public String name() {
         return this.name;
     }
 
+    @Contract(pure = true)
     @Override
+    @NotNull
     public String type() {
-        return "ias:offline_v1";
+        return "ias:offline_v2";
     }
 
+    @Contract(pure = true)
     @Override
+    @NotNull
     public String typeTipKey() {
         return "ias.accounts.tip.type.offline";
     }
 
+    @Contract(value = "-> false", pure = true)
     @Override
     public boolean canLogin() {
         // Offline account can be logged in only via offline.
         return false;
     }
 
+    @Contract(value = "-> false", pure = true)
     @Override
     public boolean insecure() {
         return false;
     }
 
+    @Contract(pure = true)
     @Override
-    public void login(LoginHandler handler) {
+    @NotNull
+    public UUID skin() {
+        return this.skin;
+    }
+
+    @Override
+    public void login(@NotNull LoginHandler handler) {
         // Offline account can be logged in only via offline.
         handler.error(new UnsupportedOperationException("Offline account login: " + this));
     }
@@ -98,24 +129,37 @@ public final class OfflineAccount implements Account {
      * @throws IOException On I/O error
      */
     @Override
-    public void write(DataOutput out) throws IOException {
+    public void write(@NotNull DataOutput out) throws IOException {
         // Write the name.
         out.writeUTF(this.name);
+
+        // Write the skin.
+        if (this.skin != null) {
+            out.writeBoolean(true);
+            out.writeLong(this.skin.getMostSignificantBits());
+            out.writeLong(this.skin.getLeastSignificantBits());
+        } else {
+            out.writeBoolean(false);
+        }
     }
 
+    @Contract(value = "null -> false", pure = true)
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(@Nullable Object obj) {
         if (this == obj) return true;
         if (!(obj instanceof OfflineAccount that)) return false;
         return Objects.equals(this.name, that.name);
     }
 
+    @Contract(pure = true)
     @Override
     public int hashCode() {
-        return Objects.hash(this.name);
+        return Objects.hashCode(this.name);
     }
 
+    @Contract(pure = true)
     @Override
+    @NotNull
     public String toString() {
         return "OfflineAccount{" +
                 "name='" + this.name + '\'' +
@@ -124,18 +168,40 @@ public final class OfflineAccount implements Account {
     }
 
     /**
-     * Reads the account from the input.
+     * Reads the account (version 1) from the input.
      *
      * @param in Target input
      * @return Read account
      * @throws IOException On I/O error
      */
-    public static OfflineAccount read(DataInput in) throws IOException {
+    @CheckReturnValue
+    @NotNull
+    public static OfflineAccount readV1(DataInput in) throws IOException {
         // Read the name.
         String name = in.readUTF();
 
         // Create and return.
-        return new OfflineAccount(name);
+        return new OfflineAccount(name, null);
+    }
+
+    /**
+     * Reads the account (version 2) from the input.
+     *
+     * @param in Target input
+     * @return Read account
+     * @throws IOException On I/O error
+     */
+    @CheckReturnValue
+    @NotNull
+    public static OfflineAccount readV2(DataInput in) throws IOException {
+        // Read the name.
+        String name = in.readUTF();
+
+        // Read the skin, if any.
+        UUID skin = in.readBoolean() ? new UUID(in.readLong(), in.readLong()) : null;
+
+        // Create and return.
+        return new OfflineAccount(name, skin);
     }
 
     /**
@@ -144,6 +210,8 @@ public final class OfflineAccount implements Account {
      * @param name Target name
      * @return Created conventional offline UUID
      */
+    @Contract(pure = true)
+    @NotNull
     public static UUID uuid(String name) {
         return UUID.nameUUIDFromBytes(("OfflinePlayer:" + name).getBytes(StandardCharsets.UTF_8));
     }

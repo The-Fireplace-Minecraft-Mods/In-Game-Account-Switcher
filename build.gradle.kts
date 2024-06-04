@@ -13,12 +13,18 @@ repositories {
 }
 
 dependencies {
+    // Annotations
+    compileOnly(libs.jetbrains.annotations)
+    compileOnly(libs.error.prone.annotations)
+
+    // Bundled with MC
     implementation("com.google.code.gson:gson:2.11.0")
     implementation("org.slf4j:slf4j-api:2.0.13")
 }
 
 tasks.withType<JavaCompile> {
     options.encoding = "UTF-8"
+    options.compilerArgs.addAll(listOf("-g", "-parameters"))
     options.release = 17
 }
 

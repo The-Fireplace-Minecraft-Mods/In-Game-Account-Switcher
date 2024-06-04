@@ -21,6 +21,8 @@ package ru.vidtu.ias.auth.microsoft;
 
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpServer;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.vidtu.ias.IAS;
@@ -63,6 +65,7 @@ public final class MSAuthServer implements Runnable, Closeable {
     /**
      * Auth URI with {@code %%port%%} to be replaced by port and {@code %%state%%} to be replaced by state.
      */
+    @NotNull
     private static final String MICROSOFT_AUTH_URL = "https://login.live.com/oauth20_authorize.srf" +
             "?client_id=54fd49e4-2103-4044-9603-2b028c814ec3" +
             "&response_type=code" +
@@ -74,56 +77,67 @@ public final class MSAuthServer implements Runnable, Closeable {
     /**
      * Redirect URI with one {@code %s} argument to be replaced by port.
      */
+    @NotNull
     private static final String REDIRECT_URI = "http://localhost:%s/in_game_account_switcher_long_enough_uri_to_prevent_accidental_leaks_on_screensharing_even_if_you_have_like_extremely_big_screen_though_it_might_not_mork_but_we_will_try_it_anyway_to_prevent_funny_things_from_happening_or_something";
 
     /**
      * End URI with one {@code %s} argument to be replaced by port.
      */
+    @NotNull
     private static final String END_URI = "http://localhost:%s/end";
 
     /**
      * Random state.
      */
+    @NotNull
     private static final String STATE_CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.-_";
 
     /**
      * Data extraction pattern.
      */
+    @NotNull
     private static final Pattern DATA_EXTRACT_PATTERN = Pattern.compile("^code=([^&]*)&state=([^&]*)$");
 
     /**
      * Code obfuscation pattern.
      */
+    @NotNull
     private static final Pattern CODE_OBFUSCATE_PATTERN = Pattern.compile("code=[^&]*", Pattern.CASE_INSENSITIVE);
 
     /**
      * Logger for this class.
      */
+    @NotNull
     public static final Logger LOGGER = LoggerFactory.getLogger("IAS/MSAuthServer");
 
     /**
      * Message to display on "done" page.
      */
+    @NotNull
     private final String doneMessage;
 
     /**
      * Account crypt.
      */
+    @NotNull
     private final Crypt crypt;
 
     /**
      * Login handler.
      */
+    @NotNull
     private final CreateHandler handler;
 
     /**
      * Created HTTP server.
      */
+    @NotNull
     private final HttpServer server;
 
     /**
      * Validation state.
      */
+    @NotNull
     private final String state;
 
     /**
@@ -145,7 +159,7 @@ public final class MSAuthServer implements Runnable, Closeable {
      * @param handler     Creation handler
      * @throws RuntimeException If unable to create an HTTP server
      */
-    public MSAuthServer(String doneMessage, Crypt crypt, CreateHandler handler) {
+    public MSAuthServer(@NotNull String doneMessage, @NotNull Crypt crypt, @NotNull CreateHandler handler) {
         try {
             // Assign the values.
             this.doneMessage = doneMessage;
@@ -382,6 +396,8 @@ public final class MSAuthServer implements Runnable, Closeable {
      *
      * @return Auth URL
      */
+    @Contract(pure = true)
+    @NotNull
     public String authUrl() {
         return MICROSOFT_AUTH_URL
                 .replace("%%port%%", Integer.toString(this.port))
@@ -393,7 +409,7 @@ public final class MSAuthServer implements Runnable, Closeable {
      *
      * @param uri Request URI
      */
-    private void auth(URI uri) {
+    private void auth(@NotNull URI uri) {
         try {
             // Stop if cancelled.
             if (this.handler.cancelled()) return;
@@ -592,7 +608,9 @@ public final class MSAuthServer implements Runnable, Closeable {
         LOGGER.info("IAS: HTTP server stopped.");
     }
 
+    @Contract(pure = true)
     @Override
+    @NotNull
     public String toString() {
         return "MSAuthServer{" +
                 "crypt=" + this.crypt +

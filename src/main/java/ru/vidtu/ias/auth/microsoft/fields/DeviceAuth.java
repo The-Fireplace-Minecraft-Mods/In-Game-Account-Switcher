@@ -21,6 +21,8 @@ package ru.vidtu.ias.auth.microsoft.fields;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 import ru.vidtu.ias.utils.GSONUtils;
 
 import java.net.URI;
@@ -36,7 +38,8 @@ import java.time.Duration;
  * @param interval Polling interval
  * @author VidTu
  */
-public record DeviceAuth(String device, String user, URI uri, Duration expire, Duration interval) {
+public record DeviceAuth(@NotNull String device, @NotNull String user, @NotNull URI uri,
+                         @NotNull Duration expire, @NotNull Duration interval) {
     /**
      * Extracts the device auth from the JSON.
      *
@@ -44,7 +47,9 @@ public record DeviceAuth(String device, String user, URI uri, Duration expire, D
      * @return Extracted MS tokens
      * @throws JsonParseException If unable to extract
      */
-    public static DeviceAuth fromJson(JsonObject json) {
+    @Contract(value = "_ -> new", pure = true)
+    @NotNull
+    public static DeviceAuth fromJson(@NotNull JsonObject json) {
         try {
             // Extract.
             String device = GSONUtils.getStringOrThrow(json, "device_code");

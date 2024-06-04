@@ -19,6 +19,8 @@
 
 package ru.vidtu.ias.config;
 
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 import ru.vidtu.ias.utils.IUtils;
 
 /**
@@ -45,6 +47,7 @@ public enum ServerMode {
     /**
      * Mode translation key.
      */
+    @NotNull
     private final String key;
 
     /**
@@ -52,7 +55,7 @@ public enum ServerMode {
      *
      * @param key Mode translation key
      */
-    ServerMode(String key) {
+    ServerMode(@NotNull String key) {
         this.key = key;
     }
 
@@ -61,7 +64,9 @@ public enum ServerMode {
      *
      * @return Translation key
      */
+    @Contract(pure = true)
     @Override
+    @NotNull
     public String toString() {
         return this.key;
     }

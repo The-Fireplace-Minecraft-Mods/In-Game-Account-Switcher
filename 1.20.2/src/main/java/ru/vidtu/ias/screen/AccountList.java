@@ -101,7 +101,7 @@ final class AccountList extends ObjectSelectionList<AccountEntry> {
         if (query == null || query.isBlank()) {
             // Add every account.
             AccountEntry selected = this.getSelected();
-            this.replaceEntries(IASStorage.accounts.stream()
+            this.replaceEntries(IASStorage.ACCOUNTS.stream()
                     .map(account -> new AccountEntry(this.minecraft, this, account))
                     .toList());
             this.setSelected(this.children().contains(selected) ? selected : null);
@@ -118,7 +118,7 @@ final class AccountList extends ObjectSelectionList<AccountEntry> {
 
         // Add every account.
         AccountEntry selected = this.getSelected();
-        this.replaceEntries(IASStorage.accounts.stream()
+        this.replaceEntries(IASStorage.ACCOUNTS.stream()
                 .filter(account -> account.name().toLowerCase(Locale.ROOT).contains(lowerQuery))
                 .sorted((f, s) -> Boolean.compare(
                         s.name().toLowerCase(Locale.ROOT).startsWith(lowerQuery),
@@ -172,7 +172,7 @@ final class AccountList extends ObjectSelectionList<AccountEntry> {
         AccountEntry selected = this.getSelected();
         if (selected == null) return;
         int index = this.children().indexOf(selected);
-        if (index < 0 || index >= IASStorage.accounts.size()) return;
+        if (index < 0 || index >= IASStorage.ACCOUNTS.size()) return;
 
         // Replace in storage.
         this.minecraft.setScreen(new AddPopupScreen(this.screen, true, account -> {
@@ -180,11 +180,11 @@ final class AccountList extends ObjectSelectionList<AccountEntry> {
             this.minecraft.setScreen(this.screen);
 
             // Add the account and save it.
-            IASStorage.accounts.removeIf(Predicate.isEqual(account));
-            if (index >= IASStorage.accounts.size()) {
-                IASStorage.accounts.add(account);
+            IASStorage.ACCOUNTS.removeIf(Predicate.isEqual(account));
+            if (index >= IASStorage.ACCOUNTS.size()) {
+                IASStorage.ACCOUNTS.add(account);
             } else {
-                IASStorage.accounts.set(index, account);
+                IASStorage.ACCOUNTS.set(index, account);
             }
 
             // Save storage.
@@ -215,7 +215,7 @@ final class AccountList extends ObjectSelectionList<AccountEntry> {
         // Skip confirmation if shift is pressed.
         if (!confirm) {
             // Remove.
-            IASStorage.accounts.remove(account);
+            IASStorage.ACCOUNTS.remove(account);
 
             // Save storage.
             try {
@@ -233,7 +233,7 @@ final class AccountList extends ObjectSelectionList<AccountEntry> {
         // Display confirmation screen.
         this.minecraft.setScreen(new DeletePopupScreen(this.screen, account, () -> {
             // Delete if confirmed.
-            IASStorage.accounts.removeIf(Predicate.isEqual(account));
+            IASStorage.ACCOUNTS.removeIf(Predicate.isEqual(account));
 
             // Save storage.
             try {
@@ -257,8 +257,8 @@ final class AccountList extends ObjectSelectionList<AccountEntry> {
             this.minecraft.setScreen(this.screen);
 
             // Add the account.
-            IASStorage.accounts.removeIf(Predicate.isEqual(account));
-            IASStorage.accounts.add(account);
+            IASStorage.ACCOUNTS.removeIf(Predicate.isEqual(account));
+            IASStorage.ACCOUNTS.add(account);
 
             // Save storage.
             try {
@@ -281,7 +281,7 @@ final class AccountList extends ObjectSelectionList<AccountEntry> {
      */
     PlayerSkin skin(AccountEntry entry) {
         // Get and return the skin if already stored.
-        UUID uuid = entry.account().uuid();
+        UUID uuid = entry.account().skin();
         PlayerSkin skin = SKINS.get(uuid);
         if (skin != null) return skin;
 
@@ -334,13 +334,13 @@ final class AccountList extends ObjectSelectionList<AccountEntry> {
     void swapUp(AccountEntry entry) {
         // Get and validate indexes.
         int idx = this.children().indexOf(entry);
-        if (idx < 0 || idx >= IASStorage.accounts.size()) return;
+        if (idx < 0 || idx >= IASStorage.ACCOUNTS.size()) return;
         int upIdx = idx - 1;
         if (upIdx < 0) return;
 
         // Move storage.
-        IASStorage.accounts.set(idx, IASStorage.accounts.get(upIdx));
-        IASStorage.accounts.set(upIdx, entry.account());
+        IASStorage.ACCOUNTS.set(idx, IASStorage.ACCOUNTS.get(upIdx));
+        IASStorage.ACCOUNTS.set(upIdx, entry.account());
 
         // Save storage.
         try {
@@ -364,13 +364,13 @@ final class AccountList extends ObjectSelectionList<AccountEntry> {
     void swapDown(AccountEntry entry) {
         // Get and validate indexes.
         int idx = this.children().indexOf(entry);
-        if (idx < 0 || idx >= IASStorage.accounts.size()) return;
+        if (idx < 0 || idx >= IASStorage.ACCOUNTS.size()) return;
         int downIdx = idx + 1;
-        if (downIdx >= this.children().size() || downIdx >= IASStorage.accounts.size()) return;
+        if (downIdx >= this.children().size() || downIdx >= IASStorage.ACCOUNTS.size()) return;
 
         // Move storage.
-        IASStorage.accounts.set(idx, IASStorage.accounts.get(downIdx));
-        IASStorage.accounts.set(downIdx, entry.account());
+        IASStorage.ACCOUNTS.set(idx, IASStorage.ACCOUNTS.get(downIdx));
+        IASStorage.ACCOUNTS.set(downIdx, entry.account());
 
         // Save storage.
         try {

@@ -19,6 +19,10 @@
 
 package ru.vidtu.ias.account;
 
+import com.google.errorprone.annotations.CheckReturnValue;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.vidtu.ias.IAS;
@@ -53,81 +57,97 @@ public final class MicrosoftAccount implements Account {
     /**
      * Initializing login.
      */
+    @NotNull
     public static final String INITIALIZING = "ias.login.initializing";
 
     /**
      * Starting server.
      */
+    @NotNull
     public static final String SERVER = "ias.login.server";
 
     /**
      * Link has been open in browser.
      */
+    @NotNull
     public static final String BROWSER = "ias.login.link";
 
     /**
      * Link has been open in browser.
      */
+    @NotNull
     public static final String CLIENT_BROWSER = "ias.login.linkClient";
 
     /**
      * Processing response.
      */
+    @NotNull
     public static final String PROCESSING = "ias.login.processing";
 
     /**
      * Decrypting tokens.
      */
+    @NotNull
     public static final String DECRYPTING = "ias.login.decrypting";
 
     /**
      * Encrypting tokens.
      */
+    @NotNull
     public static final String ENCRYPTING = "ias.login.encrypting";
 
     /**
      * Creating services.
      */
+    @NotNull
     public static final String SERVICES = "ias.login.services";
 
     /**
      * Converting Microsoft Authentication Code (MSAC) to Microsoft Access (MSA) and Microsoft Refresh (MSR) tokens.
      */
+    @NotNull
     public static final String MSAC_TO_MSA_MSR = "ias.login.msacToMsaMsr";
 
     /**
      * Converting Microsoft Refresh (MSR) token to Microsoft Access (MSA) and Microsoft Refresh (MSR) tokens.
      */
+    @NotNull
     public static final String MSR_TO_MSA_MSR = "ias.login.msrToMsaMsr";
 
     /**
      * Converting Microsoft Access (MSA) token to Xbox Live (XBL) token.
      */
+    @NotNull
     public static final String MSA_TO_XBL = "ias.login.msaToXbl";
 
     /**
      * Converting Xbox Live (XBL) token to Xbox Secure Token Service (XSTS) token.
      */
+    @NotNull
     public static final String XBL_TO_XSTS = "ias.login.xblToXsts";
 
     /**
      * Converting Xbox Secure Token Service (XSTS) token to Minecraft Access (MCA) token.
      */
+    @NotNull
     public static final String XSTS_TO_MCA = "ias.login.xstsToMca";
 
     /**
      * Converting Minecraft Access (MCA) token to Minecraft Profile. (MCP)
      */
+    @NotNull
     public static final String MCA_TO_MCP = "ias.login.mcaToMcp";
 
     /**
      * Finalizing login.
      */
+    @NotNull
     public static final String FINALIZING = "ias.login.finalizing";
 
     /**
      * Logger for this class.
      */
+    @NotNull
     public static final Logger LOGGER = LoggerFactory.getLogger("IAS/MicrosoftAccount");
 
     /**
@@ -138,17 +158,19 @@ public final class MicrosoftAccount implements Account {
     /**
      * Account UUID.
      */
+    @NotNull
     private UUID uuid;
 
     /**
      * Account name.
      */
+    @NotNull
     private String name;
 
     /**
      * Encrypted account data.
      */
-    private byte[] data;
+    private byte @NotNull [] data;
 
     /**
      * Creates a new Microsoft account.
@@ -158,46 +180,63 @@ public final class MicrosoftAccount implements Account {
      * @param name     Account name
      * @param data     Encrypted account data
      */
-    public MicrosoftAccount(boolean insecure, UUID uuid, String name, byte[] data) {
+    public MicrosoftAccount(boolean insecure, @NotNull UUID uuid, @NotNull String name, byte @NotNull [] data) {
         this.insecure = insecure;
         this.uuid = uuid;
         this.name = name;
         this.data = data;
     }
 
+    @Contract(pure = true)
     @Override
+    @NotNull
     public String type() {
         return "ias:microsoft_v1";
     }
 
+    @Contract(pure = true)
     @Override
+    @NotNull
     public String typeTipKey() {
         return "ias.accounts.tip.type.microsoft";
     }
 
+    @Contract(pure = true)
     @Override
+    @NotNull
     public UUID uuid() {
         return this.uuid;
     }
 
+    @Contract(pure = true)
     @Override
+    @NotNull
     public String name() {
         return this.name;
     }
 
+    @Contract(value = "-> true", pure = true)
     @Override
     public boolean canLogin() {
         // Online accounts should be loggable.
         return true;
     }
 
+    @Contract(pure = true)
     @Override
     public boolean insecure() {
         return this.insecure;
     }
 
+    @Contract(pure = true)
     @Override
-    public void login(LoginHandler handler) {
+    @NotNull
+    public UUID skin() {
+        return this.uuid;
+    }
+
+    @Override
+    public void login(@NotNull LoginHandler handler) {
         try {
             // Skip if cancelled.
             if (handler.cancelled()) return;
@@ -432,13 +471,15 @@ public final class MicrosoftAccount implements Account {
         }
     }
 
+    @Contract(value = "null -> false", pure = true)
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(@Nullable Object obj) {
         if (this == obj) return true;
         if (!(obj instanceof MicrosoftAccount that)) return false;
         return Objects.equals(this.uuid, that.uuid) && Objects.equals(this.name, that.name);
     }
 
+    @Contract(pure = true)
     @Override
     public int hashCode() {
         int hash = 1;
@@ -447,7 +488,9 @@ public final class MicrosoftAccount implements Account {
         return hash;
     }
 
+    @Contract(pure = true)
     @Override
+    @NotNull
     public String toString() {
         return "MicrosoftAccount{" +
                 "uuid=" + this.uuid +
@@ -457,7 +500,7 @@ public final class MicrosoftAccount implements Account {
     }
 
     @Override
-    public void write(DataOutput out) throws IOException {
+    public void write(@NotNull DataOutput out) throws IOException {
         // Write the insecure.
         out.writeBoolean(this.insecure);
 
@@ -480,7 +523,9 @@ public final class MicrosoftAccount implements Account {
      * @return Read account
      * @throws IOException On I/O error
      */
-    public static MicrosoftAccount read(DataInput in) throws IOException {
+    @CheckReturnValue
+    @NotNull
+    public static MicrosoftAccount read(@NotNull DataInput in) throws IOException {
         // Read the insecure.
         boolean insecure = in.readBoolean();
 

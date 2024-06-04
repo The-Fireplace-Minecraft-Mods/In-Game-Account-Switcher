@@ -19,8 +19,11 @@
 
 package ru.vidtu.ias.auth.microsoft;
 
+import com.google.errorprone.annotations.CheckReturnValue;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 import ru.vidtu.ias.IAS;
 import ru.vidtu.ias.auth.microsoft.fields.DeviceAuth;
 import ru.vidtu.ias.auth.microsoft.fields.MCProfile;
@@ -51,6 +54,7 @@ public final class MSAuth {
     /**
      * Request client.
      */
+    @NotNull
     private static final HttpClient CLIENT = HttpClient.newBuilder()
             .connectTimeout(IAS.TIMEOUT)
             .version(HttpClient.Version.HTTP_2)
@@ -62,6 +66,7 @@ public final class MSAuth {
     /**
      * Request client with sync.
      */
+    @NotNull
     private static final HttpClient CLIENT_SYNC = HttpClient.newBuilder()
             .connectTimeout(IAS.TIMEOUT)
             .version(HttpClient.Version.HTTP_2)
@@ -85,6 +90,8 @@ public final class MSAuth {
      * @return Future that will complete with Device Auth Code (DAC) or exceptionally
      * @see <a href="https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-device-code">Reference</a>
      */
+    @CheckReturnValue
+    @NotNull
     public static CompletableFuture<DeviceAuth> requestDac() {
         // Create the payload.
         String payload = "client_id=" + IAS.CLIENT_ID +
@@ -129,7 +136,9 @@ public final class MSAuth {
      * @see <a href="https://wiki.vg/Microsoft_Authentication_Scheme#Microsoft_OAuth2_Flow">Reference</a>
      * @see #msrToMsaMsr(String)
      */
-    public static MSTokens dacToMsaMsr(String code) {
+    @CheckReturnValue
+    @NotNull
+    public static MSTokens dacToMsaMsr(@NotNull String code) {
         // Create the payload.
         String payload = "grant_type=urn:ietf:params:oauth:grant-type:device_code" +
                 "&client_id=" + IAS.CLIENT_ID +
@@ -200,7 +209,9 @@ public final class MSAuth {
      * @see <a href="https://wiki.vg/Microsoft_Authentication_Scheme#Microsoft_OAuth2_Flow">Reference</a>
      * @see #msrToMsaMsr(String)
      */
-    public static CompletableFuture<MSTokens> msacToMsaMsr(String code, String redirect) {
+    @CheckReturnValue
+    @NotNull
+    public static CompletableFuture<MSTokens> msacToMsaMsr(@NotNull String code, @NotNull String redirect) {
         // Create the payload.
         String payload = "client_id=" + IAS.CLIENT_ID +
                 "&code=" + URLEncoder.encode(code, StandardCharsets.UTF_8) +
@@ -245,7 +256,9 @@ public final class MSAuth {
      * @return Future that will complete with Microsoft Access (MSA) and Microsoft Refresh (MSR) Tokens or exceptionally
      * @see <a href="https://wiki.vg/Microsoft_Authentication_Scheme#Microsoft_OAuth2_Flow">Reference</a>
      */
-    public static CompletableFuture<MSTokens> msrToMsaMsr(String refresh) {
+    @CheckReturnValue
+    @NotNull
+    public static CompletableFuture<MSTokens> msrToMsaMsr(@NotNull String refresh) {
         // Create the payload.
         String payload = "client_id=" + IAS.CLIENT_ID +
                 "&refresh_token=" + URLEncoder.encode(refresh, StandardCharsets.UTF_8) +
@@ -289,7 +302,9 @@ public final class MSAuth {
      * @return Future that will complete with an XBL token and a user hash or exceptionally
      * @see <a href="https://wiki.vg/Microsoft_Authentication_Scheme#Authenticate_with_Xbox_Live">Reference</a>
      */
-    public static CompletableFuture<XHashedToken> msaToXbl(String authToken) {
+    @CheckReturnValue
+    @NotNull
+    public static CompletableFuture<XHashedToken> msaToXbl(@NotNull String authToken) {
         // Create the payload.
         // This is ugly, but I won't create custom classes and serializers just for this.
         JsonObject request = new JsonObject();
@@ -347,7 +362,9 @@ public final class MSAuth {
      * @return Future that will complete with an XSTS token and a user hash or exceptionally
      * @see <a href="https://wiki.vg/Microsoft_Authentication_Scheme#Obtain_XSTS_token_for_Minecraft">Reference</a>
      */
-    public static CompletableFuture<XHashedToken> xblToXsts(String xbl, String hash) {
+    @CheckReturnValue
+    @NotNull
+    public static CompletableFuture<XHashedToken> xblToXsts(@NotNull String xbl, @NotNull String hash) {
         // Create the payload.
         // This is ugly, but I won't create custom classes and serializers just for this.
         JsonObject request = new JsonObject();
@@ -434,7 +451,9 @@ public final class MSAuth {
      * @return Future that will complete with an MCA token or exceptionally
      * @see <a href="https://wiki.vg/Microsoft_Authentication_Scheme#Authenticate_with_Minecraft">Reference</a>
      */
-    public static CompletableFuture<String> xstsToMca(String xsts, String hash) {
+    @CheckReturnValue
+    @NotNull
+    public static CompletableFuture<String> xstsToMca(@NotNull String xsts, @NotNull String hash) {
         // Create the payload.
         // This is ugly, but I won't create custom classes and serializers just for this.
         JsonObject request = new JsonObject();
@@ -479,7 +498,9 @@ public final class MSAuth {
      * @return Future that will complete with an MCP or exceptionally
      * @see <a href="https://wiki.vg/Microsoft_Authentication_Scheme#Getting_the_profile">Reference</a>
      */
-    public static CompletableFuture<MCProfile> mcaToMcp(String access) {
+    @CheckReturnValue
+    @NotNull
+    public static CompletableFuture<MCProfile> mcaToMcp(@NotNull String access) {
         // Send the request.
         return CLIENT.sendAsync(HttpRequest.newBuilder()
                 .uri(createURIUnchecked("https://api.minecraftservices.com/minecraft/profile"))
@@ -522,7 +543,9 @@ public final class MSAuth {
      * @param name Player name
      * @return Future with resolved profile (or offline as fallback)
      */
-    public static CompletableFuture<MCProfile> nameToMcp(String name) {
+    @CheckReturnValue
+    @NotNull
+    public static CompletableFuture<MCProfile> nameToMcp(@NotNull String name) {
         // Send the request.
         return CLIENT.sendAsync(HttpRequest.newBuilder()
                 .uri(createURIUnchecked("https://api.mojang.com/users/profiles/minecraft/" + URLEncoder.encode(name, StandardCharsets.UTF_8)))
@@ -554,7 +577,9 @@ public final class MSAuth {
      * @return Created URI
      * @throws RuntimeException If unable to create
      */
-    private static URI createURIUnchecked(String value) {
+    @Contract(value = "_ -> new", pure = true)
+    @NotNull
+    private static URI createURIUnchecked(@NotNull String value) {
         try {
             return new URI(value);
         } catch (Throwable t) {

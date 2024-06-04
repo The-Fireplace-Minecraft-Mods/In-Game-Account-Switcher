@@ -23,6 +23,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 import ru.vidtu.ias.auth.microsoft.MSAuth;
 import ru.vidtu.ias.utils.GSONUtils;
 
@@ -36,7 +38,7 @@ import ru.vidtu.ias.utils.GSONUtils;
  * @see MSAuth#xblToXsts(String, String)
  * @see MSAuth#xstsToMca(String, String)
  */
-public record XHashedToken(String token, String hash) {
+public record XHashedToken(@NotNull String token, @NotNull String hash) {
     /**
      * Extracts the MS tokens from the JSON.
      *
@@ -44,7 +46,9 @@ public record XHashedToken(String token, String hash) {
      * @return Extracted MS tokens
      * @throws JsonParseException If unable to extract
      */
-    public static XHashedToken fromJson(JsonObject json) {
+    @Contract(value = "_ -> new", pure = true)
+    @NotNull
+    public static XHashedToken fromJson(@NotNull JsonObject json) {
         try {
             // Extract the token.
             String token = GSONUtils.getStringOrThrow(json, "Token");

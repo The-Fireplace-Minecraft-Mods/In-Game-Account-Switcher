@@ -19,6 +19,10 @@
 
 package ru.vidtu.ias.auth.microsoft;
 
+import com.google.errorprone.annotations.CheckReturnValue;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.vidtu.ias.IAS;
@@ -54,36 +58,43 @@ public final class MSAuthClient implements Closeable {
     /**
      * Logger for this class.
      */
+    @NotNull
     public static final Logger LOGGER = LoggerFactory.getLogger("IAS/MSAuthClient");
 
     /**
      * Account crypt.
      */
+    @NotNull
     private final Crypt crypt;
 
     /**
      * Login handler.
      */
+    @NotNull
     private final CreateHandler handler;
 
     /**
      * Device auth.
      */
+    @Nullable
     private DeviceAuth auth;
 
     /**
      * Expire instant.
      */
+    @Nullable
     private Instant expire;
 
     /**
      * Next poll instant.
      */
+    @Nullable
     private Instant poll;
 
     /**
      * Polling task, if any.
      */
+    @Nullable
     private ScheduledFuture<?> task;
 
     /**
@@ -92,7 +103,8 @@ public final class MSAuthClient implements Closeable {
      * @param crypt   Account crypt
      * @param handler Creation handler
      */
-    public MSAuthClient(Crypt crypt, CreateHandler handler) {
+    @Contract(pure = true)
+    public MSAuthClient(@NotNull Crypt crypt, @NotNull CreateHandler handler) {
         this.crypt = crypt;
         this.handler = handler;
     }
@@ -102,6 +114,8 @@ public final class MSAuthClient implements Closeable {
      *
      * @return Future that will complete with device auth, with null (on cancel) or exceptionally
      */
+    @CheckReturnValue
+    @NotNull
     public CompletableFuture<DeviceAuth> start() {
         // Stop if cancelled.
         if (this.handler.cancelled()) return CompletableFuture.completedFuture(null);
@@ -301,7 +315,9 @@ public final class MSAuthClient implements Closeable {
         }
     }
 
+    @Contract(pure = true)
     @Override
+    @NotNull
     public String toString() {
         return "MSAuthClient{" +
                 "crypt=" + this.crypt +

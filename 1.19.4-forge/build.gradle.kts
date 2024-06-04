@@ -37,12 +37,16 @@ repositories {
 }
 
 dependencies {
+    // Annotations
+    compileOnlyApi(libs.jetbrains.annotations)
+    compileOnlyApi(libs.error.prone.annotations)
+
     // Minecraft
     minecraft("com.mojang:minecraft:1.19.4")
     mappings(loom.officialMojangMappings())
 
     // Forge
-    forge("net.minecraftforge:forge:1.19.4-45.2.15")
+    forge("net.minecraftforge:forge:1.19.4-45.3.0")
 
     // Root
     compileOnly(shared)

@@ -35,6 +35,10 @@ loom {
 }
 
 dependencies {
+    // Annotations
+    compileOnlyApi(libs.jetbrains.annotations)
+    compileOnlyApi(libs.error.prone.annotations)
+
     // Minecraft
     minecraft("com.mojang:minecraft:1.20.2")
     mappings(loom.officialMojangMappings())

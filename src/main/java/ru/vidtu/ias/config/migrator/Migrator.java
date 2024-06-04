@@ -21,6 +21,9 @@ package ru.vidtu.ias.config.migrator;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.regex.Pattern;
 
@@ -33,6 +36,7 @@ public sealed interface Migrator permits MigratorV1, MigratorV2 {
     /**
      * Data obfuscation helper.
      */
+    @NotNull
     Pattern OBFUSCATE_LOGS = Pattern.compile("(\"?(?:accessToken|refreshToken)\"?\\s*:)\"?[^,\":{}\\[\\]]*\"?", Pattern.CASE_INSENSITIVE);
 
     /**
@@ -41,7 +45,7 @@ public sealed interface Migrator permits MigratorV1, MigratorV2 {
      * @param json Target JSON
      * @throws JsonParseException If unable to load
      */
-    void load(JsonObject json);
+    void load(@NotNull JsonObject json);
 
     /**
      * Gets the migrator for the version.
@@ -50,6 +54,8 @@ public sealed interface Migrator permits MigratorV1, MigratorV2 {
      * @return Any config migrator, {@code null} to use direct config loading method
      * @throws IllegalArgumentException If the version is not valid
      */
+    @Contract(pure = true)
+    @Nullable
     static Migrator fromVersion(int version) {
         return switch (version) {
             case 1 -> new MigratorV1();

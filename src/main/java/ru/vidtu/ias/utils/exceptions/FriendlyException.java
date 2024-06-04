@@ -19,6 +19,10 @@
 
 package ru.vidtu.ias.utils.exceptions;
 
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.Collections;
 import java.util.IdentityHashMap;
 import java.util.Set;
@@ -32,6 +36,7 @@ public final class FriendlyException extends RuntimeException {
     /**
      * Message translation key.
      */
+    @NotNull
     private final String key;
 
     /**
@@ -40,7 +45,8 @@ public final class FriendlyException extends RuntimeException {
      * @param message Target message
      * @param key     Message translation key
      */
-    public FriendlyException(String message, String key) {
+    @Contract(pure = true)
+    public FriendlyException(@NotNull String message, @NotNull String key) {
         super(message);
         this.key = key;
     }
@@ -52,7 +58,8 @@ public final class FriendlyException extends RuntimeException {
      * @param cause   Suppressed exception cause
      * @param key     Message translation key
      */
-    public FriendlyException(String message, Throwable cause, String key) {
+    @Contract(pure = true)
+    public FriendlyException(@NotNull String message, @Nullable Throwable cause, @NotNull String key) {
         super(message, cause);
         this.key = key;
     }
@@ -62,6 +69,8 @@ public final class FriendlyException extends RuntimeException {
      *
      * @return Message translation key
      */
+    @Contract(pure = true)
+    @NotNull
     public String key() {
         return this.key;
     }
@@ -72,6 +81,8 @@ public final class FriendlyException extends RuntimeException {
      * @param root Causal chain root exception
      * @return First friendly exception in the causal chain, {@code null} if none, causal loop detected, or causal stack is too big
      */
+    @Contract(pure = true)
+    @Nullable
     public static FriendlyException friendlyInChain(Throwable root) {
         // Causal loop detection set.
         Set<Throwable> dejaVu = Collections.newSetFromMap(new IdentityHashMap<>(8));

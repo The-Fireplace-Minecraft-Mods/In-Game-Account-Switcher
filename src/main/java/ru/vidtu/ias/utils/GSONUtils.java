@@ -23,6 +23,8 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Various GSON utils.
@@ -33,6 +35,7 @@ public final class GSONUtils {
     /**
      * Shared GSON instance.
      */
+    @NotNull
     public static final Gson GSON = new Gson();
 
     /**
@@ -40,6 +43,7 @@ public final class GSONUtils {
      *
      * @throws AssertionError Always
      */
+    @Contract(value = "-> fail", pure = true)
     private GSONUtils() {
         throw new AssertionError("No instances.");
     }
@@ -52,7 +56,8 @@ public final class GSONUtils {
      * @return Read boolean
      * @throws JsonParseException If there was no boolean by that key, was a non-boolean element by that key, or if the json or the key is {@code null}
      */
-    public static boolean getBooleanOrThrow(JsonObject json, String key) {
+    @Contract(pure = true)
+    public static boolean getBooleanOrThrow(@NotNull JsonObject json, @NotNull String key) {
         try {
             return json.get(key).getAsBoolean();
         } catch (Throwable t) {
@@ -68,7 +73,8 @@ public final class GSONUtils {
      * @return Read int
      * @throws JsonParseException If there was no int by that key, was a non-int element by that key, or if the json or the key is {@code null}
      */
-    public static int getIntOrThrow(JsonObject json, String key) {
+    @Contract(pure = true)
+    public static int getIntOrThrow(@NotNull JsonObject json, @NotNull String key) {
         try {
             return json.get(key).getAsInt();
         } catch (Throwable t) {
@@ -84,7 +90,8 @@ public final class GSONUtils {
      * @return Read long
      * @throws JsonParseException If there was no long by that key, was a non-long element by that key, or if the json or the key is {@code null}
      */
-    public static long getLongOrThrow(JsonObject json, String key) {
+    @Contract(pure = true)
+    public static long getLongOrThrow(@NotNull JsonObject json, @NotNull String key) {
         try {
             return json.get(key).getAsLong();
         } catch (Throwable t) {
@@ -100,7 +107,9 @@ public final class GSONUtils {
      * @return Read string
      * @throws JsonParseException If there was no string by that key, was a non-string element by that key, or if the json or the key is {@code null}
      */
-    public static String getStringOrThrow(JsonObject json, String key) {
+    @Contract(pure = true)
+    @NotNull
+    public static String getStringOrThrow(@NotNull JsonObject json, @NotNull String key) {
         try {
             return json.get(key).getAsString();
         } catch (Throwable t) {
@@ -116,7 +125,9 @@ public final class GSONUtils {
      * @return Read object
      * @throws JsonParseException If there was no object by that key, was a non-object element by that key, or if the json or the key is {@code null}
      */
-    public static JsonObject getObjectOrThrow(JsonObject json, String key) {
+    @Contract(pure = true)
+    @NotNull
+    public static JsonObject getObjectOrThrow(@NotNull JsonObject json, @NotNull String key) {
         try {
             return json.get(key).getAsJsonObject();
         } catch (Throwable t) {
@@ -132,7 +143,9 @@ public final class GSONUtils {
      * @return Read array
      * @throws JsonParseException If there was no array by that key, was a non-array element by that key, or if the json or the key is {@code null}
      */
-    public static JsonArray getArrayOrThrow(JsonObject json, String key) {
+    @Contract(pure = true)
+    @NotNull
+    public static JsonArray getArrayOrThrow(@NotNull JsonObject json, @NotNull String key) {
         try {
             return json.get(key).getAsJsonArray();
         } catch (Throwable t) {

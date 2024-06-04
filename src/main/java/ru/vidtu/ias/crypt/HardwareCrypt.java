@@ -19,6 +19,10 @@
 
 package ru.vidtu.ias.crypt;
 
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.Unmodifiable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,26 +51,31 @@ public final class HardwareCrypt implements Crypt {
     /**
      * Shared "hardware ID" crypt version 2.
      */
+    @NotNull
     public static final HardwareCrypt INSTANCE_V2 = new HardwareCrypt(2, "ias:hardware_crypt_v2", null);
 
     /**
      * Shared "hardware ID" crypt version 1.
      */
+    @NotNull
     public static final HardwareCrypt INSTANCE_V1 = new HardwareCrypt(1, "ias:hardware_crypt_v1", INSTANCE_V2);
 
     /**
      * Logger for this class.
      */
+    @NotNull
     private static final Logger LOGGER = LoggerFactory.getLogger("IAS/HardwareCrypt");
 
     /**
      * Empty byte array for unknown MAC.
      */
-    private static final byte[] EMPTY_MAC = {};
+    private static final byte @NotNull [] EMPTY_MAC = {};
 
     /**
      * List of environmental keys used for hardware password.
      */
+    @NotNull
+    @Unmodifiable
     private static final List<String> ENV = List.of("COMPUTERNAME", "PROCESSOR_ARCHITECTURE",
             "PROCESSOR_REVISION", "PROCESSOR_IDENTIFIER", "PROCESSOR_LEVEL", "NUMBER_OF_PROCESSORS", "OS", "USERNAME",
             "USERDOMAIN", "USERDOMAIN_ROAMINGPROFILE", "APPDATA", "HOMEPATH", "LOGONSERVER", "LOCALAPPDATA", "TEMP", "TMP",
@@ -75,6 +84,8 @@ public final class HardwareCrypt implements Crypt {
     /**
      * List of system properties used for hardware password.
      */
+    @NotNull
+    @Unmodifiable
     private static final List<String> PROPS = List.of("java.io.tmpdir", "native.encoding", "user.name",
             "user.home", "user.country", "sun.io.unicode.encoding", "stderr.encoding", "sun.cpu.endian",
             "sun.cpu.isalist", "sun.jnu.encoding", "stdout.encoding", "sun.arch.data.model",
@@ -88,11 +99,13 @@ public final class HardwareCrypt implements Crypt {
     /**
      * Hardware crypt type.
      */
+    @NotNull
     private final String type;
 
     /**
      * Hardware crypt migration.
      */
+    @Nullable
     private final HardwareCrypt migrate;
 
     /**
@@ -102,30 +115,37 @@ public final class HardwareCrypt implements Crypt {
      * @param type    Crypt type
      * @param migrate Crypt migration, {@code null} if it shouldn't be migrated
      */
-    private HardwareCrypt(int version, String type, HardwareCrypt migrate) {
+    @Contract(pure = true)
+    private HardwareCrypt(int version, @NotNull String type, @Nullable HardwareCrypt migrate) {
         this.version = version;
         this.type = type;
         this.migrate = migrate;
     }
 
+    @Contract(pure = true)
     @Override
+    @NotNull
     public String type() {
         return this.type;
     }
 
+    @Contract(pure = true)
     @Override
+    @Nullable
     public HardwareCrypt migrate() {
         return this.migrate;
     }
 
+    @Contract(pure = true)
     @Override
     public boolean insecure() {
         // Hopefully.
         return false;
     }
 
+    @Contract(pure = true)
     @Override
-    public byte[] encrypt(byte[] decrypted) {
+    public byte @NotNull [] encrypt(byte @NotNull [] decrypted) {
         try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             // Generate and write salt.
             SecureRandom random = SecureRandom.getInstanceStrong();
@@ -153,8 +173,9 @@ public final class HardwareCrypt implements Crypt {
         }
     }
 
+    @Contract(pure = true)
     @Override
-    public byte[] decrypt(byte[] encrypted) {
+    public byte @NotNull [] decrypt(byte @NotNull [] encrypted) {
         try (ByteArrayInputStream in = new ByteArrayInputStream(encrypted)) {
             // Read the salt.
             byte[] salt = new byte[128];
@@ -184,19 +205,34 @@ public final class HardwareCrypt implements Crypt {
         }
     }
 
+    @Contract(value = "null -> false", pure = true)
     @Override
-    public boolean equals(Object obj) {
-        return obj instanceof HardwareCrypt;
+    public boolean equals(@Nullable Object obj) {
+        if (this == obj) return true;
+        if (!(obj instanceof HardwareCrypt that)) return false;
+        return this.version == that.version && Objects.equals(this.type, that.type) &&
+                Objects.equals(this.migrate, that.migrate);
     }
 
+    @Contract(pure = true)
     @Override
     public int hashCode() {
-        return 31074107;
+        int hash = 1;
+        hash = 31 * hash + Integer.hashCode(this.version);
+        hash = 31 * hash + Objects.hashCode(this.type);
+        hash = 31 * hash + Objects.hashCode(this.migrate);
+        return hash;
     }
 
+    @Contract(pure = true)
     @Override
+    @NotNull
     public String toString() {
-        return "HardwareCrypt{}";
+        return "HardwareCrypt{" +
+                "version=" + this.version +
+                ", type='" + this.type + '\'' +
+                ", migrate=" + this.migrate +
+                '}';
     }
 
     /**
@@ -205,6 +241,8 @@ public final class HardwareCrypt implements Crypt {
      * @return Created password
      * @throws RuntimeException If unable to create the password
      */
+    @Contract(pure = true)
+    @NotNull
     private String hardwarePassword() {
         try {
             // Calculate the "hardware ID".

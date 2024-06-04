@@ -40,12 +40,16 @@ repositories {
 }
 
 dependencies {
+    // Annotations
+    compileOnlyApi(libs.jetbrains.annotations)
+    compileOnlyApi(libs.error.prone.annotations)
+
     // Minecraft
     minecraft("com.mojang:minecraft:1.20.6")
     mappings(loom.officialMojangMappings())
 
     // NeoForge
-    neoForge("net.neoforged:neoforge:20.6.99-beta")
+    neoForge("net.neoforged:neoforge:20.6.103-beta")
 
     // Root
     compileOnly(shared)

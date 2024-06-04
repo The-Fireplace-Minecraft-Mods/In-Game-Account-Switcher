@@ -19,6 +19,8 @@
 
 package ru.vidtu.ias.config;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Unmodifiable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.vidtu.ias.account.Account;
@@ -32,8 +34,10 @@ import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Set;
+import java.util.function.Predicate;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.InflaterInputStream;
 
@@ -46,6 +50,7 @@ public final class IASStorage {
     /**
      * Disclaimer for files.
      */
+    @NotNull
     private static final String DISCLAIMER = """
             > ENGLISH
             Notification about security of accounts stored in the "In-Game Account Switcher" mod:
@@ -82,6 +87,8 @@ public final class IASStorage {
     /**
      * Disclaimer file names.
      */
+    @NotNull
+    @Unmodifiable
     private static final List<String> DISCLAIMER_FILE_NAMES = List.of(
             "READ_ME_IMPORTANT.txt", // English
             "ПРОЧТИ_МЕНЯ_ВАЖНО.txt" // Russian
@@ -90,12 +97,14 @@ public final class IASStorage {
     /**
      * Logger for this class.
      */
+    @NotNull
     public static final Logger LOGGER = LoggerFactory.getLogger("IAS/IASStorage");
 
     /**
      * Account data, encrypted or not.
      */
-    public static List<Account> accounts = new ArrayList<>(0);
+    @NotNull
+    public static final List<Account> ACCOUNTS = new ArrayList<>(0);
 
     /**
      * Whether the game disclaimer was shown.
@@ -117,7 +126,7 @@ public final class IASStorage {
      * @param path Game directory
      * @throws RuntimeException If unable to write the disclaimers
      */
-    public static void disclaimers(Path path) {
+    public static void disclaimers(@NotNull Path path) {
         try {
             // Log.
             LOGGER.debug("IAS: Writing disclaimers into {}...", path);
@@ -153,7 +162,7 @@ public final class IASStorage {
      * @param path Game directory
      * @throws RuntimeException If unable to load the storage
      */
-    public static void load(Path path) {
+    public static void load(@NotNull Path path) {
         try {
             // Log.
             LOGGER.debug("IAS: Loading storage for {}...", path);
@@ -187,17 +196,14 @@ public final class IASStorage {
                 }
 
                 // Flush the list.
-                if (accounts == null) {
-                    accounts = list;
-                } else {
-                    accounts.addAll(list);
-                }
-                accounts = accounts.stream()
-                        .distinct()
-                        .collect(Collectors.toCollection(ArrayList::new));
+                ACCOUNTS.addAll(list);
+
+                // Deduplicate.
+                Set<Account> set = new HashSet<>(ACCOUNTS.size());
+                ACCOUNTS.removeIf(Predicate.not(set::add));
 
                 // Log.
-                LOGGER.debug("IAS: Loaded {} (currently: {}) accounts from {}.", list.size(), accounts.size(), file);
+                LOGGER.debug("IAS: Loaded {} (currently: {}) accounts from {}.", list.size(), ACCOUNTS.size(), file);
             }
         } catch (Throwable t) {
             // Rethrow.
@@ -211,7 +217,7 @@ public final class IASStorage {
      * @param path Game directory
      * @throws RuntimeException If unable to save the storage
      */
-    public static void save(Path path) {
+    public static void save(@NotNull Path path) {
         try {
             // Log.
             LOGGER.debug("IAS: Saving storage into {}...", path);
@@ -221,11 +227,12 @@ public final class IASStorage {
 
             // Encode the data.
             byte[] data;
+            Account[] list;
             try (ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
                  DeflaterOutputStream defOut = new DeflaterOutputStream(byteOut);
                  DataOutputStream out = new DataOutputStream(defOut)) {
                 // Capture the list.
-                Account[] list = accounts.toArray(Account[]::new);
+                list = ACCOUNTS.toArray(Account[]::new);
 
                 // Write the length.
                 out.writeShort(list.length);
@@ -264,7 +271,7 @@ public final class IASStorage {
                     StandardOpenOption.SYNC, StandardOpenOption.DSYNC, LinkOption.NOFOLLOW_LINKS);
 
             // Log it.
-            LOGGER.debug("IAS: Saved {} accounts to {}.", accounts.size(), file);
+            LOGGER.debug("IAS: Saved {} accounts to {}.", list.length, file);
         } catch (Throwable t) {
             // Rethrow.
             throw new RuntimeException("Unable to save IAS storage.", t);
@@ -277,7 +284,7 @@ public final class IASStorage {
      * @param path Game directory
      * @throws RuntimeException If unable to set or write game disclaimer shown persistent state
      */
-    public static void gameDisclaimerShown(Path path) {
+    public static void gameDisclaimerShown(@NotNull Path path) {
         try {
             // Log it.
             LOGGER.debug("IAS: Marking in-game disclaimers as shown into {}...", path);

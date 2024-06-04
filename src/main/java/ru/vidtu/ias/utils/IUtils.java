@@ -19,6 +19,10 @@
 
 package ru.vidtu.ias.utils;
 
+import com.google.errorprone.annotations.CheckReturnValue;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,7 +52,7 @@ public final class IUtils {
      * Ports to try binding to.
      * Not everything is allowed, this should be edited in MS Entra manually.
      */
-    private static final int[] TRY_BIND_PORTS = {59125, 59126, 59127, 59128, 59129, 59130, 59131,
+    private static final int @NotNull [] TRY_BIND_PORTS = {59125, 59126, 59127, 59128, 59129, 59130, 59131,
             59132, 59133, 59134, 59135, 1234, 1235, 1236, 1237, 80, 8080, 19364, 19365, 19366, 27930,
             27931, 27932, 27933, 27934, 42069};
 
@@ -57,6 +61,7 @@ public final class IUtils {
      *
      * @throws AssertionError Always
      */
+    @Contract(value = "-> fail", pure = true)
     private IUtils() {
         throw new AssertionError("No instances.");
     }
@@ -67,7 +72,9 @@ public final class IUtils {
      * @param name Target name
      * @return Warning key, {@code null} if none
      */
-    public static String warnKey(String name) {
+    @Contract(pure = true)
+    @Nullable
+    public static String warnKey(@NotNull String name) {
         // Blank.
         if (name.isBlank()) return "ias.nick.blank";
 
@@ -94,7 +101,8 @@ public final class IUtils {
      * @param tester Exception tester
      * @return {@code true} if the predicate has matched any exception in the causal chain, {@code false} if not, causal loop detected, or causal stack is too big
      */
-    public static boolean anyInCausalChain(Throwable root, Predicate<Throwable> tester) {
+    @Contract(pure = true)
+    public static boolean anyInCausalChain(@Nullable Throwable root, @NotNull Predicate<Throwable> tester) {
         // Causal loop detection set.
         Set<Throwable> dejaVu = Collections.newSetFromMap(new IdentityHashMap<>(8));
 
@@ -126,6 +134,7 @@ public final class IUtils {
      * @return The presence of the HTTP server
      * @implNote This method might block for the first call
      */
+    @CheckReturnValue
     public static boolean canUseSunServer() {
         return SunServerAvailability.AVAILABLE;
     }
@@ -135,7 +144,8 @@ public final class IUtils {
      *
      * @return A copy of ports that can be tried to be bound to
      */
-    public static int[] tryBindPorts() {
+    @Contract(pure = true)
+    public static int @NotNull [] tryBindPorts() {
         return TRY_BIND_PORTS.clone();
     }
 
@@ -162,7 +172,7 @@ public final class IUtils {
                 try (ServerSocket server = new ServerSocket();
                      Socket client = new Socket()) {
                     // Set up timeouts.
-                    server.setSoTimeout(1000);
+                    server.setSoTimeout(2000);
 
                     // Try to bind it.
                     bindToSupportedPort(server);
@@ -170,9 +180,9 @@ public final class IUtils {
 
                     // Try to connect.
                     int port = server.getLocalPort();
-                    client.setSoTimeout(1000);
+                    client.setSoTimeout(2000);
                     client.setTcpNoDelay(true);
-                    client.connect(new InetSocketAddress(port), 1000);
+                    client.connect(new InetSocketAddress(port), 2000);
                     logger.info("IAS: Connected to TCP server, trying to exchange data bidirectionally.");
 
                     // Try to exchange some random data.
@@ -225,7 +235,7 @@ public final class IUtils {
          * @param socket Socket to bind
          * @throws RuntimeException If unable to bind
          */
-        private static void bindToSupportedPort(ServerSocket socket) {
+        private static void bindToSupportedPort(@NotNull ServerSocket socket) {
             // Any thrown exceptions.
             List<RuntimeException> thrown = new LinkedList<>();
 
@@ -254,6 +264,7 @@ public final class IUtils {
          *
          * @throws AssertionError Always
          */
+        @Contract(value = "-> fail", pure = true)
         private SunServerAvailability() {
             throw new AssertionError("No instances.");
         }

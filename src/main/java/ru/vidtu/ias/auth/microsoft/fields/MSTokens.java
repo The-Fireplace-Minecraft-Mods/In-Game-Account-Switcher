@@ -21,6 +21,8 @@ package ru.vidtu.ias.auth.microsoft.fields;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 import ru.vidtu.ias.auth.LoginData;
 import ru.vidtu.ias.auth.microsoft.MSAuth;
 import ru.vidtu.ias.utils.GSONUtils;
@@ -36,7 +38,7 @@ import ru.vidtu.ias.utils.GSONUtils;
  * @see MSAuth#msrToMsaMsr(String)
  * @see MSAuth#msaToXbl(String)
  */
-public record MSTokens(String access, String refresh) {
+public record MSTokens(@NotNull String access, @NotNull String refresh) {
     /**
      * Extracts the MS tokens from the JSON.
      *
@@ -44,7 +46,9 @@ public record MSTokens(String access, String refresh) {
      * @return Extracted MS tokens
      * @throws JsonParseException If unable to extract
      */
-    public static MSTokens fromJson(JsonObject json) {
+    @Contract(value = "_ -> new", pure = true)
+    @NotNull
+    public static MSTokens fromJson(@NotNull JsonObject json) {
         try {
             // Extract the tokens.
             String access = GSONUtils.getStringOrThrow(json, "access_token");

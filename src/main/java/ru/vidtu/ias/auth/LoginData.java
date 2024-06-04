@@ -19,6 +19,7 @@
 
 package ru.vidtu.ias.auth;
 
+import org.jetbrains.annotations.NotNull;
 import ru.vidtu.ias.account.Account;
 
 import java.util.UUID;
@@ -32,7 +33,7 @@ import java.util.UUID;
  * @param online Whether the account type is online
  * @author VidTu
  */
-public record LoginData(String name, UUID uuid, String token, boolean online) {
+public record LoginData(@NotNull String name, @NotNull UUID uuid, @NotNull String token, boolean online) {
     @Override
     public String toString() {
         return "LoginData{" +

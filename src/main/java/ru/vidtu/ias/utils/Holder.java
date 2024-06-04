@@ -19,6 +19,10 @@
 
 package ru.vidtu.ias.utils;
 
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.Objects;
 
 /**
@@ -32,11 +36,13 @@ public final class Holder<T> {
     /**
      * Hold value.
      */
+    @Nullable
     private T value;
 
     /**
      * Creates a new holder that holds {@code null}.
      */
+    @Contract(pure = true)
     public Holder() {
         this.value = null;
     }
@@ -48,7 +54,8 @@ public final class Holder<T> {
      * @see #get()
      * @see #set(Object)
      */
-    public Holder(T value) {
+    @Contract(pure = true)
+    public Holder(@Nullable T value) {
         this.value = value;
     }
 
@@ -58,6 +65,8 @@ public final class Holder<T> {
      * @return Hold value
      * @see #set(Object)
      */
+    @Contract(pure = true)
+    @Nullable
     public T get() {
         return this.value;
     }
@@ -68,23 +77,27 @@ public final class Holder<T> {
      * @param value Hold value
      * @see #get()
      */
-    public void set(T value) {
+    public void set(@Nullable T value) {
         this.value = value;
     }
 
+    @Contract(value = "null -> false", pure = true)
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(@Nullable Object obj) {
         if (this == obj) return true;
         if (!(obj instanceof Holder<?> that)) return false;
         return Objects.equals(this.value, that.value);
     }
 
+    @Contract(pure = true)
     @Override
     public int hashCode() {
         return Objects.hashCode(this.value);
     }
 
+    @Contract(pure = true)
     @Override
+    @NotNull
     public String toString() {
         return "Holder{" +
                 "value=" + this.value +
