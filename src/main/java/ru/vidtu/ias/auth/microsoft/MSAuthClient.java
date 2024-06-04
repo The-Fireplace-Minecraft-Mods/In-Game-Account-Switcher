@@ -39,6 +39,7 @@ import ru.vidtu.ias.utils.exceptions.FriendlyException;
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.DataOutputStream;
+import java.net.ConnectException;
 import java.net.NoRouteToHostException;
 import java.net.http.HttpTimeoutException;
 import java.nio.channels.UnresolvedAddressException;
@@ -229,7 +230,7 @@ public final class MSAuthClient implements Closeable {
                 return MSAuth.mcaToMcp(token);
             }, IAS.executor()).exceptionallyAsync(t -> {
                 // Probable case - no internet connection.
-                if (IUtils.anyInCausalChain(t, err -> err instanceof UnresolvedAddressException || err instanceof NoRouteToHostException || err instanceof HttpTimeoutException)) {
+                if (IUtils.anyInCausalChain(t, err -> err instanceof UnresolvedAddressException || err instanceof NoRouteToHostException || err instanceof HttpTimeoutException || err instanceof ConnectException)) {
                     throw new FriendlyException("Unable to connect to MS servers.", t,  "ias.error.connect");
                 }
 

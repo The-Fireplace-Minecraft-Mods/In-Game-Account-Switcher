@@ -39,6 +39,7 @@ import java.io.Closeable;
 import java.io.DataOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.ConnectException;
 import java.net.InetSocketAddress;
 import java.net.NoRouteToHostException;
 import java.net.URI;
@@ -274,14 +275,14 @@ public final class MSAuthServer implements Runnable, Closeable {
             });
 
             // Create the end handler. (safe spot)
-            this.server.createContext("/end/", ex -> {
+            this.server.createContext("/end", ex -> {
                 try {
                     // Log it.
-                    LOGGER.info("IAS: Requested HTTP to '/end/'.");
+                    LOGGER.info("IAS: Requested HTTP to '/end'.");
 
                     // Close and ignore if not localhost.
                     if (!ex.getRemoteAddress().getAddress().isLoopbackAddress()) {
-                        LOGGER.warn("IAS: Closed not loopback request to '/end/'.");
+                        LOGGER.warn("IAS: Closed not loopback request to '/end'.");
                         ex.close();
                         return;
                     }
@@ -520,7 +521,7 @@ public final class MSAuthServer implements Runnable, Closeable {
                 return MSAuth.mcaToMcp(token);
             }, IAS.executor()).exceptionallyAsync(t -> {
                 // Probable case - no internet connection.
-                if (IUtils.anyInCausalChain(t, err -> err instanceof UnresolvedAddressException || err instanceof NoRouteToHostException || err instanceof HttpTimeoutException)) {
+                if (IUtils.anyInCausalChain(t, err -> err instanceof UnresolvedAddressException || err instanceof NoRouteToHostException || err instanceof HttpTimeoutException || err instanceof ConnectException)) {
                     throw new FriendlyException("Unable to connect to MS servers.", t,  "ias.error.connect");
                 }
 
