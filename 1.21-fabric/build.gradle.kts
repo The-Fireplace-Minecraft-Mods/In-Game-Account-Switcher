@@ -39,7 +39,7 @@ dependencies {
     compileOnlyApi(libs.error.prone.annotations)
 
     // Minecraft
-    minecraft("com.mojang:minecraft:1.21-pre2")
+    minecraft("com.mojang:minecraft:1.21-pre3")
     mappings(loom.officialMojangMappings())
 
     // Fabric

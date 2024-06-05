@@ -24,6 +24,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import ru.vidtu.ias.IAS;
 import ru.vidtu.ias.auth.microsoft.fields.DeviceAuth;
 import ru.vidtu.ias.auth.microsoft.fields.MCProfile;
@@ -41,7 +42,6 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
-import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -364,7 +364,7 @@ public final class MSAuth {
      */
     @CheckReturnValue
     @NotNull
-    public static CompletableFuture<XHashedToken> xblToXsts(@NotNull String xbl, @NotNull String hash) {
+    public static CompletableFuture<XHashedToken> xblToXsts(@NotNull String xbl, @Nullable String hash) {
         // Create the payload.
         // This is ugly, but I won't create custom classes and serializers just for this.
         JsonObject request = new JsonObject();
@@ -437,7 +437,9 @@ public final class MSAuth {
                 // Rethrow, trying to remove sensitive data.
                 String message = "Unable to convert Xbox Live (XBL) token to Xbox Secure Token Service (XSTS) token (" + response + " with " + response.headers() + "): " + response.body();
                 message = message.replace(xbl, "[XBL]");
-                message = message.replace(hash, "[HASH]");
+                if (hash != null) {
+                    message = message.replace(hash, "[HASH]");
+                }
                 throw new RuntimeException(message, t);
             }
         }, IAS.executor());
@@ -530,7 +532,7 @@ public final class MSAuth {
                 return MCProfile.fromJson(json);
             } catch (Throwable t) {
                 // Rethrow, trying to remove sensitive data.
-                String message = "Unable to convert Minecraft Access (MCA) token to Minecraft Profile (MCP) (" + response + "): " + response.body();
+                String message = "Unable to convert Minecraft Access (MCA) token to Minecraft Profile (MCP) (" + response + " with " + response.headers() + "): " + response.body();
                 message = message.replace(access, "[MCA]");
                 throw new RuntimeException(message, t);
             }
@@ -553,20 +555,21 @@ public final class MSAuth {
                 .timeout(IAS.TIMEOUT)
                 .GET()
                 .build(), HttpResponse.BodyHandlers.ofString()).thenApplyAsync(response -> {
-            // Check the code.
-            int status = response.statusCode();
-            if (status != HttpURLConnection.HTTP_OK) {
-                throw new IllegalArgumentException("Invalid status code: " + status);
-            }
+            try {
+                // Check the code.
+                int status = response.statusCode();
+                if (status != HttpURLConnection.HTTP_OK) {
+                    throw new IllegalArgumentException("Invalid status code: " + status);
+                }
 
-            // Decode the profile and return it.
-            JsonObject json = GSONUtils.GSON.fromJson(response.body(), JsonObject.class);
-            Objects.requireNonNull(json, "Response is null");
-            return MCProfile.fromJson(json);
-        }, IAS.executor()).exceptionallyAsync(ignored -> {
-            // Fallback to offline.
-            UUID uuid = UUID.nameUUIDFromBytes(("OfflinePlayer:" + name).getBytes(StandardCharsets.UTF_8));
-            return new MCProfile(uuid, name);
+                // Decode the profile and return it.
+                JsonObject json = GSONUtils.GSON.fromJson(response.body(), JsonObject.class);
+                Objects.requireNonNull(json, "Response is null");
+                return MCProfile.fromJson(json);
+            } catch (Throwable t) {
+                // Rethrow.
+                throw new RuntimeException("Unable to obtain Minecraft profile by name '" + name + "' (" + response + " with " + response.headers() + "): " + response.body(), t);
+            }
         }, IAS.executor());
     }
 
@@ -581,7 +584,7 @@ public final class MSAuth {
     @NotNull
     private static URI createURIUnchecked(@NotNull String value) {
         try {
-            return new URI(value);
+            return new URI(value).parseServerAuthority();
         } catch (Throwable t) {
             throw new RuntimeException("Unable to create URI: " + value, t);
         }
