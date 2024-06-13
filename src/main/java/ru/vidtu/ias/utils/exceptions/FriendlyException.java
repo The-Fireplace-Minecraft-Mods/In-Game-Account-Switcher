@@ -47,7 +47,7 @@ public final class FriendlyException extends RuntimeException {
      */
     @Contract(pure = true)
     public FriendlyException(@NotNull String message, @NotNull String key) {
-        super(message);
+        super(message + " (friendly key: " + key + ")");
         this.key = key;
     }
 
@@ -60,7 +60,7 @@ public final class FriendlyException extends RuntimeException {
      */
     @Contract(pure = true)
     public FriendlyException(@NotNull String message, @Nullable Throwable cause, @NotNull String key) {
-        super(message, cause);
+        super(message + " (friendly key: " + key + ")", cause);
         this.key = key;
     }
 

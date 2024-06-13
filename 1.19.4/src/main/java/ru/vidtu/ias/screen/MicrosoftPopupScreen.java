@@ -115,6 +115,16 @@ final class MicrosoftPopupScreen extends Screen implements CreateHandler {
     private MultiLineLabel cryptPasswordTip;
 
     /**
+     * Non-NAN, if some sort of error is present.
+     */
+    private float error = Float.NaN;
+
+    /**
+     * Error note.
+     */
+    private MultiLineLabel errorNote;
+
+    /**
      * Creates a new login screen.
      *
      * @param parent  Parent screen
@@ -381,6 +391,40 @@ final class MicrosoftPopupScreen extends Screen implements CreateHandler {
                 // Render the label.
                 this.label.renderCentered(pose, this.width / 2, (this.height - this.label.getLineCount() * 9) / 2 - 4, 9, 0xFF_FF_FF_FF);
             }
+
+            // Render the error note, if errored.
+            if (Float.isFinite(this.error)) {
+                // Create it first.
+                if (this.errorNote == null) {
+                    this.errorNote = MultiLineLabel.create(this.font, Component.translatable("ias.error.note").withStyle(ChatFormatting.AQUA), 245);
+                }
+
+                // Wow, opacity. So fluent.
+                // For what purpose?
+                int opacityMask;
+                if (this.error < 1.0F) {
+                    this.error = Math.min(this.error + delta * 0.1F, 1.0F);
+                    int opacity = Math.max(9, (int) (this.error * this.error * this.error * this.error * 255.0F));
+                    opacityMask = opacity << 24;
+                } else {
+                    opacityMask = -16777216;
+                }
+
+                // Render BG.
+                int w = this.errorNote.getWidth() / 4 + 2;
+                int h = (this.errorNote.getLineCount() * 9) / 2 + 1;
+                int cx = this.width / 2;
+                int sy = this.height / 2 + 87;
+                fill(pose, cx - w, sy, cx + w, sy + h, 0x101010 | opacityMask);
+                fill(pose, cx - w + 1, sy - 1, cx + w - 1, sy, 0x101010 | opacityMask);
+                fill(pose, cx - w + 1, sy + h, cx + w - 1, sy + h + 1, 0x101010 | opacityMask);
+
+                // Render scaled.
+                pose.pushPose();
+                pose.scale(0.5F, 0.5F, 0.5F);
+                this.errorNote.renderCentered(pose, this.width, this.height + 174, 9, 0xFF_FF_FF | opacityMask);
+                pose.popPose();
+            }
         }
     }
 
@@ -470,6 +514,7 @@ final class MicrosoftPopupScreen extends Screen implements CreateHandler {
         synchronized (this.lock) {
             this.stage = component;
             this.label = null;
+            this.error = 0.0F;
         }
     }
 

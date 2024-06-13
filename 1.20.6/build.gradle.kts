@@ -36,6 +36,7 @@ dependencies {
 tasks.withType<JavaCompile> {
     source(rootProject.sourceSets.main.get().java)
     options.encoding = "UTF-8"
+    options.compilerArgs.addAll(listOf("-g", "-parameters"))
     options.release = 21
 }
 

@@ -46,7 +46,7 @@ dependencies {
     mappings(loom.officialMojangMappings())
 
     // Forge
-    forge("net.minecraftforge:forge:1.19.2-43.3.13")
+    forge("net.minecraftforge:forge:1.19.2-43.4.0")
 
     // Root
     compileOnly(shared)
@@ -56,6 +56,7 @@ tasks.withType<JavaCompile> {
     source(rootProject.sourceSets.main.get().java)
     source(shared.sourceSets.main.get().java)
     options.encoding = "UTF-8"
+    options.compilerArgs.addAll(listOf("-g", "-parameters"))
     options.release = 17
 }
 

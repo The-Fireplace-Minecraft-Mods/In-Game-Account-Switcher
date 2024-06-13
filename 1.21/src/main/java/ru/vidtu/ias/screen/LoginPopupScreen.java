@@ -91,6 +91,16 @@ final class LoginPopupScreen extends Screen implements LoginHandler {
     private MultiLineLabel cryptPasswordTip;
 
     /**
+     * Non-NAN, if some sort of error is present.
+     */
+    private float error = Float.NaN;
+
+    /**
+     * Error note.
+     */
+    private MultiLineLabel errorNote;
+
+    /**
      * Creates a new login screen.
      *
      * @param parent Parent screen
@@ -227,6 +237,51 @@ final class LoginPopupScreen extends Screen implements LoginHandler {
 
                 // Render the label.
                 this.label.renderCentered(graphics, this.width / 2, (this.height - this.label.getLineCount() * 9) / 2 - 4, 9, 0xFF_FF_FF_FF);
+            }
+
+            // Render the error note, if errored.
+            if (Float.isFinite(this.error)) {
+                // Create it first.
+                if (this.errorNote == null) {
+                    this.errorNote = MultiLineLabel.create(this.font, Component.translatable("ias.error.note").withStyle(ChatFormatting.AQUA), 245);
+                }
+
+                // Wow, opacity. So fluent.
+                // For what purpose?
+                // Actually this code and comment will probably never be read
+                // by anyone, so here's one little fact that makes me explode right now:
+                // >>>
+                // I have already written this code, however, I do have one little fun thing,
+                // I have my SSDs on my table, and so I accidentally "unplugged" them with my elbow.
+                // Not only it didn't save "unsaved" RAM, not only it did corrupt the file,
+                // it corrupted the BTRFS. I'm now writing this code once again from Win11 at 4 AM in the morn,
+                // it's actually pretty light-ish outside (imgur.com/a/waAxTK1), but this won't be pushed
+                // for a while, particularly for a reason I'm reinstalling my distro tomorrow and hell I'll use EXT4.
+                // Good night, thank you for using this mod and reading the source. <3
+                // <<<
+                int opacityMask;
+                if (this.error < 1.0F) {
+                    this.error = Math.min(this.error + delta * 0.1F, 1.0F);
+                    int opacity = Math.max(9, (int) (this.error * this.error * this.error * this.error * 255.0F));
+                    opacityMask = opacity << 24;
+                } else {
+                    opacityMask = -16777216;
+                }
+
+                // Render BG.
+                int w = this.errorNote.getWidth() / 4 + 2;
+                int h = (this.errorNote.getLineCount() * 9) / 2 + 1;
+                int cx = this.width / 2;
+                int sy = this.height / 2 + 87;
+                graphics.fill(cx - w, sy, cx + w, sy + h, 0x101010 | opacityMask);
+                graphics.fill(cx - w + 1, sy - 1, cx + w - 1, sy, 0x101010 | opacityMask);
+                graphics.fill(cx - w + 1, sy + h, cx + w - 1, sy + h + 1, 0x101010 | opacityMask);
+
+                // Render scaled.
+                pose.pushPose();
+                pose.scale(0.5F, 0.5F, 0.5F);
+                this.errorNote.renderCentered(graphics, this.width, this.height + 174, 9, 0xFF_FF_FF | opacityMask);
+                pose.popPose();
             }
         }
     }
@@ -366,6 +421,7 @@ final class LoginPopupScreen extends Screen implements LoginHandler {
         synchronized (this.lock) {
             this.stage = component;
             this.label = null;
+            this.error = 0.0F;
         }
     }
 

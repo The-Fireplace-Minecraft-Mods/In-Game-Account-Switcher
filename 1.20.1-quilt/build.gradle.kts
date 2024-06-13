@@ -45,7 +45,7 @@ dependencies {
 
     // Quilt
     modImplementation(libs.quilt.loader)
-    modImplementation("org.quiltmc.quilted-fabric-api:quilted-fabric-api:7.5.0+0.91.0-1.20.1")
+    modImplementation("org.quiltmc.quilted-fabric-api:quilted-fabric-api:7.5.0+0.92.2-1.20.1")
     modImplementation("com.terraformersmc:modmenu:7.2.2")
 
     // Root
@@ -56,6 +56,7 @@ tasks.withType<JavaCompile> {
     source(rootProject.sourceSets.main.get().java)
     source(shared.sourceSets.main.get().java)
     options.encoding = "UTF-8"
+    options.compilerArgs.addAll(listOf("-g", "-parameters"))
     options.release = 17
 }
 

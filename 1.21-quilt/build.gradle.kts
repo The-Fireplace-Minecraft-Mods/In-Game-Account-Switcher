@@ -40,13 +40,13 @@ dependencies {
     compileOnlyApi(libs.error.prone.annotations)
 
     // Minecraft
-    minecraft("com.mojang:minecraft:1.21-pre3")
+    minecraft("com.mojang:minecraft:1.21-rc1")
     mappings(loom.officialMojangMappings())
 
     // Quilt
     modImplementation(libs.mixin) // <- Future me, test if this is still needed
     modImplementation(libs.quilt.loader)
-    modImplementation("net.fabricmc.fabric-api:fabric-api:0.99.4+1.21")
+    modImplementation("net.fabricmc.fabric-api:fabric-api:0.100.1+1.21")
     modImplementation("com.terraformersmc:modmenu:11.0.0-beta.1")
 
     // Root
@@ -57,6 +57,7 @@ tasks.withType<JavaCompile> {
     source(rootProject.sourceSets.main.get().java)
     source(shared.sourceSets.main.get().java)
     options.encoding = "UTF-8"
+    options.compilerArgs.addAll(listOf("-g", "-parameters"))
     options.release = 21
 }
 

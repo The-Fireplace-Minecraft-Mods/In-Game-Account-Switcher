@@ -23,7 +23,7 @@ dependencies {
     compileOnlyApi(libs.error.prone.annotations)
 
     // Minecraft
-    minecraft("com.mojang:minecraft:1.21-pre3")
+    minecraft("com.mojang:minecraft:1.21-rc1")
     mappings(loom.officialMojangMappings())
 
     // Mixin
@@ -36,6 +36,7 @@ dependencies {
 tasks.withType<JavaCompile> {
     source(rootProject.sourceSets.main.get().java)
     options.encoding = "UTF-8"
+    options.compilerArgs.addAll(listOf("-g", "-parameters"))
     options.release = 21
 }
 

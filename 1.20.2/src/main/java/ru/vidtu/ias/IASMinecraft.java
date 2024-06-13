@@ -55,6 +55,7 @@ import ru.vidtu.ias.mixins.MinecraftAccessor;
 import ru.vidtu.ias.screen.AccountScreen;
 import ru.vidtu.ias.utils.Expression;
 import ru.vidtu.ias.utils.IUtils;
+import ru.vidtu.ias.utils.exceptions.FriendlyException;
 
 import java.nio.file.Path;
 import java.util.Optional;
@@ -322,7 +323,7 @@ public final class IASMinecraft {
         LOGGER.info("IAS: Received login request: {}", data);
         if (minecraft.player != null || minecraft.level != null || minecraft.getConnection() != null ||
                 minecraft.cameraEntity != null || minecraft.gameMode != null || minecraft.isSingleplayer()) {
-            return CompletableFuture.failedFuture(new IllegalStateException("Changing accounts in world."));
+            return CompletableFuture.failedFuture(new FriendlyException("Changing accounts in world.", "ias.error.world"));
         }
 
         // Create everything async, because it lags.

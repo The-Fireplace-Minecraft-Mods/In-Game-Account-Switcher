@@ -47,6 +47,8 @@
   "ias.error.xboxAvailable": "Xbox Live is not available for this region. Try adding this account again or into the official launcher. See the log files and/or game console for technical details. While we have tried to remove any sensitive data, you should *NOT* publish your logs.",
   "ias.error.xboxAdult": "Your Xbox account needs to be linked to or verified by an adult (parent/guardian). Try adding this account again or into the official launcher. See the log files and/or game console for technical details. While we have tried to remove any sensitive data, you should *NOT* publish your logs.",
   "ias.error.noProfile": "Your Xbox account doesn't have a Minecraft profile. Most likely, this account doesn't own a copy of the game or you didn't set up the profile for the Xbox Game Pass. Try adding this account again or into the official launcher to set up the profile. See the log files and/or game console for technical details. While we have tried to remove any sensitive data, you should *NOT* publish your logs.",
+  "ias.error.world": "You've tried to change your account while connected to a world or a server. Quit to the main menu and try again. See the log files and/or game console for technical details. While we have tried to remove any sensitive data, you should *NOT* publish your logs.",
+  "ias.error.note": "Note: A screenshot of this error screen as well as saying \"plz help i cant login\" is NOT enough for the mod developers to help you with any problems.",
   "ias.add": "Add",
   "ias.edit": "Edit",
   "ias.add.microsoft": "Microsoft",
