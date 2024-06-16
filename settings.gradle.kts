@@ -22,4 +22,5 @@ include("1.20.2", "1.20.2-fabric", "1.20.2-quilt", "1.20.2-forge", "1.20.2-neofo
 include("1.20.4", "1.20.4-fabric", "1.20.4-quilt", "1.20.4-forge", "1.20.4-neoforge")
 // TODO include("1.20.6", "1.20.6-fabric", "1.20.6-quilt", "1.20.6-forge", "1.20.6-neoforge")
 include("1.20.6", "1.20.6-fabric", "1.20.6-quilt", "1.20.6-neoforge")
-include("1.21", "1.21-fabric", "1.21-quilt")
+// TODO include("1.21", "1.21-fabric", "1.21-quilt", "1.21-forge", "1.21-neoforge")
+include("1.21", "1.21-fabric", "1.21-quilt", "1.21-neoforge")

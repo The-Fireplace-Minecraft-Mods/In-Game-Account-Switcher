@@ -32,7 +32,7 @@
       },
       {
         "id": "minecraft",
-        "versions": ">=1.21-beta.3 <=1.21",
+        "versions": "1.21",
         "reason": "In-Game Account Switcher works only with Minecraft 1.21."
       },
       {

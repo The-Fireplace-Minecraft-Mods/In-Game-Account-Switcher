@@ -40,14 +40,14 @@ dependencies {
     compileOnlyApi(libs.error.prone.annotations)
 
     // Minecraft
-    minecraft("com.mojang:minecraft:1.21-rc1")
+    minecraft("com.mojang:minecraft:1.21")
     mappings(loom.officialMojangMappings())
 
     // Quilt
     modImplementation(libs.mixin) // <- Future me, test if this is still needed
     modImplementation(libs.quilt.loader)
     modImplementation("net.fabricmc.fabric-api:fabric-api:0.100.1+1.21")
-    modImplementation("com.terraformersmc:modmenu:11.0.0-beta.1")
+    modImplementation("com.terraformersmc:modmenu:11.0.0-rc.4")
 
     // Root
     compileOnly(shared)

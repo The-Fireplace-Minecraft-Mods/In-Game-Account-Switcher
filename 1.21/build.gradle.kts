@@ -23,7 +23,7 @@ dependencies {
     compileOnlyApi(libs.error.prone.annotations)
 
     // Minecraft
-    minecraft("com.mojang:minecraft:1.21-rc1")
+    minecraft("com.mojang:minecraft:1.21")
     mappings(loom.officialMojangMappings())
 
     // Mixin
