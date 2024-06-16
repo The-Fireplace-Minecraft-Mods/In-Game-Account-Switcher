@@ -53,6 +53,13 @@
         "ias.help.errors": "https://github.com/The-Fireplace-Minecraft-Mods/In-Game-Account-Switcher/blob/main/docs/ERRORS.md",
         "ias.help.stolen": "https://github.com/The-Fireplace-Minecraft-Mods/In-Game-Account-Switcher/blob/main/docs/STOLEN.md"
       }
+    },
+    "catalogue": {
+      "icon": {
+        "image": "ias_64.png",
+        "item": "minecraft:player_head"
+      },
+      "banner": "ias_240.png"
     }
   }
 }
