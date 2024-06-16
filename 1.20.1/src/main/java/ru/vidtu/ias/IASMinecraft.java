@@ -132,6 +132,10 @@ public final class IASMinecraft {
      * @param minecraft Minecraft instance4
      */
     public static void close(@NotNull Minecraft minecraft) {
+        // Skip if double close.
+        if (IAS.shuttingDownHack) return;
+        IAS.shuttingDownHack = true;
+
         // Set screen.
         Screen prevScreen = minecraft.screen;
         minecraft.forceSetScreen(new GenericDirtMessageScreen(Component.translatable("ias.closing")));
@@ -141,6 +145,9 @@ public final class IASMinecraft {
 
         // Unset screen.
         minecraft.forceSetScreen(prevScreen);
+
+        // Done.
+        IAS.shuttingDownHack = false;
     }
 
     /**

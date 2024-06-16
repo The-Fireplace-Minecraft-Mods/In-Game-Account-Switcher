@@ -80,6 +80,23 @@ public final class IAS {
     private static final String USER_AGENT_TEMPLATE = "IAS/%s (Session: %s; Loader: %s %s; Minecraft %s; Java %s)";
 
     /**
+     * Forge (and NeoForge) call {@code GameShuttingDownEvent} from {@code Minecraft.stop()},
+     * which in vanilla and Fabric sets {@code Minecraft.running} to {@code false}).
+     * <p>
+     * Then we {@code Minecraft.forceSetScreen()} to our screen (because we can shut down up to 10 seconds)
+     * and this calls {@code Minecraft.stop()} if window has been closed (not via "Quit Game") button,
+     * leading to infinite recursion loop, which won't resolve with exceptions.
+     * <p>
+     * Fabric (and Quilt) doesn't have this issue, because it invokes its
+     * {@code ClientLifecycleEvents#CLIENT_STOPPING} in actual {@code stop()} method,
+     * which aren't called twice. Another reason to choose Fabric.
+     * <p>
+     * This field is global because it's almost in every version.
+     * It is set before {@code forceSetScreen()} to prevent recursion and stackoverflow.
+     */
+    public static boolean shuttingDownHack = false; // Originally named "hackyWorkaroundForForgeForceSetScreenStackOverflow".
+
+    /**
      * IAS executor.
      */
     @Nullable
@@ -239,24 +256,39 @@ public final class IAS {
         // Shutdown the executor.
         shutdown:
         try {
+            // Skip if doesn't exist.
             ScheduledExecutorService executor = IAS.executor;
             if (executor == null) break shutdown;
+
+            // Shutdown.
             LOGGER.info("IAS: Shutting down IAS executor...");
             executor.shutdown();
             if (executor.awaitTermination(30L, TimeUnit.SECONDS)) {
                 LOGGER.info("IAS: IAS executor shut down.");
                 break shutdown;
             }
+
+            // Shutdown forcefully.
             LOGGER.warn("IAS: Unable to shutdown IAS executor. Shutting down forcefully...");
             executor.shutdownNow();
             if (executor.awaitTermination(30L, TimeUnit.SECONDS)) {
                 LOGGER.info("IAS: IAS executor shut down forcefully.");
                 break shutdown;
             }
+
+            // Unable to shut down.
             LOGGER.error("IAS: Unable to shutdown IAS executor forcefully.");
         } catch (InterruptedException e) {
+            // Log.
             LOGGER.error("IAS: IAS executor interrupted while shutting down. Shutting down forcefully...", e);
-            executor.shutdownNow();
+
+            // Kill, if exists.
+            ScheduledExecutorService executor = IAS.executor;
+            if (executor != null) {
+                executor.shutdownNow();
+            }
+
+            // Preserve interruption.
             Thread.currentThread().interrupt();
         }
         executor = null;
