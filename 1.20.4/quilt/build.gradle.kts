@@ -15,6 +15,7 @@ repositories {
     maven("https://maven.quiltmc.org/repository/release/")
     maven("https://maven.fabricmc.net/")
     maven("https://maven.terraformersmc.com/releases/")
+    maven("https://maven.nucleoid.xyz/") // TODO: Remove when ModMenu fixes dependency issues.
 }
 
 loom {
@@ -46,7 +47,7 @@ dependencies {
     // Quilt
     modImplementation(libs.quilt.loader)
     modImplementation("org.quiltmc.quilted-fabric-api:quilted-fabric-api:9.0.0-alpha.8+0.97.0-1.20.4")
-    modImplementation("com.terraformersmc:modmenu:9.0.0")
+    modImplementation("com.terraformersmc:modmenu:9.2.0")
 
     // Root
     compileOnly(shared)

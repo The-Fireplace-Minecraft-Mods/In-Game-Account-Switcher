@@ -14,6 +14,7 @@ repositories {
     mavenCentral()
     maven("https://maven.fabricmc.net/")
     maven("https://maven.terraformersmc.com/releases/")
+    maven("https://maven.nucleoid.xyz/") // TODO: Remove when ModMenu fixes dependency issues.
 }
 
 loom {
@@ -45,7 +46,7 @@ dependencies {
     // Fabric
     modImplementation(libs.fabric.loader)
     modImplementation("net.fabricmc.fabric-api:fabric-api:0.97.1+1.20.4")
-    modImplementation("com.terraformersmc:modmenu:9.0.0")
+    modImplementation("com.terraformersmc:modmenu:9.2.0")
 
     // Root
     compileOnly(shared)

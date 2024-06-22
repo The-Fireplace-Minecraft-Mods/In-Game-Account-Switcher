@@ -46,8 +46,8 @@ dependencies {
     // Quilt
     modImplementation(libs.mixin) // <- Future me, test if this is still needed
     modImplementation(libs.quilt.loader)
-    modImplementation("net.fabricmc.fabric-api:fabric-api:0.100.1+1.21")
-    modImplementation("com.terraformersmc:modmenu:11.0.0-rc.4")
+    modImplementation("net.fabricmc.fabric-api:fabric-api:0.100.3+1.21")
+    modImplementation("com.terraformersmc:modmenu:11.0.1")
 
     // Root
     compileOnly(shared)

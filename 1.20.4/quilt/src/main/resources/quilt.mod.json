@@ -42,7 +42,7 @@
       },
       {
         "id": "modmenu",
-        "versions": ">=9.0.0",
+        "versions": ">=9.2.0",
         "reason": "In-Game Account Switcher recommends ModMenu for configuration access.",
         "optional": true
       },
