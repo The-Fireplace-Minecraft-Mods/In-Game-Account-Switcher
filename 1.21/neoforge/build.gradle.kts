@@ -7,6 +7,7 @@ java.targetCompatibility = JavaVersion.VERSION_21
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 group = "ru.vidtu.ias"
 base.archivesName = "IAS-NeoForge-1.21"
+description = "This mod allows you to change your logged in account in-game, without restarting Minecraft."
 evaluationDependsOn(":1.21-root")
 val shared = project(":1.21-root")
 
@@ -49,7 +50,7 @@ dependencies {
     mappings(loom.officialMojangMappings())
 
     // NeoForge
-    neoForge("net.neoforged:neoforge:21.0.37-beta")
+    neoForge("net.neoforged:neoforge:21.0.42-beta")
 
     // Root
     compileOnly(shared)

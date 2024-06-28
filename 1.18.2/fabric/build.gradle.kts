@@ -7,6 +7,7 @@ java.targetCompatibility = JavaVersion.VERSION_17
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 group = "ru.vidtu.ias"
 base.archivesName = "IAS-Fabric-1.18.2"
+description = "This mod allows you to change your logged in account in-game, without restarting Minecraft."
 evaluationDependsOn(":1.18.2-root")
 val shared = project(":1.18.2-root")
 
