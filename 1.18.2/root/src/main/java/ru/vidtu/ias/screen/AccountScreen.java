@@ -135,7 +135,7 @@ public final class AccountScreen extends Screen implements LastPassRenderCallbac
                 // Set screen.
                 this.minecraft.setScreen(this);
             }, new TranslatableComponent("ias.disclaimer.title").withStyle(ChatFormatting.YELLOW),
-                    new TranslatableComponent("ias.disclaimer.text"), new TranslatableComponent("gui.continue")));
+                    new TranslatableComponent("ias.disclaimer.text"), new TranslatableComponent("gui.proceed")));
             return;
         }
 
