@@ -224,7 +224,7 @@ public final class IASMinecraft {
             if (x == null || y == null) {
                 // Use default position.
                 x = width / 2 + 158;
-                y = height - 30;
+                y = height - 28;
 
                 // Move out of any overlapping elements.
                 for (int i = 0; i < 64; i++) {
