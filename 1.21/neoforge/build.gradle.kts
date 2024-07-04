@@ -1,5 +1,5 @@
 plugins {
-    id("dev.architectury.loom") version "1.6-SNAPSHOT"
+    id("dev.architectury.loom") version "1.7-SNAPSHOT"
 }
 
 java.sourceCompatibility = JavaVersion.VERSION_21
@@ -50,7 +50,7 @@ dependencies {
     mappings(loom.officialMojangMappings())
 
     // NeoForge
-    neoForge("net.neoforged:neoforge:21.0.42-beta")
+    neoForge("net.neoforged:neoforge:21.0.57-beta")
 
     // Root
     compileOnly(shared)

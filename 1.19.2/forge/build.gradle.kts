@@ -1,5 +1,5 @@
 plugins {
-    id("dev.architectury.loom") version "1.6-SNAPSHOT"
+    id("dev.architectury.loom") version "1.7-SNAPSHOT"
 }
 
 java.sourceCompatibility = JavaVersion.VERSION_17
@@ -27,6 +27,7 @@ loom {
     }
     @Suppress("UnstableApiUsage")
     mixin {
+        useLegacyMixinAp = true
         defaultRefmapName = "ias.mixins.refmap.json"
     }
 }
@@ -47,7 +48,7 @@ dependencies {
     mappings(loom.officialMojangMappings())
 
     // Forge
-    forge("net.minecraftforge:forge:1.19.2-43.4.0")
+    forge("net.minecraftforge:forge:1.19.2-43.4.2")
 
     // Root
     compileOnly(shared)
