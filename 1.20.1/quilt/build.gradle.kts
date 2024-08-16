@@ -46,7 +46,7 @@ dependencies {
 
     // Quilt
     modImplementation(libs.quilt.loader)
-    modImplementation("org.quiltmc.quilted-fabric-api:quilted-fabric-api:7.5.0+0.92.2-1.20.1")
+    modImplementation("org.quiltmc.quilted-fabric-api:quilted-fabric-api:7.6.0+0.92.2-1.20.1")
     modImplementation("com.terraformersmc:modmenu:7.2.2")
 
     // Root

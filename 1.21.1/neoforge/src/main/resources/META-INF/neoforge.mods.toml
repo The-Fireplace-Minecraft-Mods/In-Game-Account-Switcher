@@ -29,7 +29,7 @@ config="ias.mixins.json"
 modId = "neoforge"
 type = "required"
 mandatory = true
-versionRange = "[21.0,21.1)"
+versionRange = "[21.0,21.2)"
 ordering = "NONE"
 side = "CLIENT"
 
@@ -37,7 +37,7 @@ side = "CLIENT"
 modId = "minecraft"
 type = "required"
 mandatory = true
-versionRange = "1.21"
+versionRange = "[1.21,1.21.1]"
 ordering = "NONE"
 side = "CLIENT"
 
