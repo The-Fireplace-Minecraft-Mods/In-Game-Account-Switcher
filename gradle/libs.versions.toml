@@ -1,9 +1,9 @@
 [versions]
 jetbrains_annotations = "24.1.0"
-error_prone_annotations = "2.28.0"
-fabric-loader = "0.15.11"
-mixin = "0.8.6"
-quilt-loader = "0.26.0"
+error_prone_annotations = "2.30.0"
+fabric-loader = "0.16.2"
+mixin = "0.8.7"
+quilt-loader = "0.26.3"
 
 [libraries]
 jetbrains_annotations = { module = "org.jetbrains:annotations", version.ref = "jetbrains_annotations" }

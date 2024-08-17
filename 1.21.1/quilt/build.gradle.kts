@@ -6,16 +6,34 @@ java.sourceCompatibility = JavaVersion.VERSION_21
 java.targetCompatibility = JavaVersion.VERSION_21
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 group = "ru.vidtu.ias"
-base.archivesName = "IAS-1.21"
+base.archivesName = "IAS-Quilt-1.21.1"
 description = "This mod allows you to change your logged in account in-game, without restarting Minecraft."
+evaluationDependsOn(":1.21.1-root")
+val shared = project(":1.21.1-root")
 
 repositories {
     mavenCentral()
+    maven("https://maven.quiltmc.org/repository/release/")
+    maven("https://maven.fabricmc.net/")
+    maven("https://maven.terraformersmc.com/releases/")
     maven("https://repo.spongepowered.org/repository/maven-public/")
 }
 
 loom {
     silentMojangMappingsLicense()
+    runs.named("client") {
+        vmArgs(
+            "-XX:+IgnoreUnrecognizedVMOptions",
+            "-Xmx2G",
+            "-XX:+AllowEnhancedClassRedefinition",
+            "-XX:HotswapAgent=fatjar",
+            "-Dfabric.debug.disableClassPathIsolation=true"
+        )
+    }
+    @Suppress("UnstableApiUsage")
+    mixin {
+        defaultRefmapName = "ias.mixins.refmap.json"
+    }
 }
 
 dependencies {
@@ -24,18 +42,22 @@ dependencies {
     compileOnlyApi(libs.error.prone.annotations)
 
     // Minecraft
-    minecraft("com.mojang:minecraft:1.21")
+    minecraft("com.mojang:minecraft:1.21.1")
     mappings(loom.officialMojangMappings())
 
-    // Mixin
-    compileOnly(libs.mixin)
+    // Quilt
+    modImplementation(libs.mixin) // <- Future me, test if this is still needed
+    modImplementation(libs.quilt.loader)
+    modImplementation("net.fabricmc.fabric-api:fabric-api:0.102.1+1.21.1")
+    modImplementation("com.terraformersmc:modmenu:11.0.1")
 
     // Root
-    compileOnlyApi(rootProject)
+    compileOnly(shared)
 }
 
 tasks.withType<JavaCompile> {
     source(rootProject.sourceSets.main.get().java)
+    source(shared.sourceSets.main.get().java)
     options.encoding = "UTF-8"
     options.compilerArgs.addAll(listOf("-g", "-parameters"))
     options.release = 21
@@ -43,6 +65,11 @@ tasks.withType<JavaCompile> {
 
 tasks.withType<ProcessResources> {
     from(rootProject.sourceSets.main.get().resources)
+    from(shared.sourceSets.main.get().resources)
+    inputs.property("version", project.version)
+    filesMatching("quilt.mod.json") {
+        expand("version" to project.version)
+    }
 }
 
 tasks.withType<Jar> {
@@ -54,7 +81,7 @@ tasks.withType<Jar> {
             "Specification-Title" to "In-Game Account Switcher",
             "Specification-Version" to project.version,
             "Specification-Vendor" to "VidTu",
-            "Implementation-Title" to "IAS-1.21",
+            "Implementation-Title" to "IAS-Quilt-1.21.1",
             "Implementation-Version" to project.version,
             "Implementation-Vendor" to "VidTu"
         )

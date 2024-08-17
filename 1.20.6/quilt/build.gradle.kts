@@ -17,6 +17,7 @@ repositories {
     maven("https://maven.fabricmc.net/")
     maven("https://maven.terraformersmc.com/releases/")
     maven("https://maven.nucleoid.xyz/") // TODO: Remove when ModMenu fixes dependency issues.
+    maven("https://repo.spongepowered.org/repository/maven-public/")
 }
 
 loom {
@@ -48,7 +49,7 @@ dependencies {
     // Quilt
     modImplementation(libs.mixin) // <- Future me, test if this is still needed
     modImplementation(libs.quilt.loader)
-    modImplementation("net.fabricmc.fabric-api:fabric-api:0.100.4+1.20.6")
+    modImplementation("net.fabricmc.fabric-api:fabric-api:0.100.8+1.20.6")
     modImplementation("com.terraformersmc:modmenu:10.0.0")
 
     // Root

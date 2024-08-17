@@ -6,20 +6,16 @@ java.sourceCompatibility = JavaVersion.VERSION_21
 java.targetCompatibility = JavaVersion.VERSION_21
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 group = "ru.vidtu.ias"
-base.archivesName = "IAS-Quilt-1.21"
+base.archivesName = "IAS-Forge-1.21.1"
 description = "This mod allows you to change your logged in account in-game, without restarting Minecraft."
-evaluationDependsOn(":1.21-root")
-val shared = project(":1.21-root")
-
-repositories {
-    mavenCentral()
-    maven("https://maven.quiltmc.org/repository/release/")
-    maven("https://maven.fabricmc.net/")
-    maven("https://maven.terraformersmc.com/releases/")
-}
+evaluationDependsOn(":1.21.1-root")
+val shared = project(":1.21.1-root")
 
 loom {
     silentMojangMappingsLicense()
+    forge {
+        mixinConfigs = setOf("ias.mixins.json")
+    }
     runs.named("client") {
         vmArgs(
             "-XX:+IgnoreUnrecognizedVMOptions",
@@ -31,8 +27,15 @@ loom {
     }
     @Suppress("UnstableApiUsage")
     mixin {
+        useLegacyMixinAp = true
         defaultRefmapName = "ias.mixins.refmap.json"
     }
+}
+
+repositories {
+    mavenCentral()
+    maven("https://maven.architectury.dev/")
+    maven("https://maven.minecraftforge.net/")
 }
 
 dependencies {
@@ -41,14 +44,11 @@ dependencies {
     compileOnlyApi(libs.error.prone.annotations)
 
     // Minecraft
-    minecraft("com.mojang:minecraft:1.21")
+    minecraft("com.mojang:minecraft:1.21.1")
     mappings(loom.officialMojangMappings())
 
-    // Quilt
-    modImplementation(libs.mixin) // <- Future me, test if this is still needed
-    modImplementation(libs.quilt.loader)
-    modImplementation("net.fabricmc.fabric-api:fabric-api:0.100.4+1.21")
-    modImplementation("com.terraformersmc:modmenu:11.0.1")
+    // Forge
+    forge("net.minecraftforge:forge:1.21.1-52.0.4")
 
     // Root
     compileOnly(shared)
@@ -66,7 +66,7 @@ tasks.withType<ProcessResources> {
     from(rootProject.sourceSets.main.get().resources)
     from(shared.sourceSets.main.get().resources)
     inputs.property("version", project.version)
-    filesMatching("quilt.mod.json") {
+    filesMatching("META-INF/mods.toml") {
         expand("version" to project.version)
     }
 }
@@ -80,9 +80,10 @@ tasks.withType<Jar> {
             "Specification-Title" to "In-Game Account Switcher",
             "Specification-Version" to project.version,
             "Specification-Vendor" to "VidTu",
-            "Implementation-Title" to "IAS-Quilt-1.21",
+            "Implementation-Title" to "IAS-Forge-1.21.1",
             "Implementation-Version" to project.version,
-            "Implementation-Vendor" to "VidTu"
+            "Implementation-Vendor" to "VidTu",
+            "MixinConfigs" to "ias.mixins.json"
         )
     }
 }

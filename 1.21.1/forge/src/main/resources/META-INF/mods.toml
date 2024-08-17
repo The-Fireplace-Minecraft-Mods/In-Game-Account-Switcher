@@ -26,7 +26,7 @@ Allows you to change which account you are signed in to in-game without restarti
 modId = "forge"
 type = "required"
 mandatory = true
-versionRange = "[51,52)"
+versionRange = "[51,53)"
 ordering = "NONE"
 side = "CLIENT"
 
@@ -34,7 +34,7 @@ side = "CLIENT"
 modId = "minecraft"
 type = "required"
 mandatory = true
-versionRange = "1.21"
+versionRange = "[1.21,1.21.1]"
 ordering = "NONE"
 side = "CLIENT"
 

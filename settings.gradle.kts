@@ -6,6 +6,7 @@ pluginManagement {
         maven("https://maven.quiltmc.org/repository/release/")
         maven("https://maven.minecraftforge.net/")
         maven("https://maven.neoforged.net/releases/")
+        maven("https://repo.spongepowered.org/repository/maven-public/")
     }
 }
 
@@ -15,7 +16,7 @@ plugins {
 
 rootProject.name = "In-Game Account Switcher"
 val types = listOf("root", "fabric", "quilt", "forge", "neoforge")
-val versions = listOf("1.18.2", "1.19.2", "1.19.4", "1.20.1", "1.20.2", "1.20.4", "1.20.6", "1.21")
+val versions = listOf("1.18.2", "1.19.2", "1.19.4", "1.20.1", "1.20.2", "1.20.4", "1.20.6", "1.21.1")
 for (version in versions) {
     for (type in types) {
         include("$version-$type")

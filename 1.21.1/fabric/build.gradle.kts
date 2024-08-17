@@ -6,16 +6,19 @@ java.sourceCompatibility = JavaVersion.VERSION_21
 java.targetCompatibility = JavaVersion.VERSION_21
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 group = "ru.vidtu.ias"
-base.archivesName = "IAS-NeoForge-1.21"
+base.archivesName = "IAS-Fabric-1.21.1"
 description = "This mod allows you to change your logged in account in-game, without restarting Minecraft."
-evaluationDependsOn(":1.21-root")
-val shared = project(":1.21-root")
+evaluationDependsOn(":1.21.1-root")
+val shared = project(":1.21.1-root")
+
+repositories {
+    mavenCentral()
+    maven("https://maven.fabricmc.net/")
+    maven("https://maven.terraformersmc.com/releases/")
+}
 
 loom {
     silentMojangMappingsLicense()
-    neoForge {
-        // Empty
-    }
     runs.named("client") {
         vmArgs(
             "-XX:+IgnoreUnrecognizedVMOptions",
@@ -24,20 +27,11 @@ loom {
             "-XX:HotswapAgent=fatjar",
             "-Dfabric.debug.disableClassPathIsolation=true"
         )
-        programArgs("--mixin", "ias.mixins.json")
     }
     @Suppress("UnstableApiUsage")
     mixin {
-        useLegacyMixinAp = true
         defaultRefmapName = "ias.mixins.refmap.json"
     }
-}
-
-repositories {
-    mavenCentral()
-    maven("https://maven.architectury.dev/")
-    maven("https://maven.neoforged.net/releases/")
-    maven("https://maven.minecraftforge.net/")
 }
 
 dependencies {
@@ -46,11 +40,13 @@ dependencies {
     compileOnlyApi(libs.error.prone.annotations)
 
     // Minecraft
-    minecraft("com.mojang:minecraft:1.21")
+    minecraft("com.mojang:minecraft:1.21.1")
     mappings(loom.officialMojangMappings())
 
-    // NeoForge
-    neoForge("net.neoforged:neoforge:21.0.59-beta")
+    // Fabric
+    modImplementation(libs.fabric.loader)
+    modImplementation("net.fabricmc.fabric-api:fabric-api:0.102.1+1.21.1")
+    modImplementation("com.terraformersmc:modmenu:11.0.1")
 
     // Root
     compileOnly(shared)
@@ -68,7 +64,7 @@ tasks.withType<ProcessResources> {
     from(rootProject.sourceSets.main.get().resources)
     from(shared.sourceSets.main.get().resources)
     inputs.property("version", project.version)
-    filesMatching("META-INF/neoforge.mods.toml") {
+    filesMatching("fabric.mod.json") {
         expand("version" to project.version)
     }
 }
@@ -82,10 +78,9 @@ tasks.withType<Jar> {
             "Specification-Title" to "In-Game Account Switcher",
             "Specification-Version" to project.version,
             "Specification-Vendor" to "VidTu",
-            "Implementation-Title" to "IAS-NeoForge-1.21",
+            "Implementation-Title" to "IAS-Fabric-1.21.1",
             "Implementation-Version" to project.version,
-            "Implementation-Vendor" to "VidTu",
-            "MixinConfigs" to "ias.mixins.json"
+            "Implementation-Vendor" to "VidTu"
         )
     }
 }
