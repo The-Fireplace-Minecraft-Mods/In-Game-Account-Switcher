@@ -52,7 +52,7 @@ jobs:
             1.20.6/quilt/build/libs/
             1.20.6/forge/build/libs/
             1.20.6/neoforge/build/libs/
-            1.21/fabric/build/libs/
-            1.21/quilt/build/libs/
-            1.21/forge/build/libs/
-            1.21/neoforge/build/libs/
+            1.21.1/fabric/build/libs/
+            1.21.1/quilt/build/libs/
+            1.21.1/forge/build/libs/
+            1.21.1/neoforge/build/libs/
