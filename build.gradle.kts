@@ -20,7 +20,7 @@ dependencies {
 
     // Bundled with MC
     implementation("com.google.code.gson:gson:2.11.0")
-    implementation("org.slf4j:slf4j-api:2.0.13")
+    implementation("org.slf4j:slf4j-api:2.0.16")
 }
 
 tasks.withType<JavaCompile> {
