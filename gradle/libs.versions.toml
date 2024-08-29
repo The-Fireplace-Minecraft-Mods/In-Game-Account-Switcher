@@ -1,6 +1,6 @@
 [versions]
 jetbrains_annotations = "24.1.0"
-error_prone_annotations = "2.30.0"
+error_prone_annotations = "2.31.0"
 fabric-loader = "0.16.2"
 mixin = "0.8.7"
 quilt-loader = "0.26.3"
