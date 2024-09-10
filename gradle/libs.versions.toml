@@ -1,9 +1,11 @@
 [versions]
 jetbrains_annotations = "24.1.0"
 error_prone_annotations = "2.31.0"
-fabric-loader = "0.16.2"
+fabric-loader = "0.16.5"
 mixin = "0.8.7"
 quilt-loader = "0.26.3"
+gson = "2.11.0"
+slf4j = "2.0.16"
 
 [libraries]
 jetbrains_annotations = { module = "org.jetbrains:annotations", version.ref = "jetbrains_annotations" }
@@ -11,3 +13,5 @@ error_prone_annotations = { module = "com.google.errorprone:error_prone_annotati
 fabric-loader = { module = "net.fabricmc:fabric-loader", version.ref = "fabric-loader" }
 mixin = { module = "org.spongepowered:mixin", version.ref = "mixin" }
 quilt-loader = { module = "org.quiltmc:quilt-loader", version.ref = "quilt-loader" }
+gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
+slf4j = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
