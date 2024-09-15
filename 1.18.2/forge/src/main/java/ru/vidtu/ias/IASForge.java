@@ -43,6 +43,9 @@ import ru.vidtu.ias.screen.ConfigScreen;
  */
 @Mod("ias")
 public final class IASForge {
+    /**
+     * Creates a new mod.
+     */
     @SuppressWarnings("ThisEscapedInObjectConstruction") // <- Minecraft Forge API.
     public IASForge() {
         // Not sure how long the Forge does have the "clientSideOnly" field in the TOML,

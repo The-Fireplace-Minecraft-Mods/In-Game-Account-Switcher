@@ -27,7 +27,7 @@
     "depends": [
       {
         "id": "quilt_loader",
-        "versions": ">=0.25.0",
+        "versions": ">=0.26.0",
         "reason": "In-Game Account Switcher requires Quilt mod loader to be loaded."
       },
       {
@@ -36,8 +36,8 @@
         "reason": "In-Game Account Switcher works only with Minecraft 1.20.5 or 1.20.6."
       },
       {
-        "id": "fabric-api",
-        "versions": ">=0.100.0",
+        "id": "quilted_fabric_api",
+        "versions": "*",
         "reason": "In-Game Account Switcher requires Quilted Fabric API (QFAPI) and Quilt Standard Libraries (QSL) to add its button into the GUI."
       },
       {

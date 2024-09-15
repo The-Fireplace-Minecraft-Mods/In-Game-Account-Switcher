@@ -37,7 +37,7 @@ loom {
 }
 
 dependencies {
-    // Annotations Compile
+    // Annotations (Compile)
     compileOnlyApi(libs.jetbrains.annotations)
     compileOnlyApi(libs.error.prone.annotations)
 

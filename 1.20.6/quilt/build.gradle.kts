@@ -38,7 +38,7 @@ loom {
 }
 
 dependencies {
-    // Annotations Compile
+    // Annotations (Compile)
     compileOnlyApi(libs.jetbrains.annotations)
     compileOnlyApi(libs.error.prone.annotations)
 
@@ -49,6 +49,7 @@ dependencies {
     // Quilt
     modImplementation(libs.quilt.loader)
     modImplementation(libs.quilt.mc1206)
+    modImplementation(libs.qsl.mc1206)
     modImplementation(libs.modmenu.mc1206)
 
     // Root

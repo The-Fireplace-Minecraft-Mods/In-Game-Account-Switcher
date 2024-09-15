@@ -45,6 +45,9 @@ import ru.vidtu.ias.screen.ConfigScreen;
  */
 @Mod("ias")
 public final class IASNeoForge {
+    /**
+     * Creates a new mod.
+     */
     @SuppressWarnings("ThisEscapedInObjectConstruction") // <- Minecraft Forge API.
     public IASNeoForge() {
         // Check for plain Forge.

@@ -45,6 +45,9 @@ import ru.vidtu.ias.screen.ConfigScreen;
  */
 @Mod("ias")
 public final class IASForge {
+    /**
+     * Creates a new mod.
+     */
     @SuppressWarnings("ThisEscapedInObjectConstruction") // <- Minecraft Forge API.
     public IASForge() {
         // New versions don't need the NeoForge/Forge difference check, because

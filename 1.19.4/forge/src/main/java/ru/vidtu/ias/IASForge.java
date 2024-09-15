@@ -30,12 +30,13 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.IExtensionPoint;
 import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.forgespi.language.IModInfo;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
+import org.jetbrains.annotations.NotNull;
 import ru.vidtu.ias.screen.ConfigScreen;
 
 /**
@@ -45,8 +46,13 @@ import ru.vidtu.ias.screen.ConfigScreen;
  */
 @Mod("ias")
 public final class IASForge {
+    /**
+     * Creates a new mod.
+     *
+     * @param context Mod loading context
+     */
     @SuppressWarnings("ThisEscapedInObjectConstruction") // <- Minecraft Forge API.
-    public IASForge() {
+    public IASForge(@NotNull FMLJavaModLoadingContext context) {
         // Not sure how long the Forge does have the "clientSideOnly" field in the TOML,
         // so I'll do an additional exception check here.
         if (FMLEnvironment.dist != Dist.CLIENT) {
@@ -57,8 +63,8 @@ public final class IASForge {
         MinecraftForge.EVENT_BUS.register(this);
 
         // Register various display tests and config hooks.
-        ModLoadingContext.get().registerDisplayTest(IExtensionPoint.DisplayTest.IGNORE_ALL_VERSION);
-        ModLoadingContext.get().registerExtensionPoint(ConfigScreenHandler.ConfigScreenFactory.class, () -> new ConfigScreenHandler.ConfigScreenFactory((minecraft, screen) -> new ConfigScreen(screen)));
+        context.registerDisplayTest(IExtensionPoint.DisplayTest.IGNORE_ALL_VERSION);
+        context.registerExtensionPoint(ConfigScreenHandler.ConfigScreenFactory.class, () -> new ConfigScreenHandler.ConfigScreenFactory((minecraft, screen) -> new ConfigScreen(screen)));
 
         // Create the UA and initialize.
         String modVersion = ModList.get().getModContainerById("ias")
