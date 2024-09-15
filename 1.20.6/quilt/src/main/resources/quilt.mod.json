@@ -53,7 +53,7 @@
       }
     ],
     "entrypoints": {
-      "client": "ru.vidtu.ias.IASQuilt",
+      "client_init": "ru.vidtu.ias.IASQuilt",
       "modmenu": "ru.vidtu.ias.IASModMenu"
     }
   },
