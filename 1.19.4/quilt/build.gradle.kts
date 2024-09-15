@@ -1,5 +1,5 @@
 plugins {
-    id("dev.architectury.loom") version "1.7-SNAPSHOT"
+    alias(libs.plugins.architectury.loom)
 }
 
 java.sourceCompatibility = JavaVersion.VERSION_17
@@ -36,18 +36,18 @@ loom {
 }
 
 dependencies {
-    // Annotations
+    // Annotations (Compile)
     compileOnlyApi(libs.jetbrains.annotations)
     compileOnlyApi(libs.error.prone.annotations)
 
-    // Minecraft
-    minecraft("com.mojang:minecraft:1.19.4")
+    // Minecraft (Provided)
+    minecraft(libs.minecraft.mc1194)
     mappings(loom.officialMojangMappings())
 
     // Quilt
     modImplementation(libs.quilt.loader)
-    modImplementation("org.quiltmc.quilted-fabric-api:quilted-fabric-api:6.0.0-beta.9+0.83.0-1.19.4")
-    modImplementation("com.terraformersmc:modmenu:6.3.1")
+    modImplementation(libs.quilt.mc1194)
+    modImplementation(libs.modmenu.mc1194)
 
     // Root
     compileOnly(shared)

@@ -1,5 +1,5 @@
 plugins {
-    id("dev.architectury.loom") version "1.7-SNAPSHOT"
+    alias(libs.plugins.architectury.loom)
 }
 
 java.sourceCompatibility = JavaVersion.VERSION_21
@@ -36,18 +36,18 @@ loom {
 }
 
 dependencies {
-    // Annotations
+    // Annotations Compile
     compileOnlyApi(libs.jetbrains.annotations)
     compileOnlyApi(libs.error.prone.annotations)
 
-    // Minecraft
-    minecraft("com.mojang:minecraft:1.20.6")
+    // Minecraft (Provided)
+    minecraft(libs.minecraft.mc1206)
     mappings(loom.officialMojangMappings())
 
     // Fabric
     modImplementation(libs.fabric.loader)
-    modImplementation("net.fabricmc.fabric-api:fabric-api:0.100.8+1.20.6")
-    modImplementation("com.terraformersmc:modmenu:10.0.0")
+    modImplementation(libs.fabric.mc1206)
+    modImplementation(libs.modmenu.mc1206)
 
     // Root
     compileOnly(shared)

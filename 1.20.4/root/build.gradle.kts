@@ -1,5 +1,5 @@
 plugins {
-    id("dev.architectury.loom") version "1.7-SNAPSHOT"
+    alias(libs.plugins.architectury.loom)
 }
 
 java.sourceCompatibility = JavaVersion.VERSION_17
@@ -19,12 +19,12 @@ loom {
 }
 
 dependencies {
-    // Annotations
+    // Annotations Compile
     compileOnlyApi(libs.jetbrains.annotations)
     compileOnlyApi(libs.error.prone.annotations)
 
-    // Minecraft
-    minecraft("com.mojang:minecraft:1.20.4")
+    // Minecraft (Provided)
+    minecraft(libs.minecraft.mc1204)
     mappings(loom.officialMojangMappings())
 
     // Mixin

@@ -14,11 +14,11 @@ repositories {
 }
 
 dependencies {
-    // Annotations
+    // Annotations (Compile)
     compileOnly(libs.jetbrains.annotations)
     compileOnly(libs.error.prone.annotations)
 
-    // Bundled with MC
+    // Generic (Provided)
     implementation(libs.gson)
     implementation(libs.slf4j)
 }

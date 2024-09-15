@@ -1,5 +1,5 @@
 plugins {
-    id("dev.architectury.loom") version "1.7-SNAPSHOT"
+    alias(libs.plugins.architectury.loom)
 }
 
 java.sourceCompatibility = JavaVersion.VERSION_17
@@ -41,16 +41,16 @@ repositories {
 }
 
 dependencies {
-    // Annotations
+    // Annotations (Compile)
     compileOnlyApi(libs.jetbrains.annotations)
     compileOnlyApi(libs.error.prone.annotations)
 
-    // Minecraft
-    minecraft("com.mojang:minecraft:1.20.1")
+    // Minecraft (Provided)
+    minecraft(libs.minecraft.mc1201)
     mappings(loom.officialMojangMappings())
 
     // NeoForge
-    forge("net.neoforged:forge:1.20.1-47.1.106") // <- NeoForge in 1.20.1 is a fork of Forge, so we're using Forge platform.
+    forge(libs.forge.mc1201) // <- NeoForge in 1.20.1 is a fork of Forge, so we're using Forge platform.
 
     // Root
     compileOnly(shared)
