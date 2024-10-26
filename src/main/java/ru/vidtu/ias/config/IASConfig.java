@@ -137,33 +137,33 @@ public final class IASConfig {
     public static String serversButtonY = null;
 
     /**
-     * Allow storing accounts without Crypt.
+     * Allow storing accounts without Crypt, {@code false} by default.
      */
     public static boolean allowNoCrypt = false;
 
     /**
-     * Display warning toasts for invalid names.
+     * Display warning toasts for invalid names, {@code true} by default.
      */
     public static boolean nickWarns = true;
 
     /**
-     * Allow unexpected pigs to show up.
+     * Allow unexpected pigs to show up, {@code true} by default.
      */
     public static boolean unexpectedPigs = true;
 
     /**
-     * Whether to show the nick in the title bar.
+     * Whether to show the nick in the title bar, {@code false} by default.
      */
     public static boolean barNick = false;
 
     /**
-     * Current HTTP server mode.
+     * Current HTTP server mode, {@link ServerMode#AVAILABLE} by default.
      */
     @Nullable
     public static ServerMode server = ServerMode.AVAILABLE;
 
     /**
-     * Crypt password echoing.
+     * Crypt password echoing, {@code true} by default.
      */
     public static boolean passwordEchoing = true;
 

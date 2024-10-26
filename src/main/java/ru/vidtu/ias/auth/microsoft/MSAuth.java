@@ -60,7 +60,6 @@ public final class MSAuth {
             .version(HttpClient.Version.HTTP_2)
             .followRedirects(HttpClient.Redirect.NEVER)
             .executor(IAS.executor())
-            .priority(256)
             .build();
 
     /**
@@ -72,7 +71,6 @@ public final class MSAuth {
             .version(HttpClient.Version.HTTP_2)
             .followRedirects(HttpClient.Redirect.NEVER)
             .executor(Runnable::run)
-            .priority(256)
             .build();
 
     /**
