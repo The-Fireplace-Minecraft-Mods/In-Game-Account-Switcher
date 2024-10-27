@@ -36,7 +36,7 @@ plugins {
 rootProject.name = "In-Game Account Switcher"
 
 val types = listOf("fabric", "forge", "neoforge", "quilt", "root")
-val versions = listOf("1.18.2", "1.19.2", "1.19.4", "1.20.1", "1.20.2", "1.20.4", "1.20.6", "1.21.1")
+val versions = listOf("1.18.2", "1.19.2", "1.19.4", "1.20.1", "1.20.2", "1.20.4", "1.20.6", "1.21.1", "1.21.3")
 for (version in versions) {
     for (type in types) {
         val subPath = file("$version/$type")

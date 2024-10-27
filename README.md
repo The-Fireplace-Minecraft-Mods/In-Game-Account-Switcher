@@ -32,7 +32,7 @@ or you can join the [Discord server](https://discord.gg/TpU2nEkSPk).
 **A**: Forge, Fabric, Quilt, NeoForge.
 
 **Q**: Which versions are supported?  
-**A**: Minecraft 1.18.2, 1.19.2, 1.19.4, 1.20.1, 1.20.2, 1.20.4, 1.20.6, 1.21.1.
+**A**: Minecraft 1.18.2, 1.19.2, 1.19.4, 1.20.1, 1.20.2, 1.20.4, 1.20.6, 1.21.1, 1.21.3.
 There's little to no chance a newer version of this mod will be ported to versions prior to 1.18
 (e.g. 1.16.5, 1.12.2, 1.8.9), due to its reliance on Java 17 code.
 Old mod versions (e.g. 8.0.2) are not supported and will never be supported.
