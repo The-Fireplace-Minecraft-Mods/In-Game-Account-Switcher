@@ -19,6 +19,8 @@
 
 package ru.vidtu.ias.auth.handlers;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import ru.vidtu.ias.account.MicrosoftAccount;
 
 /**
@@ -41,19 +43,19 @@ public interface CreateHandler {
      * @param stage New auth stage translation key
      * @param args  New auth stage translation args
      */
-    void stage(String stage, Object... args);
+    void stage(@NotNull String stage, @Nullable Object @NotNull ... args);
 
     /**
      * Called when an authentication has performed successfully.
      *
      * @param account Created account
      */
-    void success(MicrosoftAccount account);
+    void success(@NotNull MicrosoftAccount account);
 
     /**
      * Called when an authentication has failed.
      *
      * @param error Failure reason
      */
-    void error(Throwable error);
+    void error(@NotNull Throwable error);
 }

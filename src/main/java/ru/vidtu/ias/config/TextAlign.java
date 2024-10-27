@@ -54,6 +54,7 @@ public enum TextAlign {
      *
      * @param key Alignment translation key
      */
+    @Contract(pure = true)
     TextAlign(@NotNull String key) {
         this.key = key;
     }

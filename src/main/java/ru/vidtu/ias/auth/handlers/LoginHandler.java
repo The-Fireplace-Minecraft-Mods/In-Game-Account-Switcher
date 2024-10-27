@@ -19,6 +19,9 @@
 
 package ru.vidtu.ias.auth.handlers;
 
+import com.google.errorprone.annotations.CheckReturnValue;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import ru.vidtu.ias.auth.LoginData;
 
 import java.util.concurrent.CompletableFuture;
@@ -43,13 +46,15 @@ public interface LoginHandler {
      * @param stage New auth stage translation key
      * @param args  New auth stage translation args
      */
-    void stage(String stage, Object... args);
+    void stage(@NotNull String stage, @Nullable Object @NotNull ... args);
 
     /**
      * Requests an encryption password.
      *
      * @return Future that will complete with password string on password enter, with {@code null} on cancel, exceptionally on error
      */
+    @CheckReturnValue
+    @NotNull
     CompletableFuture<String> password();
 
     /**
@@ -58,12 +63,12 @@ public interface LoginHandler {
      * @param data    Auth data
      * @param changed Whether the storage has been modified and may require saving
      */
-    void success(LoginData data, boolean changed);
+    void success(@NotNull LoginData data, boolean changed);
 
     /**
      * Called when an authentication has failed.
      *
      * @param error Failure reason
      */
-    void error(Throwable error);
+    void error(@NotNull Throwable error);
 }

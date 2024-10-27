@@ -53,7 +53,7 @@ public final class OfflineAccount implements Account {
     /**
      * Account skin.
      */
-    @NotNull
+    @Nullable
     private final UUID skin;
 
     /**
@@ -62,10 +62,11 @@ public final class OfflineAccount implements Account {
      * @param name Offline account name
      * @param skin Skin to use, {@code null} if none
      */
+    @Contract(pure = true)
     public OfflineAccount(@NotNull String name, @Nullable UUID skin) {
         this.name = name;
         this.uuid = uuid(name);
-        this.skin = Objects.requireNonNullElse(skin, this.uuid);
+        this.skin = skin;
     }
 
     @Contract(pure = true)
@@ -113,7 +114,7 @@ public final class OfflineAccount implements Account {
     @Override
     @NotNull
     public UUID skin() {
-        return this.skin;
+        return Objects.requireNonNullElse(this.skin, this.uuid);
     }
 
     @Override

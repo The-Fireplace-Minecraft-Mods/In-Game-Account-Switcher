@@ -19,6 +19,7 @@
 
 package ru.vidtu.ias.config;
 
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 import org.slf4j.Logger;
@@ -116,6 +117,7 @@ public final class IASStorage {
      *
      * @throws AssertionError Always
      */
+    @Contract(value = "-> fail", pure = true)
     private IASStorage() {
         throw new AssertionError("No instances.");
     }

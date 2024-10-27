@@ -78,6 +78,7 @@ public final class MSAuth {
      *
      * @throws AssertionError Always
      */
+    @Contract(value = "-> fail", pure = true)
     private MSAuth() {
         throw new AssertionError("No instances.");
     }
@@ -97,7 +98,7 @@ public final class MSAuth {
 
         // Send the request.
         return CLIENT.sendAsync(HttpRequest.newBuilder()
-                .uri(createURIUnchecked("https://login.microsoftonline.com/consumers/oauth2/v2.0/devicecode"))
+                .uri(URI.create("https://login.microsoftonline.com/consumers/oauth2/v2.0/devicecode"))
                 .header("User-Agent", IAS.userAgent())
                 .header("Accept", "application/json")
                 .header("Content-Type", "application/x-www-form-urlencoded")
@@ -146,7 +147,7 @@ public final class MSAuth {
         HttpResponse<String> response;
         try {
             response = CLIENT_SYNC.send(HttpRequest.newBuilder()
-                    .uri(createURIUnchecked("https://login.microsoftonline.com/consumers/oauth2/v2.0/token"))
+                    .uri(URI.create("https://login.microsoftonline.com/consumers/oauth2/v2.0/token"))
                     .header("User-Agent", IAS.userAgent())
                     .header("Accept", "application/json")
                     .header("Content-Type", "application/x-www-form-urlencoded")
@@ -219,7 +220,7 @@ public final class MSAuth {
 
         // Send the request.
         return CLIENT.sendAsync(HttpRequest.newBuilder()
-                .uri(createURIUnchecked("https://login.live.com/oauth20_token.srf"))
+                .uri(URI.create("https://login.live.com/oauth20_token.srf"))
                 .header("User-Agent", IAS.userAgent())
                 .header("Accept", "application/json")
                 .header("Content-Type", "application/x-www-form-urlencoded")
@@ -265,7 +266,7 @@ public final class MSAuth {
 
         // Send the request.
         return CLIENT.sendAsync(HttpRequest.newBuilder()
-                .uri(createURIUnchecked("https://login.live.com/oauth20_token.srf"))
+                .uri(URI.create("https://login.live.com/oauth20_token.srf"))
                 .header("User-Agent", IAS.userAgent())
                 .header("Accept", "application/json")
                 .header("Content-Type", "application/x-www-form-urlencoded")
@@ -324,7 +325,7 @@ public final class MSAuth {
 
         // Send the request.
         return CLIENT.sendAsync(HttpRequest.newBuilder()
-                .uri(createURIUnchecked("https://user.auth.xboxlive.com/user/authenticate"))
+                .uri(URI.create("https://user.auth.xboxlive.com/user/authenticate"))
                 .header("User-Agent", IAS.userAgent())
                 .header("Content-Type", "application/json")
                 .header("Accept", "application/json")
@@ -381,7 +382,7 @@ public final class MSAuth {
 
         // Send the request.
         return CLIENT.sendAsync(HttpRequest.newBuilder()
-                .uri(createURIUnchecked("https://xsts.auth.xboxlive.com/xsts/authorize"))
+                .uri(URI.create("https://xsts.auth.xboxlive.com/xsts/authorize"))
                 .header("User-Agent", IAS.userAgent())
                 .header("Content-Type", "application/json")
                 .header("Accept", "application/json")
@@ -462,7 +463,7 @@ public final class MSAuth {
 
         // Send the request.
         return CLIENT.sendAsync(HttpRequest.newBuilder()
-                .uri(createURIUnchecked("https://api.minecraftservices.com/authentication/login_with_xbox"))
+                .uri(URI.create("https://api.minecraftservices.com/authentication/login_with_xbox"))
                 .header("User-Agent", IAS.userAgent())
                 .header("Content-Type", "application/json")
                 .header("Accept", "application/json")
@@ -503,7 +504,7 @@ public final class MSAuth {
     public static CompletableFuture<MCProfile> mcaToMcp(@NotNull String access) {
         // Send the request.
         return CLIENT.sendAsync(HttpRequest.newBuilder()
-                .uri(createURIUnchecked("https://api.minecraftservices.com/minecraft/profile"))
+                .uri(URI.create("https://api.minecraftservices.com/minecraft/profile"))
                 .header("User-Agent", IAS.userAgent())
                 .header("Authorization", "Bearer " + access)
                 .timeout(IAS.TIMEOUT)
@@ -548,7 +549,7 @@ public final class MSAuth {
     public static CompletableFuture<MCProfile> nameToMcp(@NotNull String name) {
         // Send the request.
         return CLIENT.sendAsync(HttpRequest.newBuilder()
-                .uri(createURIUnchecked("https://api.mojang.com/users/profiles/minecraft/" + URLEncoder.encode(name, StandardCharsets.UTF_8)))
+                .uri(URI.create("https://api.mojang.com/users/profiles/minecraft/" + URLEncoder.encode(name, StandardCharsets.UTF_8)))
                 .header("User-Agent", IAS.userAgent())
                 .timeout(IAS.TIMEOUT)
                 .GET()
@@ -569,22 +570,5 @@ public final class MSAuth {
                 throw new RuntimeException("Unable to obtain Minecraft profile by name '" + name + "' (" + response + " with " + response.headers() + "): " + response.body(), t);
             }
         }, IAS.executor());
-    }
-
-    /**
-     * Creates the URI without checked exceptions.
-     *
-     * @param value Target value
-     * @return Created URI
-     * @throws RuntimeException If unable to create
-     */
-    @Contract(value = "_ -> new", pure = true)
-    @NotNull
-    private static URI createURIUnchecked(@NotNull String value) {
-        try {
-            return new URI(value).parseServerAuthority();
-        } catch (Throwable t) {
-            throw new RuntimeException("Unable to create URI: " + value, t);
-        }
     }
 }

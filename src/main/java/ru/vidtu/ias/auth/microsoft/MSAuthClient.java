@@ -77,7 +77,6 @@ public final class MSAuthClient implements Closeable {
     /**
      * Device auth.
      */
-    @Nullable
     private DeviceAuth auth;
 
     /**

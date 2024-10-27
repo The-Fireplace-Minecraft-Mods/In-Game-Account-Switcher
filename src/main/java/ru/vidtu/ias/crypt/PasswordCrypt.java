@@ -44,6 +44,7 @@ public final class PasswordCrypt implements Crypt {
      * Creates a new password encryption encryptor.
      *
      * @param password Encryption password
+     * @throws IllegalArgumentException If {@code password} is blank
      */
     @Contract(pure = true)
     public PasswordCrypt(@NotNull String password) {

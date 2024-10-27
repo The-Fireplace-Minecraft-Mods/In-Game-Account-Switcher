@@ -68,16 +68,10 @@ public final class IAS {
     private static final Logger LOGGER = LoggerFactory.getLogger("IAS");
 
     /**
-     * Random session. Used in {@link #USER_AGENT_TEMPLATE}.
-     */
-    @NotNull
-    private static final UUID SESSION = UUID.randomUUID();
-
-    /**
      * Template for {@link #userAgent}.
      */
     @NotNull
-    private static final String USER_AGENT_TEMPLATE = "IAS/%s (Session: %s; Loader: %s %s; Minecraft %s; Java %s)";
+    private static final String USER_AGENT_TEMPLATE = "IAS/%s (https://github.com/The-Fireplace-Minecraft-Mods/In-Game-Account-Switcher; %s; %s/%s; Minecraft/%s; Java/%s)";
 
     /**
      * Forge (and NeoForge) call {@code GameShuttingDownEvent} from {@code Minecraft.stop()},
@@ -111,13 +105,11 @@ public final class IAS {
     /**
      * Current IAS game directory.
      */
-    @Nullable
     private static Path gameDirectory;
 
     /**
      * Current IAS config directory.
      */
-    @Nullable
     private static Path configDirectory;
 
     /**
@@ -156,7 +148,8 @@ public final class IAS {
         configDirectory = configPath;
 
         // Set up IAS.
-        userAgent = USER_AGENT_TEMPLATE.formatted(version, SESSION, loader, loaderVersion, gameVersion, Runtime.version().toString());
+        UUID randomSessionId = UUID.randomUUID();
+        userAgent = USER_AGENT_TEMPLATE.formatted(version, randomSessionId, loader, loaderVersion, gameVersion, Runtime.version().toString());
         LOGGER.debug("IAS: Current user agent: {}", userAgent);
 
         // Write the disclaimers.

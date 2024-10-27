@@ -22,6 +22,7 @@ package ru.vidtu.ias.config;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -170,6 +171,7 @@ public final class IASConfig {
     /**
      * Creates a new config for GSON.
      */
+    @Contract(pure = true)
     private IASConfig() {
         // Private
     }

@@ -181,11 +181,12 @@ public final class MicrosoftAccount implements Account {
      * @param name     Account name
      * @param data     Encrypted account data
      */
+    @Contract(pure = true)
     public MicrosoftAccount(boolean insecure, @NotNull UUID uuid, @NotNull String name, byte @NotNull [] data) {
         this.insecure = insecure;
         this.uuid = uuid;
         this.name = name;
-        this.data = data;
+        this.data = data.clone();
     }
 
     @Contract(pure = true)

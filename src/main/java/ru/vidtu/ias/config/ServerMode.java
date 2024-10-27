@@ -55,6 +55,7 @@ public enum ServerMode {
      *
      * @param key Mode translation key
      */
+    @Contract(pure = true)
     ServerMode(@NotNull String key) {
         this.key = key;
     }

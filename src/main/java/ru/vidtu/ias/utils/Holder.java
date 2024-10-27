@@ -36,7 +36,6 @@ public final class Holder<T> {
     /**
      * Hold value.
      */
-    @Nullable
     private T value;
 
     /**
@@ -55,7 +54,7 @@ public final class Holder<T> {
      * @see #set(Object)
      */
     @Contract(pure = true)
-    public Holder(@Nullable T value) {
+    public Holder(T value) {
         this.value = value;
     }
 
@@ -66,7 +65,6 @@ public final class Holder<T> {
      * @see #set(Object)
      */
     @Contract(pure = true)
-    @Nullable
     public T get() {
         return this.value;
     }
@@ -77,7 +75,7 @@ public final class Holder<T> {
      * @param value Hold value
      * @see #get()
      */
-    public void set(@Nullable T value) {
+    public void set(T value) {
         this.value = value;
     }
 

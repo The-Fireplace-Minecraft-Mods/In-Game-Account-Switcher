@@ -19,6 +19,7 @@
 
 package ru.vidtu.ias.auth;
 
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import ru.vidtu.ias.account.Account;
 
@@ -34,7 +35,9 @@ import java.util.UUID;
  * @author VidTu
  */
 public record LoginData(@NotNull String name, @NotNull UUID uuid, @NotNull String token, boolean online) {
+    @Contract(pure = true)
     @Override
+    @NotNull
     public String toString() {
         return "LoginData{" +
                 "name='" + this.name + '\'' +
