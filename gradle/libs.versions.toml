@@ -1,7 +1,7 @@
 [versions]
 architectury-loom = "1.7-SNAPSHOT"
 error_prone-annotations = "2.32.0"
-fabric-loader = "0.16.8"
+fabric-loader = "0.16.9"
 fabric-mc1182 = "0.77.0+1.18.2"
 fabric-mc1192 = "0.77.0+1.19.2"
 fabric-mc1194 = "0.87.2+1.19.4"
@@ -48,7 +48,7 @@ neoforge-mc1202 = "20.2.88"
 neoforge-mc1204 = "20.4.237"
 neoforge-mc1206 = "20.6.121"
 neoforge-mc1211 = "21.1.73"
-neoforge-mc1213 = "21.3.5-beta"
+neoforge-mc1213 = "21.3.7-beta"
 qsl-mc1206 = "9.0.0-alpha.1+1.20.6"
 qsl-mc1211 = "10.0.0-alpha.1+1.21"
 qsl-mc1213 = "null" # Quilt is dead.
