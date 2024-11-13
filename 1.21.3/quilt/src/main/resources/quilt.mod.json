@@ -37,7 +37,7 @@
       },
       {
         "id": "fabric_api",
-        "versions": ">=0.106.0",
+        "versions": ">=0.107.0",
         "reason": "In-Game Account Switcher requires Quilted Fabric API (QFAPI) and Quilt Standard Libraries (QSL) to add its button into the GUI."
       },
       {
