@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "quilt_loader": {
+    "group": "ru.vidtu.ias",
+    "id": "ias",
+    "version": "${version}",
+    "metadata": {
+      "name": "In-Game Account Switcher",
+      "description": "Allows you to change which account you are signed in to in-game without restarting Minecraft.",
+      "license": "LGPL-3.0-or-later",
+      "contributors": {
+        "VidTu": "Current Maintainer",
+        "The_Fireplace": "Original Mod Author",
+        "The_BrainStone": "Contributor",
+        "2xsaiko": "Contributor",
+        "Elvm": "Contributor"
+      },
+      "contact": {
+        "homepage": "https://modrinth.com/mod/in-game-account-switcher",
+        "sources": "https://github.com/The-Fireplace-Minecraft-Mods/In-Game-Account-Switcher",
+        "issues": "https://github.com/The-Fireplace-Minecraft-Mods/In-Game-Account-Switcher/issues",
+        "discord": "https://discord.gg/TpU2nEkSPk"
+      },
+      "icon": "ias.png"
+    },
+    "intermediate_mappings": "net.fabricmc:intermediary",
+    "depends": [
+      {
+        "id": "quilt_loader",
+        "versions": ">=0.26.0",
+        "reason": "In-Game Account Switcher requires Quilt mod loader to be loaded."
+      },
+      {
+        "id": "minecraft",
+        "versions": ">=1.21.4-beta <=1.21.4",
+        "reason": "In-Game Account Switcher works only with Minecraft 1.21.4."
+      },
+      {
+        "id": "fabric_api",
+        "versions": ">=0.109.0",
+        "reason": "In-Game Account Switcher requires Quilted Fabric API (QFAPI) and Quilt Standard Libraries (QSL) to add its button into the GUI."
+      },
+      {
+        "id": "modmenu",
+        "versions": ">=12.0.0",
+        "reason": "In-Game Account Switcher recommends ModMenu for configuration access.",
+        "optional": true
+      },
+      {
+        "id": "java",
+        "versions": ">=21",
+        "reason": "In-Game Account Switcher makes use of modern Java in its code."
+      }
+    ],
+    "entrypoints": {
+      "client": "ru.vidtu.ias.IASQuilt",
+      "modmenu": "ru.vidtu.ias.IASModMenu"
+    }
+  },
+  "minecraft": {
+    "environment": "client"
+  },
+  "mixin": "ias.mixins.json",
+  "modmenu": {
+    "links": {
+      "modmenu.modrinth": "https://modrinth.com/mod/in-game-account-switcher",
+      "modmenu.curseforge": "https://curseforge.com/minecraft/mc-mods/in-game-account-switcher",
+      "modmenu.github_releases": "https://github.com/The-Fireplace-Minecraft-Mods/In-Game-Account-Switcher/releases",
+      "modmenu.discord": "https://discord.gg/TpU2nEkSPk",
+      "ias.help.crypt": "https://github.com/The-Fireplace-Minecraft-Mods/In-Game-Account-Switcher/blob/main/docs/CRYPT.md",
+      "ias.help.errors": "https://github.com/The-Fireplace-Minecraft-Mods/In-Game-Account-Switcher/blob/main/docs/ERRORS.md",
+      "ias.help.stolen": "https://github.com/The-Fireplace-Minecraft-Mods/In-Game-Account-Switcher/blob/main/docs/STOLEN.md"
+    }
+  },
+  "catalogue": {
+    "icon": {
+      "image": "ias_64.png",
+      "item": "minecraft:player_head"
+    },
+    "banner": "ias_240.png"
+  }
+}

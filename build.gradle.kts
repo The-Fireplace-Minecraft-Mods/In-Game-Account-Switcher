@@ -22,16 +22,10 @@ import com.github.mizosoft.methanol.MultipartBodyPublisher
 import com.github.mizosoft.methanol.MutableRequest
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
-import org.gradle.internal.impldep.org.joda.time.Instant
-import org.gradle.internal.impldep.org.joda.time.format.DateTimeFormat
-import java.net.HttpURLConnection
 import java.net.http.HttpClient
 import java.net.http.HttpResponse
-import java.text.DateFormat
 import java.time.Duration
-import java.time.format.DateTimeFormatter
 import java.util.*
-import kotlin.math.log
 import kotlin.time.DurationUnit
 import kotlin.time.toDuration
 import kotlin.time.toJavaDuration
