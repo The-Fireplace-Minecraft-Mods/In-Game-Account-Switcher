@@ -146,6 +146,7 @@ tasks.register("upload") {
                     modrinthJson.addProperty("primary_file", file.name)
                     modrinthJson.addProperty("status", "listed")
                     modrinthJson.addProperty("requested_status", "listed")
+                    modrinthJson.addProperty("changelog", "This alpha version is intended to test uploading files via Modrinth API. It should work fine, but it hasn't been tested thoroughly.")
                     val filePartsJson = JsonArray(1)
                     filePartsJson.add(file.name)
                     modrinthJson.add("file_parts", filePartsJson)
@@ -294,6 +295,7 @@ fun parseDuration(retryAfter: String): Duration {
         // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Date
         // https://httpwg.org/specs/rfc9110.html#http.date
         val nowMillis = System.currentTimeMillis()
+        @Suppress("DEPRECATION") // <- Sorry.
         val retryAtMillis = Date.parse(retryAfter)
         val timeDiffMillis = (retryAtMillis - nowMillis)
         return Duration.ofMillis(timeDiffMillis)
