@@ -27,6 +27,8 @@ or you can join the [Discord server](https://discord.gg/TpU2nEkSPk).
 **A**: [Modrinth](https://modrinth.com/mod/in-game-account-switcher),
 [CurseForge](https://www.curseforge.com/minecraft/mc-mods/in-game-account-switcher),
 [GitHub](https://github.com/The-Fireplace-Minecraft-Mods/In-Game-Account-Switcher).
+You can also find unstable builds at [GitHub Actions](https://github.com/The-Fireplace-Minecraft-Mods/In-Game-Account-Switcher/actions),
+to download them you'll need a GitHub account.
 
 **Q**: Which mod loaders are supported?  
 **A**: Forge, Fabric, Quilt, NeoForge.
@@ -59,4 +61,7 @@ critical enough not to be disclosed publicly, please, report it as described in 
 ## Credits
 
 Thanks to the [wiki.vg/Microsoft_Authentication_Scheme](https://wiki.vg/Microsoft_Authentication_Scheme)
-page for providing useful information about Microsoft authentication.
+page contributors for providing useful information about Microsoft authentication.
+
+Thanks to the [Methanol developers](https://github.com/mizosoft/methanol) for providing
+a cool HTTP client we use to automatically upload 30+ files to Modrinth, CurseForge, and GitHub.

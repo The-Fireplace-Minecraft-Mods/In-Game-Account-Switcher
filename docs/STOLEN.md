@@ -17,6 +17,9 @@ If you think your account is ALREADY stolen from IAS, you SHOULD do this:
 7. Optionally enable two-factor authentication within your account, by going to [account.live.com/proofs/manage/additional](https://account.live.com/proofs/manage/additional), scrolling to the "Two-step verification" block and clicking "Turn on" below it.
 8. Do not use the IAS mod for 31 days. (Or even better, do NOT use ANY Minecraft-related services for 31 days)
 
+**Note**: If someone is currently playing on any server via your (stolen) account, you can try to use an official launcher to
+login and connect to the server. This might not always work, but it may render their access tokens unusable.
+
 ## Preconditions
 
 If you want to prevent your account from being stolen from IAS and/or minimize the damage from this, you may do this:
