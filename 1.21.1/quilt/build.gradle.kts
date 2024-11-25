@@ -66,8 +66,7 @@ dependencies {
 
     // Quilt
     modImplementation(libs.quilt.loader)
-    modImplementation(libs.quilt.mc1211)
-    modImplementation(libs.qsl.mc1211)
+    modImplementation(libs.fabric.mc1211) // Quilt is dead.
     modImplementation(libs.modmenu.mc1211)
 
     // Root

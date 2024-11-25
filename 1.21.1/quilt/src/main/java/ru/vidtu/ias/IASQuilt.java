@@ -19,29 +19,33 @@
 
 package ru.vidtu.ias;
 
+import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.fabricmc.fabric.api.client.screen.v1.Screens;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.screens.TitleScreen;
 import net.minecraft.client.gui.screens.multiplayer.JoinMultiplayerScreen;
-import org.jetbrains.annotations.NotNull;
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.loader.api.ModMetadata;
 import org.quiltmc.loader.api.QuiltLoader;
 import org.quiltmc.loader.api.Version;
-import org.quiltmc.qsl.base.api.entrypoint.client.ClientModInitializer;
 
 /**
  * Main IAS class for Quilt.
  *
  * @author VidTu
  */
+@SuppressWarnings("deprecation") // <- Quilt is dead.
 public final class IASQuilt implements ClientModInitializer {
     @Override
-    public void onInitializeClient(@NotNull ModContainer mod) {
+    public void onInitializeClient() {
         // Create the UA and initialize.
-        String modVersion = mod.metadata().version().raw();
+        String modVersion = QuiltLoader.getModContainer("ias")
+                .map(ModContainer::metadata)
+                .map(ModMetadata::version)
+                .map(Version::raw)
+                .orElse("UNKNOWN");
         String loaderVersion = QuiltLoader.getModContainer("quilt_loader")
                 .map(ModContainer::metadata)
                 .map(ModMetadata::version)
