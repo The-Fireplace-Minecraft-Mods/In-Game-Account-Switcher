@@ -1,26 +1,48 @@
+# In-Game Account Switcher is a mod for Minecraft that allows you to change your logged in account in-game, without restarting Minecraft.
+# Copyright (C) 2015-2022 The_Fireplace
+# Copyright (C) 2021-2024 VidTu
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Lesser General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>
+
 name: 'Build'
 on: [ pull_request, push, workflow_dispatch ]
 jobs:
   build:
-    runs-on: ubuntu-latest
+    name: 'Build'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
     steps:
       - name: 'Checkout'
-        uses: actions/checkout@v4
-      - name: 'Validate Gradle wrapper'
-        uses: gradle/actions/wrapper-validation@v4
+        timeout-minutes: 1
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
       - name: 'Setup JDK'
-        uses: actions/setup-java@v4
+        timeout-minutes: 1
+        uses: actions/setup-java@7a6d8a8234af8eb26422e24e3006232cccaa061b # v4.6.0
         with:
           java-version: 21
-          distribution: 'temurin'
-      - name: 'Make wrapper executable'
-        run: 'chmod +x ./gradlew'
+          distribution: 'jetbrains'
       - name: 'Setup Gradle'
-        uses: gradle/actions/setup-gradle@v4
+        timeout-minutes: 10
+        uses: gradle/actions/setup-gradle@0bdd871935719febd78681f197cd39af5b6e16a6 # v4.2.2
       - name: 'Build'
-        run: './gradlew -Dorg.gradle.daemon=false build --no-daemon'
-      - name: 'Upload artifacts'
-        uses: actions/upload-artifact@v4
+        timeout-minutes: 50
+        run: './gradlew build'
+      - name: 'Upload'
+        timeout-minutes: 5
+        uses: actions/upload-artifact@6f51ac03b9356f520e9adb1b1b7802705f340c2b # v4.5.0
         with:
           name: 'Artifacts'
           path: |

@@ -27,7 +27,7 @@
     "depends": [
       {
         "id": "quilt_loader",
-        "versions": ">=0.26.0",
+        "versions": ">=0.27.0",
         "reason": "In-Game Account Switcher requires Quilt mod loader to be loaded."
       },
       {
