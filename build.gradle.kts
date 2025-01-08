@@ -89,7 +89,7 @@ buildscript {
     }
 
     dependencies {
-        classpath("com.github.mizosoft.methanol:methanol:1.7.0")
+        classpath("com.github.mizosoft.methanol:methanol:1.8.0")
     }
 }
 
