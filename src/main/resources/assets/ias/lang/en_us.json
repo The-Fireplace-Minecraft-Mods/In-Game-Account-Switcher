@@ -126,7 +126,6 @@
   "ias.nick.long": "Your (too long) nick '%s' may cause some servers to prevent you from joining.",
   "ias.nick.chars": "Your nick '%s' (containing invalid characters) may cause some servers to prevent you from joining.",
   "ias.bar": "%s (Account: %s)",
-  "ias.closing": "Stopping In-Game Account Switcher...",
   "ias.help.crypt": "What is Crypt, why it exists, which should I use?",
   "ias.help.errors": "Common Authentication Errors",
   "ias.help.stolen": "How to combat account stealing?",

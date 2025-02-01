@@ -19,7 +19,6 @@
 
 package ru.vidtu.ias;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.ConfigScreenHandler;
@@ -94,7 +93,7 @@ public final class IASNeoForge {
     @SubscribeEvent
     public void onShutDown(GameShuttingDownEvent event) {
         // Close.
-        IASMinecraft.close(Minecraft.getInstance());
+        IAS.close();
     }
 
     // Register screen handlers.
