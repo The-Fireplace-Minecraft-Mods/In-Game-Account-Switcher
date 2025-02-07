@@ -39,7 +39,7 @@ jobs:
         uses: gradle/actions/setup-gradle@94baf225fe0a508e581a564467443d0e2379123b # v4.3.0
       - name: 'Build'
         timeout-minutes: 50
-        run: './gradlew build'
+        run: './gradlew assemble'
       - name: 'Upload'
         timeout-minutes: 5
         uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08 # v4.6.0
@@ -49,15 +49,12 @@ jobs:
             1.18.2/fabric/build/libs/
             1.18.2/quilt/build/libs/
             1.18.2/forge/build/libs/
-            1.18.2/neoforge/build/libs/
             1.19.2/fabric/build/libs/
             1.19.2/quilt/build/libs/
             1.19.2/forge/build/libs/
-            1.19.2/neoforge/build/libs/
             1.19.4/fabric/build/libs/
             1.19.4/quilt/build/libs/
             1.19.4/forge/build/libs/
-            1.19.4/neoforge/build/libs/
             1.20.1/fabric/build/libs/
             1.20.1/quilt/build/libs/
             1.20.1/forge/build/libs/
