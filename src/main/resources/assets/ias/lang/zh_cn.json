@@ -127,7 +127,7 @@
   "ias.nick.chars": "您的昵称「%s」（包含无效字符）可能会导致某些服务器阻止您加入。",
   "ias.bar": "%s（账号：%s）",
   "ias.closing": "正在停止游戏内账号切换器...",
-  "ias.help.crypt": "什么是加密、为什么存在加密、我应该使用哪种加密？",
+  "ias.help.crypt": "什么是密码加密？为什么存在密码加密,我应该使用哪种密码加密？",
   "ias.help.errors": "常见的验证错误",
   "ias.help.stolen": "如何防止账号被盗？",
   "modmenu.descriptionTranslation.ias": "允许您在游戏中更改登入的帐号，而无需重新启动 Minecraft。",
