@@ -35,7 +35,6 @@ repositories {
     maven("https://maven.quiltmc.org/repository/release/")
     maven("https://maven.fabricmc.net/")
     maven("https://maven.terraformersmc.com/releases/")
-    maven("https://api.modrinth.com/maven/")
 }
 
 loom {
@@ -71,9 +70,6 @@ dependencies {
 
     // Root
     compileOnly(shared)
-
-    // Testing
-    runtimeOnly(libs.lazydfu.mc1182)
 }
 
 tasks.withType<JavaCompile> {

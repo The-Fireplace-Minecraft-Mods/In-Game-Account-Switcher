@@ -28,7 +28,7 @@ fabric-mc1204 = "0.97.2+1.20.4"
 fabric-mc1206 = "0.100.8+1.20.6"
 fabric-mc1211 = "0.115.0+1.21.1"
 fabric-mc1213 = "0.114.0+1.21.3"
-fabric-mc1214 = "0.116.1+1.21.4"
+fabric-mc1214 = "0.117.0+1.21.4"
 forge-mc1182 = "1.18.2-40.3.3"
 forge-mc1192 = "1.19.2-43.4.16"
 forge-mc1194 = "1.19.4-45.3.20"
@@ -41,8 +41,6 @@ forge-mc1213 = "1.21.3-53.0.53"
 forge-mc1214 = "1.21.4-54.1.0"
 gson = "2.12.1"
 jetbrains_annotations = "26.0.2"
-lazydfu-mc1182 = "0.1.2"
-lazydfu-mc1192 = "0.1.3"
 minecraft-mc1182 = "1.18.2"
 minecraft-mc1192 = "1.19.2"
 minecraft-mc1194 = "1.19.4"
@@ -116,8 +114,6 @@ forge-mc1213 = { module = "net.minecraftforge:forge", version.ref = "forge-mc121
 forge-mc1214 = { module = "net.minecraftforge:forge", version.ref = "forge-mc1214" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 jetbrains_annotations = { module = "org.jetbrains:annotations", version.ref = "jetbrains_annotations" }
-lazydfu-mc1182 = { module = "maven.modrinth:lazydfu", version.ref = "lazydfu-mc1182" }
-lazydfu-mc1192 = { module = "maven.modrinth:lazydfu", version.ref = "lazydfu-mc1192" }
 minecraft-mc1182 = { module = "com.mojang:minecraft", version.ref = "minecraft-mc1182" }
 minecraft-mc1192 = { module = "com.mojang:minecraft", version.ref = "minecraft-mc1192" }
 minecraft-mc1194 = { module = "com.mojang:minecraft", version.ref = "minecraft-mc1194" }
