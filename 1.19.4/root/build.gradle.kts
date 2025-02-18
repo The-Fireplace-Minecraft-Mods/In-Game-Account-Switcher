@@ -76,10 +76,10 @@ tasks.withType<Jar> {
     manifest {
         attributes(
             "Specification-Title" to "In-Game Account Switcher",
-            "Specification-Version" to project.version,
+            "Specification-Version" to version,
             "Specification-Vendor" to "VidTu",
             "Implementation-Title" to "IAS-1.19.4",
-            "Implementation-Version" to project.version,
+            "Implementation-Version" to version,
             "Implementation-Vendor" to "VidTu"
         )
     }

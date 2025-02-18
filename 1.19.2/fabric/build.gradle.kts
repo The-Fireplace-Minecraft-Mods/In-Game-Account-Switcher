@@ -82,9 +82,9 @@ tasks.withType<JavaCompile> {
 tasks.withType<ProcessResources> {
     from(rootProject.sourceSets.main.get().resources)
     from(shared.sourceSets.main.get().resources)
-    inputs.property("version", project.version)
+    inputs.property("version", version)
     filesMatching("fabric.mod.json") {
-        expand("version" to project.version)
+        expand(inputs.properties)
     }
 }
 
@@ -100,10 +100,10 @@ tasks.withType<Jar> {
     manifest {
         attributes(
             "Specification-Title" to "In-Game Account Switcher",
-            "Specification-Version" to project.version,
+            "Specification-Version" to version,
             "Specification-Vendor" to "VidTu",
             "Implementation-Title" to "IAS-Fabric-1.19.2",
-            "Implementation-Version" to project.version,
+            "Implementation-Version" to version,
             "Implementation-Vendor" to "VidTu"
         )
     }
