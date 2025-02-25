@@ -84,7 +84,7 @@ quilt-mc1206 = "10.0.0-alpha.3+0.100.4-1.20.6"
 quilt-mc1211 = "null" # Quilt is dead.
 quilt-mc1213 = "null" # Quilt is dead.
 quilt-mc1214 = "null" # Quilt is dead.
-slf4j = "2.0.16"
+slf4j = "2.0.17"
 
 [plugins]
 architectury-loom = { id = "dev.architectury.loom", version.ref = "architectury-loom" }
