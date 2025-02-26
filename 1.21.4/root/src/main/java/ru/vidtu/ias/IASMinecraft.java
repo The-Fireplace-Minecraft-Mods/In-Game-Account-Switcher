@@ -20,6 +20,7 @@
 package ru.vidtu.ias;
 
 import com.mojang.authlib.minecraft.UserApiService;
+import com.mojang.authlib.yggdrasil.ProfileResult;
 import net.minecraft.SharedConstants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.User;
@@ -54,7 +55,6 @@ import ru.vidtu.ias.screen.AccountScreen;
 import ru.vidtu.ias.utils.Expression;
 import ru.vidtu.ias.utils.IUtils;
 import ru.vidtu.ias.utils.exceptions.FriendlyException;
-
 import java.nio.file.Path;
 import java.time.Duration;
 import java.util.Optional;
@@ -322,6 +322,7 @@ public final class IASMinecraft {
             User user = new User(data.name(), data.uuid(), data.token(), Optional.empty(), Optional.empty(), type);
 
             // Create various services.
+            CompletableFuture<ProfileResult> profile = CompletableFuture.completedFuture(online ? minecraft.getMinecraftSessionService().fetchProfile(data.uuid(), true) : null);
             @SuppressWarnings("CastToIncompatibleInterface") // <- Mixin Accessor.
             MinecraftAccessor accessor = (MinecraftAccessor) minecraft;
             UserApiService apiService = online ? accessor.ias$authenticationService().createUserApiService(data.token()) : UserApiService.OFFLINE;
@@ -342,6 +343,7 @@ public final class IASMinecraft {
                 // Flush everything.
                 LOGGER.info("IAS: Flushing user...");
                 accessor.ias$user(user);
+                accessor.ias$profileFuture(profile);
                 accessor.ias$userApiService(apiService);
                 accessor.ias$userPropertiesFuture(propertiesFuture);
                 accessor.ias$playerSocialManager(social);

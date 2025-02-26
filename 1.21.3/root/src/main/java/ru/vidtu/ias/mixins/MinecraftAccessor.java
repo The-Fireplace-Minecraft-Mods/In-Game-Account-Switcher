@@ -20,6 +20,7 @@
 package ru.vidtu.ias.mixins;
 
 import com.mojang.authlib.minecraft.UserApiService;
+import com.mojang.authlib.yggdrasil.ProfileResult;
 import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.User;
@@ -50,6 +51,16 @@ public interface MinecraftAccessor {
     @Accessor("user")
     @Mutable
     void ias$user(User user);
+
+    /**
+     * Sets the profile future.
+     *
+     * @param future New profile future
+     * @see Minecraft#getGameProfile()
+     */
+    @Accessor("profileFuture")
+    @Mutable
+    void ias$profileFuture(CompletableFuture<ProfileResult> future);
 
     /**
      * Gets the authentication service.
