@@ -454,10 +454,14 @@ final class MicrosoftPopupScreen extends Screen implements CreateHandler {
         // Try to focus.
         if (MicrosoftAccount.PROCESSING.equals(stage)) {
             this.minecraft.execute(() -> {
-                long ptr = this.minecraft.getWindow().getWindow();
-                GLFW.glfwRequestWindowAttention(ptr);
-                GLFW.glfwFocusWindow(ptr);
-                GLFW.glfwRequestWindowAttention(ptr);
+                try {
+                    long ptr = this.minecraft.getWindow().getWindow();
+                    GLFW.glfwRequestWindowAttention(ptr);
+                    GLFW.glfwFocusWindow(ptr);
+                    GLFW.glfwRequestWindowAttention(ptr);
+                } catch (Throwable ignored) {
+                    // NO-OP
+                }
             });
         }
 
