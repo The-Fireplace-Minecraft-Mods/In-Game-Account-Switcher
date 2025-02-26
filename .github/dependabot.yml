@@ -28,9 +28,7 @@ updates:
     ignore:
       - dependency-name: "*minecraft*"
       - dependency-name: "*fabric-api*"
-      - dependency-name: "*quilted-fabric-api*"
       - dependency-name: "*forge*"
       - dependency-name: "*neoforge*"
       - dependency-name: "*modmenu*"
       - dependency-name: "*architectury.loom*"
-      - dependency-name: "*lazydfu*"

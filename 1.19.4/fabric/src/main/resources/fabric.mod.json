@@ -34,13 +34,11 @@
     "ias.mixins.json"
   ],
   "depends": {
-    "fabricloader": ">=0.16.0",
     "minecraft": "1.19.4",
-    "fabric-api": ">=0.87.0",
-    "java": ">=17"
+    "fabric-api": "*"
   },
   "recommends": {
-    "modmenu": ">=6.3.0"
+    "modmenu": "*"
   },
   "custom": {
     "modmenu": {

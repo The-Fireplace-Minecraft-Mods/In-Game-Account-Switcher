@@ -69,21 +69,6 @@ neoforge-mc1206 = "20.6.125"
 neoforge-mc1211 = "21.1.122"
 neoforge-mc1213 = "21.3.63"
 neoforge-mc1214 = "21.4.95-beta"
-qsl-mc1206 = "9.0.0-alpha.1+1.20.6"
-qsl-mc1211 = "null" # Quilt is dead.
-qsl-mc1213 = "null" # Quilt is dead.
-qsl-mc1214 = "null" # Quilt is dead.
-quilt-loader = "0.27.1"
-quilt-mc1182 = "1.0.0-beta.28+0.67.0-1.18.2"
-quilt-mc1192 = "4.0.0-beta.30+0.77.0-1.19.2"
-quilt-mc1194 = "6.0.0-beta.9+0.83.0-1.19.4" # Updating this to the latest version causes compilation errors for whatever reason.
-quilt-mc1201 = "7.7.0+0.92.2-1.20.1"
-quilt-mc1202 = "8.0.0-alpha.6+0.91.6-1.20.2"
-quilt-mc1204 = "9.0.0-alpha.8+0.97.0-1.20.4"
-quilt-mc1206 = "10.0.0-alpha.3+0.100.4-1.20.6"
-quilt-mc1211 = "null" # Quilt is dead.
-quilt-mc1213 = "null" # Quilt is dead.
-quilt-mc1214 = "null" # Quilt is dead.
 slf4j = "2.0.17"
 
 [plugins]
@@ -142,19 +127,4 @@ neoforge-mc1206 = { module = "net.neoforged:neoforge", version.ref = "neoforge-m
 neoforge-mc1211 = { module = "net.neoforged:neoforge", version.ref = "neoforge-mc1211" }
 neoforge-mc1213 = { module = "net.neoforged:neoforge", version.ref = "neoforge-mc1213" }
 neoforge-mc1214 = { module = "net.neoforged:neoforge", version.ref = "neoforge-mc1214" }
-qsl-mc1206 = { module = "org.quiltmc:qsl", version.ref = "qsl-mc1206" }
-qsl-mc1211 = { module = "org.quiltmc:qsl", version.ref = "qsl-mc1211" }
-qsl-mc1213 = { module = "org.quiltmc:qsl", version.ref = "qsl-mc1213" }
-qsl-mc1214 = { module = "org.quiltmc:qsl", version.ref = "qsl-mc1214" }
-quilt-loader = { module = "org.quiltmc:quilt-loader", version.ref = "quilt-loader" }
-quilt-mc1182 = { module = "org.quiltmc.quilted-fabric-api:quilted-fabric-api", version.ref = "quilt-mc1182" }
-quilt-mc1192 = { module = "org.quiltmc.quilted-fabric-api:quilted-fabric-api", version.ref = "quilt-mc1192" }
-quilt-mc1194 = { module = "org.quiltmc.quilted-fabric-api:quilted-fabric-api", version.ref = "quilt-mc1194" }
-quilt-mc1201 = { module = "org.quiltmc.quilted-fabric-api:quilted-fabric-api", version.ref = "quilt-mc1201" }
-quilt-mc1202 = { module = "org.quiltmc.quilted-fabric-api:quilted-fabric-api", version.ref = "quilt-mc1202" }
-quilt-mc1204 = { module = "org.quiltmc.quilted-fabric-api:quilted-fabric-api", version.ref = "quilt-mc1204" }
-quilt-mc1206 = { module = "org.quiltmc.quilted-fabric-api:quilted-fabric-api", version.ref = "quilt-mc1206" }
-quilt-mc1211 = { module = "org.quiltmc.quilted-fabric-api:quilted-fabric-api", version.ref = "quilt-mc1211" }
-quilt-mc1213 = { module = "org.quiltmc.quilted-fabric-api:quilted-fabric-api", version.ref = "quilt-mc1213" }
-quilt-mc1214 = { module = "org.quiltmc.quilted-fabric-api:quilted-fabric-api", version.ref = "quilt-mc1214" }
 slf4j = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }

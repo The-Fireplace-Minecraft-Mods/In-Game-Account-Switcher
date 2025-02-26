@@ -74,23 +74,6 @@ public final class IAS {
     private static final String USER_AGENT_TEMPLATE = "IAS/%s (https://github.com/The-Fireplace-Minecraft-Mods/In-Game-Account-Switcher; %s; %s/%s; Minecraft/%s; Java/%s)";
 
     /**
-     * Forge (and NeoForge) call {@code GameShuttingDownEvent} from {@code Minecraft.stop()},
-     * which in vanilla and Fabric sets {@code Minecraft.running} to {@code false}).
-     * <p>
-     * Then we {@code Minecraft.forceSetScreen()} to our screen (because we can shut down up to 10 seconds)
-     * and this calls {@code Minecraft.stop()} if window has been closed (not via "Quit Game") button,
-     * leading to infinite recursion loop, which won't resolve with exceptions.
-     * <p>
-     * Fabric (and Quilt) doesn't have this issue, because it invokes its
-     * {@code ClientLifecycleEvents#CLIENT_STOPPING} in actual {@code stop()} method,
-     * which aren't called twice. Another reason to choose Fabric.
-     * <p>
-     * This field is global because it's almost in every version.
-     * It is set before {@code forceSetScreen()} to prevent recursion and stackoverflow.
-     */
-    public static boolean shuttingDownHack = false; // Originally named "hackyWorkaroundForForgeForceSetScreenStackOverflow".
-
-    /**
      * IAS executor.
      */
     @Nullable

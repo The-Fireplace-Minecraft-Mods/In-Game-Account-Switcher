@@ -31,7 +31,7 @@ You can also find unstable builds at [GitHub Actions](https://github.com/The-Fir
 to download them you'll need a GitHub account.
 
 **Q**: Which mod loaders are supported?  
-**A**: Forge, Fabric, Quilt, NeoForge.
+**A**: Forge, Fabric, NeoForge. Quilt should work too.
 
 **Q**: Which versions are supported?  
 **A**: Minecraft 1.18.2, 1.19.2, 1.19.4, 1.20.1, 1.20.2, 1.20.4, 1.20.6, 1.21.1, 1.21.3, 1.21.4.
@@ -40,7 +40,7 @@ There's little to no chance a newer version of this mod will be ported to versio
 Old mod versions (e.g. 8.0.2) are not supported and will never be supported.
 
 **Q**: Do I need Fabric API or Quilt Standard Libraries?  
-**A**: Yes, you'll need Fabric API for Fabric and QFAPI/QSL for Quilt.
+**A**: Yes, you'll need Fabric API for Fabric/Quilt. On Quilt, you can install QFAPI/QSL instead.
 Obviously, you do NOT need them for Forge or NeoForge.
 
 **Q**: Is this mod open source?  

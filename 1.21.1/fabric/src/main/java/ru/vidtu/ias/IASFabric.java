@@ -39,12 +39,6 @@ import net.minecraft.client.gui.screens.multiplayer.JoinMultiplayerScreen;
 public final class IASFabric implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
-        // Check for Quilt.
-        boolean allowOnQuilt = Boolean.getBoolean("ias.allowFabricVersionOnQuilt");
-        if (!allowOnQuilt && (FabricLoader.getInstance().isModLoaded("quilt_loader") || FabricLoader.getInstance().isModLoaded("quilted_fabric_api"))) {
-            throw new IllegalStateException("IAS: You've tried to use Fabric version of the In-Game Account Switcher mod with Quilt Loader. This is not supported. The IAS mod has its own separate Quilt version, use that one. If you still want to use Fabric version on Quilt without any support, add '-Dias.allowFabricVersionOnQuilt=true' to your game JVM start-up flags.");
-        }
-
         // Create the UA and initialize.
         String modVersion = FabricLoader.getInstance().getModContainer("ias")
                 .map(ModContainer::getMetadata)

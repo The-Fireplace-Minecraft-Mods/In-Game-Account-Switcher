@@ -49,39 +49,29 @@ jobs:
           name: 'Artifacts'
           path: |
             1.18.2/fabric/build/libs/
-            1.18.2/quilt/build/libs/
             1.18.2/forge/build/libs/
             1.19.2/fabric/build/libs/
-            1.19.2/quilt/build/libs/
             1.19.2/forge/build/libs/
             1.19.4/fabric/build/libs/
-            1.19.4/quilt/build/libs/
             1.19.4/forge/build/libs/
             1.20.1/fabric/build/libs/
-            1.20.1/quilt/build/libs/
             1.20.1/forge/build/libs/
             1.20.1/neoforge/build/libs/
             1.20.2/fabric/build/libs/
-            1.20.2/quilt/build/libs/
             1.20.2/forge/build/libs/
             1.20.2/neoforge/build/libs/
             1.20.4/fabric/build/libs/
-            1.20.4/quilt/build/libs/
             1.20.4/forge/build/libs/
             1.20.4/neoforge/build/libs/
             1.20.6/fabric/build/libs/
-            1.20.6/quilt/build/libs/
             1.20.6/forge/build/libs/
             1.20.6/neoforge/build/libs/
             1.21.1/fabric/build/libs/
-            1.21.1/quilt/build/libs/
             1.21.1/forge/build/libs/
             1.21.1/neoforge/build/libs/
             1.21.3/fabric/build/libs/
-            1.21.3/quilt/build/libs/
             1.21.3/forge/build/libs/
             1.21.3/neoforge/build/libs/
             1.21.4/fabric/build/libs/
-            1.21.4/quilt/build/libs/
             1.21.4/forge/build/libs/
             1.21.4/neoforge/build/libs/

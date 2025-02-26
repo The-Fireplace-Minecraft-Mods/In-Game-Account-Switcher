@@ -178,18 +178,15 @@ tasks.register("upload") {
                     }
                     modrinthJson.add("loaders", modrinthLoadersJson)
 
-                    // Dependencies, only Fabric and Quilt have dependencies.
+                    // Dependencies, only Fabric has dependencies.
                     if (modrinthLoaders.contains("quilt") || modrinthLoaders.contains("fabric")) {
-                        // Fabric has FAPI, Quilt has QSL.
-                        // Both have ModMenu.
+                        // Fabric API and Mod Menu.
                         val modrinthDependenciesJson = JsonArray(2)
 
-                        // Fabric API or Quilt Standard Libraries.
-                        // FAPI: P7dR8mSH (https://modrinth.com/mod/P7dR8mSH)
-                        // QSL: qvIfYCYJ (https://modrinth.com/mod/qvIfYCYJ)
+                        // Fabric API
+                        // ID: P7dR8mSH (https://modrinth.com/mod/P7dR8mSH)
                         val modrinthDependencyApiJson = JsonObject()
-                        val id = if (modrinthLoaders.contains("quilt")) "qvIfYCYJ" else "P7dR8mSH"
-                        modrinthDependencyApiJson.addProperty("project_id", id)
+                        modrinthDependencyApiJson.addProperty("project_id", "P7dR8mSH")
                         modrinthDependencyApiJson.addProperty("dependency_type", "required")
                         modrinthDependenciesJson.add(modrinthDependencyApiJson)
 
