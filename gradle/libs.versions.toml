@@ -29,6 +29,7 @@ fabric-mc1206 = "0.100.8+1.20.6"
 fabric-mc1211 = "0.115.3+1.21.1"
 fabric-mc1213 = "0.114.0+1.21.3"
 fabric-mc1214 = "0.119.2+1.21.4"
+fabric-mc1215 = "0.119.5+1.21.5"
 forge-mc1182 = "1.18.2-40.3.9"
 forge-mc1192 = "1.19.2-43.5.0"
 forge-mc1194 = "1.19.4-45.4.0"
@@ -39,6 +40,7 @@ forge-mc1206 = "1.20.6-50.2.0"
 forge-mc1211 = "1.21.1-52.1.0"
 forge-mc1213 = "1.21.3-53.1.0"
 forge-mc1214 = "1.21.4-54.1.3"
+forge-mc1215 = "null" # TODO(VidTu): Add Forge support when it releases.
 gson = "2.12.1"
 jetbrains_annotations = "26.0.2"
 minecraft-mc1182 = "1.18.2"
@@ -51,6 +53,7 @@ minecraft-mc1206 = "1.20.6"
 minecraft-mc1211 = "1.21.1"
 minecraft-mc1213 = "1.21.3"
 minecraft-mc1214 = "1.21.4"
+minecraft-mc1215 = "1.21.5"
 mixin = "0.8.7"
 modmenu-mc1182 = "3.2.5"
 modmenu-mc1192 = "4.1.2"
@@ -62,13 +65,15 @@ modmenu-mc1206 = "10.0.0"
 modmenu-mc1211 = "11.0.3"
 modmenu-mc1213 = "12.0.0"
 modmenu-mc1214 = "13.0.3"
+modmenu-mc1215 = "14.0.0-rc.2"
 neoforge-mc1201 = "1.20.1-47.1.106"
 neoforge-mc1202 = "20.2.88"
 neoforge-mc1204 = "20.4.239"
 neoforge-mc1206 = "20.6.125"
-neoforge-mc1211 = "21.1.138"
+neoforge-mc1211 = "21.1.139"
 neoforge-mc1213 = "21.3.66"
 neoforge-mc1214 = "21.4.123"
+neoforge-mc1215 = "21.5.1-beta"
 slf4j = "2.0.17"
 
 [plugins]
@@ -87,6 +92,7 @@ fabric-mc1206 = { module = "net.fabricmc.fabric-api:fabric-api", version.ref = "
 fabric-mc1211 = { module = "net.fabricmc.fabric-api:fabric-api", version.ref = "fabric-mc1211" }
 fabric-mc1213 = { module = "net.fabricmc.fabric-api:fabric-api", version.ref = "fabric-mc1213" }
 fabric-mc1214 = { module = "net.fabricmc.fabric-api:fabric-api", version.ref = "fabric-mc1214" }
+fabric-mc1215 = { module = "net.fabricmc.fabric-api:fabric-api", version.ref = "fabric-mc1215" }
 forge-mc1182 = { module = "net.minecraftforge:forge", version.ref = "forge-mc1182" }
 forge-mc1192 = { module = "net.minecraftforge:forge", version.ref = "forge-mc1192" }
 forge-mc1194 = { module = "net.minecraftforge:forge", version.ref = "forge-mc1194" }
@@ -97,6 +103,7 @@ forge-mc1206 = { module = "net.minecraftforge:forge", version.ref = "forge-mc120
 forge-mc1211 = { module = "net.minecraftforge:forge", version.ref = "forge-mc1211" }
 forge-mc1213 = { module = "net.minecraftforge:forge", version.ref = "forge-mc1213" }
 forge-mc1214 = { module = "net.minecraftforge:forge", version.ref = "forge-mc1214" }
+forge-mc1215 = { module = "net.minecraftforge:forge", version.ref = "forge-mc1215" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 jetbrains_annotations = { module = "org.jetbrains:annotations", version.ref = "jetbrains_annotations" }
 minecraft-mc1182 = { module = "com.mojang:minecraft", version.ref = "minecraft-mc1182" }
@@ -109,6 +116,7 @@ minecraft-mc1206 = { module = "com.mojang:minecraft", version.ref = "minecraft-m
 minecraft-mc1211 = { module = "com.mojang:minecraft", version.ref = "minecraft-mc1211" }
 minecraft-mc1213 = { module = "com.mojang:minecraft", version.ref = "minecraft-mc1213" }
 minecraft-mc1214 = { module = "com.mojang:minecraft", version.ref = "minecraft-mc1214" }
+minecraft-mc1215 = { module = "com.mojang:minecraft", version.ref = "minecraft-mc1215" }
 mixin = { module = "org.spongepowered:mixin", version.ref = "mixin" }
 modmenu-mc1182 = { module = "com.terraformersmc:modmenu", version.ref = "modmenu-mc1182" }
 modmenu-mc1192 = { module = "com.terraformersmc:modmenu", version.ref = "modmenu-mc1192" }
@@ -120,6 +128,7 @@ modmenu-mc1206 = { module = "com.terraformersmc:modmenu", version.ref = "modmenu
 modmenu-mc1211 = { module = "com.terraformersmc:modmenu", version.ref = "modmenu-mc1211" }
 modmenu-mc1213 = { module = "com.terraformersmc:modmenu", version.ref = "modmenu-mc1213" }
 modmenu-mc1214 = { module = "com.terraformersmc:modmenu", version.ref = "modmenu-mc1214" }
+modmenu-mc1215 = { module = "com.terraformersmc:modmenu", version.ref = "modmenu-mc1215" }
 neoforge-mc1201 = { module = "net.neoforged:forge", version.ref = "neoforge-mc1201" }
 neoforge-mc1202 = { module = "net.neoforged:neoforge", version.ref = "neoforge-mc1202" }
 neoforge-mc1204 = { module = "net.neoforged:neoforge", version.ref = "neoforge-mc1204" }
@@ -127,4 +136,5 @@ neoforge-mc1206 = { module = "net.neoforged:neoforge", version.ref = "neoforge-m
 neoforge-mc1211 = { module = "net.neoforged:neoforge", version.ref = "neoforge-mc1211" }
 neoforge-mc1213 = { module = "net.neoforged:neoforge", version.ref = "neoforge-mc1213" }
 neoforge-mc1214 = { module = "net.neoforged:neoforge", version.ref = "neoforge-mc1214" }
+neoforge-mc1215 = { module = "net.neoforged:neoforge", version.ref = "neoforge-mc1215" }
 slf4j = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
