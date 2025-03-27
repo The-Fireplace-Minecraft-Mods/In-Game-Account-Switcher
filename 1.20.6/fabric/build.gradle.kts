@@ -34,7 +34,6 @@ repositories {
     mavenCentral()
     maven("https://maven.fabricmc.net/")
     maven("https://maven.terraformersmc.com/releases/")
-    maven("https://maven.nucleoid.xyz/") // TODO: Remove when ModMenu fixes dependency issues.
 }
 
 loom {

@@ -38,7 +38,6 @@ val types = listOf("fabric", "forge", "neoforge", "root")
 val versions = listOf("1.18.2", "1.19.2", "1.19.4", "1.20.1", "1.20.2", "1.20.4", "1.20.6", "1.21.1", "1.21.3", "1.21.4", "1.21.5")
 for (version in versions) {
     for (type in types) {
-        if (version == "1.21.5" && type == "forge") continue // TODO(VidTu): Remove when Forge 1.21.5
         val subPath = file("$version/$type")
         if (!subPath.isDirectory) continue
         include("$version-$type")
