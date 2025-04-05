@@ -151,7 +151,7 @@ tasks.register("upload") {
                     modrinthJson.addProperty("primary_file", file.name)
                     modrinthJson.addProperty("status", "listed")
                     modrinthJson.addProperty("requested_status", "listed")
-                    modrinthJson.addProperty("changelog", "This alpha version is intended to test uploading files via Modrinth API. It should work fine, but it hasn't been tested thoroughly.")
+                    modrinthJson.addProperty("changelog", "- Added full support for Forge/NeoForge/Fabric 1.21.1/1.21.3/1.21.4/1.21.5.\n- Added Forge 1.20.6 support too.\n- Fixed PojavLauncher support. ([#188](https://github.com/The-Fireplace-Minecraft-Mods/In-Game-Account-Switcher/issues/188))\n- Dropped Quilt support, use Fabric version for Quilt.\n- Removed \"Shutting down IAS...\" screen, it was very buggy.\n- Fixed a bug with singleplayer worlds not shutting down properly. ([#194](https://github.com/The-Fireplace-Minecraft-Mods/In-Game-Account-Switcher/issues/194)/[#207](https://github.com/The-Fireplace-Minecraft-Mods/In-Game-Account-Switcher/issues/207))\n- Added zh_cn (by [mowenxuan](https://github.com/mowenxuan)) and zh_tw (by [yichifauzi](https://github.com/yichifauzi)) translations.\n- Fixed buttons alignment in 1.18.2 and 1.19.2.\n- Some fixes and improvements.\n\nFull changelog: https://github.com/The-Fireplace-Minecraft-Mods/In-Game-Account-Switcher/compare/v9.0.1..v9.0.2")
                     val filePartsJson = JsonArray(1)
                     filePartsJson.add(file.name)
                     modrinthJson.add("file_parts", filePartsJson)
