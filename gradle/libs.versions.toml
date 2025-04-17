@@ -18,7 +18,7 @@
 [versions]
 architectury-loom = "1.10.430"
 error_prone-annotations = "2.37.0"
-fabric-loader = "0.16.13"
+fabric-loader = "0.16.14"
 fabric-mc1182 = "0.77.0+1.18.2"
 fabric-mc1192 = "0.77.0+1.19.2"
 fabric-mc1194 = "0.87.2+1.19.4"
@@ -70,10 +70,10 @@ neoforge-mc1201 = "1.20.1-47.1.106"
 neoforge-mc1202 = "20.2.88"
 neoforge-mc1204 = "20.4.239"
 neoforge-mc1206 = "20.6.125"
-neoforge-mc1211 = "21.1.147"
+neoforge-mc1211 = "21.1.148"
 neoforge-mc1213 = "21.3.66"
 neoforge-mc1214 = "21.4.124"
-neoforge-mc1215 = "21.5.38-beta"
+neoforge-mc1215 = "21.5.40-beta"
 slf4j = "2.0.17"
 
 [plugins]
