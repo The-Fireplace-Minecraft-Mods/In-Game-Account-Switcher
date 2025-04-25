@@ -17,7 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
 
-package ru.vidtu.ias;
+package ru.vidtu.ias.platform;
 
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
@@ -30,15 +30,30 @@ import net.fabricmc.loader.api.metadata.ModMetadata;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.screens.TitleScreen;
 import net.minecraft.client.gui.screens.multiplayer.JoinMultiplayerScreen;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.jspecify.annotations.NullMarked;
+import ru.vidtu.ias.IAS;
 
 /**
  * Main IAS class for Fabric.
  *
  * @author VidTu
+ * @apiNote Internal use only
  */
-public final class IASFabric implements ClientModInitializer {
+@NullMarked
+public final class IFabric implements ClientModInitializer {
+    /**
+     * Logger for this class.
+     */
+    private static final Logger LOGGER = LogManager.getLogger("IAS/IFabric");
+
     @Override
     public void onInitializeClient() {
+        // Log.
+        long start = System.nanoTime();
+        LOGGER.info(IAS.IAS_MARKER, "IAS: Starting... (platform: fabric)");
+
         // Create the UA and initialize.
         String modVersion = FabricLoader.getInstance().getModContainer("ias")
                 .map(ModContainer::getMetadata)
@@ -50,7 +65,7 @@ public final class IASFabric implements ClientModInitializer {
                 .map(ModMetadata::getVersion)
                 .map(Version::getFriendlyString)
                 .orElse("UNKNOWN");
-        IASMinecraft.init(FabricLoader.getInstance().getGameDir(), FabricLoader.getInstance().getConfigDir(), "Fabric", modVersion, loaderVersion);
+        IAS.init("Fabric", modVersion, loaderVersion);
 
         // Register closer.
         ClientLifecycleEvents.CLIENT_STOPPING.register(client -> IAS.close());
@@ -58,13 +73,13 @@ public final class IASFabric implements ClientModInitializer {
         // Register screen handlers.
         ScreenEvents.AFTER_INIT.register((client, screen, width, height) -> {
             // Init.
-            IASMinecraft.onInit(client, screen, Screens.getButtons(screen)::add);
+            IAS.onInit(client, screen, Screens.getButtons(screen)::add);
 
             // Register drawer.
             if (screen instanceof TitleScreen || screen instanceof JoinMultiplayerScreen) {
                 // Draw.
                 Font font = client.font;
-                ScreenEvents.afterRender(screen).register((scr, graphics, mouseX, mouseY, delta) -> IASMinecraft.onDraw(scr, font, graphics));
+                ScreenEvents.afterRender(screen).register((scr, graphics, mouseX, mouseY, delta) -> IAS.onDraw(scr, font, graphics));
             }
         });
     }

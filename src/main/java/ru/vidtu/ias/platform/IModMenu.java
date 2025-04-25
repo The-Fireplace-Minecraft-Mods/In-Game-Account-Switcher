@@ -17,20 +17,43 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
 
-package ru.vidtu.ias;
+//? if fabric {
+package ru.vidtu.ias.platform;
 
 import com.terraformersmc.modmenu.api.ConfigScreenFactory;
 import com.terraformersmc.modmenu.api.ModMenuApi;
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Contract;
+import org.jspecify.annotations.NullMarked;
 import ru.vidtu.ias.screen.ConfigScreen;
 
 /**
- * Main IAS hook for ModMenu.
+ * IAS entrypoint for the ModMenu API.
  *
  * @author VidTu
+ * @apiNote Internal use only
  */
-public final class IASModMenu implements ModMenuApi {
+@ApiStatus.Internal
+@NullMarked
+public final class IModMenu implements ModMenuApi {
+    /**
+     * Creates a new entrypoint.
+     */
+    @Contract(pure = true)
+    public IModMenu() {
+        // Empty
+    }
+
+    @Contract(pure = true)
     @Override
     public ConfigScreenFactory<?> getModConfigScreenFactory() {
         return ConfigScreen::new;
     }
+
+    @Contract(pure = true)
+    @Override
+    public String toString() {
+        return "IAS/IModMenu{}";
+    }
 }
+//?}

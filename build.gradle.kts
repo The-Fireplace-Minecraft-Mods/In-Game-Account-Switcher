@@ -70,7 +70,7 @@ loom {
             "-ea",
             "-esa",
             "-Dmixin.debug=true",
-            "-Dmixin.debug.strict=true",
+            "-Dmixin.debug.strict.unique=true",
             "-Dmixin.checks=true",
             "-Dio.netty.tryReflectionSetAccessible=true",
             "-Dio.netty.leakDetection.level=PARANOID",
