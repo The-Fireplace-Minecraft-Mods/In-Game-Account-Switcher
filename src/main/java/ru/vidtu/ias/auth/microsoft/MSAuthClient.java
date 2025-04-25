@@ -19,7 +19,7 @@
 
 package ru.vidtu.ias.auth.microsoft;
 
-import com.google.errorprone.annotations.CheckReturnValue;
+import org.jetbrains.annotations.CheckReturnValue;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

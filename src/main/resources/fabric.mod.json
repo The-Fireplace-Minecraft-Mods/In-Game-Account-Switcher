@@ -17,6 +17,7 @@
     "homepage": "https://modrinth.com/mod/in-game-account-switcher",
     "sources": "https://github.com/The-Fireplace-Minecraft-Mods/In-Game-Account-Switcher",
     "issues": "https://github.com/The-Fireplace-Minecraft-Mods/In-Game-Account-Switcher/issues",
+    "email": "pig@vidtu.ru",
     "discord": "https://discord.gg/TpU2nEkSPk"
   },
   "license": "LGPL-3.0-or-later",
@@ -34,17 +35,18 @@
     "ias.mixins.json"
   ],
   "depends": {
-    "minecraft": "1.21.5",
+    "minecraft": "${minecraft}",
     "fabric-api": "*"
   },
   "recommends": {
+    "fabric": "*",
     "modmenu": "*"
   },
   "custom": {
     "modmenu": {
       "links": {
-        "modmenu.modrinth": "https://modrinth.com/mod/in-game-account-switcher",
         "modmenu.curseforge": "https://curseforge.com/minecraft/mc-mods/in-game-account-switcher",
+        "modmenu.modrinth": "https://modrinth.com/mod/in-game-account-switcher",
         "modmenu.github_releases": "https://github.com/The-Fireplace-Minecraft-Mods/In-Game-Account-Switcher/releases",
         "modmenu.discord": "https://discord.gg/TpU2nEkSPk",
         "ias.help.crypt": "https://github.com/The-Fireplace-Minecraft-Mods/In-Game-Account-Switcher/blob/main/docs/CRYPT.md",

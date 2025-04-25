@@ -19,7 +19,7 @@
 
 package ru.vidtu.ias.account;
 
-import com.google.errorprone.annotations.CheckReturnValue;
+import org.jetbrains.annotations.CheckReturnValue;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import ru.vidtu.ias.auth.handlers.LoginHandler;

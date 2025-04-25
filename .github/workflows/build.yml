@@ -40,41 +40,11 @@ jobs:
         with:
           cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
       - name: 'Build'
-        timeout-minutes: 50
+        timeout-minutes: 60
         run: './gradlew assemble'
       - name: 'Upload'
         timeout-minutes: 5
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: 'Artifacts'
-          path: |
-            1.18.2/fabric/build/libs/
-            1.18.2/forge/build/libs/
-            1.19.2/fabric/build/libs/
-            1.19.2/forge/build/libs/
-            1.19.4/fabric/build/libs/
-            1.19.4/forge/build/libs/
-            1.20.1/fabric/build/libs/
-            1.20.1/forge/build/libs/
-            1.20.1/neoforge/build/libs/
-            1.20.2/fabric/build/libs/
-            1.20.2/forge/build/libs/
-            1.20.2/neoforge/build/libs/
-            1.20.4/fabric/build/libs/
-            1.20.4/forge/build/libs/
-            1.20.4/neoforge/build/libs/
-            1.20.6/fabric/build/libs/
-            1.20.6/forge/build/libs/
-            1.20.6/neoforge/build/libs/
-            1.21.1/fabric/build/libs/
-            1.21.1/forge/build/libs/
-            1.21.1/neoforge/build/libs/
-            1.21.3/fabric/build/libs/
-            1.21.3/forge/build/libs/
-            1.21.3/neoforge/build/libs/
-            1.21.4/fabric/build/libs/
-            1.21.4/forge/build/libs/
-            1.21.4/neoforge/build/libs/
-            1.21.5/fabric/build/libs/
-            1.21.5/forge/build/libs/
-            1.21.5/neoforge/build/libs/
+          path: 'build/libs/'
