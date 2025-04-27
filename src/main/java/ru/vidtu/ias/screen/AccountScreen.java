@@ -110,14 +110,10 @@ public final class AccountScreen extends Screen {
         }
 
         // Disclaimer.
-        if (!IStorage.gameDisclaimerShown) {
+        if (!IStorage.storageExists()) {
             this.minecraft.setScreen(new AlertScreen(() -> {
                 // Save disclaimer.
-                try {
-                    IStorage.gameDisclaimerShown = true;
-                } catch (Throwable t) {
-                    LOGGER.error("Unable to set or write game disclaimer state.", t);
-                }
+                IStorage.save();
 
                 // Set screen.
                 this.minecraft.setScreen(this);

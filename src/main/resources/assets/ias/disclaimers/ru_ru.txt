@@ -1,0 +1,22 @@
+ВАЖНАЯ_ИНФОРМАЦИЯ
+> ВНИМАНИЕ: В этой папке хранятся ваши аккаунты из мода "In-Game Account Switcher".
+НЕ ОТПРАВЛЯЙТЕ эту папку *НИКОМУ*,
+ДАЖЕ если КАЖЕТСЯ, что эта ПАПКА ПУСТАЯ,
+ДАЖЕ если "разработчик мода", "агент поддержки" или "ваш друг" ПРОСИТ ВАС.
+Ваши данные от аккаунта (грубо говоря, ЛОГИН и ПАРОЛЬ) ХРАНЯТСЯ В ЭТОЙ ПАПКЕ.
+
+> Если вы УЖЕ ОТПРАВИЛИ эту папку кому-либо:
+1. Смените пароль от аккаунта Microsoft тут: https://account.microsoft.com/security
+2. Отзовите доступ от "In-Game Account Switcher" тут: https://account.live.com/consent/manage
+3. Не используйте этот мод как минимум один месяц.
+
+> О моде
+In-Game Account Switcher это мод для Minecraft, которые позволяет менять
+используемый аккаунт в игре без перезапуска Minecraft.
+
+> Контакты
+Modrinth: https://modrinth.com/mod/in-game-account-switcher
+CurseForge: https://curseforge.com/minecraft/mc-mods/in-game-account-switcher
+GitHub: https://github.com/The-Fireplace-Minecraft-Mods/In-Game-Account-Switcher
+Email: pig@vidtu.ru (пишите по-английски, пожалуйста)
+Discord: https://discord.gg/TpU2nEkSPk (пишите по-английски, пожалуйста)"

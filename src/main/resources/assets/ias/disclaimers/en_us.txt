@@ -1,0 +1,22 @@
+IMPORTANT_INFO
+> CAUTION: In this folder, your accounts from the "In-Game Account Switcher" mod are stored.
+Do NOT SEND this folder to *ANYONE*
+EVEN if it APPEARS that this FOLDER IS COMPLETELY EMPTY
+EVEN if a "mod developer a "support agent or "your friend" ASKS YOU TO.
+Your account data (basically the LOGIN and the PASSWORD) are STORED IN THIS FOLDER.
+
+> If you DID SEND this folder to anyone:
+1. Change your Microsoft password here: https://account.microsoft.com/security
+2. Revoke the access from "In-Game Account Switcher" here: https://account.live.com/consent/manage
+3. Do not use this mod for at least a month.
+
+> About
+In-Game Account Switcher is a mod for Minecraft that allows you to change
+your logged in account in-game, without restarting Minecraft.
+
+> Contacts
+Modrinth: https://modrinth.com/mod/in-game-account-switcher
+CurseForge: https://curseforge.com/minecraft/mc-mods/in-game-account-switcher
+GitHub: https://github.com/The-Fireplace-Minecraft-Mods/In-Game-Account-Switcher
+Email: pig@vidtu.ru
+Discord: https://discord.gg/TpU2nEkSPk

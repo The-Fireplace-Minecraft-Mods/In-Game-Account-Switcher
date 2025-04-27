@@ -155,13 +155,6 @@ public final class IAS {
         // Log.
         LOGGER.info("IAS: Initializing IAS...");
 
-        // Write the disclaimers.
-        try {
-            IStorage.disclaimers();
-        } catch (Throwable t) {
-            LOGGER.error("IAS: Unable to write disclaimers.", t);
-        }
-
         // Read the config.
         try {
             IASConfig.load();
@@ -184,6 +177,7 @@ public final class IAS {
             LOGGER.debug("IAS: Skipped IAS remote scanning because system property is set.");
             return;
         }
+        String version = IAS.class.getPackage().getImplementationVersion();
         Holder<ScheduledFuture<?>> task = new Holder<>();
         task.set(executor.scheduleWithFixedDelay(() -> {
             // Perform scanning, if allowed.
@@ -205,7 +199,7 @@ public final class IAS {
                 // Send the request.
                 HttpResponse<Stream<String>> response = client.send(HttpRequest.newBuilder()
                         .uri(new URI("https://raw.githubusercontent.com/The-Fireplace-Minecraft-Mods/In-Game-Account-Switcher/main/.ias/disabled_v1"))
-                        .header("User-Agent", userAgent())
+                        .header("User-Agent", MSAuth.USER_AGENT)
                         .timeout(MSAuth.TIMEOUT)
                         .GET()
                         .build(), HttpResponse.BodyHandlers.ofLines());
@@ -287,13 +281,6 @@ public final class IAS {
             Thread.currentThread().interrupt();
         }
         executor = null;
-
-        // Write the disclaimers, if we can.
-        try {
-            IStorage.disclaimers();
-        } catch (Throwable ignored) {
-            // NO-OP
-        }
 
         // Log.
         LOGGER.info("IAS: IAS has been unloaded.");

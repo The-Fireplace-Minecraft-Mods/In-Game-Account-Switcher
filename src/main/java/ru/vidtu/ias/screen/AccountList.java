@@ -189,7 +189,6 @@ final class AccountList extends ObjectSelectionList<AccountEntry> {
 
             // Save storage.
             try {
-                IStorage.disclaimers();
                 IStorage.save();
             } catch (Throwable t) {
                 LOGGER.error("IAS: Unable to save storage.", t);
@@ -219,7 +218,6 @@ final class AccountList extends ObjectSelectionList<AccountEntry> {
 
             // Save storage.
             try {
-                IStorage.disclaimers();
                 IStorage.save();
             } catch (Throwable t) {
                 LOGGER.error("IAS: Unable to save storage.", t);
@@ -237,7 +235,6 @@ final class AccountList extends ObjectSelectionList<AccountEntry> {
 
             // Save storage.
             try {
-                IStorage.disclaimers();
                 IStorage.save();
             } catch (Throwable t) {
                 LOGGER.error("IAS: Unable to save storage.", t);
@@ -262,7 +259,6 @@ final class AccountList extends ObjectSelectionList<AccountEntry> {
 
             // Save storage.
             try {
-                IStorage.disclaimers();
                 IStorage.save();
             } catch (Throwable t) {
                 LOGGER.error("IAS: Unable to save storage.", t);
@@ -341,7 +337,6 @@ final class AccountList extends ObjectSelectionList<AccountEntry> {
 
         // Save storage.
         try {
-            IStorage.disclaimers();
             IStorage.save();
         } catch (Throwable t) {
             LOGGER.error("IAS: Unable to save storage.", t);
@@ -371,7 +366,6 @@ final class AccountList extends ObjectSelectionList<AccountEntry> {
 
         // Save storage.
         try {
-            IStorage.disclaimers();
             IStorage.save();
         } catch (Throwable t) {
             LOGGER.error("IAS: Unable to save storage.", t);

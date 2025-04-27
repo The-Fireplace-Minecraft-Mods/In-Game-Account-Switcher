@@ -381,7 +381,6 @@ final class LoginPopupScreen extends Screen implements LoginHandler {
         // Save storage.
         if (changed) {
             try {
-                IStorage.disclaimers();
                 IStorage.save();
             } catch (Throwable t) {
                 LOGGER.error("IAS: Unable to save storage.", t);

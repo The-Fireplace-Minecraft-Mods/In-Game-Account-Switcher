@@ -19,18 +19,22 @@
 
 package ru.vidtu.ias.storage;
 
+import com.google.common.base.Preconditions;
+import net.minecraft.client.Minecraft;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.Unmodifiable;
 import org.jspecify.annotations.NullMarked;
 import ru.vidtu.ias.IAS;
-import ru.vidtu.ias.storage.account.Account;
 import ru.vidtu.ias.platform.IStonecutter;
+import ru.vidtu.ias.storage.account.Account;
 
+import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.nio.file.NoSuchFileException;
@@ -39,7 +43,9 @@ import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
+import java.util.regex.Pattern;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.InflaterInputStream;
 
@@ -53,60 +59,17 @@ import java.util.zip.InflaterInputStream;
 @NullMarked
 public final class IStorage {
     /**
-     * Disclaimer for files.
-     *
-     * @deprecated Disclaimer text should be localized via files, not with hardcoding
-     */
-    @Deprecated(forRemoval = true)
-    private static final String DISCLAIMER = """
-            > ENGLISH
-            Notification about security of accounts stored in the "In-Game Account Switcher" mod:
-            UNDER NO CIRCUMSTANCES SHOULD YOU SEND THIS FOLDER TO *ANYONE* (INCLUDING DEVELOPERS OF THIS MOD),
-            EVEN IF IT APPEARS THAT THIS FOLDER IS FULLY EMPTY.
-            IF YOU ACCIDENTALLY SENT THIS FOLDER TO ANYONE, PLEASE, VISIT THE FOLLOWING WEBSITE:
-            https://account.microsoft.com/security
-            AND CHANGE YOUR PASSWORD, THEN VISIT THE FOLLOWING WEBSITE:
-            https://account.live.com/consent/manage
-            AND REVOKE THE PERMISSIONS (ACCESS) TO THE "In-Game Account Switcher" APPLICATION,
-            AND/OR ANY OTHER THAT YOU DO CAN'T RECOGNIZE OR YOU SUSPECT IT COULD ACCESS YOUR GAME ACCOUNT.
-            AFTER REVOKING ACCESS YOU SHOULD *NOT* USE THIS MODIFICATION FOR 31 DAYS.
-            (If you suspect someone has got access to your game account, revoke ALL permissions
-            for ALL applications and do *NOT* launch the game for 31 days at all)
-            
-            
-            
-            > РУССКИЙ (RUSSIAN)
-            Уведомление о безопасности аккаунтов из мода "In-Game Account Switcher":
-            НИ ПРИ КАКИХ ОБСТОЯТЕЛЬСТВАХ НЕ ОТПРАВЛЯЙТЕ ЭТУ ПАПКУ *КОМУ-ЛИБО* (В ТОМ ЧИСЛЕ И РАЗРАБОТЧИКАМ ЭТОГО МОДА),
-            ДАЖЕ ЕСЛИ ВАМ КАЖЕТСЯ, ЧТО ЭТА ПАПКА ПОЛНОСТЬЮ ПУСТАЯ.
-            ЕСЛИ ВЫ СЛУЧАЙНО ОТПРАВИЛИ ЭТУ ПАПКУ КОМУ-ЛИБО, ПОЖАЛУЙСТА, ЗАЙДИТЕ НА СЛЕДУЮЩИЙ ВЕБСАЙТ:
-            https://account.microsoft.com/security
-            И СМЕНИТЕ СВОЙ ПАРОЛЬ, ПОТОМ ЗАЙДИТЕ НА СЛЕДУЮЩИЙ ВЕБСАЙТ:
-            https://account.live.com/consent/manage
-            И ОТЗОВИТЕ РАЗРЕШЕНИЯ (ДОСТУП) К ПРИЛОЖЕНИЮ "In-Game Account Switcher"
-            И/ИЛИ ЛЮБОМУ ДРУГОМУ, КОТОРОЕ ВЫ НЕ МОЖЕТЕ ОПОЗНАТЬ ИЛИ ПОДОЗРЕВАЕТЕ, ЧТО ОНО МОЖЕТ
-            ПОЛУЧИТЬ ДОСТУП К ВАШЕМУ ИГРОВОМУ АККАУНТУ.
-            ПОСЛЕ ОТЗЫВА ДОСТУПА ВЫ *НЕ* ДОЛЖНЫ ИСПОЛЬЗОВАТЬ ЭТУ МОДИФИКАЦИЮ КАК МИНИМУМ 31 ДЕНЬ.
-            (Если вы подозреваете, что кто-то получил доступ к вашему игровому аккаунту, отзовите ВСЕ разрешения
-            для ВСЕХ приложений и *НЕ* запускайте игру вообще как минимум 31 день)
-            """;
-
-    /**
-     * Disclaimer file names.
-     *
-     * @deprecated Disclaimer file names should be localized via files, not with hardcoding and some filesystems (Linux withOUT utf-8) doesn't support all unicode
-     */
-    @Deprecated(forRemoval = true)
-    @Unmodifiable
-    private static final List<String> DISCLAIMER_FILE_NAMES = List.of(
-            "READ_ME_IMPORTANT.txt", // English
-            "ПРОЧТИ_МЕНЯ_ВАЖНО.txt" // Russian
-    );
-
-    /**
      * Logger for this class.
      */
     private static final Logger LOGGER = LogManager.getLogger("IAS/IStorage");
+
+    /**
+     * Pattern for valid file names for game disclaimers.
+     */
+    // This regex allows from 1 to 32 characters, excluding dots, slashes (forwards/backwards), and null characters.
+    // Additional filename sanity checks (e.g. disallowance of vertical bar characters) is performed by the filesystem.
+    // Why does this check exists? Simple and plain: I don't want a malicious locale to allow arbitrary file writing.
+    private static final Pattern VALID_NAME = Pattern.compile("^[^\0./\\\\]{1,32}$");
 
     /**
      * Account data, encrypted or not.
@@ -114,10 +77,9 @@ public final class IStorage {
     public static final List<Account> ACCOUNTS = new ArrayList<>(0);
 
     /**
-     * @deprecated A better alternative needs to be designed
+     * Whether the storage already exists and the disclaimer doesn't need to be shown.
      */
-    @Deprecated(forRemoval = true)
-    public static boolean gameDisclaimerShown = false;
+    private static boolean storageExists = false;
 
     /**
      * An instance of this class cannot be created.
@@ -130,43 +92,6 @@ public final class IStorage {
     @Contract(value = "-> fail", pure = true)
     private IStorage() {
         throw new AssertionError("No instances.");
-    }
-
-    /**
-     * Writes the disclaimers.
-     *
-     * @throws RuntimeException If unable to write the disclaimers
-     * @deprecated Disclaimers should be localized via files, not hardcoded
-     */
-    @Deprecated(forRemoval = true)
-    public static void disclaimers() {
-        try {
-            // Log.
-            LOGGER.debug("IAS: Writing disclaimers into {}...", IStonecutter.GAME_DIRECTORY);
-
-            // Get the path.
-            var path = IStonecutter.GAME_DIRECTORY.resolve("_IAS_ACCOUNTS_DO_NOT_SEND_TO_ANYONE");
-
-            // Create the path.
-            Files.createDirectories(path);
-
-            // Write every name.
-            for (String name : DISCLAIMER_FILE_NAMES) {
-                // Resolve the file.
-                Path file = path.resolve(name);
-
-                // Write the disclaimer.
-                Files.writeString(file, DISCLAIMER, StandardOpenOption.CREATE,
-                        StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE,
-                        StandardOpenOption.SYNC, StandardOpenOption.DSYNC, LinkOption.NOFOLLOW_LINKS);
-            }
-
-            // Log.
-            LOGGER.debug("IAS: Disclaimers ({}) written to {}.", DISCLAIMER_FILE_NAMES, path);
-        } catch (Throwable t) {
-            // Rethrow.
-            throw new RuntimeException("Unable to write IAS disclaimers.", t);
-        }
     }
 
     /**
@@ -200,6 +125,9 @@ public final class IStorage {
             // Flush the accounts.
             ACCOUNTS.addAll(accounts);
 
+            // Mark the storage as existing.
+            storageExists = true;
+
             // Log. (**DEBUG**)
             LOGGER.debug(IAS.IAS_MARKER, "IAS: Storage has been loaded. (directory: {}, file: {})", IStonecutter.GAME_DIRECTORY, file);
         } catch (NoSuchFileException nsfe) {
@@ -222,7 +150,8 @@ public final class IStorage {
             LOGGER.trace(IAS.IAS_MARKER, "IAS: Saving the storage... (directory: {})", IStonecutter.GAME_DIRECTORY);
 
             // Resolve the file.
-            Path file = IStonecutter.GAME_DIRECTORY.resolve("_IAS_ACCOUNTS_DO_NOT_SEND_TO_ANYONE/.hidden/accounts_v1.do_not_send_to_anyone");
+            Path folder = IStonecutter.GAME_DIRECTORY.resolve("_IAS_ACCOUNTS_DO_NOT_SEND_TO_ANYONE");
+            Path file = folder.resolve(".hidden/accounts_v1.do_not_send_to_anyone");
 
             // Write the storage.
             Files.createDirectories(file.getParent());
@@ -252,11 +181,42 @@ public final class IStorage {
                 // Ignored
             }
 
+            // Get and validate the disclaimer filename.
+            // Load the disclaimer file.
+            String lang = Minecraft.getInstance().getLanguageManager().getSelected();
+            try (BufferedReader input = new BufferedReader(new InputStreamReader(Objects.requireNonNullElseGet(
+                    IStorage.class.getResourceAsStream("/assets/ias/disclaimers/" + lang + ".txt"),
+                    () -> IStorage.class.getResourceAsStream("/assets/ias/disclaimers/en_us.txt")), StandardCharsets.UTF_8))) {
+                // Read.
+                String name = input.readLine();
+                Preconditions.checkNotNull(name, "IAS: Disclaimer file is empty. (lang: %s)", lang);
+                Preconditions.checkState(VALID_NAME.matcher(name).matches(), "IAS: Invalid disclaimer file name. (lang: %s, name: %s)", lang, name);;
+                List<String> lines = input.lines().toList();
+
+                // Write.
+                Path dfile = folder.resolve(name + ".txt");
+                Preconditions.checkState(dfile.startsWith(folder) && dfile.getParent().equals(folder), "IAS: Invalid disclaimer file. (lang: %s, name: %s, file: %s)", lang, name, dfile);
+                Files.write(dfile, lines);
+            }
+
+            // Mark the storage as existing.
+            storageExists = true;
+
             // Log. (**DEBUG**)
             LOGGER.debug(IAS.IAS_MARKER, "IAS: Storage has been saved. (directory: {}, file: {})", IStonecutter.GAME_DIRECTORY, file);
         } catch (Throwable t) {
             // Log.
             LOGGER.error(IAS.IAS_MARKER, "IAS: Unable to save the IAS storage.", t);
         }
+    }
+
+    /**
+     * Gets whether the storage exists.
+     *
+     * @return Whether the storage already exists and the disclaimer doesn't need to be shown
+     */
+    @Contract(pure = true)
+    public static boolean storageExists() {
+        return storageExists;
     }
 }

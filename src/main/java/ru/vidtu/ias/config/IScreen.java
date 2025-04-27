@@ -32,8 +32,8 @@ import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import ru.vidtu.ias.IAS;
 import ru.vidtu.ias.storage.IStorage;
 import ru.vidtu.ias.utils.Expression;
@@ -50,7 +50,7 @@ public final class IScreen extends Screen {
     /**
      * Logger for this class.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger("IAS/ConfigScreen");
+    private static final Logger LOGGER = LogManager.getLogger("IAS/IScreen");
 
     /**
      * Parent screen, {@code null} if none.
@@ -441,7 +441,6 @@ public final class IScreen extends Screen {
 
         // Save config.
         try {
-            IStorage.disclaimers();
             IStorage.save();
         } catch (Throwable t) {
             LOGGER.error("IAS: Unable to save config.", t);
