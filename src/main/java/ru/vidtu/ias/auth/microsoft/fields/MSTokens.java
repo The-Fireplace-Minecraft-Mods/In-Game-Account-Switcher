@@ -21,9 +21,9 @@ package ru.vidtu.ias.auth.microsoft.fields;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import net.minecraft.client.User;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import ru.vidtu.ias.auth.LoginData;
 import ru.vidtu.ias.auth.microsoft.MSAuth;
 import ru.vidtu.ias.utils.GSONUtils;
 
@@ -33,7 +33,7 @@ import ru.vidtu.ias.utils.GSONUtils;
  * @param access
  * @param refresh
  * @author VidTu
- * @apiNote The {@link #access()} provided is not suitable for {@link LoginData#token()}
+ * @apiNote The {@link #access()} provided is not suitable for {@link User#getAccessToken()}
  * @see MSAuth#msacToMsaMsr(String, String)
  * @see MSAuth#msrToMsaMsr(String)
  * @see MSAuth#msaToXbl(String)

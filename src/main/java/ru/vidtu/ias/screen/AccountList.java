@@ -21,6 +21,7 @@ package ru.vidtu.ias.screen;
 
 import com.mojang.authlib.yggdrasil.ProfileResult;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.User;
 import net.minecraft.client.gui.components.ObjectSelectionList;
 import net.minecraft.client.resources.DefaultPlayerSkin;
 import net.minecraft.client.resources.PlayerSkin;
@@ -30,11 +31,11 @@ import org.slf4j.LoggerFactory;
 import ru.vidtu.ias.IAS;
 import ru.vidtu.ias.account.Account;
 import ru.vidtu.ias.account.OfflineAccount;
-import ru.vidtu.ias.auth.LoginData;
 import ru.vidtu.ias.config.IASStorage;
 
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.WeakHashMap;
 import java.util.concurrent.CompletableFuture;
@@ -162,7 +163,7 @@ final class AccountList extends ObjectSelectionList<AccountEntry> {
 
         // Login offline.
         String name = account.name();
-        LoginData data = new LoginData(name, OfflineAccount.uuid(name), "ias:offline", false);
+        User data = new User(name, OfflineAccount.uuid(name), "ias:offline", Optional.empty(), Optional.empty(), User.Type.LEGACY);
         login.success(data, false);
     }
 

@@ -19,10 +19,10 @@
 
 package ru.vidtu.ias.auth.handlers;
 
+import net.minecraft.client.User;
 import org.jetbrains.annotations.CheckReturnValue;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ru.vidtu.ias.auth.LoginData;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -63,7 +63,7 @@ public interface LoginHandler {
      * @param data    Auth data
      * @param changed Whether the storage has been modified and may require saving
      */
-    void success(@NotNull LoginData data, boolean changed);
+    void success(@NotNull User data, boolean changed);
 
     /**
      * Called when an authentication has failed.

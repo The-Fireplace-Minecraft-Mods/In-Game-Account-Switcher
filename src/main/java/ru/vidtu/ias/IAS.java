@@ -53,7 +53,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.vidtu.ias.auth.LoginData;
 import ru.vidtu.ias.auth.microsoft.MSAuth;
 import ru.vidtu.ias.config.IASConfig;
 import ru.vidtu.ias.config.IASStorage;
@@ -68,10 +67,8 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.nio.file.Path;
 import java.time.Duration;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
@@ -565,7 +562,7 @@ public final class IAS {
      * @param data      Login data
      * @return Future for logging in
      */
-    public static CompletableFuture<Void> account(Minecraft minecraft, LoginData data) {
+    public static CompletableFuture<Void> account(Minecraft minecraft, User data) {
         // Check if not in-game.
         LOGGER.info("IAS: Received login request: {}", data);
         if (minecraft.player != null || minecraft.level != null || minecraft.getConnection() != null ||
@@ -577,20 +574,12 @@ public final class IAS {
         return CompletableFuture.runAsync(() -> {
             // Create the user.
             LOGGER.info("IAS: Creating user...");
-            // I have no idea what are the OPTIONAL fields and the game
-            // works FINE without them, even with chat reporting and parental control, etc.
-            // etc., it may be some telemetry, it may be something else. If something is broken by this
-            // feel free to submit an issue, if someone knows what this is, feel free to PR a fix,
-            // I'm too lazy to fix anything related to telemetry or chat signatures/reports.
-            boolean online = data.online();
-            User.Type type = online ? User.Type.MSA : User.Type.LEGACY;
-            User user = new User(data.name(), data.uuid(), data.token(), Optional.empty(), Optional.empty(), type);
 
             // Create various services.
-            CompletableFuture<ProfileResult> profile = CompletableFuture.completedFuture(online ? minecraft.getMinecraftSessionService().fetchProfile(data.uuid(), true) : null);
+            CompletableFuture<ProfileResult> profile = CompletableFuture.completedFuture(data.getType() == User.Type.LEGACY ? null : minecraft.getMinecraftSessionService().fetchProfile(data.getProfileId(), true));
             @SuppressWarnings("CastToIncompatibleInterface") // <- Mixin Accessor.
             MinecraftAccessor accessor = (MinecraftAccessor) minecraft;
-            UserApiService apiService = online ? accessor.ias$authenticationService().createUserApiService(data.token()) : UserApiService.OFFLINE;
+            UserApiService apiService = data.getType() == User.Type.LEGACY ? UserApiService.OFFLINE : accessor.ias$authenticationService().createUserApiService(data.getAccessToken());
             UserApiService.UserProperties properties;
             try {
                 properties = apiService.fetchProperties();
@@ -599,15 +588,15 @@ public final class IAS {
             }
             CompletableFuture<UserApiService.UserProperties> propertiesFuture = CompletableFuture.completedFuture(properties);
             PlayerSocialManager social = new PlayerSocialManager(minecraft, apiService);
-            ClientTelemetryManager telemetry = new ClientTelemetryManager(minecraft, apiService, user);
-            ProfileKeyPairManager keyPair = ProfileKeyPairManager.create(apiService, user, minecraft.gameDirectory.toPath());
+            ClientTelemetryManager telemetry = new ClientTelemetryManager(minecraft, apiService, data);
+            ProfileKeyPairManager keyPair = ProfileKeyPairManager.create(apiService, data, minecraft.gameDirectory.toPath());
             ReportingContext reporting = ReportingContext.create(ReportEnvironment.local(), apiService);
 
             // Schedule to the main thread
             minecraft.execute(() -> {
                 // Flush everything.
                 LOGGER.info("IAS: Flushing user...");
-                accessor.ias$user(user);
+                accessor.ias$user(data);
                 accessor.ias$profileFuture(profile);
                 accessor.ias$userApiService(apiService);
                 accessor.ias$userPropertiesFuture(propertiesFuture);

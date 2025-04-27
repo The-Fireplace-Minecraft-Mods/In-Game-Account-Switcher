@@ -19,6 +19,7 @@
 
 package ru.vidtu.ias.account;
 
+import net.minecraft.client.User;
 import org.jetbrains.annotations.CheckReturnValue;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -26,7 +27,6 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.vidtu.ias.IAS;
-import ru.vidtu.ias.auth.LoginData;
 import ru.vidtu.ias.auth.handlers.LoginHandler;
 import ru.vidtu.ias.auth.microsoft.MSAuth;
 import ru.vidtu.ias.crypt.Crypt;
@@ -46,6 +46,7 @@ import java.net.NoRouteToHostException;
 import java.net.http.HttpTimeoutException;
 import java.nio.channels.UnresolvedAddressException;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
@@ -458,7 +459,7 @@ public final class MicrosoftAccount implements Account {
                 handler.stage(FINALIZING);
 
                 // Create and return the data.
-                LoginData login = new LoginData(this.name, this.uuid, access.get(), true);
+                User login = new User(this.name, this.uuid, access.get(), Optional.empty(), Optional.empty(), User.Type.MSA);
                 handler.success(login, saveStorage);
             }, IAS.executor()).exceptionallyAsync(t -> {
                 // Handle error.

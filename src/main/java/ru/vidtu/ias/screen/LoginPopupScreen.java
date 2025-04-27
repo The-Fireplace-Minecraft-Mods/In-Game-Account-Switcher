@@ -21,6 +21,7 @@ package ru.vidtu.ias.screen;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.User;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.MultiLineLabel;
 import net.minecraft.client.gui.screens.Screen;
@@ -32,7 +33,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.vidtu.ias.IAS;
 import ru.vidtu.ias.account.MicrosoftAccount;
-import ru.vidtu.ias.auth.LoginData;
 import ru.vidtu.ias.auth.handlers.LoginHandler;
 import ru.vidtu.ias.config.IASConfig;
 import ru.vidtu.ias.config.IASStorage;
@@ -353,7 +353,7 @@ final class LoginPopupScreen extends Screen implements LoginHandler {
     }
 
     @Override
-    public void success(LoginData data, boolean changed) {
+    public void success(User data, boolean changed) {
         // Bruh.
         assert this.minecraft != null;
 
