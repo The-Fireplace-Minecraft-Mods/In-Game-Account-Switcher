@@ -40,7 +40,7 @@ jobs:
         with:
           cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
       - name: 'Build'
-        timeout-minutes: 50
+        timeout-minutes: 60
         run: './gradlew assemble'
       - name: 'Upload'
         timeout-minutes: 5
