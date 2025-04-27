@@ -21,7 +21,7 @@ package ru.vidtu.ias.auth.handlers;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ru.vidtu.ias.account.MicrosoftAccount;
+import ru.vidtu.ias.storage.account.MicrosoftAccount;
 
 /**
  * Handler for creating accounts.

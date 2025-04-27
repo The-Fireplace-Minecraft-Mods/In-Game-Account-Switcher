@@ -32,7 +32,7 @@ import net.minecraft.util.FormattedCharSequence;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.vidtu.ias.IAS;
-import ru.vidtu.ias.account.MicrosoftAccount;
+import ru.vidtu.ias.storage.account.MicrosoftAccount;
 import ru.vidtu.ias.auth.handlers.LoginHandler;
 import ru.vidtu.ias.config.IASConfig;
 import ru.vidtu.ias.storage.IStorage;

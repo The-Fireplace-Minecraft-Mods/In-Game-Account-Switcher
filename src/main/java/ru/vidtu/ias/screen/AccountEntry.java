@@ -36,7 +36,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
 import org.jetbrains.annotations.NotNull;
-import ru.vidtu.ias.account.Account;
+import ru.vidtu.ias.storage.account.Account;
 
 import java.util.List;
 import java.util.Objects;

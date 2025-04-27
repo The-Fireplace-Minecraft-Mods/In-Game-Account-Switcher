@@ -26,10 +26,10 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import org.lwjgl.glfw.GLFW;
-import ru.vidtu.ias.account.Account;
+import ru.vidtu.ias.storage.account.Account;
 import ru.vidtu.ias.config.IASConfig;
-import ru.vidtu.ias.crypt.DummyCrypt;
-import ru.vidtu.ias.crypt.HardwareCrypt;
+import ru.vidtu.ias.storage.crypt.DummyCrypt;
+import ru.vidtu.ias.storage.crypt.HardwareCrypt;
 
 import java.time.Duration;
 import java.util.function.Consumer;

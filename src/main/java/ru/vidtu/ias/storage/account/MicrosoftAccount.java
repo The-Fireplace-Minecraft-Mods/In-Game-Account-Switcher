@@ -17,7 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
 
-package ru.vidtu.ias.account;
+package ru.vidtu.ias.storage.account;
 
 import net.minecraft.client.User;
 import org.jetbrains.annotations.CheckReturnValue;
@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
 import ru.vidtu.ias.IAS;
 import ru.vidtu.ias.auth.handlers.LoginHandler;
 import ru.vidtu.ias.auth.microsoft.MSAuth;
-import ru.vidtu.ias.crypt.Crypt;
+import ru.vidtu.ias.storage.crypt.Crypt;
 import ru.vidtu.ias.utils.Holder;
 import ru.vidtu.ias.utils.IUtils;
 import ru.vidtu.ias.utils.exceptions.FriendlyException;

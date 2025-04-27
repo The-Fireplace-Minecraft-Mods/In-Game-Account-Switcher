@@ -17,7 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
 
-package ru.vidtu.ias.crypt;
+package ru.vidtu.ias.storage.crypt;
 
 import org.jetbrains.annotations.CheckReturnValue;
 import org.jetbrains.annotations.Contract;

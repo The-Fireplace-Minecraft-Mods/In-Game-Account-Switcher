@@ -29,8 +29,8 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.vidtu.ias.IAS;
-import ru.vidtu.ias.account.Account;
-import ru.vidtu.ias.account.OfflineAccount;
+import ru.vidtu.ias.storage.account.Account;
+import ru.vidtu.ias.storage.account.OfflineAccount;
 import ru.vidtu.ias.storage.IStorage;
 
 import java.util.Locale;

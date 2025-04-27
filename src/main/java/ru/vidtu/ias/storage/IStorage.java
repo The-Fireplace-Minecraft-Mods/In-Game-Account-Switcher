@@ -26,7 +26,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Unmodifiable;
 import org.jspecify.annotations.NullMarked;
 import ru.vidtu.ias.IAS;
-import ru.vidtu.ias.account.Account;
+import ru.vidtu.ias.storage.account.Account;
 import ru.vidtu.ias.platform.IStonecutter;
 
 import java.io.DataInputStream;

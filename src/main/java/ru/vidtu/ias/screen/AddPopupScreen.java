@@ -25,7 +25,7 @@ import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
-import ru.vidtu.ias.account.Account;
+import ru.vidtu.ias.storage.account.Account;
 
 import java.time.Duration;
 import java.util.function.Consumer;

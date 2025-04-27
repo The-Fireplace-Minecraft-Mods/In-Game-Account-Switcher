@@ -25,13 +25,13 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import ru.vidtu.ias.account.Account;
-import ru.vidtu.ias.account.MicrosoftAccount;
-import ru.vidtu.ias.account.OfflineAccount;
+import ru.vidtu.ias.storage.account.Account;
+import ru.vidtu.ias.storage.account.MicrosoftAccount;
+import ru.vidtu.ias.storage.account.OfflineAccount;
 import ru.vidtu.ias.config.IASConfig;
 import ru.vidtu.ias.storage.IStorage;
 import ru.vidtu.ias.config.TextAlign;
-import ru.vidtu.ias.crypt.DummyCrypt;
+import ru.vidtu.ias.storage.crypt.DummyCrypt;
 import ru.vidtu.ias.utils.GSONUtils;
 
 import java.io.ByteArrayOutputStream;
