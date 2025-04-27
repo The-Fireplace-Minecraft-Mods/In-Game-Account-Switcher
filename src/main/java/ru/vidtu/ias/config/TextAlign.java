@@ -19,55 +19,142 @@
 
 package ru.vidtu.ias.config;
 
+import net.minecraft.network.chat.Component;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NullMarked;
+import ru.vidtu.ias.platform.IStonecutter;
+
+import java.util.Locale;
 
 /**
- * Text alignment.
+ * "Current account" text label alignment.
  *
  * @author VidTu
+ * @apiNote Internal use only
+ * @see IASConfig#titleTextAlign
+ * @see IASConfig#serversTextAlign
  */
+@ApiStatus.Internal
+@NullMarked
 public enum TextAlign {
     /**
      * Text is left-aligned.
      */
-    LEFT("ias.config.textAlign.left"),
+    LEFT,
 
     /**
      * Text is center-aligned.
      */
-    CENTER("ias.config.textAlign.center"),
+    CENTER,
 
     /**
      * Text is right-aligned.
      */
-    RIGHT("ias.config.textAlign.right");
+    RIGHT;
 
     /**
-     * Alignment translation key.
+     * Title screen alignment button label.
      */
-    @NotNull
-    private final String key;
+    private final Component titleLabel;
+
+    /**
+     * Title screen alignment button tip.
+     */
+    private final Component titleTip;
+
+    /**
+     * Servers (multiplayer) screen alignment button label.
+     */
+    private final Component serversLabel;
+
+    /**
+     * Servers (multiplayer) screen alignment button tip.
+     */
+    private final Component serversTip;
 
     /**
      * Creates a new alignment.
-     *
-     * @param key Alignment translation key
      */
     @Contract(pure = true)
-    TextAlign(@NotNull String key) {
-        this.key = key;
+    TextAlign() {
+        // Create the translation key.
+        String key = ("ias.align." + this.name().toLowerCase(Locale.ROOT));
+
+        // Create the components.
+        Component type = IStonecutter.translate(key.intern());
+        this.titleLabel = IStonecutter.translate("options.generic_value", IStonecutter.translate("ias.align.title"), type);
+        this.titleTip = IStonecutter.translate((key + ".title.tip").intern());
+        this.serversLabel = IStonecutter.translate("options.generic_value", IStonecutter.translate("ias.align.servers"), type);
+        this.serversTip = IStonecutter.translate((key + ".servers.tip").intern());
     }
 
     /**
-     * Gets the translation key.
+     * Gets the button label for this alignment for the title screen.
      *
-     * @return Translation key
+     * @return Title screen alignment button label
+     * @see #titleTip()
+     * @see #serversLabel()
+     * @see #serversTip()
+     * @see IScreen
      */
     @Contract(pure = true)
+    Component titleLabel() {
+        return this.titleLabel;
+    }
+
+    /**
+     * Gets the button tooltip for this alignment for the title screen.
+     *
+     * @return Mode button tip
+     * @see #titleLabel()
+     * @see #serversLabel()
+     * @see #serversTip()
+     * @see IScreen
+     */
+    @Contract(pure = true)
+    Component titleTip() {
+        return this.titleTip;
+    }
+
+    /**
+     * Gets the button label for this alignment for the servers (multiplayer) screen.
+     *
+     * @return Servers (multiplayer) screen alignment button label
+     * @see #titleLabel()
+     * @see #titleTip()
+     * @see #serversTip()
+     * @see IScreen
+     */
+    @Contract(pure = true)
+    Component serversLabel() {
+        return this.serversLabel;
+    }
+
+    /**
+     * Gets the button tooltip for this alignment for the servers (multiplayer) screen.
+     *
+     * @return Mode button tip
+     * @see #titleLabel()
+     * @see #titleTip()
+     * @see #serversLabel()
+     * @see IScreen
+     */
+    @Contract(pure = true)
+    Component serversTip() {
+        return this.serversTip;
+    }
+
+    @Contract(pure = true)
     @Override
-    @NotNull
     public String toString() {
-        return this.key;
+        return "IAS/TextAlign{" +
+                "name='" + this.name() + '\'' +
+                ", ordinal=" + this.ordinal() +
+                ", titleLabel=" + this.titleLabel +
+                ", titleTip=" + this.titleTip +
+                ", serversLabel=" + this.serversLabel +
+                ", serversTip=" + this.serversTip +
+                '}';
     }
 }

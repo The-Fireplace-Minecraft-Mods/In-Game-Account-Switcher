@@ -37,7 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.vidtu.ias.IAS;
 import ru.vidtu.ias.account.Account;
-import ru.vidtu.ias.config.IASStorage;
+import ru.vidtu.ias.storage.IStorage;
 
 import java.time.Duration;
 
@@ -110,11 +110,11 @@ public final class AccountScreen extends Screen {
         }
 
         // Disclaimer.
-        if (!IASStorage.gameDisclaimerShown) {
+        if (!IStorage.gameDisclaimerShown) {
             this.minecraft.setScreen(new AlertScreen(() -> {
                 // Save disclaimer.
                 try {
-                    IASStorage.gameDisclaimerShown();
+                    IStorage.gameDisclaimerShown = true;
                 } catch (Throwable t) {
                     LOGGER.error("Unable to set or write game disclaimer state.", t);
                 }

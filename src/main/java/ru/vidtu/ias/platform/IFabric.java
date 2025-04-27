@@ -17,6 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
 
+//? if fabric {
 package ru.vidtu.ias.platform;
 
 import net.fabricmc.api.ClientModInitializer;
@@ -33,6 +34,7 @@ import net.minecraft.client.gui.screens.multiplayer.JoinMultiplayerScreen;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Contract;
 import org.jspecify.annotations.NullMarked;
 import ru.vidtu.ias.IAS;
 
@@ -50,6 +52,14 @@ public final class IFabric implements ClientModInitializer {
      */
     private static final Logger LOGGER = LogManager.getLogger("IAS/IFabric");
 
+    /**
+     * Creates a new mod.
+     */
+    @Contract(pure = true)
+    public IFabric() {
+        // Empty
+    }
+
     @Override
     public void onInitializeClient() {
         // Log.
@@ -57,17 +67,7 @@ public final class IFabric implements ClientModInitializer {
         LOGGER.info(IAS.IAS_MARKER, "IAS: Starting... (platform: fabric)");
 
         // Create the UA and initialize.
-        String modVersion = FabricLoader.getInstance().getModContainer("ias")
-                .map(ModContainer::getMetadata)
-                .map(ModMetadata::getVersion)
-                .map(Version::getFriendlyString)
-                .orElse("UNKNOWN");
-        String loaderVersion = FabricLoader.getInstance().getModContainer("fabricloader")
-                .map(ModContainer::getMetadata)
-                .map(ModMetadata::getVersion)
-                .map(Version::getFriendlyString)
-                .orElse("UNKNOWN");
-        IAS.init("Fabric", modVersion, loaderVersion);
+        IAS.init();
 
         // Register closer.
         ClientLifecycleEvents.CLIENT_STOPPING.register(client -> IAS.close());
@@ -84,5 +84,15 @@ public final class IFabric implements ClientModInitializer {
                 ScreenEvents.afterRender(screen).register((scr, graphics, mouseX, mouseY, delta) -> IAS.onDraw(scr, font, graphics));
             }
         });
+
+        // Done.
+        LOGGER.info(IAS.IAS_MARKER, "IAS: Booted. ({} ms)", (System.nanoTime() - start) / 1_000_000L);
+    }
+
+    @Contract(pure = true)
+    @Override
+    public String toString() {
+        return "IAS/IFabric{}";
     }
 }
+//?}

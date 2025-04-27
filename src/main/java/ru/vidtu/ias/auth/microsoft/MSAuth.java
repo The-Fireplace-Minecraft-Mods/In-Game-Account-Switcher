@@ -41,6 +41,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
@@ -52,11 +53,21 @@ import java.util.concurrent.CompletableFuture;
  */
 public final class MSAuth {
     /**
+     * Request timeout.
+     */
+    public static final Duration TIMEOUT = Duration.ofSeconds(Long.getLong("ias.timeout", 15L));
+
+    /**
+     * User agent for requests.
+     */
+    public static final String USER_AGENT = "IAS/%s (https://github.com/The-Fireplace-Minecraft-Mods/In-Game-Account-Switcher; contact: pig@vidtu.ru; Java %s)".formatted(MSAuth.class.getPackage().getImplementationVersion(), Runtime.version());
+
+    /**
      * Request client.
      */
     @NotNull
     private static final HttpClient CLIENT = HttpClient.newBuilder()
-            .connectTimeout(IAS.TIMEOUT)
+            .connectTimeout(TIMEOUT)
             .version(HttpClient.Version.HTTP_2)
             .followRedirects(HttpClient.Redirect.NEVER)
             .executor(IAS.executor())
@@ -67,11 +78,17 @@ public final class MSAuth {
      */
     @NotNull
     private static final HttpClient CLIENT_SYNC = HttpClient.newBuilder()
-            .connectTimeout(IAS.TIMEOUT)
+            .connectTimeout(TIMEOUT)
             .version(HttpClient.Version.HTTP_2)
             .followRedirects(HttpClient.Redirect.NEVER)
             .executor(Runnable::run)
             .build();
+
+    /**
+     * IAS static Microsoft application ID.
+     */
+    @NotNull
+    public static final String CLIENT_ID = "54fd49e4-2103-4044-9603-2b028c814ec3";
 
     /**
      * An instance of this class cannot be created.
@@ -93,7 +110,7 @@ public final class MSAuth {
     @NotNull
     public static CompletableFuture<DeviceAuth> requestDac() {
         // Create the payload.
-        String payload = "client_id=" + IAS.CLIENT_ID +
+        String payload = "client_id=" + CLIENT_ID +
                 "&scope=XboxLive.signin%20XboxLive.offline_access";
 
         // Send the request.
@@ -102,7 +119,7 @@ public final class MSAuth {
                 .header("User-Agent", IAS.userAgent())
                 .header("Accept", "application/json")
                 .header("Content-Type", "application/x-www-form-urlencoded")
-                .timeout(IAS.TIMEOUT)
+                .timeout(TIMEOUT)
                 .POST(HttpRequest.BodyPublishers.ofString(payload))
                 .build(), HttpResponse.BodyHandlers.ofString()).thenApplyAsync(response -> {
             // Process the response.
@@ -140,7 +157,7 @@ public final class MSAuth {
     public static MSTokens dacToMsaMsr(@NotNull String code) {
         // Create the payload.
         String payload = "grant_type=urn:ietf:params:oauth:grant-type:device_code" +
-                "&client_id=" + IAS.CLIENT_ID +
+                "&client_id=" + CLIENT_ID +
                 "&device_code=" + URLEncoder.encode(code, StandardCharsets.UTF_8);
 
         // Send the request.
@@ -151,7 +168,7 @@ public final class MSAuth {
                     .header("User-Agent", IAS.userAgent())
                     .header("Accept", "application/json")
                     .header("Content-Type", "application/x-www-form-urlencoded")
-                    .timeout(IAS.TIMEOUT)
+                    .timeout(TIMEOUT)
                     .POST(HttpRequest.BodyPublishers.ofString(payload))
                     .build(), HttpResponse.BodyHandlers.ofString());
         } catch (Throwable t) {
@@ -212,7 +229,7 @@ public final class MSAuth {
     @NotNull
     public static CompletableFuture<MSTokens> msacToMsaMsr(@NotNull String code, @NotNull String redirect) {
         // Create the payload.
-        String payload = "client_id=" + IAS.CLIENT_ID +
+        String payload = "client_id=" + CLIENT_ID +
                 "&code=" + URLEncoder.encode(code, StandardCharsets.UTF_8) +
                 "&grant_type=authorization_code" +
                 "&redirect_uri=" + URLEncoder.encode(redirect, StandardCharsets.UTF_8) +
@@ -224,7 +241,7 @@ public final class MSAuth {
                 .header("User-Agent", IAS.userAgent())
                 .header("Accept", "application/json")
                 .header("Content-Type", "application/x-www-form-urlencoded")
-                .timeout(IAS.TIMEOUT)
+                .timeout(TIMEOUT)
                 .POST(HttpRequest.BodyPublishers.ofString(payload))
                 .build(), HttpResponse.BodyHandlers.ofString()).thenApplyAsync(response -> {
             // Process the response.
@@ -259,7 +276,7 @@ public final class MSAuth {
     @NotNull
     public static CompletableFuture<MSTokens> msrToMsaMsr(@NotNull String refresh) {
         // Create the payload.
-        String payload = "client_id=" + IAS.CLIENT_ID +
+        String payload = "client_id=" + CLIENT_ID +
                 "&refresh_token=" + URLEncoder.encode(refresh, StandardCharsets.UTF_8) +
                 "&grant_type=refresh_token" +
                 "&scope=XboxLive.signin%20XboxLive.offline_access";
@@ -270,7 +287,7 @@ public final class MSAuth {
                 .header("User-Agent", IAS.userAgent())
                 .header("Accept", "application/json")
                 .header("Content-Type", "application/x-www-form-urlencoded")
-                .timeout(IAS.TIMEOUT)
+                .timeout(TIMEOUT)
                 .POST(HttpRequest.BodyPublishers.ofString(payload))
                 .build(), HttpResponse.BodyHandlers.ofString()).thenApplyAsync(response -> {
             // Process the response.
@@ -329,7 +346,7 @@ public final class MSAuth {
                 .header("User-Agent", IAS.userAgent())
                 .header("Content-Type", "application/json")
                 .header("Accept", "application/json")
-                .timeout(IAS.TIMEOUT)
+                .timeout(TIMEOUT)
                 .POST(HttpRequest.BodyPublishers.ofString(payload))
                 .build(), HttpResponse.BodyHandlers.ofString()).thenApplyAsync(response -> {
             // Process the response.
@@ -386,7 +403,7 @@ public final class MSAuth {
                 .header("User-Agent", IAS.userAgent())
                 .header("Content-Type", "application/json")
                 .header("Accept", "application/json")
-                .timeout(IAS.TIMEOUT)
+                .timeout(TIMEOUT)
                 .POST(HttpRequest.BodyPublishers.ofString(payload))
                 .build(), HttpResponse.BodyHandlers.ofString()).thenApplyAsync(response -> {
             // Process the response.
@@ -467,7 +484,7 @@ public final class MSAuth {
                 .header("User-Agent", IAS.userAgent())
                 .header("Content-Type", "application/json")
                 .header("Accept", "application/json")
-                .timeout(IAS.TIMEOUT)
+                .timeout(TIMEOUT)
                 .POST(HttpRequest.BodyPublishers.ofString(payload))
                 .build(), HttpResponse.BodyHandlers.ofString()).thenApplyAsync(response -> {
             // Process the response.
@@ -507,7 +524,7 @@ public final class MSAuth {
                 .uri(URI.create("https://api.minecraftservices.com/minecraft/profile"))
                 .header("User-Agent", IAS.userAgent())
                 .header("Authorization", "Bearer " + access)
-                .timeout(IAS.TIMEOUT)
+                .timeout(TIMEOUT)
                 .GET()
                 .build(), HttpResponse.BodyHandlers.ofString()).thenApplyAsync(response -> {
             // Process the response.
@@ -551,7 +568,7 @@ public final class MSAuth {
         return CLIENT.sendAsync(HttpRequest.newBuilder()
                 .uri(URI.create("https://api.mojang.com/users/profiles/minecraft/" + URLEncoder.encode(name, StandardCharsets.UTF_8)))
                 .header("User-Agent", IAS.userAgent())
-                .timeout(IAS.TIMEOUT)
+                .timeout(TIMEOUT)
                 .GET()
                 .build(), HttpResponse.BodyHandlers.ofString()).thenApplyAsync(response -> {
             try {

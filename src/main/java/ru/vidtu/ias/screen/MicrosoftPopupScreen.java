@@ -39,6 +39,7 @@ import ru.vidtu.ias.IAS;
 import ru.vidtu.ias.account.Account;
 import ru.vidtu.ias.account.MicrosoftAccount;
 import ru.vidtu.ias.auth.handlers.CreateHandler;
+import ru.vidtu.ias.auth.microsoft.MSAuth;
 import ru.vidtu.ias.auth.microsoft.MSAuthClient;
 import ru.vidtu.ias.auth.microsoft.MSAuthServer;
 import ru.vidtu.ias.config.IASConfig;
@@ -316,7 +317,7 @@ final class MicrosoftPopupScreen extends Screen implements CreateHandler {
         String clipboard = keyboard.getClipboard();
 
         // Null if it is.
-        if (clipboard.toLowerCase(Locale.ROOT).contains(IAS.CLIENT_ID.toLowerCase(Locale.ROOT))) {
+        if (clipboard.toLowerCase(Locale.ROOT).contains(MSAuth.CLIENT_ID.toLowerCase(Locale.ROOT))) {
             keyboard.setClipboard(" ");
         }
 

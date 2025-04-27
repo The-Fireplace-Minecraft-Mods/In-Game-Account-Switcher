@@ -17,7 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
 
-package ru.vidtu.ias.screen;
+package ru.vidtu.ias.config;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.ChatFormatting;
@@ -35,10 +35,7 @@ import net.minecraft.sounds.SoundEvents;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.vidtu.ias.IAS;
-import ru.vidtu.ias.config.IASConfig;
-import ru.vidtu.ias.config.IASStorage;
-import ru.vidtu.ias.config.ServerMode;
-import ru.vidtu.ias.config.TextAlign;
+import ru.vidtu.ias.storage.IStorage;
 import ru.vidtu.ias.utils.Expression;
 
 import java.time.Duration;
@@ -49,7 +46,7 @@ import java.util.Objects;
  *
  * @author VidTu
  */
-public final class ConfigScreen extends Screen {
+public final class IScreen extends Screen {
     /**
      * Logger for this class.
      */
@@ -115,7 +112,7 @@ public final class ConfigScreen extends Screen {
      *
      * @param parent Parent screen, {@code null} if none
      */
-    public ConfigScreen(Screen parent) {
+    public IScreen(Screen parent) {
         super(Component.translatable("ias.config"));
         this.parent = parent;
     }
@@ -371,7 +368,7 @@ public final class ConfigScreen extends Screen {
         this.addRenderableWidget(box);
 
         // Sun Server.
-        Button button = Button.builder(CommonComponents.optionNameValue(Component.translatable("ias.config.server"), Component.translatable(IASConfig.server.toString())), btn -> {
+        Button button = Button.builder(IASConfig.server.label(), btn -> {
             // Update the value.
             IASConfig.server = switch (IASConfig.server) {
                 case ALWAYS -> ServerMode.AVAILABLE;
@@ -380,7 +377,7 @@ public final class ConfigScreen extends Screen {
             };
 
             // Set the message.
-            btn.setMessage(CommonComponents.optionNameValue(Component.translatable("ias.config.server"), Component.translatable(IASConfig.server.toString())));
+            btn.setMessage(IASConfig.server.label());
         }).bounds(9 + box.getWidth(), 116, 200, 20).tooltip(Tooltip.create(Component.translatable("ias.config.server.tip"))).build();
         button.setTooltipDelay(Duration.ofMillis(250L));
         this.addRenderableWidget(button);
@@ -444,8 +441,8 @@ public final class ConfigScreen extends Screen {
 
         // Save config.
         try {
-            IASStorage.disclaimers();
-            IASStorage.save();
+            IStorage.disclaimers();
+            IStorage.save();
         } catch (Throwable t) {
             LOGGER.error("IAS: Unable to save config.", t);
         }

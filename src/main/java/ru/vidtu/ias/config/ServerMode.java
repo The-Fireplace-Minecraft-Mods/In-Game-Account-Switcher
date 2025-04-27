@@ -19,56 +19,95 @@
 
 package ru.vidtu.ias.config;
 
+import net.minecraft.network.chat.Component;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NullMarked;
+import ru.vidtu.ias.platform.IStonecutter;
 import ru.vidtu.ias.utils.IUtils;
 
+import java.util.Locale;
+
 /**
- * HTTP server mode.
+ * Internal Sun HTTP server mode.
  *
  * @author VidTu
+ * @apiNote Internal use only
+ * @see IASConfig#server
  */
+@ApiStatus.Internal
+@NullMarked
 public enum ServerMode {
     /**
      * Always use HTTP server, never use Microsoft device auth.
      */
-    ALWAYS("ias.config.server.always"),
+    ALWAYS,
 
     /**
      * Use HTTP server if {@link IUtils#canUseSunServer()}, otherwise use Microsoft device auth.
      */
-    AVAILABLE("ias.config.server.available"),
+    AVAILABLE,
 
     /**
      * Never use HTTP server, always use Microsoft device auth.
      */
-    NEVER("ias.config.server.never");
+    NEVER;
 
     /**
-     * Mode translation key.
+     * Mode button label.
      */
-    @NotNull
-    private final String key;
+    private final Component label;
+
+    /**
+     * Mode button tip.
+     */
+    private final Component tip;
 
     /**
      * Creates a new mode.
-     *
-     * @param key Mode translation key
      */
     @Contract(pure = true)
-    ServerMode(@NotNull String key) {
-        this.key = key;
+    ServerMode() {
+        // Create the translation key.
+        String key = ("ias.server." + this.name().toLowerCase(Locale.ROOT));
+
+        // Create the components.
+        this.label = IStonecutter.translate("options.generic_value", IStonecutter.translate("ias.server"), IStonecutter.translate(key.intern()));
+        this.tip = IStonecutter.translate((key + ".tip").intern());
     }
 
     /**
-     * Gets the translation key.
+     * Gets the button label for this mode.
      *
-     * @return Translation key
+     * @return Mode button label
+     * @see #tip()
+     * @see IScreen
      */
     @Contract(pure = true)
+    Component label() {
+        return this.label;
+    }
+
+    /**
+     * Gets the button tooltip for this mode.
+     *
+     * @return Mode button tip
+     * @see #label()
+     * @see IScreen
+     */
+    @Contract(pure = true)
+    Component tip() {
+        return this.tip;
+    }
+
+    @Contract(pure = true)
     @Override
-    @NotNull
     public String toString() {
-        return this.key;
+        return "IAS/ServerMode{" +
+                "name='" + this.name() + '\'' +
+                ", ordinal=" + this.ordinal() +
+                ", label=" + this.label +
+                ", tip=" + this.tip +
+                '}';
     }
 }

@@ -22,9 +22,11 @@ package ru.vidtu.ias.config;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NullMarked;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.vidtu.ias.config.migrator.Migrator;
@@ -39,10 +41,13 @@ import java.nio.file.StandardOpenOption;
 import java.util.Objects;
 
 /**
- * IAS config.
+ * IAS config storage.
  *
  * @author VidTu
+ * @apiNote Internal use only
  */
+@ApiStatus.Internal
+@NullMarked
 public final class IASConfig {
     /**
      * Config GSON.

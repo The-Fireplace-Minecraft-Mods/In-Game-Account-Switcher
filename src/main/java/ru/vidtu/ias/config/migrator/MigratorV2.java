@@ -29,7 +29,7 @@ import ru.vidtu.ias.account.Account;
 import ru.vidtu.ias.account.MicrosoftAccount;
 import ru.vidtu.ias.account.OfflineAccount;
 import ru.vidtu.ias.config.IASConfig;
-import ru.vidtu.ias.config.IASStorage;
+import ru.vidtu.ias.storage.IStorage;
 import ru.vidtu.ias.config.TextAlign;
 import ru.vidtu.ias.crypt.DummyCrypt;
 import ru.vidtu.ias.utils.GSONUtils;
@@ -164,11 +164,11 @@ final class MigratorV2 implements Migrator {
             IASConfig.serversButtonY = serversButtonY;
 
             // Flush.
-            IASStorage.ACCOUNTS.addAll(accounts);
+            IStorage.ACCOUNTS.addAll(accounts);
 
             // Deduplicate.
-            Set<Account> set = new HashSet<>(IASStorage.ACCOUNTS.size());
-            IASStorage.ACCOUNTS.removeIf(Predicate.not(set::add));
+            Set<Account> set = new HashSet<>(IStorage.ACCOUNTS.size());
+            IStorage.ACCOUNTS.removeIf(Predicate.not(set::add));
         } catch (Throwable t) {
             // Rethrow.
             String redacted = OBFUSCATE_LOGS.matcher(String.valueOf(json)).replaceAll("$1[TOKEN]");

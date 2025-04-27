@@ -17,29 +17,29 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
 
-package ru.vidtu.ias.config;
+package ru.vidtu.ias.storage;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.jspecify.annotations.NullMarked;
+import ru.vidtu.ias.IAS;
 import ru.vidtu.ias.account.Account;
 import ru.vidtu.ias.platform.IStonecutter;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.function.Predicate;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.InflaterInputStream;
 
@@ -47,12 +47,17 @@ import java.util.zip.InflaterInputStream;
  * IAS account storage.
  *
  * @author VidTu
+ * @apiNote Internal use only
  */
-public final class IASStorage {
+@ApiStatus.Internal
+@NullMarked
+public final class IStorage {
     /**
      * Disclaimer for files.
+     *
+     * @deprecated Disclaimer text should be localized via files, not with hardcoding
      */
-    @NotNull
+    @Deprecated(forRemoval = true)
     private static final String DISCLAIMER = """
             > ENGLISH
             Notification about security of accounts stored in the "In-Game Account Switcher" mod:
@@ -88,8 +93,10 @@ public final class IASStorage {
 
     /**
      * Disclaimer file names.
+     *
+     * @deprecated Disclaimer file names should be localized via files, not with hardcoding and some filesystems (Linux withOUT utf-8) doesn't support all unicode
      */
-    @NotNull
+    @Deprecated(forRemoval = true)
     @Unmodifiable
     private static final List<String> DISCLAIMER_FILE_NAMES = List.of(
             "READ_ME_IMPORTANT.txt", // English
@@ -99,27 +106,29 @@ public final class IASStorage {
     /**
      * Logger for this class.
      */
-    @NotNull
-    public static final Logger LOGGER = LoggerFactory.getLogger("IAS/IASStorage");
+    private static final Logger LOGGER = LogManager.getLogger("IAS/IStorage");
 
     /**
      * Account data, encrypted or not.
      */
-    @NotNull
     public static final List<Account> ACCOUNTS = new ArrayList<>(0);
 
     /**
-     * Whether the game disclaimer was shown.
+     * @deprecated A better alternative needs to be designed
      */
+    @Deprecated(forRemoval = true)
     public static boolean gameDisclaimerShown = false;
 
     /**
      * An instance of this class cannot be created.
      *
      * @throws AssertionError Always
+     * @deprecated Always throws
      */
+    @ApiStatus.ScheduledForRemoval
+    @Deprecated
     @Contract(value = "-> fail", pure = true)
-    private IASStorage() {
+    private IStorage() {
         throw new AssertionError("No instances.");
     }
 
@@ -127,7 +136,9 @@ public final class IASStorage {
      * Writes the disclaimers.
      *
      * @throws RuntimeException If unable to write the disclaimers
+     * @deprecated Disclaimers should be localized via files, not hardcoded
      */
+    @Deprecated(forRemoval = true)
     public static void disclaimers() {
         try {
             // Log.
@@ -159,97 +170,73 @@ public final class IASStorage {
     }
 
     /**
-     * Loads the storage.
+     * Loads the storage, suppressing and logging any errors.
      *
-     * @throws RuntimeException If unable to load the storage
+     * @see #save()
      */
     public static void load() {
         try {
-            // Log.
-            LOGGER.debug("IAS: Loading storage for {}...", IStonecutter.GAME_DIRECTORY);
+            // Log. (**TRACE**)
+            LOGGER.trace(IAS.IAS_MARKER, "IAS: Loading the storage... (directory: {})", IStonecutter.GAME_DIRECTORY);
 
-            // Get the file.
-            Path folder = IStonecutter.GAME_DIRECTORY.resolve("_IAS_ACCOUNTS_DO_NOT_SEND_TO_ANYONE/.hidden");
-            Path file = folder.resolve("accounts_v1.do_not_send_to_anyone");
-            gameDisclaimerShown = Files.isRegularFile(folder.resolve("game_disclaimer_shown"), LinkOption.NOFOLLOW_LINKS);
+            // Resolve the file.
+            Path file = IStonecutter.GAME_DIRECTORY.resolve("_IAS_ACCOUNTS_DO_NOT_SEND_TO_ANYONE/.hidden/accounts_v1.do_not_send_to_anyone");
 
-            // Skip if it doesn't exist.
-            if (!Files.isRegularFile(file, LinkOption.NOFOLLOW_LINKS)) {
-                LOGGER.debug("IAS: Storage not found. Saving...");
-                save();
-                return;
-            }
-            file = file.toRealPath(LinkOption.NOFOLLOW_LINKS);
-
-            // Read the data.
-            byte[] data = Files.readAllBytes(file);
-
-            // Decode the data.
-            try (DataInputStream in = new DataInputStream(new InflaterInputStream(new ByteArrayInputStream(data)))) {
-                // Read the length. (Hopefully 65535 accounts is enough)
+            // Read the storage.
+            Set<Account> accounts;
+            try (DataInputStream in = new DataInputStream(new InflaterInputStream(Files.newInputStream(file)))) {
+                // Read the length.
                 int length = in.readUnsignedShort();
-                List<Account> list = new ArrayList<>(length);
+                accounts = LinkedHashSet.newLinkedHashSet(length);
 
-                // Read all accounts.
+                // Read the accounts.
                 for (int i = 0; i < length; i++) {
-                    // Read typed.
-                    list.add(Account.readTyped(in));
+                    // Read and add the account.
+                    Account account = Account.readTyped(in);
+                    accounts.add(account);
                 }
-
-                // Flush the list.
-                ACCOUNTS.addAll(list);
-
-                // Deduplicate.
-                Set<Account> set = new HashSet<>(ACCOUNTS.size());
-                ACCOUNTS.removeIf(Predicate.not(set::add));
-
-                // Log.
-                LOGGER.debug("IAS: Loaded {} (currently: {}) accounts from {}.", list.size(), ACCOUNTS.size(), file);
             }
+
+            // Flush the accounts.
+            ACCOUNTS.addAll(accounts);
+
+            // Log. (**DEBUG**)
+            LOGGER.debug(IAS.IAS_MARKER, "IAS: Storage has been loaded. (directory: {}, file: {})", IStonecutter.GAME_DIRECTORY, file);
+        } catch (NoSuchFileException nsfe) {
+            // Log. (**DEBUG**)
+            LOGGER.debug(IAS.IAS_MARKER, "IAS: Ignoring missing IAS storage.", nsfe);
         } catch (Throwable t) {
-            // Rethrow.
-            throw new RuntimeException("Unable to load IAS storage.", t);
+            // Log.
+            LOGGER.error(IAS.IAS_MARKER, "IAS: Unable to load the IAS storage.", t);
         }
     }
 
     /**
-     * Saves the storage.
+     * Saves the storage, suppressing and logging any errors.
      *
-     * @throws RuntimeException If unable to save the storage
+     * @see #load()
      */
     public static void save() {
         try {
-            // Log.
-            LOGGER.debug("IAS: Saving storage into {}...", IStonecutter.GAME_DIRECTORY);
+            // Log. (**TRACE**)
+            LOGGER.trace(IAS.IAS_MARKER, "IAS: Saving the storage... (directory: {})", IStonecutter.GAME_DIRECTORY);
 
-            // Get the file.
+            // Resolve the file.
             Path file = IStonecutter.GAME_DIRECTORY.resolve("_IAS_ACCOUNTS_DO_NOT_SEND_TO_ANYONE/.hidden/accounts_v1.do_not_send_to_anyone");
 
-            // Encode the data.
-            byte[] data;
-            Account[] list;
-            try (ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
-                 DeflaterOutputStream defOut = new DeflaterOutputStream(byteOut);
-                 DataOutputStream out = new DataOutputStream(defOut)) {
-                // Capture the list.
-                list = ACCOUNTS.toArray(Account[]::new);
-
+            // Write the storage.
+            Files.createDirectories(file.getParent());
+            try (DataOutputStream out = new DataOutputStream(new DeflaterOutputStream(Files.newOutputStream(file, StandardOpenOption.WRITE,
+                    StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.SYNC)))) {
                 // Write the length.
-                out.writeShort(list.length);
+                out.writeShort(ACCOUNTS.size());
 
                 // Write the accounts.
-                for (Account account : list) {
+                for (Account account : ACCOUNTS) {
                     // Write typed.
                     Account.writeTyped(out, account);
                 }
-
-                // Flush the data.
-                defOut.finish();
-                data = byteOut.toByteArray();
             }
-
-            // Create parent directories.
-            Files.createDirectories(file.getParent());
 
             // Try to make folder hidden on Windows. (already hidden by name on UNIX-like)
             try {
@@ -265,42 +252,11 @@ public final class IASStorage {
                 // Ignored
             }
 
-            // Write the data.
-            Files.write(file, data, StandardOpenOption.CREATE,
-                    StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE,
-                    StandardOpenOption.SYNC, StandardOpenOption.DSYNC, LinkOption.NOFOLLOW_LINKS);
-
-            // Log it.
-            LOGGER.debug("IAS: Saved {} accounts to {}.", list.length, file);
+            // Log. (**DEBUG**)
+            LOGGER.debug(IAS.IAS_MARKER, "IAS: Storage has been saved. (directory: {}, file: {})", IStonecutter.GAME_DIRECTORY, file);
         } catch (Throwable t) {
-            // Rethrow.
-            throw new RuntimeException("Unable to save IAS storage.", t);
-        }
-    }
-
-    /**
-     * Sets the {@link #gameDisclaimerShown} to {@code true} and writes the persistent state file.
-     *
-     * @throws RuntimeException If unable to set or write game disclaimer shown persistent state
-     */
-    public static void gameDisclaimerShown() {
-        try {
-            // Log it.
-            LOGGER.debug("IAS: Marking in-game disclaimers as shown into {}...", IStonecutter.GAME_DIRECTORY);
-
-            // Set the parameter.
-            gameDisclaimerShown = true;
-
-            // Create the file.
-            Path file = IStonecutter.GAME_DIRECTORY.resolve("_IAS_ACCOUNTS_DO_NOT_SEND_TO_ANYONE/.hidden/game_disclaimer_shown");
-            Files.createDirectories(file.getParent());
-            Files.createFile(file);
-
-            // Log it.
-            LOGGER.debug("IAS: Marked in-game disclaimers as shown to {}.", file);
-        } catch (Throwable t) {
-            // Rethrow.
-            throw new RuntimeException("Unable to mark game disclaimer as shown.", t);
+            // Log.
+            LOGGER.error(IAS.IAS_MARKER, "IAS: Unable to save the IAS storage.", t);
         }
     }
 }
