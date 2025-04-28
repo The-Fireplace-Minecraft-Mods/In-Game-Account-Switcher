@@ -25,13 +25,10 @@ import net.minecraft.client.User;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.ObjectSelectionList;
 import net.minecraft.client.gui.components.PlayerFaceRenderer;
-import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.resources.PlayerSkin;
-import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
@@ -40,7 +37,6 @@ import ru.vidtu.ias.storage.account.Account;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Stream;
 
 /**
  * Account GUI entry.

@@ -51,14 +51,12 @@ import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jspecify.annotations.NullMarked;
 import ru.vidtu.ias.auth.microsoft.MSAuth;
-import ru.vidtu.ias.config.IASConfig;
-import ru.vidtu.ias.storage.IStorage;
+import ru.vidtu.ias.config.IConfig;
 import ru.vidtu.ias.mixins.MinecraftAccessor;
 import ru.vidtu.ias.screen.AccountScreen;
+import ru.vidtu.ias.storage.IStorage;
 import ru.vidtu.ias.utils.Expression;
 import ru.vidtu.ias.utils.Holder;
 import ru.vidtu.ias.utils.IUtils;
@@ -69,7 +67,6 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
-import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -93,15 +90,14 @@ public final class IAS {
     public static final Marker IAS_MARKER = MarkerManager.getMarker("MOD_IAS");
 
     /**
+     * IAS asynchronous executor.
+     */
+    public static final ScheduledExecutorService EXECUTOR = Executors.newSingleThreadScheduledExecutor(r -> new Thread(r, "IAS Mod Thread"));
+
+    /**
      * Logger for this class.
      */
     private static final Logger LOGGER = LogManager.getLogger("IAS");
-
-    /**
-     * IAS executor.
-     */
-    @Nullable
-    private static ScheduledExecutorService executor;
 
     /**
      * Whether the mod is disabled remotely.
@@ -155,23 +151,6 @@ public final class IAS {
         // Log.
         LOGGER.info("IAS: Initializing IAS...");
 
-        // Read the config.
-        try {
-            IASConfig.load();
-        } catch (Throwable t) {
-            LOGGER.error("IAS: Unable to load IAS config.", t);
-        }
-
-        // Read the storage.
-        try {
-            IStorage.load();
-        } catch (Throwable t) {
-            LOGGER.error("IAS: Unable to load IAS storage.", t);
-        }
-
-        // Create the executor.
-        executor = Executors.newSingleThreadScheduledExecutor(r -> new Thread(r, "IAS"));
-
         // Perform initial loading.
         if (Boolean.getBoolean("ias.skipDisableScanning")) {
             LOGGER.debug("IAS: Skipped IAS remote scanning because system property is set.");
@@ -179,7 +158,7 @@ public final class IAS {
         }
         String version = IAS.class.getPackage().getImplementationVersion();
         Holder<ScheduledFuture<?>> task = new Holder<>();
-        task.set(executor.scheduleWithFixedDelay(() -> {
+        task.set(EXECUTOR.scheduleWithFixedDelay(() -> {
             // Perform scanning, if allowed.
             try {
                 // Skip if not allowed or already disabled.
@@ -245,22 +224,18 @@ public final class IAS {
         // Shutdown the executor.
         shutdown:
         try {
-            // Skip if doesn't exist.
-            ScheduledExecutorService executor = IAS.executor;
-            if (executor == null) break shutdown;
-
             // Shutdown.
             LOGGER.info("IAS: Shutting down IAS executor...");
-            executor.shutdown();
-            if (executor.awaitTermination(30L, TimeUnit.SECONDS)) {
+            EXECUTOR.shutdown();
+            if (EXECUTOR.awaitTermination(30L, TimeUnit.SECONDS)) {
                 LOGGER.info("IAS: IAS executor shut down.");
                 break shutdown;
             }
 
             // Shutdown forcefully.
             LOGGER.warn("IAS: Unable to shutdown IAS executor. Shutting down forcefully...");
-            executor.shutdownNow();
-            if (executor.awaitTermination(30L, TimeUnit.SECONDS)) {
+            EXECUTOR.shutdownNow();
+            if (EXECUTOR.awaitTermination(30L, TimeUnit.SECONDS)) {
                 LOGGER.info("IAS: IAS executor shut down forcefully.");
                 break shutdown;
             }
@@ -272,32 +247,14 @@ public final class IAS {
             LOGGER.error("IAS: IAS executor interrupted while shutting down. Shutting down forcefully...", e);
 
             // Kill, if exists.
-            ScheduledExecutorService executor = IAS.executor;
-            if (executor != null) {
-                executor.shutdownNow();
-            }
+            EXECUTOR.shutdownNow();
 
             // Preserve interruption.
             Thread.currentThread().interrupt();
         }
-        executor = null;
 
         // Log.
         LOGGER.info("IAS: IAS has been unloaded.");
-    }
-
-    /**
-     * Gets the async executor for IAS.
-     *
-     * @return IAS executor
-     * @throws NullPointerException If the executor is not available
-     */
-    @Contract(pure = true)
-    @NotNull
-    public static ScheduledExecutorService executor() {
-        ScheduledExecutorService executor = IAS.executor;
-        Objects.requireNonNull(executor, "IAS executor is not available.");
-        return executor;
     }
 
     /**
@@ -320,12 +277,12 @@ public final class IAS {
     @SuppressWarnings({"ChainOfInstanceofChecks", "ConstantValue"}) // <- Abstraction for Minecraft is not possible, mods break user non-nullness.
     public static void onInit(Minecraft minecraft, Screen screen, Consumer<Button> buttonAdder) {
         // Add title button.
-        if (IASConfig.titleButton && screen instanceof TitleScreen) {
+        if (IConfig.titleButton && screen instanceof TitleScreen) {
             // Calculate the position.
             int width = screen.width;
             int height = screen.height;
-            Integer x = Expression.parsePosition(IASConfig.titleButtonX, width, height);
-            Integer y = Expression.parsePosition(IASConfig.titleButtonY, width, height);
+            Integer x = Expression.parsePosition(IConfig.titleButtonX, width, height);
+            Integer y = Expression.parsePosition(IConfig.titleButtonY, width, height);
 
             // Couldn't parse position.
             if (x == null || y == null) {
@@ -364,12 +321,12 @@ public final class IAS {
         }
 
         // Add servers button.
-        if (IASConfig.serversButton && screen instanceof JoinMultiplayerScreen) {
+        if (IConfig.serversButton && screen instanceof JoinMultiplayerScreen) {
             // Calculate the position.
             int width = screen.width;
             int height = screen.height;
-            Integer x = Expression.parsePosition(IASConfig.serversButtonX, width, height);
-            Integer y = Expression.parsePosition(IASConfig.serversButtonY, width, height);
+            Integer x = Expression.parsePosition(IConfig.serversButtonX, width, height);
+            Integer y = Expression.parsePosition(IConfig.serversButtonY, width, height);
 
             // Couldn't parse position.
             if (x == null || y == null) {
@@ -408,16 +365,16 @@ public final class IAS {
         }
 
         // Add title text.
-        if (IASConfig.titleText && screen instanceof TitleScreen) {
+        if (IConfig.titleText && screen instanceof TitleScreen) {
             // Calculate the position.
             int width = screen.width;
             int height = screen.height;
-            Integer cx = Expression.parsePosition(IASConfig.titleTextX, width, height);
-            Integer cy = Expression.parsePosition(IASConfig.titleTextY, width, height);
+            Integer cx = Expression.parsePosition(IConfig.titleTextX, width, height);
+            Integer cy = Expression.parsePosition(IConfig.titleTextY, width, height);
             Font font = minecraft.font;
             User user = minecraft.getUser();
             text = Component.translatable("ias.title", user != null ? user.getName() : "(broken by mods)");
-            textX = cx == null || cy == null ? (width - font.width(text)) / 2 : switch (IASConfig.titleTextAlign) {
+            textX = cx == null || cy == null ? (width - font.width(text)) / 2 : switch (IConfig.titleTextAlign) {
                 case LEFT -> cx;
                 case CENTER -> cx - font.width(text) / 2;
                 case RIGHT -> cx - font.width(text);
@@ -426,16 +383,16 @@ public final class IAS {
         }
 
         // Add servers text.
-        if (IASConfig.serversText && screen instanceof JoinMultiplayerScreen) {
+        if (IConfig.serversText && screen instanceof JoinMultiplayerScreen) {
             // Calculate the position.
             int width = screen.width;
             int height = screen.height;
-            Integer cx = Expression.parsePosition(IASConfig.serversTextX, width, height);
-            Integer cy = Expression.parsePosition(IASConfig.serversTextY, width, height);
+            Integer cx = Expression.parsePosition(IConfig.serversTextX, width, height);
+            Integer cy = Expression.parsePosition(IConfig.serversTextY, width, height);
             Font font = minecraft.font;
             User user = minecraft.getUser();
             text = Component.translatable("ias.title", user != null ? user.getName() : "(broken by mods)");
-            textX = cx == null || cy == null ? (width - font.width(text)) / 2 : switch (IASConfig.serversTextAlign) {
+            textX = cx == null || cy == null ? (width - font.width(text)) / 2 : switch (IConfig.serversTextAlign) {
                 case LEFT -> cx;
                 case CENTER -> cx - font.width(text) / 2;
                 case RIGHT -> cx - font.width(text);
@@ -444,7 +401,7 @@ public final class IAS {
         }
 
         // Warn about invalid names.
-        if (!IASConfig.nickWarns || !(screen instanceof ConnectScreen) || minecraft.getToastManager().getToast(SystemToast.class, NICK_WARN) != null) return;
+        if (!IConfig.nickWarns || !(screen instanceof ConnectScreen) || minecraft.getToastManager().getToast(SystemToast.class, NICK_WARN) != null) return;
         User user = minecraft.getUser();
         // Mods break non-nullness.
         //noinspection ConstantValue
@@ -466,10 +423,10 @@ public final class IAS {
      */
     @SuppressWarnings("ChainOfInstanceofChecks") // <- Abstraction for Minecraft is not possible.
     public static void onDraw(Screen screen, Font font, GuiGraphics graphics) {
-        if (IASConfig.titleText && screen instanceof TitleScreen) {
+        if (IConfig.titleText && screen instanceof TitleScreen) {
             graphics.drawString(font, text, textX, textY, 0xFF_CC_88_88);
         }
-        if (IASConfig.serversText && screen instanceof JoinMultiplayerScreen) {
+        if (IConfig.serversText && screen instanceof JoinMultiplayerScreen) {
             graphics.drawString(font, text, textX, textY, 0xFF_CC_88_88);
         }
     }
@@ -527,7 +484,7 @@ public final class IAS {
                 minecraft.updateTitle();
                 LOGGER.info("IAS: Flushed user.");
             });
-        }, IAS.executor()).exceptionally(t -> {
+        }, IAS.EXECUTOR).exceptionally(t -> {
             // Log it.
             LOGGER.error("IAS: Unable to log in: {}.", data, t);
 

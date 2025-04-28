@@ -32,8 +32,8 @@ import java.util.Locale;
  *
  * @author VidTu
  * @apiNote Internal use only
- * @see IASConfig#titleTextAlign
- * @see IASConfig#serversTextAlign
+ * @see IConfig#titleTextAlign
+ * @see IConfig#serversTextAlign
  */
 @ApiStatus.Internal
 @NullMarked

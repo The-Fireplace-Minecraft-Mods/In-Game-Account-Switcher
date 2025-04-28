@@ -19,26 +19,28 @@
 
 package ru.vidtu.ias.config;
 
+import com.google.common.base.MoreObjects;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jspecify.annotations.NullMarked;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.jspecify.annotations.Nullable;
+import ru.vidtu.ias.IAS;
 import ru.vidtu.ias.config.migrator.Migrator;
 import ru.vidtu.ias.platform.IStonecutter;
 import ru.vidtu.ias.utils.GSONUtils;
-import ru.vidtu.ias.utils.IUtils;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.lang.reflect.Modifier;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import java.util.Objects;
 
 /**
  * IAS config storage.
@@ -48,20 +50,18 @@ import java.util.Objects;
  */
 @ApiStatus.Internal
 @NullMarked
-public final class IASConfig {
-    /**
-     * Config GSON.
-     */
-    @NotNull
-    private static final Gson GSON = new GsonBuilder()
-            .excludeFieldsWithModifiers(Modifier.TRANSIENT, Modifier.FINAL)
-            .create();
-
+public final class IConfig {
     /**
      * Logger for this class.
      */
-    @NotNull
-    public static final Logger LOGGER = LoggerFactory.getLogger("IAS/IASConfig");
+    private static final Logger LOGGER = LogManager.getLogger("IAS/IConfig");
+
+    /**
+     * GSON instance for configuration loading/saving.
+     */
+    private static final Gson GSON = new GsonBuilder()
+            .excludeFieldsWithModifiers(Modifier.TRANSIENT, Modifier.FINAL)
+            .create();
 
     /**
      * Whether the title screen text is enabled, {@code true} by default.
@@ -83,7 +83,6 @@ public final class IASConfig {
     /**
      * Alignment for title screen text, {@link TextAlign#LEFT} by default.
      */
-    @Nullable
     public static TextAlign titleTextAlign = TextAlign.LEFT;
 
     /**
@@ -123,7 +122,6 @@ public final class IASConfig {
     /**
      * Alignment for servers screen text, {@link TextAlign#LEFT} by default.
      */
-    @Nullable
     public static TextAlign serversTextAlign = TextAlign.LEFT;
 
     /**
@@ -166,7 +164,6 @@ public final class IASConfig {
     /**
      * Current HTTP server mode, {@link ServerMode#AVAILABLE} by default.
      */
-    @Nullable
     public static ServerMode server = ServerMode.AVAILABLE;
 
     /**
@@ -175,121 +172,100 @@ public final class IASConfig {
     public static boolean passwordEchoing = true;
 
     /**
-     * Creates a new config for GSON.
+     * Creates a new config via GSON.
      */
     @Contract(pure = true)
-    private IASConfig() {
+    private IConfig() {
         // Private
     }
 
     /**
-     * Loads the config.
+     * Loads the config, suppressing and logging any errors.
      *
-     * @throws RuntimeException If unable to load the config
+     * @see #save()
      */
     public static void load() {
         try {
-            // Log.
-            LOGGER.debug("IAS: Loading config for {}...", IStonecutter.CONFIG_DIRECTORY);
+            // Log. (**TRACE**)
+            LOGGER.trace(IAS.IAS_MARKER, "IAS: Loading the config... (directory: {})", IStonecutter.CONFIG_DIRECTORY);
 
-            // Get the file.
+            // Resolve the file.
             Path file = IStonecutter.CONFIG_DIRECTORY.resolve("ias.json");
 
-            // Skip if it doesn't exist.
-            if (!Files.isRegularFile(file)) {
-                LOGGER.debug("IAS: Config not found. Saving...");
-                save(IStonecutter.CONFIG_DIRECTORY);
-                return;
+            // Read the JSON.
+            JsonObject json;
+            try (BufferedReader reader = Files.newBufferedReader(file)) {
+                // Load the JSON.
+                json = GSON.fromJson(reader, JsonObject.class);
             }
 
-            // Read the file.
-            String value = Files.readString(file);
+            // Determine the version.
+            int version = (json.has("version") ? GSONUtils.getIntOrThrow(json, "version") : 1);
+            LOGGER.trace(IAS.IAS_MARKER, "IAS: Loaded config version is {}.", version);
 
-            // Read JSON.
-            JsonObject json = GSON.fromJson(value, JsonObject.class);
-            int version = json.has("version") ? GSONUtils.getIntOrThrow(json, "version") : 1;
-            LOGGER.trace("IAS: Loaded config version is {}.", version);
-
-            // Load migrated, if any.
+            // Migrate the config.
             Migrator migrator = Migrator.fromVersion(version);
             if (migrator != null) {
-                LOGGER.info("IAS: Migrating old config version {} via {}.", version, migrator);
+                LOGGER.info(IAS.IAS_MARKER, "IAS: Migrating old config version {} via {}.", version, migrator);
                 migrator.load(json);
-                LOGGER.info("IAS: Migrated old config.");
-                save(IStonecutter.CONFIG_DIRECTORY);
+                LOGGER.info(IAS.IAS_MARKER, "IAS: Migrated old config.");
+                save();
                 return;
             }
 
-            // Hacky JSON reading.
-            GSON.fromJson(json, IASConfig.class);
+            // Load the config.
+            GSON.fromJson(json, IConfig.class);
 
-            // Log it.
-            LOGGER.debug("IAS: Config loaded.");
+            // Log. (**DEBUG**)
+            LOGGER.debug(IAS.IAS_MARKER, "IAS: Config has been loaded. (directory: {}, file: {})", IStonecutter.CONFIG_DIRECTORY, file);
+        } catch (NoSuchFileException nsfe) {
+            // Log. (**DEBUG**)
+            LOGGER.debug(IAS.IAS_MARKER, "IAS: Ignoring missing IAS config.", nsfe);
         } catch (Throwable t) {
-            // Rethrow.
-            throw new RuntimeException("Unable to load IAS config.", t);
+            // Log.
+            LOGGER.error(IAS.IAS_MARKER, "IAS: Unable to load the IAS config.", t);
         } finally {
-            // NPE protection.
-            titleTextAlign = Objects.requireNonNullElse(titleTextAlign, TextAlign.LEFT);
-            serversTextAlign = Objects.requireNonNullElse(serversTextAlign, TextAlign.LEFT);
-            server = Objects.requireNonNullElse(server, ServerMode.AVAILABLE);
+            // Clamp.
+            titleTextAlign = MoreObjects.firstNonNull(titleTextAlign, TextAlign.LEFT);
+            serversTextAlign = MoreObjects.firstNonNull(serversTextAlign, TextAlign.LEFT);
+            server = MoreObjects.firstNonNull(server, ServerMode.AVAILABLE);
         }
     }
 
     /**
-     * Saves the config.
+     * Saves the storage, suppressing and logging any errors.
      *
-     * @param path Config directory (not file)
-     * @throws RuntimeException If unable to save the config
+     * @see #load()
      */
-    public static void save(@NotNull Path path) {
+    public static void save() {
         try {
-            // Log.
-            LOGGER.debug("IAS: Saving config into {}...", path);
+            // Log. (**TRACE**)
+            LOGGER.trace(IAS.IAS_MARKER, "IAS: Saving the storage... (directory: {})", IStonecutter.CONFIG_DIRECTORY);
 
-            // NPE protection.
-            titleTextAlign = Objects.requireNonNullElse(titleTextAlign, TextAlign.LEFT);
-            serversTextAlign = Objects.requireNonNullElse(serversTextAlign, TextAlign.LEFT);
-            server = Objects.requireNonNullElse(server, ServerMode.AVAILABLE);
+            // Resolve the file.
+            Path file = IStonecutter.CONFIG_DIRECTORY.resolve("ias.json");
 
-            // Get the file.
-            Path file = path.resolve("ias.json");
-
-            // Hacky JSON writing.
-            @SuppressWarnings("InstantiationOfUtilityClass") // <- Hack.
-            JsonObject json = (JsonObject) GSON.toJsonTree(new IASConfig());
-
-            // Write JSON.
+            // Save the config.
+            JsonObject json = (JsonObject) GSON.toJsonTree(new IConfig());
             json.addProperty("version", 3);
-            String value = GSON.toJson(json);
 
-            // Create parent directories.
+            // Write the config.
             Files.createDirectories(file.getParent());
+            try (BufferedWriter writer = Files.newBufferedWriter(file, StandardOpenOption.WRITE, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.SYNC)) {
+                GSON.toJson(json, writer);
+            }
 
-            // Write the file.
-            Files.writeString(file, value, StandardOpenOption.CREATE,
-                    StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE,
-                    StandardOpenOption.SYNC, StandardOpenOption.DSYNC);
-
-            // Log.
-            LOGGER.debug("IAS: Config saved to {}.", file);
+            // Log. (**DEBUG**)
+            LOGGER.debug(IAS.IAS_MARKER, "IAS: Config has been saved. (directory: {}, file: {})", IStonecutter.GAME_DIRECTORY, file);
         } catch (Throwable t) {
-            // Rethrow.
-            throw new RuntimeException("Unable to save IAS config.", t);
+            // Log.
+            LOGGER.error(IAS.IAS_MARKER, "IAS: Unable to save the IAS config.", t);
         }
     }
 
-    /**
-     * Gets whether to use server auth for MS.
-     *
-     * @return Whether to use server auth for MS
-     */
-    public static boolean useServerAuth() {
-        if (server == null) return IUtils.canUseSunServer();
-        return switch (server) {
-            case ALWAYS -> true;
-            case NEVER -> false;
-            case AVAILABLE -> IUtils.canUseSunServer();
-        };
+    @Contract(pure = true)
+    @Override
+    public String toString() {
+        return "IAS/IConfig{}";
     }
 }

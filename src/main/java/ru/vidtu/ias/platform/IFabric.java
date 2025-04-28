@@ -24,10 +24,6 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.fabricmc.fabric.api.client.screen.v1.Screens;
-import net.fabricmc.loader.api.FabricLoader;
-import net.fabricmc.loader.api.ModContainer;
-import net.fabricmc.loader.api.Version;
-import net.fabricmc.loader.api.metadata.ModMetadata;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.screens.TitleScreen;
 import net.minecraft.client.gui.screens.multiplayer.JoinMultiplayerScreen;
@@ -37,6 +33,8 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jspecify.annotations.NullMarked;
 import ru.vidtu.ias.IAS;
+import ru.vidtu.ias.config.IConfig;
+import ru.vidtu.ias.storage.IStorage;
 
 /**
  * Main IAS class for Fabric.
@@ -66,7 +64,11 @@ public final class IFabric implements ClientModInitializer {
         long start = System.nanoTime();
         LOGGER.info(IAS.IAS_MARKER, "IAS: Starting... (platform: fabric)");
 
-        // Create the UA and initialize.
+        // Load the config and the storage.
+        // It is critical that the config is loaded after the storage,
+        // otherwise the migration of accounts from old data will be wiped.
+        IStorage.load();
+        IConfig.load();
         IAS.init();
 
         // Register closer.

@@ -25,12 +25,12 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import ru.vidtu.ias.config.IConfig;
+import ru.vidtu.ias.config.TextAlign;
+import ru.vidtu.ias.storage.IStorage;
 import ru.vidtu.ias.storage.account.Account;
 import ru.vidtu.ias.storage.account.MicrosoftAccount;
 import ru.vidtu.ias.storage.account.OfflineAccount;
-import ru.vidtu.ias.config.IASConfig;
-import ru.vidtu.ias.storage.IStorage;
-import ru.vidtu.ias.config.TextAlign;
 import ru.vidtu.ias.storage.crypt.DummyCrypt;
 import ru.vidtu.ias.utils.GSONUtils;
 
@@ -59,13 +59,13 @@ final class MigratorV1 implements Migrator {
             }
 
             // Load old config.
-            boolean titleText = json.has("text") ? GSONUtils.getBooleanOrThrow(json, "text") : IASConfig.titleText;
-            String titleTextX = json.has("textX") ? GSONUtils.getStringOrThrow(json, "textX") : IASConfig.titleTextX;
-            String titleTextY = json.has("textY") ? GSONUtils.getStringOrThrow(json, "textY") : IASConfig.titleTextY;
-            TextAlign titleTextAlign = titleTextX != null && titleTextY != null ? TextAlign.CENTER : IASConfig.titleTextAlign;
-            boolean titleButton = json.has("showOnTitleScreen") ? GSONUtils.getBooleanOrThrow(json, "titleScreenButton") : IASConfig.titleButton;
-            String titleButtonX = json.has("btnX") ? GSONUtils.getStringOrThrow(json, "btnX") : IASConfig.titleButtonX;
-            String titleButtonY = json.has("btnY") ? GSONUtils.getStringOrThrow(json, "btnY") : IASConfig.titleButtonY;
+            boolean titleText = json.has("text") ? GSONUtils.getBooleanOrThrow(json, "text") : IConfig.titleText;
+            String titleTextX = json.has("textX") ? GSONUtils.getStringOrThrow(json, "textX") : IConfig.titleTextX;
+            String titleTextY = json.has("textY") ? GSONUtils.getStringOrThrow(json, "textY") : IConfig.titleTextY;
+            TextAlign titleTextAlign = titleTextX != null && titleTextY != null ? TextAlign.CENTER : IConfig.titleTextAlign;
+            boolean titleButton = json.has("showOnTitleScreen") ? GSONUtils.getBooleanOrThrow(json, "titleScreenButton") : IConfig.titleButton;
+            String titleButtonX = json.has("btnX") ? GSONUtils.getStringOrThrow(json, "btnX") : IConfig.titleButtonX;
+            String titleButtonY = json.has("btnY") ? GSONUtils.getStringOrThrow(json, "btnY") : IConfig.titleButtonY;
 
             // Load accounts.
             JsonArray rawAccounts = json.has("accounts") ? GSONUtils.getArrayOrThrow(json, "accounts") : new JsonArray(0);
@@ -134,13 +134,13 @@ final class MigratorV1 implements Migrator {
                     .replace("H", "%height%");
 
             // Flush config.
-            IASConfig.titleText = titleText;
-            IASConfig.titleTextX = titleTextX;
-            IASConfig.titleTextY = titleTextY;
-            IASConfig.titleTextAlign = titleTextAlign;
-            IASConfig.titleButton = titleButton;
-            IASConfig.titleButtonX = titleButtonX;
-            IASConfig.titleButtonY = titleButtonY;
+            IConfig.titleText = titleText;
+            IConfig.titleTextX = titleTextX;
+            IConfig.titleTextY = titleTextY;
+            IConfig.titleTextAlign = titleTextAlign;
+            IConfig.titleButton = titleButton;
+            IConfig.titleButtonX = titleButtonX;
+            IConfig.titleButtonY = titleButtonY;
 
             // Flush.
             IStorage.ACCOUNTS.addAll(accounts);

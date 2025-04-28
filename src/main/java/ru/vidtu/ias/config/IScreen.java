@@ -132,9 +132,9 @@ public final class IScreen extends Screen {
         // Title Text.
         Checkbox box = Checkbox.builder(Component.translatable("ias.config.titleText"), this.font)
                 .pos(5, 20)
-                .selected(IASConfig.titleText)
+                .selected(IConfig.titleText)
                 .onValueChange((cb, value) -> {
-                    IASConfig.titleText = value;
+                    IConfig.titleText = value;
                     this.titleTextX.active = value;
                     this.titleTextY.active = value;
                     this.titleTextX.setEditable(value);
@@ -156,10 +156,10 @@ public final class IScreen extends Screen {
         this.titleTextX.setMaxLength(128);
         this.titleTextX.setResponder(value -> {
             value = value.isBlank() ? null : Expression.SPACE_PATTERN.matcher(value.strip()).replaceAll(" ");
-            IASConfig.titleTextX = value;
+            IConfig.titleTextX = value;
             this.titleTextX.setTextColor(Expression.positionValidityColor(value, this.width, this.height, true));
         });
-        this.titleTextX.setValue(Objects.requireNonNullElse(IASConfig.titleTextX, ""));
+        this.titleTextX.setValue(Objects.requireNonNullElse(IConfig.titleTextX, ""));
         this.addRenderableWidget(this.titleTextX);
 
         // Title Text Y.
@@ -172,21 +172,21 @@ public final class IScreen extends Screen {
         this.titleTextY.setMaxLength(128);
         this.titleTextY.setResponder(value -> {
             value = value.isBlank() ? null : Expression.SPACE_PATTERN.matcher(value.strip()).replaceAll(" ");
-            IASConfig.titleTextY = value;
+            IConfig.titleTextY = value;
             this.titleTextY.setTextColor(Expression.positionValidityColor(value, this.width, this.height, false));
         });
-        this.titleTextY.setValue(Objects.requireNonNullElse(IASConfig.titleTextY, ""));
+        this.titleTextY.setValue(Objects.requireNonNullElse(IConfig.titleTextY, ""));
         this.addRenderableWidget(this.titleTextY);
 
         // Title Text Align.
-        this.titleTextAlign = Button.builder(CommonComponents.optionNameValue(Component.translatable("ias.config.titleTextAlign"), Component.translatable(IASConfig.titleTextAlign.toString())), btn -> {
+        this.titleTextAlign = Button.builder(CommonComponents.optionNameValue(Component.translatable("ias.config.titleTextAlign"), Component.translatable(IConfig.titleTextAlign.toString())), btn -> {
                     // This could be implemented with indexing, but there aren't too many options.
-                    IASConfig.titleTextAlign = switch (IASConfig.titleTextAlign) {
+                    IConfig.titleTextAlign = switch (IConfig.titleTextAlign) {
                         case LEFT -> TextAlign.CENTER;
                         case CENTER -> TextAlign.RIGHT;
                         case RIGHT -> TextAlign.LEFT;
                     };
-                    btn.setMessage(CommonComponents.optionNameValue(Component.translatable("ias.config.titleTextAlign"), Component.translatable(IASConfig.titleTextAlign.toString())));
+                    btn.setMessage(CommonComponents.optionNameValue(Component.translatable("ias.config.titleTextAlign"), Component.translatable(IConfig.titleTextAlign.toString())));
                 })
                 .bounds(167 + box.getWidth(), 20, Math.min(150, Math.max(20, this.width - 171 - box.getWidth())), 20)
                 .build();
@@ -198,9 +198,9 @@ public final class IScreen extends Screen {
         // Title Button.
         box = Checkbox.builder(Component.translatable("ias.config.titleButton"), this.font)
                 .pos(5, 44)
-                .selected(IASConfig.titleButton)
+                .selected(IConfig.titleButton)
                 .onValueChange((cb, value) -> {
-                    IASConfig.titleButton = value;
+                    IConfig.titleButton = value;
                     this.titleButtonX.active = value;
                     this.titleButtonY.active = value;
                     this.titleButtonX.setEditable(value);
@@ -221,10 +221,10 @@ public final class IScreen extends Screen {
         this.titleButtonX.setMaxLength(128);
         this.titleButtonX.setResponder(value -> {
             value = value.isBlank() ? null : Expression.SPACE_PATTERN.matcher(value.strip()).replaceAll(" ");
-            IASConfig.titleButtonX = value;
+            IConfig.titleButtonX = value;
             this.titleButtonX.setTextColor(Expression.positionValidityColor(value, this.width, this.height, true));
         });
-        this.titleButtonX.setValue(Objects.requireNonNullElse(IASConfig.titleButtonX, ""));
+        this.titleButtonX.setValue(Objects.requireNonNullElse(IConfig.titleButtonX, ""));
         this.addRenderableWidget(this.titleButtonX);
 
         // Title Button Y.
@@ -237,18 +237,18 @@ public final class IScreen extends Screen {
         this.titleButtonY.setMaxLength(128);
         this.titleButtonY.setResponder(value -> {
             value = value.isBlank() ? null : Expression.SPACE_PATTERN.matcher(value.strip()).replaceAll(" ");
-            IASConfig.titleButtonY = value;
+            IConfig.titleButtonY = value;
             this.titleButtonY.setTextColor(Expression.positionValidityColor(value, this.width, this.height, false));
         });
-        this.titleButtonY.setValue(Objects.requireNonNullElse(IASConfig.titleButtonY, ""));
+        this.titleButtonY.setValue(Objects.requireNonNullElse(IConfig.titleButtonY, ""));
         this.addRenderableWidget(this.titleButtonY);
 
         // Servers Text.
         box = Checkbox.builder(Component.translatable("ias.config.serversText"), this.font)
                 .pos(5, 68)
-                .selected(IASConfig.serversText)
+                .selected(IConfig.serversText)
                 .onValueChange((cb, value) -> {
-                    IASConfig.serversText = value;
+                    IConfig.serversText = value;
                     this.serversTextX.active = value;
                     this.serversTextY.active = value;
                     this.serversTextX.setEditable(value);
@@ -270,10 +270,10 @@ public final class IScreen extends Screen {
         this.serversTextX.setMaxLength(128);
         this.serversTextX.setResponder(value -> {
             value = value.isBlank() ? null : Expression.SPACE_PATTERN.matcher(value.strip()).replaceAll(" ");
-            IASConfig.serversTextX = value;
+            IConfig.serversTextX = value;
             this.serversTextX.setTextColor(Expression.positionValidityColor(value, this.width, this.height, true));
         });
-        this.serversTextX.setValue(Objects.requireNonNullElse(IASConfig.serversTextX, ""));
+        this.serversTextX.setValue(Objects.requireNonNullElse(IConfig.serversTextX, ""));
         this.addRenderableWidget(this.serversTextX);
 
         // Servers Text Y.
@@ -286,21 +286,21 @@ public final class IScreen extends Screen {
         this.serversTextY.setMaxLength(128);
         this.serversTextY.setResponder(value -> {
             value = value.isBlank() ? null : Expression.SPACE_PATTERN.matcher(value.strip()).replaceAll(" ");
-            IASConfig.serversTextY = value;
+            IConfig.serversTextY = value;
             this.serversTextY.setTextColor(Expression.positionValidityColor(value, this.width, this.height, false));
         });
-        this.serversTextY.setValue(Objects.requireNonNullElse(IASConfig.serversTextY, ""));
+        this.serversTextY.setValue(Objects.requireNonNullElse(IConfig.serversTextY, ""));
         this.addRenderableWidget(this.serversTextY);
 
         // Servers Text Align.
-        this.serversTextAlign = Button.builder(CommonComponents.optionNameValue(Component.translatable("ias.config.serversTextAlign"), Component.translatable(IASConfig.serversTextAlign.toString())), btn -> {
+        this.serversTextAlign = Button.builder(CommonComponents.optionNameValue(Component.translatable("ias.config.serversTextAlign"), Component.translatable(IConfig.serversTextAlign.toString())), btn -> {
                     // This could be implemented with indexing, but there aren't too many options.
-                    IASConfig.serversTextAlign = switch (IASConfig.serversTextAlign) {
+                    IConfig.serversTextAlign = switch (IConfig.serversTextAlign) {
                         case LEFT -> TextAlign.CENTER;
                         case CENTER -> TextAlign.RIGHT;
                         case RIGHT -> TextAlign.LEFT;
                     };
-                    btn.setMessage(CommonComponents.optionNameValue(Component.translatable("ias.config.serversTextAlign"), Component.translatable(IASConfig.serversTextAlign.toString())));
+                    btn.setMessage(CommonComponents.optionNameValue(Component.translatable("ias.config.serversTextAlign"), Component.translatable(IConfig.serversTextAlign.toString())));
                 })
                 .bounds(167 + box.getWidth(), 68, Math.min(150, Math.max(20, this.width - 171 - box.getWidth())), 20)
                 .build();
@@ -312,9 +312,9 @@ public final class IScreen extends Screen {
         // Servers Button.
         box = Checkbox.builder(Component.translatable("ias.config.serversButton"), this.font)
                 .pos(5, 92)
-                .selected(IASConfig.serversButton)
+                .selected(IConfig.serversButton)
                 .onValueChange((cb, value) -> {
-                    IASConfig.serversButton = value;
+                    IConfig.serversButton = value;
                     this.serversButtonX.active = value;
                     this.serversButtonY.active = value;
                     this.serversButtonX.setEditable(value);
@@ -335,10 +335,10 @@ public final class IScreen extends Screen {
         this.serversButtonX.setMaxLength(128);
         this.serversButtonX.setResponder(value -> {
             value = value.isBlank() ? null : Expression.SPACE_PATTERN.matcher(value.strip()).replaceAll(" ");
-            IASConfig.serversButtonX = value;
+            IConfig.serversButtonX = value;
             this.serversButtonX.setTextColor(Expression.positionValidityColor(value, this.width, this.height, true));
         });
-        this.serversButtonX.setValue(Objects.requireNonNullElse(IASConfig.serversButtonX, ""));
+        this.serversButtonX.setValue(Objects.requireNonNullElse(IConfig.serversButtonX, ""));
         this.addRenderableWidget(this.serversButtonX);
 
         // Servers Button Y.
@@ -351,33 +351,33 @@ public final class IScreen extends Screen {
         this.serversButtonY.setMaxLength(128);
         this.serversButtonY.setResponder(value -> {
             value = value.isBlank() ? null : Expression.SPACE_PATTERN.matcher(value.strip()).replaceAll(" ");
-            IASConfig.serversButtonY = value;
+            IConfig.serversButtonY = value;
             this.serversButtonY.setTextColor(Expression.positionValidityColor(value, this.width, this.height, false));
         });
-        this.serversButtonY.setValue(Objects.requireNonNullElse(IASConfig.serversButtonY, ""));
+        this.serversButtonY.setValue(Objects.requireNonNullElse(IConfig.serversButtonY, ""));
         this.addRenderableWidget(this.serversButtonY);
 
         // No Crypt Button.
         box = Checkbox.builder(Component.translatable("ias.config.allowNoCrypt"), this.font)
                 .pos(5, 116)
-                .selected(IASConfig.allowNoCrypt)
-                .onValueChange((cb, value) -> IASConfig.allowNoCrypt = value)
+                .selected(IConfig.allowNoCrypt)
+                .onValueChange((cb, value) -> IConfig.allowNoCrypt = value)
                 .tooltip(Tooltip.create(Component.translatable("ias.config.allowNoCrypt.tip")))
                 .build();
         box.setTooltipDelay(Duration.ofMillis(250L));
         this.addRenderableWidget(box);
 
         // Sun Server.
-        Button button = Button.builder(IASConfig.server.label(), btn -> {
+        Button button = Button.builder(IConfig.server.label(), btn -> {
             // Update the value.
-            IASConfig.server = switch (IASConfig.server) {
+            IConfig.server = switch (IConfig.server) {
                 case ALWAYS -> ServerMode.AVAILABLE;
                 case AVAILABLE -> ServerMode.NEVER;
                 case NEVER -> ServerMode.ALWAYS;
             };
 
             // Set the message.
-            btn.setMessage(IASConfig.server.label());
+            btn.setMessage(IConfig.server.label());
         }).bounds(9 + box.getWidth(), 116, 200, 20).tooltip(Tooltip.create(Component.translatable("ias.config.server.tip"))).build();
         button.setTooltipDelay(Duration.ofMillis(250L));
         this.addRenderableWidget(button);
@@ -385,8 +385,8 @@ public final class IScreen extends Screen {
         // Nick Warns.
         box = Checkbox.builder(Component.translatable("ias.config.nickWarns"), this.font)
                 .pos(5, 140)
-                .selected(IASConfig.nickWarns)
-                .onValueChange((cb, value) -> IASConfig.nickWarns = value)
+                .selected(IConfig.nickWarns)
+                .onValueChange((cb, value) -> IConfig.nickWarns = value)
                 .tooltip(Tooltip.create(Component.translatable("ias.config.nickWarns.tip")))
                 .build();
         box.setTooltipDelay(Duration.ofMillis(250L));
@@ -395,8 +395,8 @@ public final class IScreen extends Screen {
         // Password Echoing.
         box = Checkbox.builder(Component.translatable("ias.config.passwordEchoing"), this.font)
                 .pos(10 + box.getWidth(), 140)
-                .selected(IASConfig.passwordEchoing)
-                .onValueChange((cb, value) -> IASConfig.passwordEchoing = value)
+                .selected(IConfig.passwordEchoing)
+                .onValueChange((cb, value) -> IConfig.passwordEchoing = value)
                 .tooltip(Tooltip.create(Component.translatable("ias.config.passwordEchoing.tip")))
                 .build();
         box.setTooltipDelay(Duration.ofMillis(250L));
@@ -405,9 +405,9 @@ public final class IScreen extends Screen {
         // Unexpected Pigs.
         box = Checkbox.builder(Component.translatable("ias.config.unexpectedPigs"), this.font)
                 .pos(5, 164)
-                .selected(IASConfig.unexpectedPigs)
+                .selected(IConfig.unexpectedPigs)
                 .onValueChange((cb, value) -> {
-                    IASConfig.unexpectedPigs = value;
+                    IConfig.unexpectedPigs = value;
                     this.minecraft.getSoundManager().play(SimpleSoundInstance.forUI(value ? SoundEvents.PIG_AMBIENT : SoundEvents.PIG_DEATH, 1.0F));
                 })
                 .tooltip(Tooltip.create(Component.translatable("ias.config.unexpectedPigs.tip")))
@@ -418,9 +418,9 @@ public final class IScreen extends Screen {
         // Bar Name.
         box = Checkbox.builder(Component.translatable("ias.config.barNick"), this.font)
                 .pos(5, 188)
-                .selected(IASConfig.barNick)
+                .selected(IConfig.barNick)
                 .onValueChange((cb, value) -> {
-                    IASConfig.barNick = value;
+                    IConfig.barNick = value;
                     this.minecraft.updateTitle();
                 })
                 .tooltip(Tooltip.create(Component.translatable("ias.config.barNick.tip")))

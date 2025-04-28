@@ -27,10 +27,10 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import org.lwjgl.glfw.GLFW;
+import ru.vidtu.ias.auth.microsoft.MSAuth;
+import ru.vidtu.ias.config.IConfig;
 import ru.vidtu.ias.storage.account.Account;
 import ru.vidtu.ias.storage.account.OfflineAccount;
-import ru.vidtu.ias.auth.microsoft.MSAuth;
-import ru.vidtu.ias.config.IASConfig;
 
 import java.time.Duration;
 import java.util.UUID;
@@ -93,7 +93,7 @@ public final class OfflinePopupScreen extends Screen {
         // Add name box.
         this.name = new PopupBox(this.font, this.width / 2 - 75, this.height / 2 - 10 + 5, 148, 20, this.name, Component.translatable("ias.offline.nick"), this::done, false);
         this.name.setMaxLength(16);
-        if (IASConfig.unexpectedPigs) {
+        if (IConfig.unexpectedPigs) {
             //noinspection StringConcatenationMissingWhitespace
             this.name.setHint(Component.literal("Boar" + this.hashCode()).withStyle(ChatFormatting.DARK_GRAY));
         } else {

@@ -306,7 +306,7 @@ public final class MicrosoftAccount extends Account {
 
                 // Continue.
                 return data;
-            }, IAS.executor()).thenApplyAsync(value -> {
+            }, IAS.EXECUTOR).thenApplyAsync(value -> {
                 // Skip if cancelled.
                 if (value == null || handler.cancelled()) return false;
 
@@ -330,7 +330,7 @@ public final class MicrosoftAccount extends Account {
                 } catch (Throwable t) {
                     throw new RuntimeException("Unable to read the tokens.", t);
                 }
-            }, IAS.executor()).thenComposeAsync(value -> {
+            }, IAS.EXECUTOR).thenComposeAsync(value -> {
                 // Skip if cancelled.
                 if (!value || handler.cancelled()) return CompletableFuture.completedFuture(null);
 
@@ -365,7 +365,7 @@ public final class MicrosoftAccount extends Account {
 
                         // Convert MSA to XBL.
                         return MSAuth.msaToXbl(ms.access());
-                    }, IAS.executor()).thenComposeAsync(xbl -> {
+                    }, IAS.EXECUTOR).thenComposeAsync(xbl -> {
                         // Skip if cancelled.
                         if (xbl == null || handler.cancelled()) return CompletableFuture.completedFuture(null);
 
@@ -375,7 +375,7 @@ public final class MicrosoftAccount extends Account {
 
                         // Convert XBL to XSTS.
                         return MSAuth.xblToXsts(xbl.token(), xbl.hash());
-                    }, IAS.executor()).thenComposeAsync(xsts -> {
+                    }, IAS.EXECUTOR).thenComposeAsync(xsts -> {
                         // Skip if cancelled.
                         if (xsts == null || handler.cancelled()) return CompletableFuture.completedFuture(null);
 
@@ -385,7 +385,7 @@ public final class MicrosoftAccount extends Account {
 
                         // Convert XSTS to MCA.
                         return MSAuth.xstsToMca(xsts.token(), xsts.hash());
-                    }, IAS.executor()).thenComposeAsync(token -> {
+                    }, IAS.EXECUTOR).thenComposeAsync(token -> {
                         // Skip if cancelled.
                         if (token == null || handler.cancelled()) return CompletableFuture.completedFuture(null);
 
@@ -398,7 +398,7 @@ public final class MicrosoftAccount extends Account {
 
                         // Convert MCA to MCP.
                         return MSAuth.mcaToMcp(token);
-                    }, IAS.executor()).exceptionallyAsync(t -> {
+                    }, IAS.EXECUTOR).exceptionallyAsync(t -> {
                         t.addSuppressed(original);
 
                         // Probable case - no internet connection.
@@ -408,13 +408,13 @@ public final class MicrosoftAccount extends Account {
 
                         // Handle error.
                         throw new RuntimeException("Unable to perform MSR auth.", t);
-                    }, IAS.executor()).exceptionallyAsync(t -> {
+                    }, IAS.EXECUTOR).exceptionallyAsync(t -> {
                         // Rethrow. (adding original)
                         t.addSuppressed(original);
                         throw new RuntimeException("Unable to refresh MSR.", t);
-                    }, IAS.executor());
-                }, IAS.executor());
-            }, IAS.executor()).thenAcceptAsync(profile -> {
+                    }, IAS.EXECUTOR);
+                }, IAS.EXECUTOR);
+            }, IAS.EXECUTOR).thenAcceptAsync(profile -> {
                 // Skip if cancelled.
                 if (profile == null || handler.cancelled()) return;
 
@@ -478,13 +478,13 @@ public final class MicrosoftAccount extends Account {
                 // Create and return the data.
                 User login = new User(this.name, this.uuid, access.get(), Optional.empty(), Optional.empty(), User.Type.MSA);
                 handler.success(login, saveStorage);
-            }, IAS.executor()).exceptionallyAsync(t -> {
+            }, IAS.EXECUTOR).exceptionallyAsync(t -> {
                 // Handle error.
                 handler.error(new RuntimeException("Unable to login as MS account", t));
 
                 // Return null.
                 return null;
-            }, IAS.executor());
+            }, IAS.EXECUTOR);
         } catch (Throwable t) {
             // Handle.
             handler.error(new RuntimeException("Unable to begin MS auth.", t));

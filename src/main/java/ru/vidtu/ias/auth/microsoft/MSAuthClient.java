@@ -26,10 +26,10 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.vidtu.ias.IAS;
-import ru.vidtu.ias.storage.account.MicrosoftAccount;
 import ru.vidtu.ias.auth.handlers.CreateHandler;
 import ru.vidtu.ias.auth.microsoft.fields.DeviceAuth;
 import ru.vidtu.ias.auth.microsoft.fields.MSTokens;
+import ru.vidtu.ias.storage.account.MicrosoftAccount;
 import ru.vidtu.ias.storage.crypt.Crypt;
 import ru.vidtu.ias.utils.Holder;
 import ru.vidtu.ias.utils.IUtils;
@@ -134,12 +134,12 @@ public final class MSAuthClient implements Closeable {
 
             // Flush the task.
             this.close();
-            this.task = IAS.executor().scheduleWithFixedDelay(this::tick, interval.toMillis(), interval.toMillis(), TimeUnit.MILLISECONDS);
+            this.task = IAS.EXECUTOR.scheduleWithFixedDelay(this::tick, interval.toMillis(), interval.toMillis(), TimeUnit.MILLISECONDS);
             LOGGER.info("IAS: HTTP polling started with delay of {}.", interval);
 
             // Return as-is.
             return auth;
-        }, IAS.executor());
+        }, IAS.EXECUTOR);
     }
 
     /**
@@ -194,7 +194,7 @@ public final class MSAuthClient implements Closeable {
 
                 // Convert MSA to XBL.
                 return MSAuth.msaToXbl(ms.access());
-            }, IAS.executor()).thenComposeAsync(xbl -> {
+            }, IAS.EXECUTOR).thenComposeAsync(xbl -> {
                 // Stop if cancelled.
                 if (xbl == null || this.handler.cancelled()) return CompletableFuture.completedFuture(null);
 
@@ -204,7 +204,7 @@ public final class MSAuthClient implements Closeable {
 
                 // Convert XBL to XSTS.
                 return MSAuth.xblToXsts(xbl.token(), xbl.hash());
-            }, IAS.executor()).thenComposeAsync(xsts -> {
+            }, IAS.EXECUTOR).thenComposeAsync(xsts -> {
                 // Stop if cancelled.
                 if (xsts == null || this.handler.cancelled()) return CompletableFuture.completedFuture(null);
 
@@ -214,7 +214,7 @@ public final class MSAuthClient implements Closeable {
 
                 // Convert XSTS to MCA.
                 return MSAuth.xstsToMca(xsts.token(), xsts.hash());
-            }, IAS.executor()).thenComposeAsync(token -> {
+            }, IAS.EXECUTOR).thenComposeAsync(token -> {
                 // Stop if cancelled.
                 if (token == null || this.handler.cancelled()) return CompletableFuture.completedFuture(null);
 
@@ -227,7 +227,7 @@ public final class MSAuthClient implements Closeable {
 
                 // Convert MCA to MCP.
                 return MSAuth.mcaToMcp(token);
-            }, IAS.executor()).exceptionallyAsync(t -> {
+            }, IAS.EXECUTOR).exceptionallyAsync(t -> {
                 // Probable case - no internet connection.
                 if (IUtils.anyInCausalChain(t, err -> err instanceof UnresolvedAddressException || err instanceof NoRouteToHostException || err instanceof HttpTimeoutException || err instanceof ConnectException)) {
                     throw new FriendlyException("Unable to connect to MS servers.", t,  "ias.error.connect");
@@ -235,7 +235,7 @@ public final class MSAuthClient implements Closeable {
 
                 // Handle error.
                 throw new RuntimeException("Unable to perform MS auth.", t);
-            }, IAS.executor()).thenApplyAsync(profile -> {
+            }, IAS.EXECUTOR).thenApplyAsync(profile -> {
                 // Stop if cancelled.
                 if (profile == null || this.handler.cancelled()) return null;
 
@@ -277,7 +277,7 @@ public final class MSAuthClient implements Closeable {
 
                 // Return the profile as-is.
                 return profile;
-            }, IAS.executor()).thenAcceptAsync(profile -> {
+            }, IAS.EXECUTOR).thenAcceptAsync(profile -> {
                 // Stop if cancelled.
                 if (profile == null || this.handler.cancelled()) return;
 
@@ -292,13 +292,13 @@ public final class MSAuthClient implements Closeable {
                 // Create and return the data.
                 MicrosoftAccount account = new MicrosoftAccount(uuid, name, data.get());
                 this.handler.success(account);
-            }, IAS.executor()).exceptionallyAsync(t -> {
+            }, IAS.EXECUTOR).exceptionallyAsync(t -> {
                 // Handle error.
                 this.handler.error(new RuntimeException("Unable to create an MS account.", t));
 
                 // Return null.
                 return null;
-            }, IAS.executor());
+            }, IAS.EXECUTOR);
         } catch (Throwable t) {
             // Handle.
             this.handler.error(new RuntimeException("Unable to finalize MS auth.", t));

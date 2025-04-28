@@ -36,13 +36,13 @@ import org.lwjgl.glfw.GLFW;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.vidtu.ias.IAS;
-import ru.vidtu.ias.storage.account.Account;
-import ru.vidtu.ias.storage.account.MicrosoftAccount;
 import ru.vidtu.ias.auth.handlers.CreateHandler;
 import ru.vidtu.ias.auth.microsoft.MSAuth;
 import ru.vidtu.ias.auth.microsoft.MSAuthClient;
 import ru.vidtu.ias.auth.microsoft.MSAuthServer;
-import ru.vidtu.ias.config.IASConfig;
+import ru.vidtu.ias.config.IConfig;
+import ru.vidtu.ias.storage.account.Account;
+import ru.vidtu.ias.storage.account.MicrosoftAccount;
 import ru.vidtu.ias.storage.crypt.Crypt;
 import ru.vidtu.ias.storage.crypt.PasswordCrypt;
 import ru.vidtu.ias.utils.exceptions.FriendlyException;
@@ -187,7 +187,7 @@ final class MicrosoftPopupScreen extends Screen implements CreateHandler {
                 this.init(this.minecraft, this.width, this.height);
             }, true);
             this.password.setHint(Component.translatable("ias.password.hint").withStyle(ChatFormatting.DARK_GRAY));
-            this.password.setFormatter((s, i) -> IASConfig.passwordEchoing ? FormattedCharSequence.forward("*".repeat(s.length()), Style.EMPTY) : FormattedCharSequence.EMPTY);
+            this.password.setFormatter((s, i) -> IConfig.passwordEchoing ? FormattedCharSequence.forward("*".repeat(s.length()), Style.EMPTY) : FormattedCharSequence.EMPTY);
             this.password.setMaxLength(32);
             this.addRenderableWidget(this.password);
 
@@ -215,13 +215,13 @@ final class MicrosoftPopupScreen extends Screen implements CreateHandler {
         }
 
         // Try to open the server.
-        IAS.executor().execute(() -> {
-            if (IASConfig.useServerAuth()) {
+        IConfig.server.useSunServer().thenAcceptAsync(useServer -> {
+            if (useServer) {
                 this.server();
             } else {
                 this.client();
             }
-        });
+        }, IAS.EXECUTOR);
     }
 
     /**
@@ -278,7 +278,7 @@ final class MicrosoftPopupScreen extends Screen implements CreateHandler {
             CompletableFuture.runAsync(() -> {
                 // Run the server.
                 this.server.run();
-            }, IAS.executor()).thenRunAsync(() -> {
+            }, IAS.EXECUTOR).thenRunAsync(() -> {
                 // Log it and display progress.
                 LOGGER.info("IAS: Opening server link...");
                 this.stage(MicrosoftAccount.BROWSER);
@@ -322,7 +322,7 @@ final class MicrosoftPopupScreen extends Screen implements CreateHandler {
         }
 
         // Close off-thread.
-        IAS.executor().execute(() -> {
+        IAS.EXECUTOR.execute(() -> {
             // Close the client, if any.
             if (this.client != null) {
                 this.client.close();

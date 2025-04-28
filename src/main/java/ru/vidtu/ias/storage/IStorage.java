@@ -131,6 +131,7 @@ public final class IStorage {
             }
 
             // Flush the accounts.
+            ACCOUNTS.clear();
             ACCOUNTS.addAll(accounts);
 
             // Mark the storage as existing.

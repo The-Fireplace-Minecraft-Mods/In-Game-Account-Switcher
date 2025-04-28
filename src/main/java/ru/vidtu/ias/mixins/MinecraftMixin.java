@@ -28,10 +28,10 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import ru.vidtu.ias.config.IASConfig;
+import ru.vidtu.ias.config.IConfig;
 
 /**
- * Mixin for {@link IASConfig#barNick}.
+ * Mixin for {@link IConfig#barNick}.
  *
  * @author VidTu
  */
@@ -52,7 +52,7 @@ public final class MinecraftMixin {
     @Inject(method = "createTitle", at = @At("RETURN"), cancellable = true)
     private void ias$createTitle$return(CallbackInfoReturnable<String> cir) {
         // Skip if not enabled or not fully loaded.
-        if (!IASConfig.barNick || !I18n.exists("ias.bar") || this.user == null) return;
+        if (!IConfig.barNick || !I18n.exists("ias.bar") || this.user == null) return;
 
         // Modify otherwise.
         String original = cir.getReturnValue();

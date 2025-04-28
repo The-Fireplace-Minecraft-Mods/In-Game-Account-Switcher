@@ -26,8 +26,8 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import org.lwjgl.glfw.GLFW;
+import ru.vidtu.ias.config.IConfig;
 import ru.vidtu.ias.storage.account.Account;
-import ru.vidtu.ias.config.IASConfig;
 import ru.vidtu.ias.storage.crypt.DummyCrypt;
 import ru.vidtu.ias.storage.crypt.HardwareCrypt;
 
@@ -97,7 +97,7 @@ final class MicrosoftCryptPopupScreen extends Screen {
         // Add plain button.
         this.plain = new PopupButton(this.width / 2 - 75, this.height / 2 + 12, 150, 20,
                 Component.translatable("ias.microsoft.plain"), btn -> this.minecraft.setScreen(new MicrosoftPopupScreen(this.parent, this.handler, DummyCrypt.INSTANCE)), Supplier::get);
-        if (IASConfig.allowNoCrypt) {
+        if (IConfig.allowNoCrypt) {
             this.plain.setTooltip(Tooltip.create(Component.translatable("ias.microsoft.plain.tip.off", Component.translatable("key.keyboard.left.alt"), GLFW.glfwGetKeyName(GLFW.GLFW_KEY_Y, GLFW.GLFW_KEY_UNKNOWN))));
         } else {
             this.plain.setTooltip(Tooltip.create(Component.translatable("ias.microsoft.plain.tip.no")));
@@ -169,7 +169,7 @@ final class MicrosoftCryptPopupScreen extends Screen {
     @Override
     public boolean keyPressed(int key, int scan, int mods) {
         // Enable plain.
-        if (key == GLFW.GLFW_KEY_Y && IASConfig.allowNoCrypt && this.plain != null && !this.plain.isActive() && Screen.hasAltDown()) {
+        if (key == GLFW.GLFW_KEY_Y && IConfig.allowNoCrypt && this.plain != null && !this.plain.isActive() && Screen.hasAltDown()) {
             // Activate button.
             this.plain.active = true;
 

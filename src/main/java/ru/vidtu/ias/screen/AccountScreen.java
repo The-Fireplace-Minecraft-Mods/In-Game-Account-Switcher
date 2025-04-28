@@ -36,8 +36,8 @@ import org.lwjgl.glfw.GLFW;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.vidtu.ias.IAS;
-import ru.vidtu.ias.storage.account.Account;
 import ru.vidtu.ias.storage.IStorage;
+import ru.vidtu.ias.storage.account.Account;
 
 import java.time.Duration;
 

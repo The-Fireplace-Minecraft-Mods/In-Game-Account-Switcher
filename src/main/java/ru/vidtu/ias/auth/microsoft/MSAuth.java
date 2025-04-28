@@ -70,7 +70,7 @@ public final class MSAuth {
             .connectTimeout(TIMEOUT)
             .version(HttpClient.Version.HTTP_2)
             .followRedirects(HttpClient.Redirect.NEVER)
-            .executor(IAS.executor())
+            .executor(IAS.EXECUTOR)
             .build();
 
     /**
@@ -89,6 +89,14 @@ public final class MSAuth {
      */
     @NotNull
     public static final String CLIENT_ID = "54fd49e4-2103-4044-9603-2b028c814ec3";
+
+    /**
+     * Ports to try binding to.
+     * Not everything is allowed, this should be edited in MS Entra manually.
+     */
+    public static final int[] TRY_BIND_PORTS = {59125, 59126, 59127, 59128, 59129, 59130, 59131,
+            59132, 59133, 59134, 59135, 1234, 1235, 1236, 1237, 80, 8080, 19364, 19365, 19366, 27930,
+            27931, 27932, 27933, 27934, 42069};
 
     /**
      * An instance of this class cannot be created.
@@ -139,7 +147,7 @@ public final class MSAuth {
                 String message = "Unable to request Device Auth Code (DAC) from (" + response + " with " + response.headers() + "): " + response.body();
                 throw new RuntimeException(message, t);
             }
-        }, IAS.executor());
+        }, IAS.EXECUTOR);
     }
 
     /**
@@ -262,7 +270,7 @@ public final class MSAuth {
                 message = message.replace(code, "[MSAC]");
                 throw new RuntimeException(message, t);
             }
-        }, IAS.executor());
+        }, IAS.EXECUTOR);
     }
 
     /**
@@ -308,7 +316,7 @@ public final class MSAuth {
                 message = message.replace(refresh, "[MSR]");
                 throw new RuntimeException(message, t);
             }
-        }, IAS.executor());
+        }, IAS.EXECUTOR);
     }
 
     /**
@@ -367,7 +375,7 @@ public final class MSAuth {
                 message = message.replace(authToken, "[MSA]");
                 throw new RuntimeException(message, t);
             }
-        }, IAS.executor());
+        }, IAS.EXECUTOR);
     }
 
     /**
@@ -458,7 +466,7 @@ public final class MSAuth {
                 }
                 throw new RuntimeException(message, t);
             }
-        }, IAS.executor());
+        }, IAS.EXECUTOR);
     }
 
     /**
@@ -506,7 +514,7 @@ public final class MSAuth {
                 message = message.replace(hash, "[HASH]");
                 throw new RuntimeException(message, t);
             }
-        }, IAS.executor());
+        }, IAS.EXECUTOR);
     }
 
     /**
@@ -552,7 +560,7 @@ public final class MSAuth {
                 message = message.replace(access, "[MCA]");
                 throw new RuntimeException(message, t);
             }
-        }, IAS.executor());
+        }, IAS.EXECUTOR);
     }
 
     /**
@@ -586,6 +594,6 @@ public final class MSAuth {
                 // Rethrow.
                 throw new RuntimeException("Unable to obtain Minecraft profile by name '" + name + "' (" + response + " with " + response.headers() + "): " + response.body(), t);
             }
-        }, IAS.executor());
+        }, IAS.EXECUTOR);
     }
 }

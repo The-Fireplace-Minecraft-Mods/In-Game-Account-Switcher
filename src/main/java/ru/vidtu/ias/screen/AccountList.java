@@ -30,9 +30,8 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.vidtu.ias.IAS;
-import ru.vidtu.ias.storage.account.Account;
-import ru.vidtu.ias.storage.account.OfflineAccount;
 import ru.vidtu.ias.storage.IStorage;
+import ru.vidtu.ias.storage.account.Account;
 
 import java.util.Locale;
 import java.util.Map;
@@ -152,7 +151,7 @@ final class AccountList extends ObjectSelectionList<AccountEntry> {
             this.minecraft.setScreen(login);
 
             // Start login.
-            IAS.executor().execute(() -> account.login(login));
+            IAS.EXECUTOR.execute(() -> account.login(login));
 
             // Don't process further.
             return;
@@ -299,13 +298,13 @@ final class AccountList extends ObjectSelectionList<AccountEntry> {
 
             // Return the profile.
             return result.profile();
-        }, IAS.executor()).thenComposeAsync(profile -> {
+        }, IAS.EXECUTOR).thenComposeAsync(profile -> {
             // Skip if profile is null.
             if (profile == null) return CompletableFuture.completedFuture(null);
 
             // Load the skin.
             return this.minecraft.getSkinManager().getOrLoad(profile);
-        }, IAS.executor()).thenAcceptAsync(loaded -> {
+        }, IAS.EXECUTOR).thenAcceptAsync(loaded -> {
             // Put into map.
             loaded.ifPresent(newSkin -> SKINS.put(uuid, newSkin));
         }, this.minecraft).exceptionally(t -> {
