@@ -167,8 +167,11 @@ public final class OfflineAccount extends Account {
      */
     @Override
     public void encode(DataOutput out) throws IOException {
+        // Validate.
+        assert out != null : "Parameter 'out' is null. (account: " + this + ')';
+
         // Encode the type.
-        out.writeUTF("ias:offline_v2");
+        out.writeUTF("ias:offline_v2"); // Implicit NPE for 'out'
 
         // Encode the name.
         out.writeUTF(this.name);

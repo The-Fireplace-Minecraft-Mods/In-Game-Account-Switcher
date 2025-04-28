@@ -527,8 +527,11 @@ public final class MicrosoftAccount extends Account {
      */
     @Override
     public void encode(DataOutput out) throws IOException {
+        // Validate.
+        assert out != null : "Parameter 'out' is null. (account: " + this + ')';
+
         // Encode the type.
-        out.writeUTF("ias:microsoft_v2");
+        out.writeUTF("ias:microsoft_v2"); // Implicit NPE for 'out'
 
         // Encode the UUID.
         UUID uuid = this.uuid;

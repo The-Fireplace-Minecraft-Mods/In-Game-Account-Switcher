@@ -59,9 +59,12 @@ import java.util.zip.InflaterInputStream;
 @NullMarked
 public final class IStorage {
     /**
-     * Logger for this class.
+     * Whether to always use English (ASCII) instead of user-selected language disclaimer.
      */
-    private static final Logger LOGGER = LogManager.getLogger("IAS/IStorage");
+    // Addendum to fix for: https://github.com/The-Fireplace-Minecraft-Mods/In-Game-Account-Switcher/issues/216
+    // While the fix itself is to use ONLY the user language instead of writing disclaimers in ALL languages,
+    // this is the additional system property that will allow forcing English (ASCII) disclaimers.
+    private static final boolean FORCE_ENGLISH_DISCLAIMER = Boolean.getBoolean("ru.vidtu.ias.forceEnglishDisclaimer");
 
     /**
      * Pattern for valid file names for game disclaimers.
@@ -70,6 +73,11 @@ public final class IStorage {
     // Additional filename sanity checks (e.g. disallowance of vertical bar characters) is performed by the filesystem.
     // Why does this check exists? Simple and plain: I don't want a malicious locale to allow arbitrary file writing.
     private static final Pattern VALID_NAME = Pattern.compile("^[^\0./\\\\]{1,32}$");
+
+    /**
+     * Logger for this class.
+     */
+    private static final Logger LOGGER = LogManager.getLogger("IAS/IStorage");
 
     /**
      * Account data, encrypted or not.
@@ -153,6 +161,26 @@ public final class IStorage {
             Path folder = IStonecutter.GAME_DIRECTORY.resolve("_IAS_ACCOUNTS_DO_NOT_SEND_TO_ANYONE");
             Path file = folder.resolve(".hidden/accounts_v1.do_not_send_to_anyone");
 
+            // Load the disclaimer file.
+            String lang = FORCE_ENGLISH_DISCLAIMER ? "en_us" : Minecraft.getInstance().getLanguageManager().getSelected();
+            try (BufferedReader input = new BufferedReader(new InputStreamReader(Objects.requireNonNullElseGet(
+                    IStorage.class.getResourceAsStream("/assets/ias/disclaimers/" + lang + ".txt"),
+                    () -> IStorage.class.getResourceAsStream("/assets/ias/disclaimers/en_us.txt")), StandardCharsets.UTF_8))) {
+                // Get and validate the disclaimer filename.
+                String name = input.readLine();
+                Preconditions.checkNotNull(name, "IAS: Disclaimer file is empty. (lang: %s)", lang);
+                Preconditions.checkState(VALID_NAME.matcher(name).matches(), "IAS: Invalid disclaimer file name. (lang: %s, name: %s)", lang, name);;
+
+                // Get the lines.
+                List<String> lines = input.lines().toList();
+
+                // Write.
+                Path dfile = folder.resolve(name + ".txt");
+                Preconditions.checkState(dfile.startsWith(folder) && dfile.getParent().equals(folder), "IAS: Invalid disclaimer file. (lang: %s, name: %s, file: %s)", lang, name, dfile);
+                Files.createDirectories(dfile.getParent());
+                Files.write(dfile, lines);
+            }
+
             // Write the storage.
             Files.createDirectories(file.getParent());
             try (DataOutputStream out = new DataOutputStream(new DeflaterOutputStream(Files.newOutputStream(file, StandardOpenOption.WRITE,
@@ -179,24 +207,6 @@ public final class IStorage {
                 Files.setAttribute(file.getParent(), "dos:system", true, LinkOption.NOFOLLOW_LINKS);
             } catch (Throwable ignored) {
                 // Ignored
-            }
-
-            // Get and validate the disclaimer filename.
-            // Load the disclaimer file.
-            String lang = Minecraft.getInstance().getLanguageManager().getSelected();
-            try (BufferedReader input = new BufferedReader(new InputStreamReader(Objects.requireNonNullElseGet(
-                    IStorage.class.getResourceAsStream("/assets/ias/disclaimers/" + lang + ".txt"),
-                    () -> IStorage.class.getResourceAsStream("/assets/ias/disclaimers/en_us.txt")), StandardCharsets.UTF_8))) {
-                // Read.
-                String name = input.readLine();
-                Preconditions.checkNotNull(name, "IAS: Disclaimer file is empty. (lang: %s)", lang);
-                Preconditions.checkState(VALID_NAME.matcher(name).matches(), "IAS: Invalid disclaimer file name. (lang: %s, name: %s)", lang, name);;
-                List<String> lines = input.lines().toList();
-
-                // Write.
-                Path dfile = folder.resolve(name + ".txt");
-                Preconditions.checkState(dfile.startsWith(folder) && dfile.getParent().equals(folder), "IAS: Invalid disclaimer file. (lang: %s, name: %s, file: %s)", lang, name, dfile);
-                Files.write(dfile, lines);
             }
 
             // Mark the storage as existing.
