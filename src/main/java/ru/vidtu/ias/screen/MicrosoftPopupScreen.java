@@ -215,13 +215,13 @@ final class MicrosoftPopupScreen extends Screen implements CreateHandler {
         }
 
         // Try to open the server.
-        IConfig.server.useSunServer().thenAcceptAsync(useServer -> {
-            if (useServer) {
+        IAS.EXECUTOR.execute(() -> {
+            if (IConfig.server.useSunServer()) {
                 this.server();
             } else {
                 this.client();
             }
-        }, IAS.EXECUTOR);
+        });
     }
 
     /**

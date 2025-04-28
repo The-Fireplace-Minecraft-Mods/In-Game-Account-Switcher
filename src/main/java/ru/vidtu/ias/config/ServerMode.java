@@ -24,6 +24,7 @@ import net.minecraft.network.chat.Component;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Blocking;
 import org.jetbrains.annotations.CheckReturnValue;
 import org.jetbrains.annotations.Contract;
 import org.jspecify.annotations.NullMarked;
@@ -43,7 +44,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
-import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 
 /**
@@ -65,12 +65,12 @@ public enum ServerMode {
     /**
      * Always use HTTP server, never use Microsoft device auth.
      */
-    ALWAYS(Suppliers.ofInstance(CompletableFuture.completedFuture(true))),
+    ALWAYS(Suppliers.ofInstance(true)),
 
     /**
      * Use HTTP server if available, otherwise use Microsoft device auth.
      */
-    AVAILABLE(() -> CompletableFuture.supplyAsync(() -> {
+    AVAILABLE(Suppliers.memoize(() -> {
         Logger logger = LogManager.getLogger("IAS/ServerMode");
         long start = System.nanoTime();
         try {
@@ -143,17 +143,17 @@ public enum ServerMode {
             }
             return false;
         }
-    }, IAS.EXECUTOR)),
+    })),
 
     /**
      * Never use HTTP server, always use Microsoft device auth.
      */
-    NEVER(Suppliers.ofInstance(CompletableFuture.completedFuture(false)));
+    NEVER(Suppliers.ofInstance(false));
 
     /**
-     * Lazy supplier for completable future that determines whether the Sun HTTP server should be used.
+     * Lazy supplier that determines whether the Sun HTTP server should be used.
      */
-    private final Supplier<CompletableFuture<Boolean>> useSunServer;
+    private final Supplier<Boolean> useSunServer;
 
     /**
      * Mode button label.
@@ -167,9 +167,11 @@ public enum ServerMode {
 
     /**
      * Creates a new mode.
+     *
+     * @param useSunServer Lazy supplier that determines whether the Sun HTTP server should be used
      */
     @Contract(pure = true)
-    ServerMode(Supplier<CompletableFuture<Boolean>> useSunServer) {
+    ServerMode(Supplier<Boolean> useSunServer) {
         // Validate.
         assert useSunServer != null : "Parameter 'useSunServer' is null. (mode: " + this + ')';
 
@@ -185,12 +187,13 @@ public enum ServerMode {
     }
 
     /**
-     * Gets whether the Sun HTTP server should be used.
+     * Gets whether the Sun HTTP server should be used. This method is <b>BLOCKING</b>.
      *
-     * @return A lazy-computed completable future that is either will complete at most once
+     * @return Whether the
      */
+    @Blocking
     @CheckReturnValue
-    public CompletableFuture<Boolean> useSunServer() {
+    public boolean useSunServer() {
         return this.useSunServer.get();
     }
 
