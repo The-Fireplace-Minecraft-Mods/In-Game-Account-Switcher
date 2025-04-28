@@ -19,16 +19,21 @@
 
 package ru.vidtu.ias.storage.account;
 
+import com.google.common.collect.ImmutableList;
 import net.minecraft.client.User;
+import net.minecraft.network.chat.Component;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.CheckReturnValue;
 import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.jetbrains.annotations.Unmodifiable;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import ru.vidtu.ias.IAS;
 import ru.vidtu.ias.auth.handlers.LoginHandler;
 import ru.vidtu.ias.auth.microsoft.MSAuth;
+import ru.vidtu.ias.platform.IStonecutter;
 import ru.vidtu.ias.storage.crypt.Crypt;
 import ru.vidtu.ias.utils.Holder;
 import ru.vidtu.ias.utils.IUtils;
@@ -40,7 +45,10 @@ import java.io.DataInput;
 import java.io.DataInputStream;
 import java.io.DataOutput;
 import java.io.DataOutputStream;
+import java.io.EOFException;
 import java.io.IOException;
+import java.io.InvalidObjectException;
+import java.io.UTFDataFormatException;
 import java.net.ConnectException;
 import java.net.NoRouteToHostException;
 import java.net.http.HttpTimeoutException;
@@ -54,192 +62,201 @@ import java.util.concurrent.CompletableFuture;
  * Encrypted Microsoft account instance.
  *
  * @author VidTu
+ * @apiNote Internal use only
  */
-public final class MicrosoftAccount implements Account {
+@ApiStatus.Internal
+@NullMarked
+public final class MicrosoftAccount extends Account {
     /**
      * Initializing login.
      */
-    @NotNull
     public static final String INITIALIZING = "ias.login.initializing";
 
     /**
      * Starting server.
      */
-    @NotNull
     public static final String SERVER = "ias.login.server";
 
     /**
      * Link has been open in browser.
      */
-    @NotNull
     public static final String BROWSER = "ias.login.link";
 
     /**
      * Link has been open in browser.
      */
-    @NotNull
     public static final String CLIENT_BROWSER = "ias.login.linkClient";
 
     /**
      * Processing response.
      */
-    @NotNull
     public static final String PROCESSING = "ias.login.processing";
 
     /**
      * Decrypting tokens.
      */
-    @NotNull
     public static final String DECRYPTING = "ias.login.decrypting";
 
     /**
      * Encrypting tokens.
      */
-    @NotNull
     public static final String ENCRYPTING = "ias.login.encrypting";
 
     /**
      * Creating services.
      */
-    @NotNull
     public static final String SERVICES = "ias.login.services";
 
     /**
      * Converting Microsoft Authentication Code (MSAC) to Microsoft Access (MSA) and Microsoft Refresh (MSR) tokens.
      */
-    @NotNull
     public static final String MSAC_TO_MSA_MSR = "ias.login.msacToMsaMsr";
 
     /**
      * Converting Microsoft Refresh (MSR) token to Microsoft Access (MSA) and Microsoft Refresh (MSR) tokens.
      */
-    @NotNull
     public static final String MSR_TO_MSA_MSR = "ias.login.msrToMsaMsr";
 
     /**
      * Converting Microsoft Access (MSA) token to Xbox Live (XBL) token.
      */
-    @NotNull
     public static final String MSA_TO_XBL = "ias.login.msaToXbl";
 
     /**
      * Converting Xbox Live (XBL) token to Xbox Secure Token Service (XSTS) token.
      */
-    @NotNull
     public static final String XBL_TO_XSTS = "ias.login.xblToXsts";
 
     /**
      * Converting Xbox Secure Token Service (XSTS) token to Minecraft Access (MCA) token.
      */
-    @NotNull
     public static final String XSTS_TO_MCA = "ias.login.xstsToMca";
 
     /**
      * Converting Minecraft Access (MCA) token to Minecraft Profile. (MCP)
      */
-    @NotNull
     public static final String MCA_TO_MCP = "ias.login.mcaToMcp";
 
     /**
      * Finalizing login.
      */
-    @NotNull
     public static final String FINALIZING = "ias.login.finalizing";
+
+    /**
+     * Account type for the hover tooltip.
+     */
+    private static final Component TIP_TYPE = IStonecutter.translate("ias.accounts.tip.type.microsoft");
 
     /**
      * Logger for this class.
      */
-    @NotNull
-    public static final Logger LOGGER = LoggerFactory.getLogger("IAS/MicrosoftAccount");
-
-    /**
-     * Whether the account is insecurely stored.
-     */
-    private final boolean insecure;
+    private static final Logger LOGGER = LogManager.getLogger("IAS/MicrosoftAccount");
 
     /**
      * Account UUID.
      */
-    @NotNull
     private UUID uuid;
 
     /**
      * Account name.
      */
-    @NotNull
     private String name;
 
     /**
      * Encrypted account data.
      */
-    private byte @NotNull [] data;
+    private byte[] data;
+
+    /**
+     * An immutable list of account hover tooltip lines.
+     */
+    @Unmodifiable
+    private ImmutableList<Component> tip;
 
     /**
      * Creates a new Microsoft account.
      *
-     * @param insecure Whether the account is insecurely stored
-     * @param uuid     Account UUID
-     * @param name     Account name
-     * @param data     Encrypted account data
+     * @param uuid Account UUID
+     * @param name Account name
+     * @param data Encrypted account data
      */
     @Contract(pure = true)
-    public MicrosoftAccount(boolean insecure, @NotNull UUID uuid, @NotNull String name, byte @NotNull [] data) {
-        this.insecure = insecure;
+    public MicrosoftAccount(UUID uuid, String name, byte[] data) {
+        // Call super.
+        super(/*online=*/true);
+
+        // Validate.
+        assert data != null : "IAS: Parameter 'data' is null. (uuid: " + uuid + ", name: " + name + ", account: " + this + ')';
+        assert uuid != null : "IAS: Parameter 'uuid' is null. (name: " + name + ", data: " + data.length + " BYTES, account: " + this + ')';
+        assert name != null : "IAS: Parameter 'name' is null. (uuid: " + uuid + ", data: " + data.length + " BYTES, account: " + this + ')';
+        assert uuid.version() == 4 : "IAS: UUID version is not 4. (name: " + name + ", uuid: " + uuid + ", data: " + data.length + " BYTES, account: " + this + ", uuidVersion" + ')';
+        assert !name.isBlank() : "IAS: Name is blank. (name: " + name + ", uuid: " + uuid + ", data: " + data.length + " BYTES, account: " + this + ')';
+        assert name.length() <= 16 : "IAS: Name is longer than 16 characters. (name: " + name + ", uuid: " + uuid + ", data: " + data.length + " BYTES, account: " + this + ", nameLength: " + name.length() + ')';
+        assert data.length != 0 : "IAS: Data is empty. (name: " + name + ", uuid: " + uuid + ", account: " + this + ')';
+
+        // Assign.
         this.uuid = uuid;
-        this.name = name;
-        this.data = data.clone();
+        this.name = name.intern(); // Implicit NPE for 'name'
+        this.data = data.clone(); // Implicit NPE for 'data'
+
+        // Create.
+        this.tip = ImmutableList.of(
+                IStonecutter.translate("options.generic_value", IStonecutter.translate("ias.accounts.tip.nick"), this.name),
+                IStonecutter.translate("options.generic_value", IStonecutter.translate("ias.accounts.tip.uuid"), this.uuid.toString().intern()),
+                IStonecutter.translate("options.generic_value", IStonecutter.translate("ias.accounts.tip.type"), TIP_TYPE)
+        );
     }
 
+    /**
+     * Gets the UUID. Microsoft account UUIDs may technically change, but this is unlikely.
+     *
+     * @return Account UUID
+     * @see #name()
+     * @see #skin()
+     */
     @Contract(pure = true)
     @Override
-    @NotNull
-    public String type() {
-        return "ias:microsoft_v1";
-    }
-
-    @Contract(pure = true)
-    @Override
-    @NotNull
-    public String typeTipKey() {
-        return "ias.accounts.tip.type.microsoft";
-    }
-
-    @Contract(pure = true)
-    @Override
-    @NotNull
     public UUID uuid() {
         return this.uuid;
     }
 
+    /**
+     * Gets the name. Microsoft account names may be changed via the website and therefore may change.
+     *
+     * @return Account name
+     * @see #uuid()
+     */
     @Contract(pure = true)
     @Override
-    @NotNull
     public String name() {
         return this.name;
     }
 
-    @Contract(value = "-> true", pure = true)
-    @Override
-    public boolean canLogin() {
-        // Online accounts should be loggable.
-        return true;
-    }
-
+    /**
+     * Gets the skin. Microsoft accounts always return the same value as {@link #uuid()}.
+     *
+     * @return Account skin UUID, exactly the same as {@link #uuid()}
+     * @see #uuid()
+     */
     @Contract(pure = true)
     @Override
-    public boolean insecure() {
-        return this.insecure;
-    }
-
-    @Contract(pure = true)
-    @Override
-    @NotNull
     public UUID skin() {
         return this.uuid;
     }
 
+    /**
+     * Gets the tip.
+     *
+     * @return An immutable list of account hover tooltip lines
+     */
+    @Contract(pure = true)
+    @Unmodifiable
+    public ImmutableList<Component> tip() {
+        return this.tip;
+    }
+
     @Override
-    public void login(@NotNull LoginHandler handler) {
+    public void login(LoginHandler handler) {
         try {
             // Skip if cancelled.
             if (handler.cancelled()) return;
@@ -493,57 +510,83 @@ public final class MicrosoftAccount implements Account {
 
     @Contract(pure = true)
     @Override
-    @NotNull
     public String toString() {
-        return "MicrosoftAccount{" +
-                "uuid=" + this.uuid +
-                ", name='" + this.name + '\'' +
-                ", data='[DATA]'" +
+        byte[] data = this.data;
+        return "IAS/MicrosoftAccount{" +
+                "uuid=" + uuid +
+                ", name='" + name + '\'' +
+                ", data=" + (data != null ? ('[' + data.length + " BYTES]") : null) +
                 '}';
     }
 
+    /**
+     * Encodes the account into the binary output.
+     *
+     * @param out Binary output
+     * @throws IOException If an I/O error occurs
+     */
     @Override
-    public void write(@NotNull DataOutput out) throws IOException {
-        // Write the insecure.
-        out.writeBoolean(this.insecure);
+    public void encode(DataOutput out) throws IOException {
+        // Encode the type.
+        out.writeUTF("ias:microsoft_v2");
 
-        // Write the UUID.
-        out.writeLong(this.uuid.getMostSignificantBits());
-        out.writeLong(this.uuid.getLeastSignificantBits());
+        // Encode the UUID.
+        UUID uuid = this.uuid;
+        out.writeLong(uuid.getMostSignificantBits());
+        out.writeLong(uuid.getLeastSignificantBits());
 
-        // Write the name.
+        // Encode the name.
         out.writeUTF(this.name);
 
-        // Write the data.
-        out.writeShort(this.data.length);
-        out.write(this.data);
+        // Encode the data.
+        byte[] data = this.data;
+        out.writeShort(data.length);
+        out.write(data);
     }
 
     /**
-     * Reads the account from the input.
+     * Decodes the account from the binary input.
      *
-     * @param in Target input
-     * @return Read account
-     * @throws IOException On I/O error
+     * @param in              Binary input
+     * @param hasInsecureFlag Whether the account has an "insecure" flag attached to it
+     * @return A newly created decoded account
+     * @throws EOFException           If the {@code in} reaches the end before reading all the data
+     * @throws UTFDataFormatException If the decoded {@code name} string byte sequence can't be used to create a valid UTF string
+     * @throws InvalidObjectException If the decoded {@code name} is blank or too long or the {@code skin} is present ant its version is not {@code 4}
+     * @throws IOException            If an I/O error occurs
      */
     @CheckReturnValue
-    @NotNull
-    public static MicrosoftAccount read(@NotNull DataInput in) throws IOException {
-        // Read the insecure.
-        boolean insecure = in.readBoolean();
+    static MicrosoftAccount decode(DataInput in, boolean hasInsecureFlag) throws IOException {
+        // Decode and ignore the insecure.
+        if (hasInsecureFlag) {
+            boolean ignoredInsecureFlag = in.readBoolean();
+        }
 
-        // Read the UUID.
-        UUID uuid = new UUID(in.readLong(), in.readLong());
+        // Decode and validate the UUID.
+        long msb = in.readLong();
+        long lsb = in.readLong();
+        UUID uuid = new UUID(msb, lsb);
+        int version = uuid.version();
+        if (version != 4) {
+            throw new InvalidObjectException("IAS: UUID version is not 4. (in: " + in + ", uuid: " + ", uuidVersion: " + version + ')');
+        }
 
-        // Read the name.
+        // Decode and validate the name.
         String name = in.readUTF();
+        if (name.isBlank()) {
+            throw new InvalidObjectException("IAS: Name is blank. (in: " + in + ", uuid: " + uuid + ", name: " + name + ')');
+        }
+        int nameLength = name.length();
+        if (nameLength > 16) {
+            throw new InvalidObjectException("IAS: Name is longer than 16 characters. (in: " + in + ", uuid: " + uuid + ", name: " + name + ", nameLength: " + nameLength + ')');
+        }
 
-        // Read the data.
+        // Decode the data.
         int length = in.readUnsignedShort();
         byte[] data = new byte[length];
         in.readFully(data);
 
         // Create and return.
-        return new MicrosoftAccount(insecure, uuid, name, data);
+        return new MicrosoftAccount(uuid, name, data);
     }
 }

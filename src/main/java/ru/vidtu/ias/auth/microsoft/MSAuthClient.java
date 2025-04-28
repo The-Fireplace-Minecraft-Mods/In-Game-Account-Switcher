@@ -290,7 +290,7 @@ public final class MSAuthClient implements Closeable {
                 this.handler.stage(MicrosoftAccount.FINALIZING);
 
                 // Create and return the data.
-                MicrosoftAccount account = new MicrosoftAccount(this.crypt.insecure(), uuid, name, data.get());
+                MicrosoftAccount account = new MicrosoftAccount(uuid, name, data.get());
                 this.handler.success(account);
             }, IAS.executor()).exceptionallyAsync(t -> {
                 // Handle error.

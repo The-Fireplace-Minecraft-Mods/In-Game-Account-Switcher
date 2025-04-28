@@ -138,13 +138,6 @@ public final class HardwareCrypt implements Crypt {
 
     @Contract(pure = true)
     @Override
-    public boolean insecure() {
-        // Hopefully.
-        return false;
-    }
-
-    @Contract(pure = true)
-    @Override
     public byte @NotNull [] encrypt(byte @NotNull [] decrypted) {
         try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             // Generate and write salt.

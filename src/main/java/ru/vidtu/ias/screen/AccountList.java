@@ -25,6 +25,7 @@ import net.minecraft.client.User;
 import net.minecraft.client.gui.components.ObjectSelectionList;
 import net.minecraft.client.resources.DefaultPlayerSkin;
 import net.minecraft.client.resources.PlayerSkin;
+import net.minecraft.core.UUIDUtil;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -145,7 +146,7 @@ final class AccountList extends ObjectSelectionList<AccountEntry> {
         Account account = selected.account();
 
         // Check if we should log in online.
-        if (online && account.canLogin()) {
+        if (online && account.online()) {
             // Initialize and set the login screen.
             LoginPopupScreen login = new LoginPopupScreen(this.screen);
             this.minecraft.setScreen(login);
@@ -163,7 +164,7 @@ final class AccountList extends ObjectSelectionList<AccountEntry> {
 
         // Login offline.
         String name = account.name();
-        User data = new User(name, OfflineAccount.uuid(name), "ias:offline", Optional.empty(), Optional.empty(), User.Type.LEGACY);
+        User data = new User(name, UUIDUtil.createOfflinePlayerUUID(name), "ias:offline", Optional.empty(), Optional.empty(), User.Type.LEGACY);
         login.success(data, false);
     }
 

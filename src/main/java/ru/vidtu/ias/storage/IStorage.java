@@ -116,8 +116,8 @@ public final class IStorage {
 
                 // Read the accounts.
                 for (int i = 0; i < length; i++) {
-                    // Read and add the account.
-                    Account account = Account.readTyped(in);
+                    // Decode the account.
+                    Account account = Account.decode(in);
                     accounts.add(account);
                 }
             }
@@ -162,8 +162,8 @@ public final class IStorage {
 
                 // Write the accounts.
                 for (Account account : ACCOUNTS) {
-                    // Write typed.
-                    Account.writeTyped(out, account);
+                    // Encode the account.
+                    account.encode(out);
                 }
             }
 

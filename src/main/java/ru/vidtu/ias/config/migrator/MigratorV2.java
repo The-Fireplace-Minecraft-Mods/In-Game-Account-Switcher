@@ -113,7 +113,7 @@ final class MigratorV2 implements Migrator {
                         }
 
                         // Create.
-                        yield new MicrosoftAccount(true, uuid, name, data);
+                        yield new MicrosoftAccount(uuid, name, data);
                     }
                     case "ias:offline", "ru.vidtu.ias.account.offlineaccount" -> {
                         // Extract.

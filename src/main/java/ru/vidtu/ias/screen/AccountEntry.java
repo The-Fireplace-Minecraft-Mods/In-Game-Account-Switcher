@@ -115,11 +115,9 @@ final class AccountEntry extends ObjectSelectionList.Entry<AccountEntry> {
         this.minecraft = minecraft;
         this.list = list;
         this.account = account;
-        this.tooltip = Stream.of(
-                CommonComponents.optionNameValue(Component.translatable("ias.accounts.tip.nick"), Component.literal(this.account.name())),
-                CommonComponents.optionNameValue(Component.translatable("ias.accounts.tip.uuid"), Component.literal(this.account.uuid().toString())),
-                CommonComponents.optionNameValue(Component.translatable("ias.accounts.tip.type"), Component.translatable(this.account.typeTipKey()))
-        ).map(Component::getVisualOrderText).toList();
+        this.tooltip = account.tip().stream()
+                .map(Component::getVisualOrderText)
+                .toList();
     }
 
     @Override
@@ -154,15 +152,6 @@ final class AccountEntry extends ObjectSelectionList.Entry<AccountEntry> {
 
         // Render name.
         graphics.drawString(this.minecraft.font, this.account.name(), x + 10, y, color);
-
-        // Render warning if insecure.
-        if (this.account.insecure()) {
-            boolean warning = (System.nanoTime() / 1_000_000_000L) % 2L == 0;
-            graphics.blitSprite(RenderType::guiTextured, warning ? WARNING.enabled() : WARNING.enabledFocused(), x - 6, y - 1, 2, 10);
-            if (mouseX >= x - 10 && mouseX <= x && mouseY >= y && mouseY <= y + height) {
-                this.list.screen().setTooltipForNextRenderPass(Tooltip.create(Component.translatable("ias.accounts.tip.insecure")), DefaultTooltipPositioner.INSTANCE, true);
-            }
-        }
 
         // Render only for focused, selected or hovered.
         if (this.equals(this.list.getFocused()) || this.equals(this.list.getSelected())) {

@@ -45,14 +45,6 @@ import java.util.function.Supplier;
  */
 public sealed interface Crypt permits DummyCrypt, HardwareCrypt, PasswordCrypt {
     /**
-     * Gets whether this crypt is insecure.
-     *
-     * @return Whether this crypt is insecure
-     */
-    @Contract(pure = true)
-    boolean insecure();
-
-    /**
      * Gets the crypt storage type.
      *
      * @return Crypt storage namespace

@@ -68,12 +68,6 @@ public final class PasswordCrypt implements Crypt {
         return null;
     }
 
-    @Contract(value = "-> false", pure = true)
-    @Override
-    public boolean insecure() {
-        return false;
-    }
-
     @Contract(pure = true)
     @Override
     public byte @NotNull [] encrypt(byte @NotNull [] decrypted) {

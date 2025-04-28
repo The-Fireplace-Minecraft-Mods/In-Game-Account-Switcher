@@ -19,138 +19,136 @@
 
 package ru.vidtu.ias.storage.account;
 
+import com.google.common.collect.ImmutableList;
+import net.minecraft.network.chat.Component;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.CheckReturnValue;
 import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Unmodifiable;
+import org.jspecify.annotations.NullMarked;
 import ru.vidtu.ias.auth.handlers.LoginHandler;
 
 import java.io.DataInput;
 import java.io.DataOutput;
+import java.io.EOFException;
 import java.io.IOException;
+import java.io.InvalidObjectException;
+import java.io.UTFDataFormatException;
 import java.util.UUID;
 
 /**
- * Parent interface for all accounts.
+ * Parent class for all accounts.
  *
  * @author VidTu
+ * @apiNote Internal use only
  */
-public sealed interface Account permits OfflineAccount, MicrosoftAccount {
+@ApiStatus.Internal
+@NullMarked
+public sealed abstract class Account permits OfflineAccount, MicrosoftAccount {
     /**
-     * Gets the account type.
-     *
-     * @return Account storage type
+     * Whether the "Login" button should be enabled and call to {@link #login(LoginHandler)} is allowed
      */
-    @Contract(pure = true)
-    @NotNull
-    String type();
+    final boolean online;
 
     /**
-     * Gets the account type translation tip key.
+     * Creates the account.
      *
-     * @return Account type translation key
+     * @param online Whether the "Login" button should be enabled and call to {@link #login(LoginHandler)} is allowed
      */
     @Contract(pure = true)
-    @NotNull
-    String typeTipKey();
+    Account(boolean online) {
+        this.online = online;
+    }
 
     /**
-     * Gets the UUID of this account.
+     * Gets the online.
+     *
+     * @return Whether the "Login" button should be enabled and call to {@link #login(LoginHandler)} is allowed
+     * @see #login(LoginHandler)
+     */
+    @Contract(pure = true)
+    public final boolean online() {
+        return this.online;
+    }
+
+    /**
+     * Gets the UUID.
      *
      * @return Account UUID
+     * @see #name()
+     * @see #skin()
      */
     @Contract(pure = true)
-    @NotNull
-    UUID uuid();
+    public abstract UUID uuid();
 
     /**
-     * Gets the username of this account.
+     * Gets the name.
      *
-     * @return Account player name
+     * @return Account name
+     * @see #uuid()
      */
     @Contract(pure = true)
-    @NotNull
-    String name();
+    public abstract String name();
 
     /**
-     * Whether the player can log in into this account.
+     * Gets the skin.
      *
-     * @return Whether the {@link #login(LoginHandler)} is appropriate
+     * @return Account skin UUID, usually the same as {@link #uuid()}
+     * @see #uuid()
      */
     @Contract(pure = true)
-    boolean canLogin();
+    public abstract UUID skin();
 
     /**
-     * Gets the insecure state.
+     * Gets the tip.
      *
-     * @return Whether the account is insecurely stored
+     * @return An immutable list of account hover tooltip lines
      */
     @Contract(pure = true)
-    boolean insecure();
-
-    /**
-     * Gets the skin UUID.
-     *
-     * @return Account skin UUID
-     */
-    @Contract(pure = true)
-    @NotNull
-    UUID skin();
+    @Unmodifiable
+    public abstract ImmutableList<Component> tip();
 
     /**
      * Starts the authentication process for this account.
      *
      * @param handler Login handler
+     * @see #online()
      */
-    void login(@NotNull LoginHandler handler);
+    public abstract void login(LoginHandler handler);
 
     /**
-     * Writes the account to the output.
+     * Encodes the account into the binary output.
      *
-     * @param out Target output
-     * @throws IOException On I/O error
+     * @param out Binary output
+     * @throws IOException If an I/O error occurs
      */
-    void write(@NotNull DataOutput out) throws IOException;
+    public abstract void encode(DataOutput out) throws IOException;
 
     /**
-     * Writes the account type and account to the output.
+     * Decodes the account from the binary input.
      *
-     * @param out     Target output
-     * @param account Target account
-     * @throws IOException              On I/O error
-     * @throws IllegalArgumentException On unknown account type
-     */
-    static void writeTyped(@NotNull DataOutput out, @NotNull Account account) throws IOException {
-        // Get the account type.
-        String type = account.type();
-
-        // Write the type.
-        out.writeUTF(type);
-
-        // Write the data.
-        account.write(out);
-    }
-
-    /**
-     * Reads the account type and account from the input.
-     *
-     * @param in Target input
-     * @return Read account
-     * @throws IOException              On I/O error
-     * @throws IllegalArgumentException On unknown account type
+     * @param in Binary input
+     * @return A newly created decoded account
+     * @throws EOFException           If the {@code in} reaches the end before reading all the data
+     * @throws UTFDataFormatException If the decoded {@code type} or {@code name} string byte sequence can't be used to create a valid UTF string
+     * @throws InvalidObjectException If the decoded {@code type} is not valid
+     * @throws IOException            If an I/O error occurs
      */
     @CheckReturnValue
-    @NotNull
-    static Account readTyped(@NotNull DataInput in) throws IOException {
-        // Read the type.
-        String type = in.readUTF();
+    public static Account decode(DataInput in) throws IOException {
+        // Validate.
+        assert in != null : "IAS: Parameter 'in' is null.";
 
-        // Read and return the account by type.
-        return switch (type) {
-            case "ias:offline_v1" -> OfflineAccount.readV1(in);
-            case "ias:offline_v2" -> OfflineAccount.readV2(in);
-            case "ias:microsoft_v1" -> MicrosoftAccount.read(in);
-            default -> throw new IllegalArgumentException("Unknown account type: " + type);
-        };
+        // Decode the type.
+        String type = in.readUTF(); // Implicit NPE for 'in'
+
+        // Decode account by type.
+        switch (type) {
+            case "ias:microsoft_v2": return MicrosoftAccount.decode(in, /*hasInsecureFlag=*/false);
+            case "ias:offline_v2": return OfflineAccount.decode(in, /*hasSkin=*/true);
+            case "ias:microsoft_v1": return MicrosoftAccount.decode(in, /*hasInsecureFlag=*/true);
+            case "ias:offline_v1": return OfflineAccount.decode(in, /*hasSkin=*/false);
+            default: throw new InvalidObjectException("Unknown account type: " + type);
+        }
     }
-
 }

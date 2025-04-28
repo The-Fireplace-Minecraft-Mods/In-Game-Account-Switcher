@@ -61,12 +61,6 @@ public final class DummyCrypt implements Crypt {
         return null;
     }
 
-    @Contract(value = "-> true", pure = true)
-    @Override
-    public boolean insecure() {
-        return true;
-    }
-
     @Contract(value = "_ -> param1", pure = true)
     @Override
     public byte @NotNull [] encrypt(byte @NotNull [] decrypted) {

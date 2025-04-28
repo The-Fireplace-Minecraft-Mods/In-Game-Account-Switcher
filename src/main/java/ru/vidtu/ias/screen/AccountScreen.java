@@ -244,7 +244,7 @@ public final class AccountScreen extends Screen {
         this.offlineLogin.active = this.edit.active = this.delete.active = true;
 
         // Enable online login button if we can log in.
-        if (selected.account().canLogin()) {
+        if (selected.account().online()) {
             this.login.active = true;
             this.login.setTooltip(null);
         } else {
