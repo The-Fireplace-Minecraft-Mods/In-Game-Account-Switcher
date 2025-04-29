@@ -104,8 +104,6 @@
   "ias.config.allowNoCrypt.tip": "允許新增沒有加密的微軟帳號。這很*不安全*。",
   "ias.config.nickWarns": "暱稱警告",
   "ias.config.nickWarns.tip": "在使用可能不允許的暱稱加入伺服器時，使用訊息通知進行警告。",
-  "ias.config.unexpectedPigs": "意外的豬",
-  "ias.config.unexpectedPigs.tip": "允許出現意外的豬（復活節彩蛋）。",
   "ias.config.barNick": "標題欄暱稱",
   "ias.config.barNick.tip": "在視窗標題欄中顯示目前的暱稱。",
   "ias.config.server": "使用 HTTP 伺服器",

@@ -93,12 +93,8 @@ public final class OfflinePopupScreen extends Screen {
         // Add name box.
         this.name = new PopupBox(this.font, this.width / 2 - 75, this.height / 2 - 10 + 5, 148, 20, this.name, Component.translatable("ias.offline.nick"), this::done, false);
         this.name.setMaxLength(16);
-        if (IConfig.unexpectedPigs) {
-            //noinspection StringConcatenationMissingWhitespace
-            this.name.setHint(Component.literal("Boar" + this.hashCode()).withStyle(ChatFormatting.DARK_GRAY));
-        } else {
-            this.name.setHint(Component.literal("Steve").withStyle(ChatFormatting.DARK_GRAY));
-        }
+        //noinspection StringConcatenationMissingWhitespace
+        this.name.setHint(Component.literal("Boar" + this.hashCode()).withStyle(ChatFormatting.DARK_GRAY));
         this.addRenderableWidget(this.name);
 
         // Add done button.

@@ -227,9 +227,7 @@ public final class MSAuthServer implements Runnable, Closeable {
 
                         // Read and replace the page data.
                         String page = new String(in.readAllBytes(), StandardCharsets.UTF_8);
-                        page = page
-                                .replace("%%ias_icon%%", IConfig.unexpectedPigs ? "🐷👍" : "✅")
-                                .replace("%%ias_message%%", this.doneMessage);
+                        page = page.replace("%%ias_message%%", this.doneMessage);
                         data = page.getBytes(StandardCharsets.UTF_8);
                     }
 
@@ -294,9 +292,7 @@ public final class MSAuthServer implements Runnable, Closeable {
 
                         // Read and replace the page data.
                         String page = new String(in.readAllBytes(), StandardCharsets.UTF_8);
-                        page = page
-                                .replace("%%ias_icon%%", IConfig.unexpectedPigs ? "🐷👍" : "✅")
-                                .replace("%%ias_message%%", this.doneMessage);
+                        page = page.replace("%%ias_message%%", this.doneMessage);
                         data = page.getBytes(StandardCharsets.UTF_8);
                     }
 

@@ -392,19 +392,6 @@ public final class IScreen extends Screen {
         box.setTooltipDelay(Duration.ofMillis(250L));
         this.addRenderableWidget(box);
 
-        // Unexpected Pigs.
-        box = Checkbox.builder(Component.translatable("ias.config.unexpectedPigs"), this.font)
-                .pos(5, 164)
-                .selected(IConfig.unexpectedPigs)
-                .onValueChange((cb, value) -> {
-                    IConfig.unexpectedPigs = value;
-                    this.minecraft.getSoundManager().play(SimpleSoundInstance.forUI(value ? SoundEvents.PIG_AMBIENT : SoundEvents.PIG_DEATH, 1.0F));
-                })
-                .tooltip(Tooltip.create(Component.translatable("ias.config.unexpectedPigs.tip")))
-                .build();
-        box.setTooltipDelay(Duration.ofMillis(250L));
-        this.addRenderableWidget(box);
-
         // Bar Name.
         box = Checkbox.builder(Component.translatable("ias.config.barNick"), this.font)
                 .pos(5, 188)

@@ -104,8 +104,6 @@
   "ias.config.allowNoCrypt.tip": "Allow to add Microsoft accounts with no crypt. This is *UNSAFE*.",
   "ias.config.nickWarns": "Nick Warns",
   "ias.config.nickWarns.tip": "Warn with toast notifications when joining a server with possibly not allowed nick.",
-  "ias.config.unexpectedPigs": "Unexpected Pigs",
-  "ias.config.unexpectedPigs.tip": "Allow unexpected pigs (easter eggs) to show up.",
   "ias.config.barNick": "Bar Nick",
   "ias.config.barNick.tip": "Show current nick in the window title bar.",
   "ias.config.server": "Use HTTP server",

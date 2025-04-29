@@ -147,11 +147,6 @@ public final class IConfig {
     public static boolean nickWarns = true;
 
     /**
-     * Allow unexpected pigs to show up, {@code true} by default.
-     */
-    public static boolean unexpectedPigs = true;
-
-    /**
      * Whether to show the nick in the title bar, {@code false} by default.
      */
     public static boolean barNick = false;

@@ -104,8 +104,6 @@
   "ias.config.allowNoCrypt.tip": "Разрешить добавлять аккаунты Microsoft без шифра. Это *НЕБЕЗОПАСНО*.",
   "ias.config.nickWarns": "Предупреждения о никах",
   "ias.config.nickWarns.tip": "Предупреждать всплывающими уведомлениями при заходе на сервер с (возможно) запрещённым ником.",
-  "ias.config.unexpectedPigs": "Неожиданные свинки",
-  "ias.config.unexpectedPigs.tip": "Разрешить показывать неожиданных свинок. (пасхалки)",
   "ias.config.barNick": "Ник в баре",
   "ias.config.barNick.tip": "Показывать текущий ник в заголовке окна.",
   "ias.config.server": "Использовать HTTP-сервер",
