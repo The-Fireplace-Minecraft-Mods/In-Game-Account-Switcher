@@ -97,11 +97,7 @@ final class MicrosoftCryptPopupScreen extends Screen {
         // Add plain button.
         this.plain = new PopupButton(this.width / 2 - 75, this.height / 2 + 12, 150, 20,
                 Component.translatable("ias.microsoft.plain"), btn -> this.minecraft.setScreen(new MicrosoftPopupScreen(this.parent, this.handler, DummyCrypt.INSTANCE)), Supplier::get);
-        if (IConfig.allowNoCrypt) {
-            this.plain.setTooltip(Tooltip.create(Component.translatable("ias.microsoft.plain.tip.off", Component.translatable("key.keyboard.left.alt"), GLFW.glfwGetKeyName(GLFW.GLFW_KEY_Y, GLFW.GLFW_KEY_UNKNOWN))));
-        } else {
-            this.plain.setTooltip(Tooltip.create(Component.translatable("ias.microsoft.plain.tip.no")));
-        }
+        this.plain.setTooltip(Tooltip.create(Component.translatable("ias.microsoft.plain.tip", Component.translatable("key.keyboard.left.alt"), GLFW.glfwGetKeyName(GLFW.GLFW_KEY_Y, GLFW.GLFW_KEY_UNKNOWN))));
         this.plain.setTooltipDelay(Duration.ofMillis(250L));
         this.plain.color(1.0F, 0.5F, 0.5F, true);
         this.plain.active = false;
@@ -164,23 +160,6 @@ final class MicrosoftCryptPopupScreen extends Screen {
 
         // Close to parent.
         this.minecraft.setScreen(this.parent);
-    }
-
-    @Override
-    public boolean keyPressed(int key, int scan, int mods) {
-        // Enable plain.
-        if (key == GLFW.GLFW_KEY_Y && IConfig.allowNoCrypt && this.plain != null && !this.plain.isActive() && Screen.hasAltDown()) {
-            // Activate button.
-            this.plain.active = true;
-
-            // Recolor button and update tooltip.
-            this.plain.setTooltip(Tooltip.create(Component.translatable("ias.microsoft.plain.tip.on")));
-            this.plain.setTooltipDelay(Duration.ofMillis(250L));
-            this.plain.color(1.0F, 0.25F, 0.25F, false);
-        }
-
-        // Pass-through.
-        return super.keyPressed(key, scan, mods);
     }
 
     @Override

@@ -142,11 +142,6 @@ public final class IConfig {
     public static String serversButtonY = null;
 
     /**
-     * Allow storing accounts without Crypt, {@code false} by default.
-     */
-    public static boolean allowNoCrypt = false;
-
-    /**
      * Display warning toasts for invalid names, {@code true} by default.
      */
     public static boolean nickWarns = true;

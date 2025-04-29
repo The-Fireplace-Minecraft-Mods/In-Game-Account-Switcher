@@ -357,16 +357,6 @@ public final class IScreen extends Screen {
         this.serversButtonY.setValue(Objects.requireNonNullElse(IConfig.serversButtonY, ""));
         this.addRenderableWidget(this.serversButtonY);
 
-        // No Crypt Button.
-        box = Checkbox.builder(Component.translatable("ias.config.allowNoCrypt"), this.font)
-                .pos(5, 116)
-                .selected(IConfig.allowNoCrypt)
-                .onValueChange((cb, value) -> IConfig.allowNoCrypt = value)
-                .tooltip(Tooltip.create(Component.translatable("ias.config.allowNoCrypt.tip")))
-                .build();
-        box.setTooltipDelay(Duration.ofMillis(250L));
-        this.addRenderableWidget(box);
-
         // Sun Server.
         Button button = Button.builder(IConfig.server.label(), btn -> {
             // Update the value.
