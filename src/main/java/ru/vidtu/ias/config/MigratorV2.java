@@ -17,7 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
 
-package ru.vidtu.ias.config.migrator;
+package ru.vidtu.ias.config;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -25,8 +25,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import ru.vidtu.ias.config.IConfig;
-import ru.vidtu.ias.config.TextAlign;
 import ru.vidtu.ias.storage.IStorage;
 import ru.vidtu.ias.storage.account.Account;
 import ru.vidtu.ias.storage.account.MicrosoftAccount;
@@ -60,19 +58,19 @@ final class MigratorV2 implements Migrator {
             }
 
             // Load old config.
-            boolean titleText = json.has("titleScreenText") ? GSONUtils.getBooleanOrThrow(json, "titleScreenText") : IConfig.titleText;
-            String titleTextX = json.has("titleScreenTextX") ? GSONUtils.getStringOrThrow(json, "titleScreenTextX") : IConfig.titleTextX;
-            String titleTextY = json.has("titleScreenTextY") ? GSONUtils.getStringOrThrow(json, "titleScreenTextY") : IConfig.titleTextY;
+            boolean titleText = json.has("titleScreenText") ? GSONUtils.getBooleanOrThrow(json, "titleScreenText") : IConfig.titleText();
+            String titleTextX = json.has("titleScreenTextX") ? GSONUtils.getStringOrThrow(json, "titleScreenTextX") : IConfig.titleTextX();
+            String titleTextY = json.has("titleScreenTextY") ? GSONUtils.getStringOrThrow(json, "titleScreenTextY") : IConfig.titleTextY();
             String rawTitleTextAlign = json.has("titleScreenTextAlignment") ? GSONUtils.getStringOrThrow(json, "titleScreenTextAlignment").toUpperCase(Locale.ROOT) : null;
             TextAlign titleTextAlign;
             try {
-                titleTextAlign = rawTitleTextAlign != null ? TextAlign.valueOf(rawTitleTextAlign.toUpperCase(Locale.ROOT)) : IConfig.titleTextAlign;
+                titleTextAlign = rawTitleTextAlign != null ? TextAlign.valueOf(rawTitleTextAlign.toUpperCase(Locale.ROOT)) : IConfig.titleTextAlign();
             } catch (Throwable ignored) {
-                titleTextAlign = IConfig.titleTextAlign;
+                titleTextAlign = IConfig.titleTextAlign();
             }
-            boolean titleButton = json.has("titleScreenButton") ? GSONUtils.getBooleanOrThrow(json, "titleScreenButton") : IConfig.titleButton;
-            String titleButtonX = json.has("titleScreenButtonX") ? GSONUtils.getStringOrThrow(json, "titleScreenButtonX") : IConfig.titleButtonX;
-            String titleButtonY = json.has("titleScreenButtonY") ? GSONUtils.getStringOrThrow(json, "titleScreenButtonY") : IConfig.titleButtonY;
+            boolean titleButton = json.has("titleScreenButton") ? GSONUtils.getBooleanOrThrow(json, "titleScreenButton") : IConfig.titleButton();
+            String titleButtonX = json.has("titleScreenButtonX") ? GSONUtils.getStringOrThrow(json, "titleScreenButtonX") : IConfig.titleButtonX();
+            String titleButtonY = json.has("titleScreenButtonY") ? GSONUtils.getStringOrThrow(json, "titleScreenButtonY") : IConfig.titleButtonY();
             // We don't migrate serversButton, since it WAS false-defaulted, and now it's true-defaulted.
             String serversButtonX = json.has("multiplayerScreenButtonX") ? GSONUtils.getStringOrThrow(json, "multiplayerScreenButtonX") : null;
             String serversButtonY = json.has("multiplayerScreenButtonY") ? GSONUtils.getStringOrThrow(json, "multiplayerScreenButtonY") : null;
@@ -153,15 +151,15 @@ final class MigratorV2 implements Migrator {
                     .replace("H", "%height%");
 
             // Flush config.
-            IConfig.titleText = titleText;
-            IConfig.titleTextX = titleTextX;
-            IConfig.titleTextY = titleTextY;
-            IConfig.titleTextAlign = titleTextAlign;
-            IConfig.titleButton = titleButton;
-            IConfig.titleButtonX = titleButtonX;
-            IConfig.titleButtonY = titleButtonY;
-            IConfig.serversButtonX = serversButtonX;
-            IConfig.serversButtonY = serversButtonY;
+            IConfig.titleText(titleText);
+            IConfig.titleTextX(titleTextX);
+            IConfig.titleTextY(titleTextY);
+            IConfig.titleTextAlign(titleTextAlign);
+            IConfig.titleButton(titleButton);
+            IConfig.titleButtonX(titleButtonX);
+            IConfig.titleButtonY(titleButtonY);
+            IConfig.serversButtonX(serversButtonX);
+            IConfig.serversButtonY(serversButtonY);
 
             // Flush.
             IStorage.ACCOUNTS.addAll(accounts);

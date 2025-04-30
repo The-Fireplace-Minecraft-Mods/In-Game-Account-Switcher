@@ -56,7 +56,6 @@ import ru.vidtu.ias.auth.microsoft.MSAuth;
 import ru.vidtu.ias.config.IConfig;
 import ru.vidtu.ias.mixins.MinecraftAccessor;
 import ru.vidtu.ias.screen.AccountScreen;
-import ru.vidtu.ias.storage.IStorage;
 import ru.vidtu.ias.utils.Expression;
 import ru.vidtu.ias.utils.Holder;
 import ru.vidtu.ias.utils.IUtils;
@@ -277,12 +276,12 @@ public final class IAS {
     @SuppressWarnings({"ChainOfInstanceofChecks", "ConstantValue"}) // <- Abstraction for Minecraft is not possible, mods break user non-nullness.
     public static void onInit(Minecraft minecraft, Screen screen, Consumer<Button> buttonAdder) {
         // Add title button.
-        if (IConfig.titleButton && screen instanceof TitleScreen) {
+        if (IConfig.titleButton() && screen instanceof TitleScreen) {
             // Calculate the position.
             int width = screen.width;
             int height = screen.height;
-            Integer x = Expression.parsePosition(IConfig.titleButtonX, width, height);
-            Integer y = Expression.parsePosition(IConfig.titleButtonY, width, height);
+            Integer x = Expression.parsePosition(IConfig.titleButtonX(), width, height);
+            Integer y = Expression.parsePosition(IConfig.titleButtonY(), width, height);
 
             // Couldn't parse position.
             if (x == null || y == null) {
@@ -321,12 +320,12 @@ public final class IAS {
         }
 
         // Add servers button.
-        if (IConfig.serversButton && screen instanceof JoinMultiplayerScreen) {
+        if (IConfig.serversButton() && screen instanceof JoinMultiplayerScreen) {
             // Calculate the position.
             int width = screen.width;
             int height = screen.height;
-            Integer x = Expression.parsePosition(IConfig.serversButtonX, width, height);
-            Integer y = Expression.parsePosition(IConfig.serversButtonY, width, height);
+            Integer x = Expression.parsePosition(IConfig.serversButtonX(), width, height);
+            Integer y = Expression.parsePosition(IConfig.serversButtonY(), width, height);
 
             // Couldn't parse position.
             if (x == null || y == null) {
@@ -365,16 +364,16 @@ public final class IAS {
         }
 
         // Add title text.
-        if (IConfig.titleText && screen instanceof TitleScreen) {
+        if (IConfig.titleText() && screen instanceof TitleScreen) {
             // Calculate the position.
             int width = screen.width;
             int height = screen.height;
-            Integer cx = Expression.parsePosition(IConfig.titleTextX, width, height);
-            Integer cy = Expression.parsePosition(IConfig.titleTextY, width, height);
+            Integer cx = Expression.parsePosition(IConfig.titleTextX(), width, height);
+            Integer cy = Expression.parsePosition(IConfig.titleTextY(), width, height);
             Font font = minecraft.font;
             User user = minecraft.getUser();
             text = Component.translatable("ias.title", user != null ? user.getName() : "(broken by mods)");
-            textX = cx == null || cy == null ? (width - font.width(text)) / 2 : switch (IConfig.titleTextAlign) {
+            textX = cx == null || cy == null ? (width - font.width(text)) / 2 : switch (IConfig.titleTextAlign()) {
                 case LEFT -> cx;
                 case CENTER -> cx - font.width(text) / 2;
                 case RIGHT -> cx - font.width(text);
@@ -383,16 +382,16 @@ public final class IAS {
         }
 
         // Add servers text.
-        if (IConfig.serversText && screen instanceof JoinMultiplayerScreen) {
+        if (IConfig.serversText() && screen instanceof JoinMultiplayerScreen) {
             // Calculate the position.
             int width = screen.width;
             int height = screen.height;
-            Integer cx = Expression.parsePosition(IConfig.serversTextX, width, height);
-            Integer cy = Expression.parsePosition(IConfig.serversTextY, width, height);
+            Integer cx = Expression.parsePosition(IConfig.serversTextX(), width, height);
+            Integer cy = Expression.parsePosition(IConfig.serversTextY(), width, height);
             Font font = minecraft.font;
             User user = minecraft.getUser();
             text = Component.translatable("ias.title", user != null ? user.getName() : "(broken by mods)");
-            textX = cx == null || cy == null ? (width - font.width(text)) / 2 : switch (IConfig.serversTextAlign) {
+            textX = cx == null || cy == null ? (width - font.width(text)) / 2 : switch (IConfig.serversTextAlign()) {
                 case LEFT -> cx;
                 case CENTER -> cx - font.width(text) / 2;
                 case RIGHT -> cx - font.width(text);
@@ -401,7 +400,7 @@ public final class IAS {
         }
 
         // Warn about invalid names.
-        if (!IConfig.nickWarns || !(screen instanceof ConnectScreen) || minecraft.getToastManager().getToast(SystemToast.class, NICK_WARN) != null) return;
+        if (!(screen instanceof ConnectScreen) || minecraft.getToastManager().getToast(SystemToast.class, NICK_WARN) != null) return;
         User user = minecraft.getUser();
         // Mods break non-nullness.
         //noinspection ConstantValue
@@ -423,10 +422,10 @@ public final class IAS {
      */
     @SuppressWarnings("ChainOfInstanceofChecks") // <- Abstraction for Minecraft is not possible.
     public static void onDraw(Screen screen, Font font, GuiGraphics graphics) {
-        if (IConfig.titleText && screen instanceof TitleScreen) {
+        if (IConfig.titleText() && screen instanceof TitleScreen) {
             graphics.drawString(font, text, textX, textY, 0xFF_CC_88_88);
         }
-        if (IConfig.serversText && screen instanceof JoinMultiplayerScreen) {
+        if (IConfig.serversText() && screen instanceof JoinMultiplayerScreen) {
             graphics.drawString(font, text, textX, textY, 0xFF_CC_88_88);
         }
     }

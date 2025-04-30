@@ -17,7 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
 
-package ru.vidtu.ias.config.migrator;
+package ru.vidtu.ias.config;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;

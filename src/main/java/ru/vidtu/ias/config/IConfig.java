@@ -26,12 +26,13 @@ import com.google.gson.JsonObject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.CheckReturnValue;
 import org.jetbrains.annotations.Contract;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import ru.vidtu.ias.IAS;
-import ru.vidtu.ias.config.migrator.Migrator;
 import ru.vidtu.ias.platform.IStonecutter;
+import ru.vidtu.ias.utils.Expression;
 import ru.vidtu.ias.utils.GSONUtils;
 
 import java.io.BufferedReader;
@@ -64,102 +65,97 @@ public final class IConfig {
             .create();
 
     /**
-     * Whether the title screen text is enabled, {@code true} by default.
+     * Show the 'Current Account' label on the title screen, {@code true} by default.
      */
-    public static boolean titleText = true;
+    private static boolean titleText = true;
 
     /**
      * Custom title screen text X position, {@code null} by default.
      */
     @Nullable
-    public static String titleTextX = null;
+    private static String titleTextX = null;
 
     /**
      * Custom title screen text Y position, {@code null} by default.
      */
     @Nullable
-    public static String titleTextY = null;
+    private static String titleTextY = null;
 
     /**
      * Alignment for title screen text, {@link TextAlign#LEFT} by default.
      */
-    public static TextAlign titleTextAlign = TextAlign.LEFT;
+    private static TextAlign titleTextAlign = TextAlign.LEFT;
 
     /**
      * Whether the title screen button is enabled, {@code true} by default.
      */
-    public static boolean titleButton = true;
+    private static boolean titleButton = true;
 
     /**
      * Custom title screen button X position, {@code null} by default.
      */
     @Nullable
-    public static String titleButtonX = null;
+    private static String titleButtonX = null;
 
     /**
      * Custom title screen button Y position, {@code null} by default.
      */
     @Nullable
-    public static String titleButtonY = null;
+    private static String titleButtonY = null;
 
     /**
      * Whether the servers screen text is enabled, {@code false} by default.
      */
-    public static boolean serversText = true;
+    private static boolean serversText = true;
 
     /**
      * Custom servers screen text X position, {@code null} by default.
      */
     @Nullable
-    public static String serversTextX = null;
+    private static String serversTextX = null;
 
     /**
      * Custom servers screen text Y position, {@code null} by default.
      */
     @Nullable
-    public static String serversTextY = null;
+    private static String serversTextY = null;
 
     /**
      * Alignment for servers screen text, {@link TextAlign#LEFT} by default.
      */
-    public static TextAlign serversTextAlign = TextAlign.LEFT;
+    private static TextAlign serversTextAlign = TextAlign.LEFT;
 
     /**
      * Whether the servers screen button is enabled, {@code false} by default.
      */
-    public static boolean serversButton = true;
+    private static boolean serversButton = true;
 
     /**
      * Custom servers screen button X position, {@code null} by default.
      */
     @Nullable
-    public static String serversButtonX = null;
+    private static String serversButtonX = null;
 
     /**
      * Custom servers screen button Y position, {@code null} by default.
      */
     @Nullable
-    public static String serversButtonY = null;
-
-    /**
-     * Display warning toasts for invalid names, {@code true} by default.
-     */
-    public static boolean nickWarns = true;
+    private static String serversButtonY = null;
 
     /**
      * Whether to show the nick in the title bar, {@code false} by default.
      */
-    public static boolean barNick = false;
+    private static boolean barNick = false;
 
     /**
      * Current HTTP server mode, {@link ServerMode#AVAILABLE} by default.
      */
-    public static ServerMode server = ServerMode.AVAILABLE;
+    private static ServerMode server = ServerMode.AVAILABLE;
 
     /**
      * Crypt password echoing, {@code true} by default.
      */
-    public static boolean passwordEchoing = true;
+    private static boolean passwordEchoing = true;
 
     /**
      * Creates a new config via GSON.
@@ -257,5 +253,497 @@ public final class IConfig {
     @Override
     public String toString() {
         return "IAS/IConfig{}";
+    }
+
+    /**
+     * Gets the title text state.
+     *
+     * @return Show the 'Current Account' label on the title screen, {@code true} by default
+     * @see #titleText(boolean)
+     * @see #titleTextX()
+     * @see #titleTextY()
+     * @see #titleTextAlign()
+     */
+    @Contract(pure = true)
+    public static boolean titleText() {
+        return titleText;
+    }
+
+    /**
+     * Sets the title text state.
+     *
+     * @param titleText Show the 'Current Account' label on the title screen, {@code true} by default
+     * @see #titleText()
+     * @see #titleTextX()
+     * @see #titleTextY()
+     * @see #titleTextAlign()
+     */
+    static void titleText(boolean titleText) {
+        IConfig.titleText = titleText;
+    }
+
+    /**
+     * Gets the title text X.
+     *
+     * @return Custom title screen text X position, {@code null} by default
+     * @see #titleText()
+     * @see #titleTextX(String)
+     * @see #titleTextY()
+     * @see #titleTextAlign()
+     */
+    @Contract(pure = true)
+    @Nullable
+    public static String titleTextX() {
+        return titleTextX;
+    }
+
+    /**
+     * Sets the title text X.
+     *
+     * @param titleTextX Custom title screen text X position, {@code null} by default
+     * @see #titleText()
+     * @see #titleTextX()
+     * @see #titleTextY()
+     * @see #titleTextAlign()
+     */
+    static void titleTextX(@Nullable String titleTextX) {
+        IConfig.titleTextX = (titleTextX == null || titleTextX.isBlank() ? null : Expression.SPACE_PATTERN.matcher(titleTextX.strip()).replaceAll(" "));
+    }
+
+    /**
+     * Gets the title text Y.
+     *
+     * @return Custom title screen text Y position, {@code null} by default
+     * @see #titleText()
+     * @see #titleTextX()
+     * @see #titleTextY(String)
+     * @see #titleTextAlign()
+     */
+    @Contract(pure = true)
+    @Nullable
+    public static String titleTextY() {
+        return titleTextY;
+    }
+
+    /**
+     * Sets the title text Y.
+     *
+     * @param titleTextY Custom title screen text Y position, {@code null} by default
+     * @see #titleText()
+     * @see #titleTextX()
+     * @see #titleTextY()
+     * @see #titleTextAlign()
+     */
+    static void titleTextY(@Nullable String titleTextY) {
+        IConfig.titleTextY = (titleTextY == null || titleTextY.isBlank() ? null : Expression.SPACE_PATTERN.matcher(titleTextY.strip()).replaceAll(" "));
+    }
+
+    /**
+     * Gets the title text align.
+     *
+     * @return Alignment for title screen text, {@link TextAlign#LEFT} by default
+     * @see #titleText()
+     * @see #titleTextX()
+     * @see #titleTextY()
+     * @see #titleTextAlign(TextAlign)
+     * @see #cycleTitleTextAlign(boolean)
+     */
+    @Contract(pure = true)
+    public static TextAlign titleTextAlign() {
+        return titleTextAlign;
+    }
+
+    /**
+     * Sets the title text align.
+     *
+     * @param titleTextAlign Alignment for title screen text, {@link TextAlign#LEFT} by default
+     * @apiNote Only for config migration, use {@link #cycleTitleTextAlign(boolean)}
+     * @see #titleText()
+     * @see #titleTextX()
+     * @see #titleTextY()
+     * @see #titleTextAlign()
+     * @see #cycleTitleTextAlign(boolean)
+     */
+    @ApiStatus.Obsolete
+    static void titleTextAlign(TextAlign titleTextAlign) {
+        IConfig.titleTextAlign = MoreObjects.firstNonNull(titleTextAlign, TextAlign.LEFT);
+    }
+
+    /**
+     * Cycles the title text align.
+     *
+     * @param back Whether to cycle backwards
+     * @return New title text alignment
+     * @see #titleText()
+     * @see #titleTextX()
+     * @see #titleTextY()
+     * @see #titleTextAlign()
+     * @see #titleTextAlign(TextAlign)
+     */
+    @CheckReturnValue
+    static TextAlign cycleTitleTextAlign(boolean back) {
+        switch (titleTextAlign) {
+            case LEFT: return (titleTextAlign = (back ? TextAlign.RIGHT : TextAlign.CENTER));
+            case CENTER: return (titleTextAlign = (back ? TextAlign.LEFT : TextAlign.RIGHT));
+            case RIGHT: return (titleTextAlign = (back ? TextAlign.CENTER : TextAlign.LEFT));
+            default: return (titleTextAlign = TextAlign.LEFT);
+        }
+    }
+
+    /**
+     * Gets the title button.
+     *
+     * @return Whether the title screen button is enabled, {@code true} by default
+     * @see #titleButton(boolean)
+     * @see #titleButtonX()
+     * @see #titleButtonY()
+     */
+    @Contract(pure = true)
+    public static boolean titleButton() {
+        return titleButton;
+    }
+
+    /**
+     * Sets the title button.
+     *
+     * @param titleButton Whether the title screen button is enabled, {@code true} by default
+     * @see #titleButton()
+     * @see #titleButtonX()
+     * @see #titleButtonY()
+     */
+    static void titleButton(boolean titleButton) {
+        IConfig.titleButton = titleButton;
+    }
+
+    /**
+     * Gets the title button X.
+     *
+     * @return Custom title screen button X position, {@code null} by default
+     * @see #titleButton()
+     * @see #titleButtonX(String)
+     * @see #titleButtonY()
+     */
+    @Contract(pure = true)
+    @Nullable
+    public static String titleButtonX() {
+        return titleButtonX;
+    }
+
+    /**
+     * Sets the title button X.
+     *
+     * @param titleButtonX Custom title screen button X position, {@code null} by default
+     * @see #titleButton()
+     * @see #titleButtonX()
+     * @see #titleButtonY()
+     */
+    static void titleButtonX(@Nullable String titleButtonX) {
+        IConfig.titleButtonX = (titleButtonX == null || titleButtonX.isBlank() ? null : Expression.SPACE_PATTERN.matcher(titleButtonX.strip()).replaceAll(" "));
+    }
+
+    /**
+     * Gets the title button Y.
+     *
+     * @return Custom title screen button Y position, {@code null} by default
+     * @see #titleButton()
+     * @see #titleButtonX()
+     * @see #titleButtonY(String)
+     */
+    @Contract(pure = true)
+    @Nullable
+    public static String titleButtonY() {
+        return titleButtonY;
+    }
+
+    /**
+     * Sets the title button Y.
+     *
+     * @param titleButtonY Custom title screen button Y position, {@code null} by default
+     * @see #titleButton()
+     * @see #titleButtonX()
+     * @see #titleButtonY()
+     */
+    static void titleButtonY(@Nullable String titleButtonY) {
+        IConfig.titleButtonY = (titleButtonY == null || titleButtonY.isBlank() ? null : Expression.SPACE_PATTERN.matcher(titleButtonY.strip()).replaceAll(" "));
+    }
+
+    /**
+     * Gets the servers text state.
+     *
+     * @return Show the 'Current Account' label on the servers screen, {@code true} by default
+     * @see #serversText(boolean)
+     * @see #serversTextX()
+     * @see #serversTextY()
+     * @see #serversTextAlign()
+     */
+    @Contract(pure = true)
+    public static boolean serversText() {
+        return serversText;
+    }
+
+    /**
+     * Sets the servers text state.
+     *
+     * @param serversText Show the 'Current Account' label on the servers screen, {@code true} by default
+     * @see #serversText()
+     * @see #serversTextX()
+     * @see #serversTextY()
+     * @see #serversTextAlign()
+     */
+    static void serversText(boolean serversText) {
+        IConfig.serversText = serversText;
+    }
+
+    /**
+     * Gets the servers text X.
+     *
+     * @return Custom servers screen text X position, {@code null} by default
+     * @see #serversText()
+     * @see #serversTextX(String)
+     * @see #serversTextY()
+     * @see #serversTextAlign()
+     */
+    @Contract(pure = true)
+    @Nullable
+    public static String serversTextX() {
+        return serversTextX;
+    }
+
+    /**
+     * Sets the servers text X.
+     *
+     * @param serversTextX Custom servers screen text X position, {@code null} by default
+     * @see #serversText()
+     * @see #serversTextX()
+     * @see #serversTextY()
+     * @see #serversTextAlign()
+     */
+    static void serversTextX(@Nullable String serversTextX) {
+        IConfig.serversTextX = (serversTextX == null || serversTextX.isBlank() ? null : Expression.SPACE_PATTERN.matcher(serversTextX.strip()).replaceAll(" "));
+    }
+
+    /**
+     * Gets the servers text Y.
+     *
+     * @return Custom servers screen text Y position, {@code null} by default
+     * @see #serversText()
+     * @see #serversTextX()
+     * @see #serversTextY(String)
+     * @see #serversTextAlign()
+     */
+    @Contract(pure = true)
+    @Nullable
+    public static String serversTextY() {
+        return serversTextY;
+    }
+
+    /**
+     * Sets the servers text Y.
+     *
+     * @param serversTextY Custom servers screen text Y position, {@code null} by default
+     * @see #serversText()
+     * @see #serversTextX()
+     * @see #serversTextY()
+     * @see #serversTextAlign()
+     */
+    static void serversTextY(@Nullable String serversTextY) {
+        IConfig.serversTextY = (serversTextY == null || serversTextY.isBlank() ? null : Expression.SPACE_PATTERN.matcher(serversTextY.strip()).replaceAll(" "));
+    }
+
+    /**
+     * Gets the servers text align.
+     *
+     * @return Alignment for servers screen text, {@link TextAlign#LEFT} by default
+     * @see #serversText()
+     * @see #serversTextX()
+     * @see #serversTextY()
+     * @see #serversTextAlign(TextAlign)
+     * @see #cycleServersTextAlign(boolean)
+     */
+    @Contract(pure = true)
+    public static TextAlign serversTextAlign() {
+        return serversTextAlign;
+    }
+
+    /**
+     * Sets the servers text align.
+     *
+     * @param serversTextAlign Alignment for servers screen text, {@link TextAlign#LEFT} by default
+     * @apiNote Only for config migration, use {@link #cycleServersTextAlign(boolean)}
+     * @see #serversText()
+     * @see #serversTextX()
+     * @see #serversTextY()
+     * @see #serversTextAlign()
+     * @see #cycleServersTextAlign(boolean)
+     */
+    @ApiStatus.Obsolete
+    static void serversTextAlign(TextAlign serversTextAlign) {
+        IConfig.serversTextAlign = MoreObjects.firstNonNull(serversTextAlign, TextAlign.LEFT);
+    }
+
+    /**
+     * Cycles the servers text align.
+     *
+     * @param back Whether to cycle backwards
+     * @return New servers text alignment
+     * @see #serversText()
+     * @see #serversTextX()
+     * @see #serversTextY()
+     * @see #serversTextAlign()
+     * @see #serversTextAlign(TextAlign)
+     */
+    @CheckReturnValue
+    static TextAlign cycleServersTextAlign(boolean back) {
+        switch (serversTextAlign) {
+            case LEFT: return (serversTextAlign = (back ? TextAlign.RIGHT : TextAlign.CENTER));
+            case CENTER: return (serversTextAlign = (back ? TextAlign.LEFT : TextAlign.RIGHT));
+            case RIGHT: return (serversTextAlign = (back ? TextAlign.CENTER : TextAlign.LEFT));
+            default: return (serversTextAlign = TextAlign.LEFT);
+        }
+    }
+
+    /**
+     * Gets the servers button.
+     *
+     * @return Whether the servers screen button is enabled, {@code true} by default
+     * @see #serversButton(boolean)
+     * @see #serversButtonX()
+     * @see #serversButtonY()
+     */
+    @Contract(pure = true)
+    public static boolean serversButton() {
+        return serversButton;
+    }
+
+    /**
+     * Sets the servers button.
+     *
+     * @param serversButton Whether the servers screen button is enabled, {@code true} by default
+     * @see #serversButton()
+     * @see #serversButtonX()
+     * @see #serversButtonY()
+     */
+    static void serversButton(boolean serversButton) {
+        IConfig.serversButton = serversButton;
+    }
+
+    /**
+     * Gets the servers button X.
+     *
+     * @return Custom servers screen button X position, {@code null} by default
+     * @see #serversButton()
+     * @see #serversButtonX(String)
+     * @see #serversButtonY()
+     */
+    @Contract(pure = true)
+    @Nullable
+    public static String serversButtonX() {
+        return serversButtonX;
+    }
+
+    /**
+     * Sets the servers button X.
+     *
+     * @param serversButtonX Custom servers screen button X position, {@code null} by default
+     * @see #serversButton()
+     * @see #serversButtonX()
+     * @see #serversButtonY()
+     */
+    static void serversButtonX(@Nullable String serversButtonX) {
+        IConfig.serversButtonX = (serversButtonX == null || serversButtonX.isBlank() ? null : Expression.SPACE_PATTERN.matcher(serversButtonX.strip()).replaceAll(" "));
+    }
+
+    /**
+     * Gets the servers button Y.
+     *
+     * @return Custom servers screen button Y position, {@code null} by default
+     * @see #serversButton()
+     * @see #serversButtonX()
+     * @see #serversButtonY(String)
+     */
+    @Contract(pure = true)
+    @Nullable
+    public static String serversButtonY() {
+        return serversButtonY;
+    }
+
+    /**
+     * Sets the servers button Y.
+     *
+     * @param serversButtonY Custom servers screen button Y position, {@code null} by default
+     * @see #serversButton()
+     * @see #serversButtonX()
+     * @see #serversButtonY()
+     */
+    static void serversButtonY(@Nullable String serversButtonY) {
+        IConfig.serversButtonY = (serversButtonY == null || serversButtonY.isBlank() ? null : Expression.SPACE_PATTERN.matcher(serversButtonY.strip()).replaceAll(" "));
+    }
+
+    /**
+     * Gets the server mode.
+     *
+     * @return Current HTTP server mode, {@link ServerMode#AVAILABLE} by default
+     * @see #cycleServer(boolean)
+     */
+    public static ServerMode server() {
+        return server;
+    }
+
+    /**
+     * Cycles the server mode.
+     *
+     * @param back Whether to cycle backwards
+     * @return New server mode
+     * @see #server()
+     */
+    @CheckReturnValue
+    static ServerMode cycleServer(boolean back) {
+        switch (server) {
+            case ALWAYS: return (server = (back ? ServerMode.NEVER : ServerMode.AVAILABLE));
+            case AVAILABLE: return (server = (back ? ServerMode.ALWAYS : ServerMode.NEVER));
+            case NEVER: return (server = (back ? ServerMode.AVAILABLE : ServerMode.ALWAYS));
+            default: return (server = ServerMode.AVAILABLE);
+        }
+    }
+
+    /**
+     * Gets the bar nick state.
+     *
+     * @return Whether to show the nick in the title bar, {@code false} by default
+     * @see #barNick(boolean)
+     */
+    @Contract(pure = true)
+    public static boolean barNick() {
+        return barNick;
+    }
+
+    /**
+     * Sets the bar nick state.
+     *
+     * @param barNick Whether to show the nick in the title bar, {@code false} by default
+     * @see #barNick()
+     */
+    static void barNick(boolean barNick) {
+        IConfig.barNick = barNick;
+    }
+
+    /**
+     * Gets the password echoing state.
+     *
+     * @return Crypt password echoing, {@code true} by default
+     * @see #passwordEchoing(boolean)
+     */
+    public static boolean passwordEchoing() {
+        return passwordEchoing;
+    }
+
+    /**
+     * Sets the password echoing state.
+     *
+     * @param passwordEchoing Crypt password echoing, {@code true} by default
+     * @see #passwordEchoing()
+     */
+    static void passwordEchoing(boolean passwordEchoing) {
+        IConfig.passwordEchoing = passwordEchoing;
     }
 }

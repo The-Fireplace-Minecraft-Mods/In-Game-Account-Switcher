@@ -20,6 +20,7 @@
 package ru.vidtu.ias.platform;
 
 import it.unimi.dsi.fastutil.booleans.BooleanConsumer;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Checkbox;
@@ -130,7 +131,7 @@ public final class IStonecutter {
         //?} else
         /*return new net.minecraft.network.chat.TranslatableComponent(key, args);*/
     }
-    
+
     /**
      * Creates a new GUI button instance.
      *
@@ -146,24 +147,37 @@ public final class IStonecutter {
      * @return A new button instance
      */
     @Contract(value = "_, _, _, _, _, _, _, _, _ -> new", pure = true)
-    public static Button guiButton(@SuppressWarnings("unused") Font font, int x, int y, int width, int height, // <- Used before 1.19.4.
-                                   Component message, Component tooltip, BiConsumer<Button, Consumer<Component>> handler,
-                                   @SuppressWarnings("unused") Consumer<List<FormattedCharSequence>> tooltipRenderer) { // <- Used before 1.19.4.
+    public static Button guiButton(Font font, int x, int y, int width, int height, Component message,
+                                   Component tooltip, BiConsumer<Button, Consumer<Component>> handler,
+                                   Consumer<List<FormattedCharSequence>> tooltipRenderer) {
+        // Validate.
+        assert font != null : "IAS: Parameter 'font' is null. (x: " + x + ", y: " + y + ", width: " + width + ", height: " + height + ", message: " + message + ", tooltip: " + tooltip + ", handler: " + handler + ", tooltipRenderer: " + tooltipRenderer + ')';
+        assert (x >= -320) && (x <= Math.max(Minecraft.getInstance().getWindow().getGuiScaledWidth(), 320)) : "IAS: Parameter 'x' is not in the [" + -320 + ".." + Math.max(Minecraft.getInstance().getWindow().getGuiScaledWidth(), 320) + "] range. (font: " + font + ", x: " + x + ", y: " + y + ", width: " + width + ", height: " + height + ", message: " + message + ", tooltip: " + tooltip + ", handler: " + handler + ", tooltipRenderer: " + tooltipRenderer + ')';
+        assert (y >= -240) && (y <= Math.max(Minecraft.getInstance().getWindow().getGuiScaledHeight(), 240)) : "IAS: Parameter 'y' is not in the [" + -240 + ".." + Math.max(Minecraft.getInstance().getWindow().getGuiScaledHeight(), 240) + "] range. (font: " + font + ", x: " + x + ", y: " + y + ", width: " + width + ", height: " + height + ", message: " + message + ", tooltip: " + tooltip + ", handler: " + handler + ", tooltipRenderer: " + tooltipRenderer + ')';
+        assert width == 98 || width == 200 : "IAS: Parameter 'width' is not 98 or 200. (font: " + font + ", x: " + x + ", y: " + y + ", width: " + width + ", height: " + height + ", message: " + message + ", tooltip: " + tooltip + ", handler: " + handler + ", tooltipRenderer: " + tooltipRenderer + ')';
+        assert height == 20 : "IAS: Parameter 'height' is 20. (font: " + font + ", x: " + x + ", y: " + y + ", width: " + width + ", height: " + height + ", message: " + message + ", tooltip: " + tooltip + ", handler: " + handler + ", tooltipRenderer: " + tooltipRenderer + ')';
+        assert message != null : "IAS: Parameter 'message' is null. (font: " + font + ", x: " + x + ", y: " + y + ", width: " + width + ", height: " + height + ", tooltip: " + tooltip + ", handler: " + handler + ", tooltipRenderer: " + tooltipRenderer + ')';
+        assert tooltip != null : "IAS: Parameter 'tooltip' is null. (font: " + font + ", x: " + x + ", y: " + y + ", width: " + width + ", height: " + height + ", message: " + message + ", handler: " + handler + ", tooltipRenderer: " + tooltipRenderer + ')';
+        assert handler != null : "IAS: Parameter 'handler' is null. (font: " + font + ", x: " + x + ", y: " + y + ", width: " + width + ", height: " + height + ", message: " + message + ", tooltip: " + tooltip + ", tooltipRenderer: " + tooltipRenderer + ')';
+        assert tooltipRenderer != null : "IAS: Parameter 'tooltipRenderer' is null. (font: " + font + ", x: " + x + ", y: " + y + ", width: " + width + ", height: " + height + ", message: " + message + ", tooltip: " + tooltip + ", handler: " + handler + ')';
+
+        // Create.
         //? if >=1.19.4 {
-        Button button = Button.builder(message, btn -> handler.accept(btn, tip -> {
+        Button button = Button.builder(message, btn -> handler.accept(btn, tip -> { // Implicit NPE for 'handler'
             btn.setTooltip(net.minecraft.client.gui.components.Tooltip.create(tip));
             btn.setTooltipDelay(TOOLTIP_DURATION);
         })).tooltip(net.minecraft.client.gui.components.Tooltip.create(tooltip)).bounds(x, y, width, height).build();
         button.setTooltipDelay(TOOLTIP_DURATION);
         return button;
         //?} else {
-        /*org.apache.commons.lang3.mutable.Mutable<List<FormattedCharSequence>> tipHolder = new org.apache.commons.lang3.mutable.MutableObject<>(font.split(tooltip, 170));
-        return new Button(x, y, width, height, message, btn -> handler.accept(btn, tip -> tipHolder.setValue(font.split(tip, 170)))) {
+        /*org.apache.commons.lang3.mutable.Mutable<List<FormattedCharSequence>> tipHolder = new org.apache.commons.lang3.mutable.MutableObject<>(font.split(tooltip, 170)); // Implicit NPE for 'font', 'tooltip'
+        return new Button(x, y, width, height, message, btn -> handler.accept(btn, tip -> tipHolder.setValue(font.split(tip, 170)))) { // Implicit NPE for 'handler'
             /^*
              * Last time when the mouse was NOT over this element in units of {@link System#nanoTime()}.
              ^/
             private long lastAway = System.nanoTime();
 
+            @SuppressWarnings("ParameterNameDiffersFromOverriddenParameter") // <- Parameter names are not provided by Mojmap.
             @Override
             public void renderButton(com.mojang.blaze3d.vertex.PoseStack graphics, int mouseX, int mouseY, float delta) {
                 // Render the element itself.
@@ -179,7 +193,7 @@ public final class IStonecutter {
                 if ((System.nanoTime() - this.lastAway) < TOOLTIP_DURATION) return;
 
                 // Render the tooltip.
-                tooltipRenderer.accept(tipHolder.getValue());
+                tooltipRenderer.accept(tipHolder.getValue()); // Implicit NPE for 'tooltipRenderer'
             }
         };
         *///?}
@@ -200,17 +214,26 @@ public final class IStonecutter {
      */
     @SuppressWarnings("BooleanParameter") // <- Boolean method used as a state, not as control flow. (checkbox "checked" state)
     @Contract(value = "_, _, _, _, _, _, _, _ -> new", pure = true)
-    public static Checkbox guiCheckbox(Font font, int x, int y, Component message, Component tooltip,
-                                       boolean check, BooleanConsumer handler,
-                                       @SuppressWarnings("unused") Consumer<List<FormattedCharSequence>> tooltipRenderer) { // <- Used before 1.19.4.
+    public static Checkbox guiCheckbox(Font font, int x, int y, Component message, Component tooltip, boolean check,
+                                       BooleanConsumer handler, Consumer<List<FormattedCharSequence>> tooltipRenderer) {
+        // Validate.
+        assert font != null : "IAS: Parameter 'font' is null. (x: " + x + ", y: " + y + ", message: " + message + ", tooltip: " + tooltip + ", check: " + check + ", handler: " + handler + ", tooltipRenderer: " + tooltipRenderer + ')';
+        assert (x >= -320) && (x <= Math.max(Minecraft.getInstance().getWindow().getGuiScaledWidth(), 320)) : "IAS: Parameter 'x' is not in the [" + -320 + ".." + Math.max(Minecraft.getInstance().getWindow().getGuiScaledWidth(), 320) + "] range. (font: " + font + ", x: " + x + ", y: " + y + ", message: " + message + ", tooltip: " + tooltip + ", check: " + check + ", handler: " + handler + ", tooltipRenderer: " + tooltipRenderer + ')';
+        assert (y >= -240) && (y <= Math.max(Minecraft.getInstance().getWindow().getGuiScaledHeight(), 240)) : "IAS: Parameter 'y' is not in the [" + -240 + ".." + Math.max(Minecraft.getInstance().getWindow().getGuiScaledHeight(), 240) + "] range. (font: " + font + ", x: " + x + ", y: " + y + ", message: " + message + ", tooltip: " + tooltip + ", check: " + check + ", handler: " + handler + ", tooltipRenderer: " + tooltipRenderer + ')';
+        assert message != null : "IAS: Parameter 'message' is null. (font: " + font + ", x: " + x + ", y: " + y + ", tooltip: " + tooltip + ", check: " + check + ", handler: " + handler + ", tooltipRenderer: " + tooltipRenderer + ')';
+        assert tooltip != null : "IAS: Parameter 'tooltip' is null. (font: " + font + ", x: " + x + ", y: " + y + ", message: " + message + ", check: " + check + ", handler: " + handler + ", tooltipRenderer: " + tooltipRenderer + ')';
+        assert handler != null : "IAS: Parameter 'handler' is null. (font: " + font + ", x: " + x + ", y: " + y + ", message: " + message + ", tooltip: " + tooltip + ", check: " + check + ", tooltipRenderer: " + tooltipRenderer + ')';
+        assert tooltipRenderer != null : "IAS: Parameter 'tooltipRenderer' is null. (font: " + font + ", x: " + x + ", y: " + y + ", message: " + message + ", tooltip: " + tooltip + ", check: " + check + ", handler: " + handler + ')';
+
+        // Create.
         //? if >=1.20.4 {
-        Checkbox box = Checkbox.builder(message, font)
+        Checkbox box = Checkbox.builder(message, font) // Implicit NPE for 'message', 'font'
                 .pos(x - ((font.width(message) + 24) / 2), y)
                 .selected(check)
-                .onValueChange((checkbox, value) -> handler.accept(value))
+                .onValueChange((checkbox, value) -> handler.accept(value)) // Implicit NPE for 'handler'
                 .build();
         //?} else {
-        /*int width = font.width(message) + 24;
+        /*int width = font.width(message) + 24; // Implicit NPE for 'font', 'message'
         Checkbox box = new Checkbox(x - (width / 2), y, width, 20, message, check) {
             @Override
             public void onPress() {
@@ -218,20 +241,21 @@ public final class IStonecutter {
                 super.onPress();
 
                 // Invoke the handler.
-                handler.accept(this.selected());
+                handler.accept(this.selected()); // Implicit NPE for 'handler'
             }
 
             //? if <1.19.4 {
             /^/^¹*
              * A tooltip split to {@code 170} scaled pixels wide, a value used in modern versions
              ¹^/
-            private final List<FormattedCharSequence> tip = font.split(tooltip, 170);
+            private final List<FormattedCharSequence> tip = font.split(tooltip, 170); // Implicit NPE for 'tooltip'
 
             /^¹*
              * Last time when the mouse was NOT over this element in units of {@link System#nanoTime()}.
              ¹^/
             private long lastAway = System.nanoTime();
 
+            @SuppressWarnings("ParameterNameDiffersFromOverriddenParameter") // <- Parameter names are not provided by Mojmap.
             @Override
             public void renderButton(com.mojang.blaze3d.vertex.PoseStack graphics, int mouseX, int mouseY, float delta) {
                 // Render the element itself.
@@ -247,7 +271,7 @@ public final class IStonecutter {
                 if ((System.nanoTime() - this.lastAway) < TOOLTIP_DURATION) return;
 
                 // Render the tooltip.
-                tooltipRenderer.accept(this.tip);
+                tooltipRenderer.accept(this.tip); // Implicit NPE for 'tooltipRenderer'
             }
             ^///?}
         };

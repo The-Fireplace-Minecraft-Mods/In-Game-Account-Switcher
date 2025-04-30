@@ -19,27 +19,26 @@
 
 package ru.vidtu.ias.config;
 
+import com.google.common.base.Strings;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.components.Checkbox;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.AlertScreen;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.FormattedCharSequence;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.vidtu.ias.IAS;
-import ru.vidtu.ias.storage.IStorage;
+import ru.vidtu.ias.platform.IStonecutter;
 import ru.vidtu.ias.utils.Expression;
 
 import java.time.Duration;
-import java.util.Objects;
+import java.util.List;
 
 /**
  * IAS config screen.
@@ -56,56 +55,6 @@ public final class IScreen extends Screen {
      * Parent screen, {@code null} if none.
      */
     private final Screen parent;
-
-    /**
-     * Title text X.
-     */
-    private EditBox titleTextX;
-
-    /**
-     * Title text Y.
-     */
-    private EditBox titleTextY;
-
-    /**
-     * Title text align.
-     */
-    private Button titleTextAlign;
-
-    /**
-     * Title button X.
-     */
-    private EditBox titleButtonX;
-
-    /**
-     * Title button Y.
-     */
-    private EditBox titleButtonY;
-
-    /**
-     * Servers text X.
-     */
-    private EditBox serversTextX;
-
-    /**
-     * Servers text Y.
-     */
-    private EditBox serversTextY;
-
-    /**
-     * Servers text align.
-     */
-    private Button serversTextAlign;
-
-    /**
-     * Servers button X.
-     */
-    private EditBox serversButtonX;
-
-    /**
-     * Servers button Y.
-     */
-    private EditBox serversButtonY;
 
     /**
      * Creates a new screen.
@@ -130,280 +79,201 @@ public final class IScreen extends Screen {
         }
 
         // Title Text.
-        Checkbox box = Checkbox.builder(Component.translatable("ias.config.titleText"), this.font)
-                .pos(5, 20)
-                .selected(IConfig.titleText)
-                .onValueChange((cb, value) -> {
-                    IConfig.titleText = value;
-                    this.titleTextX.active = value;
-                    this.titleTextY.active = value;
-                    this.titleTextX.setEditable(value);
-                    this.titleTextY.setEditable(value);
-                    this.titleTextAlign.active = value;
-                })
-                .tooltip(Tooltip.create(Component.translatable("ias.config.titleText.tip")))
-                .build();
-        box.setTooltipDelay(Duration.ofMillis(250L));
-        this.addRenderableWidget(box);
+        int centerX = (this.width / 2);
+        this.addRenderableWidget(IStonecutter.guiCheckbox(this.font, centerX, 20, IStonecutter.translate("ias.title.text"),
+                IStonecutter.translate("ias.title.text.tip"), IConfig.titleText(),
+                IConfig::titleText, this::tooltip));
 
         // Title Text X.
-        this.titleTextX = new EditBox(this.font, 9 + box.getWidth(), 20, 75, 20, this.titleTextX, Component.translatable("ias.config.titleText.x"));
-        this.titleTextX.setHint(this.titleTextX.getMessage().copy().withStyle(ChatFormatting.DARK_GRAY));
-        this.titleTextX.setTooltip(Tooltip.create(Component.translatable("ias.config.titleText.x.tip", Component.translatable("key.keyboard.left.alt"))));
-        this.titleTextX.setTooltipDelay(Duration.ofMillis(250L));
-        this.titleTextX.active = box.selected();
-        this.titleTextX.setEditable(box.selected());
-        this.titleTextX.setMaxLength(128);
-        this.titleTextX.setResponder(value -> {
-            value = value.isBlank() ? null : Expression.SPACE_PATTERN.matcher(value.strip()).replaceAll(" ");
-            IConfig.titleTextX = value;
-            this.titleTextX.setTextColor(Expression.positionValidityColor(value, this.width, this.height, true));
+        int leftThirdX = (centerX - 151);
+        EditBox titleTextX = new EditBox(this.font, leftThirdX, 20 + 24, 98, 20, Component.translatable("ias.title.text.x"));
+        titleTextX.setHint(titleTextX.getMessage().copy().withStyle(ChatFormatting.DARK_GRAY));
+        titleTextX.setTooltip(Tooltip.create(Component.translatable("ias.title.text.x.tip", Component.translatable("key.keyboard.left.alt"))));
+        titleTextX.setTooltipDelay(Duration.ofMillis(250L));
+        titleTextX.setMaxLength(128);
+        titleTextX.setResponder(value -> {
+            // Update the value.
+            IConfig.titleTextX(value);
+
+            // Update the color.
+            titleTextX.setTextColor(Expression.positionValidityColor(value, this.width, this.height, true));
         });
-        this.titleTextX.setValue(Objects.requireNonNullElse(IConfig.titleTextX, ""));
-        this.addRenderableWidget(this.titleTextX);
+        titleTextX.setValue(Strings.nullToEmpty(IConfig.titleTextX()));
+        this.addRenderableWidget(titleTextX);
 
         // Title Text Y.
-        this.titleTextY = new EditBox(this.font, 88 + box.getWidth(), 20, 75, 20, this.titleTextY, Component.translatable("ias.config.titleText.y"));
-        this.titleTextY.setHint(this.titleTextY.getMessage().copy().withStyle(ChatFormatting.DARK_GRAY));
-        this.titleTextY.setTooltip(Tooltip.create(Component.translatable("ias.config.titleText.y.tip", Component.translatable("key.keyboard.left.alt"))));
-        this.titleTextY.setTooltipDelay(Duration.ofMillis(250L));
-        this.titleTextY.active = box.selected();
-        this.titleTextY.setEditable(box.selected());
-        this.titleTextY.setMaxLength(128);
-        this.titleTextY.setResponder(value -> {
-            value = value.isBlank() ? null : Expression.SPACE_PATTERN.matcher(value.strip()).replaceAll(" ");
-            IConfig.titleTextY = value;
-            this.titleTextY.setTextColor(Expression.positionValidityColor(value, this.width, this.height, false));
+        int middleThirdX = (centerX - 49);
+        EditBox titleTextY = new EditBox(this.font, middleThirdX, 20 + 24, 98, 20, Component.translatable("ias.title.text.y"));
+        titleTextY.setHint(titleTextY.getMessage().copy().withStyle(ChatFormatting.DARK_GRAY));
+        titleTextY.setTooltip(Tooltip.create(Component.translatable("ias.title.text.y.tip", Component.translatable("key.keyboard.left.alt"))));
+        titleTextY.setTooltipDelay(Duration.ofMillis(250L));
+        titleTextY.setMaxLength(128);
+        titleTextY.setResponder(value -> {
+            // Update the value.
+            IConfig.titleTextY(value);
+
+            // Update the color.
+            titleTextY.setTextColor(Expression.positionValidityColor(value, this.width, this.height, false));
         });
-        this.titleTextY.setValue(Objects.requireNonNullElse(IConfig.titleTextY, ""));
-        this.addRenderableWidget(this.titleTextY);
+        titleTextY.setValue(Strings.nullToEmpty(IConfig.titleTextY()));
+        this.addRenderableWidget(titleTextY);
 
         // Title Text Align.
-        this.titleTextAlign = Button.builder(CommonComponents.optionNameValue(Component.translatable("ias.config.titleTextAlign"), Component.translatable(IConfig.titleTextAlign.toString())), btn -> {
-                    // This could be implemented with indexing, but there aren't too many options.
-                    IConfig.titleTextAlign = switch (IConfig.titleTextAlign) {
-                        case LEFT -> TextAlign.CENTER;
-                        case CENTER -> TextAlign.RIGHT;
-                        case RIGHT -> TextAlign.LEFT;
-                    };
-                    btn.setMessage(CommonComponents.optionNameValue(Component.translatable("ias.config.titleTextAlign"), Component.translatable(IConfig.titleTextAlign.toString())));
-                })
-                .bounds(167 + box.getWidth(), 20, Math.min(150, Math.max(20, this.width - 171 - box.getWidth())), 20)
-                .build();
-        this.titleTextAlign.active = box.selected();
-        this.titleTextAlign.setTooltip(Tooltip.create(Component.translatable("ias.config.titleTextAlign.tip")));
-        this.titleTextAlign.setTooltipDelay(Duration.ofMillis(250L));
-        this.addRenderableWidget(this.titleTextAlign);
+        int rightThirdX = (centerX + 50);
+        TextAlign titleAlign = IConfig.titleTextAlign();
+        this.addRenderableWidget(IStonecutter.guiButton(this.font, rightThirdX, 20 + 24, 98, 20, titleAlign.titleLabel(), titleAlign.titleTip(), (button, tipSetter) -> {
+            // Update the alignment.
+            TextAlign newAlign = IConfig.cycleTitleTextAlign(/*back=*/hasShiftDown());
+
+            // Update the label and tooltip.
+            button.setMessage(newAlign.titleLabel());
+            tipSetter.accept(newAlign.titleTip());
+        }, this::tooltip));
 
         // Title Button.
-        box = Checkbox.builder(Component.translatable("ias.config.titleButton"), this.font)
-                .pos(5, 44)
-                .selected(IConfig.titleButton)
-                .onValueChange((cb, value) -> {
-                    IConfig.titleButton = value;
-                    this.titleButtonX.active = value;
-                    this.titleButtonY.active = value;
-                    this.titleButtonX.setEditable(value);
-                    this.titleButtonY.setEditable(value);
-                })
-                .tooltip(Tooltip.create(Component.translatable("ias.config.titleButton.tip")))
-                .build();
-        box.setTooltipDelay(Duration.ofMillis(250L));
-        this.addRenderableWidget(box);
+        this.addRenderableWidget(IStonecutter.guiCheckbox(this.font, centerX, 20 + (24 * 2), IStonecutter.translate("ias.title.button"),
+                IStonecutter.translate("ias.title.button.tip"), IConfig.titleButton(),
+                IConfig::titleButton, this::tooltip));
 
         // Title Button X.
-        this.titleButtonX = new EditBox(this.font, 9 + box.getWidth(), 44, 75, 20, this.titleButtonX, Component.translatable("ias.config.titleButton.x"));
-        this.titleButtonX.setHint(this.titleButtonX.getMessage().copy().withStyle(ChatFormatting.DARK_GRAY));
-        this.titleButtonX.setTooltip(Tooltip.create(Component.translatable("ias.config.titleButton.x.tip", Component.translatable("key.keyboard.left.alt"))));
-        this.titleButtonX.setTooltipDelay(Duration.ofMillis(250L));
-        this.titleButtonX.active = box.selected();
-        this.titleButtonX.setEditable(box.selected());
-        this.titleButtonX.setMaxLength(128);
-        this.titleButtonX.setResponder(value -> {
-            value = value.isBlank() ? null : Expression.SPACE_PATTERN.matcher(value.strip()).replaceAll(" ");
-            IConfig.titleButtonX = value;
-            this.titleButtonX.setTextColor(Expression.positionValidityColor(value, this.width, this.height, true));
+        int leftX = (centerX - 100);
+        EditBox titleButtonX = new EditBox(this.font, leftX, 20 + (24 * 3), 98, 20, Component.translatable("ias.title.button.x"));
+        titleButtonX.setHint(titleButtonX.getMessage().copy().withStyle(ChatFormatting.DARK_GRAY));
+        titleButtonX.setTooltip(Tooltip.create(Component.translatable("ias.title.button.x.tip", Component.translatable("key.keyboard.left.alt"))));
+        titleButtonX.setTooltipDelay(Duration.ofMillis(250L));
+        titleButtonX.setMaxLength(128);
+        titleButtonX.setResponder(value -> {
+            // Update the value.
+            IConfig.titleButtonX(value);
+
+            // Update the color.
+            titleButtonX.setTextColor(Expression.positionValidityColor(value, this.width, this.height, true));
         });
-        this.titleButtonX.setValue(Objects.requireNonNullElse(IConfig.titleButtonX, ""));
-        this.addRenderableWidget(this.titleButtonX);
+        titleButtonX.setValue(Strings.nullToEmpty(IConfig.titleButtonX()));
+        this.addRenderableWidget(titleButtonX);
 
         // Title Button Y.
-        this.titleButtonY = new EditBox(this.font, 88 + box.getWidth(), 44, 75, 20, this.titleButtonY, Component.translatable("ias.config.titleButton.y"));
-        this.titleButtonY.setHint(this.titleButtonY.getMessage().copy().withStyle(ChatFormatting.DARK_GRAY));
-        this.titleButtonY.setTooltip(Tooltip.create(Component.translatable("ias.config.titleButton.y.tip", Component.translatable("key.keyboard.left.alt"))));
-        this.titleButtonY.setTooltipDelay(Duration.ofMillis(250L));
-        this.titleButtonY.active = box.selected();
-        this.titleButtonY.setEditable(box.selected());
-        this.titleButtonY.setMaxLength(128);
-        this.titleButtonY.setResponder(value -> {
-            value = value.isBlank() ? null : Expression.SPACE_PATTERN.matcher(value.strip()).replaceAll(" ");
-            IConfig.titleButtonY = value;
-            this.titleButtonY.setTextColor(Expression.positionValidityColor(value, this.width, this.height, false));
+        int rightX = (centerX + 2);
+        EditBox titleButtonY = new EditBox(this.font, rightX, 20 + (24 * 3), 98, 20, Component.translatable("ias.title.button.y"));
+        titleButtonY.setHint(titleButtonY.getMessage().copy().withStyle(ChatFormatting.DARK_GRAY));
+        titleButtonY.setTooltip(Tooltip.create(Component.translatable("ias.title.button.y.tip", Component.translatable("key.keyboard.left.alt"))));
+        titleButtonY.setTooltipDelay(Duration.ofMillis(250L));
+        titleButtonY.setMaxLength(128);
+        titleButtonY.setResponder(value -> {
+            // Update the value.
+            IConfig.titleButtonY(value);
+
+            // Update the color.
+            titleButtonY.setTextColor(Expression.positionValidityColor(value, this.width, this.height, false));
         });
-        this.titleButtonY.setValue(Objects.requireNonNullElse(IConfig.titleButtonY, ""));
-        this.addRenderableWidget(this.titleButtonY);
+        titleButtonY.setValue(Strings.nullToEmpty(IConfig.titleButtonY()));
+        this.addRenderableWidget(titleButtonY);
 
         // Servers Text.
-        box = Checkbox.builder(Component.translatable("ias.config.serversText"), this.font)
-                .pos(5, 68)
-                .selected(IConfig.serversText)
-                .onValueChange((cb, value) -> {
-                    IConfig.serversText = value;
-                    this.serversTextX.active = value;
-                    this.serversTextY.active = value;
-                    this.serversTextX.setEditable(value);
-                    this.serversTextY.setEditable(value);
-                    this.serversTextAlign.active = value;
-                })
-                .tooltip(Tooltip.create(Component.translatable("ias.config.serversText.tip")))
-                .build();
-        box.setTooltipDelay(Duration.ofMillis(250L));
-        this.addRenderableWidget(box);
+        this.addRenderableWidget(IStonecutter.guiCheckbox(this.font, centerX, 20 + (24 * 4), IStonecutter.translate("ias.servers.text"),
+                IStonecutter.translate("ias.servers.text.tip"), IConfig.serversText(),
+                IConfig::serversText, this::tooltip));
 
         // Servers Text X.
-        this.serversTextX = new EditBox(this.font, 9 + box.getWidth(), 68, 75, 20, this.serversTextX, Component.translatable("ias.config.serversText.x"));
-        this.serversTextX.setHint(this.serversTextX.getMessage().copy().withStyle(ChatFormatting.DARK_GRAY));
-        this.serversTextX.setTooltip(Tooltip.create(Component.translatable("ias.config.serversText.x.tip", Component.translatable("key.keyboard.left.alt"))));
-        this.serversTextX.setTooltipDelay(Duration.ofMillis(250L));
-        this.serversTextX.active = box.selected();
-        this.serversTextX.setEditable(box.selected());
-        this.serversTextX.setMaxLength(128);
-        this.serversTextX.setResponder(value -> {
-            value = value.isBlank() ? null : Expression.SPACE_PATTERN.matcher(value.strip()).replaceAll(" ");
-            IConfig.serversTextX = value;
-            this.serversTextX.setTextColor(Expression.positionValidityColor(value, this.width, this.height, true));
+        EditBox serversTextX = new EditBox(this.font, leftThirdX, 20 + (24 * 5), 98, 20, Component.translatable("ias.servers.text.x"));
+        serversTextX.setHint(serversTextX.getMessage().copy().withStyle(ChatFormatting.DARK_GRAY));
+        serversTextX.setTooltip(Tooltip.create(Component.translatable("ias.servers.text.x.tip", Component.translatable("key.keyboard.left.alt"))));
+        serversTextX.setTooltipDelay(Duration.ofMillis(250L));
+        serversTextX.setMaxLength(128);
+        serversTextX.setResponder(value -> {
+            // Update the value.
+            IConfig.serversTextX(value);
+
+            // Update the color.
+            serversTextX.setTextColor(Expression.positionValidityColor(value, this.width, this.height, true));
         });
-        this.serversTextX.setValue(Objects.requireNonNullElse(IConfig.serversTextX, ""));
-        this.addRenderableWidget(this.serversTextX);
+        serversTextX.setValue(Strings.nullToEmpty(IConfig.serversTextX()));
+        this.addRenderableWidget(serversTextX);
 
         // Servers Text Y.
-        this.serversTextY = new EditBox(this.font, 88 + box.getWidth(), 68, 75, 20, this.serversTextY, Component.translatable("ias.config.serversText.y"));
-        this.serversTextY.setHint(this.serversTextY.getMessage().copy().withStyle(ChatFormatting.DARK_GRAY));
-        this.serversTextY.setTooltip(Tooltip.create(Component.translatable("ias.config.serversText.y.tip", Component.translatable("key.keyboard.left.alt"))));
-        this.serversTextY.setTooltipDelay(Duration.ofMillis(250L));
-        this.serversTextY.active = box.selected();
-        this.serversTextY.setEditable(box.selected());
-        this.serversTextY.setMaxLength(128);
-        this.serversTextY.setResponder(value -> {
-            value = value.isBlank() ? null : Expression.SPACE_PATTERN.matcher(value.strip()).replaceAll(" ");
-            IConfig.serversTextY = value;
-            this.serversTextY.setTextColor(Expression.positionValidityColor(value, this.width, this.height, false));
+        EditBox serversTextY = new EditBox(this.font, middleThirdX, 20 + (24 * 5), 98, 20, Component.translatable("ias.servers.text.y"));
+        serversTextY.setHint(serversTextY.getMessage().copy().withStyle(ChatFormatting.DARK_GRAY));
+        serversTextY.setTooltip(Tooltip.create(Component.translatable("ias.servers.text.y.tip", Component.translatable("key.keyboard.left.alt"))));
+        serversTextY.setTooltipDelay(Duration.ofMillis(250L));
+        serversTextY.setMaxLength(128);
+        serversTextY.setResponder(value -> {
+            // Update the value.
+            IConfig.serversTextY(value);
+
+            // Update the color.
+            serversTextY.setTextColor(Expression.positionValidityColor(value, this.width, this.height, false));
         });
-        this.serversTextY.setValue(Objects.requireNonNullElse(IConfig.serversTextY, ""));
-        this.addRenderableWidget(this.serversTextY);
+        serversTextY.setValue(Strings.nullToEmpty(IConfig.serversTextY()));
+        this.addRenderableWidget(serversTextY);
 
         // Servers Text Align.
-        this.serversTextAlign = Button.builder(CommonComponents.optionNameValue(Component.translatable("ias.config.serversTextAlign"), Component.translatable(IConfig.serversTextAlign.toString())), btn -> {
-                    // This could be implemented with indexing, but there aren't too many options.
-                    IConfig.serversTextAlign = switch (IConfig.serversTextAlign) {
-                        case LEFT -> TextAlign.CENTER;
-                        case CENTER -> TextAlign.RIGHT;
-                        case RIGHT -> TextAlign.LEFT;
-                    };
-                    btn.setMessage(CommonComponents.optionNameValue(Component.translatable("ias.config.serversTextAlign"), Component.translatable(IConfig.serversTextAlign.toString())));
-                })
-                .bounds(167 + box.getWidth(), 68, Math.min(150, Math.max(20, this.width - 171 - box.getWidth())), 20)
-                .build();
-        this.serversTextAlign.active = box.selected();
-        this.serversTextAlign.setTooltip(Tooltip.create(Component.translatable("ias.config.serversTextAlign.tip")));
-        this.serversTextAlign.setTooltipDelay(Duration.ofMillis(250L));
-        this.addRenderableWidget(this.serversTextAlign);
+        TextAlign serversAlign = IConfig.serversTextAlign();
+        this.addRenderableWidget(IStonecutter.guiButton(this.font, rightThirdX, 20 + (24 * 5), 98, 20, serversAlign.serversLabel(), serversAlign.serversTip(), (button, tipSetter) -> {
+            // Update the alignment.
+            TextAlign newAlign = IConfig.cycleServersTextAlign(/*back=*/hasShiftDown());
+
+            // Update the label and tooltip.
+            button.setMessage(newAlign.serversLabel());
+            tipSetter.accept(newAlign.serversTip());
+        }, this::tooltip));
 
         // Servers Button.
-        box = Checkbox.builder(Component.translatable("ias.config.serversButton"), this.font)
-                .pos(5, 92)
-                .selected(IConfig.serversButton)
-                .onValueChange((cb, value) -> {
-                    IConfig.serversButton = value;
-                    this.serversButtonX.active = value;
-                    this.serversButtonY.active = value;
-                    this.serversButtonX.setEditable(value);
-                    this.serversButtonY.setEditable(value);
-                })
-                .tooltip(Tooltip.create(Component.translatable("ias.config.serversButton.tip")))
-                .build();
-        box.setTooltipDelay(Duration.ofMillis(250L));
-        this.addRenderableWidget(box);
+        this.addRenderableWidget(IStonecutter.guiCheckbox(this.font, centerX, 20 + (24 * 6), IStonecutter.translate("ias.servers.button"),
+                IStonecutter.translate("ias.servers.button.tip"), IConfig.serversButton(),
+                IConfig::serversButton, this::tooltip));
 
         // Servers Button X.
-        this.serversButtonX = new EditBox(this.font, 9 + box.getWidth(), 92, 75, 20, this.serversButtonX, Component.translatable("ias.config.serversButton.x"));
-        this.serversButtonX.setHint(this.serversButtonX.getMessage().copy().withStyle(ChatFormatting.DARK_GRAY));
-        this.serversButtonX.setTooltip(Tooltip.create(Component.translatable("ias.config.serversButton.x.tip", Component.translatable("key.keyboard.left.alt"))));
-        this.serversButtonX.setTooltipDelay(Duration.ofMillis(250L));
-        this.serversButtonX.active = box.selected();
-        this.serversButtonX.setEditable(box.selected());
-        this.serversButtonX.setMaxLength(128);
-        this.serversButtonX.setResponder(value -> {
-            value = value.isBlank() ? null : Expression.SPACE_PATTERN.matcher(value.strip()).replaceAll(" ");
-            IConfig.serversButtonX = value;
-            this.serversButtonX.setTextColor(Expression.positionValidityColor(value, this.width, this.height, true));
+        EditBox serversButtonX = new EditBox(this.font, leftX, 20 + (24 * 7), 98, 20, Component.translatable("ias.servers.button.x"));
+        serversButtonX.setHint(serversButtonX.getMessage().copy().withStyle(ChatFormatting.DARK_GRAY));
+        serversButtonX.setTooltip(Tooltip.create(Component.translatable("ias.servers.button.x.tip", Component.translatable("key.keyboard.left.alt"))));
+        serversButtonX.setTooltipDelay(Duration.ofMillis(250L));
+        serversButtonX.setMaxLength(128);
+        serversButtonX.setResponder(value -> {
+            // Update the value.
+            IConfig.serversButtonX(value);
+
+            // Update the color.
+            serversButtonX.setTextColor(Expression.positionValidityColor(value, this.width, this.height, true));
         });
-        this.serversButtonX.setValue(Objects.requireNonNullElse(IConfig.serversButtonX, ""));
-        this.addRenderableWidget(this.serversButtonX);
+        serversButtonX.setValue(Strings.nullToEmpty(IConfig.serversButtonX()));
+        this.addRenderableWidget(serversButtonX);
 
         // Servers Button Y.
-        this.serversButtonY = new EditBox(this.font, 88 + box.getWidth(), 92, 75, 20, this.serversButtonY, Component.translatable("ias.config.serversButton.y"));
-        this.serversButtonY.setHint(this.serversButtonY.getMessage().copy().withStyle(ChatFormatting.DARK_GRAY));
-        this.serversButtonY.setTooltip(Tooltip.create(Component.translatable("ias.config.serversButton.y.tip", Component.translatable("key.keyboard.left.alt"))));
-        this.serversButtonY.setTooltipDelay(Duration.ofMillis(250L));
-        this.serversButtonY.active = box.selected();
-        this.serversButtonY.setEditable(box.selected());
-        this.serversButtonY.setMaxLength(128);
-        this.serversButtonY.setResponder(value -> {
-            value = value.isBlank() ? null : Expression.SPACE_PATTERN.matcher(value.strip()).replaceAll(" ");
-            IConfig.serversButtonY = value;
-            this.serversButtonY.setTextColor(Expression.positionValidityColor(value, this.width, this.height, false));
+        EditBox serversButtonY = new EditBox(this.font, rightX, 20 + (24 * 7), 98, 20, Component.translatable("ias.servers.button.y"));
+        serversButtonY.setHint(serversButtonY.getMessage().copy().withStyle(ChatFormatting.DARK_GRAY));
+        serversButtonY.setTooltip(Tooltip.create(Component.translatable("ias.servers.button.y.tip", Component.translatable("key.keyboard.left.alt"))));
+        serversButtonY.setTooltipDelay(Duration.ofMillis(250L));
+        serversButtonY.setMaxLength(128);
+        serversButtonY.setResponder(value -> {
+            // Update the value.
+            IConfig.serversButtonY(value);
+
+            // Update the color.
+            serversButtonY.setTextColor(Expression.positionValidityColor(value, this.width, this.height, false));
         });
-        this.serversButtonY.setValue(Objects.requireNonNullElse(IConfig.serversButtonY, ""));
-        this.addRenderableWidget(this.serversButtonY);
+        serversButtonY.setValue(Strings.nullToEmpty(IConfig.serversButtonY()));
+        this.addRenderableWidget(serversButtonY);
 
         // Sun Server.
-        Button button = Button.builder(IConfig.server.label(), btn -> {
-            // Update the value.
-            IConfig.server = switch (IConfig.server) {
-                case ALWAYS -> ServerMode.AVAILABLE;
-                case AVAILABLE -> ServerMode.NEVER;
-                case NEVER -> ServerMode.ALWAYS;
-            };
+        ServerMode mode = IConfig.server();
+        this.addRenderableWidget(IStonecutter.guiButton(this.font, leftX, 20 + (24 * 8), 200, 20, mode.label(), mode.tip(), (button, tipSetter) -> {
+            // Update the mode.
+            ServerMode newMode = IConfig.cycleServer(/*back=*/hasShiftDown());
 
-            // Set the message.
-            btn.setMessage(IConfig.server.label());
-        }).bounds(9 + box.getWidth(), 116, 200, 20).tooltip(Tooltip.create(Component.translatable("ias.config.server.tip"))).build();
-        button.setTooltipDelay(Duration.ofMillis(250L));
-        this.addRenderableWidget(button);
-
-        // Nick Warns.
-        box = Checkbox.builder(Component.translatable("ias.config.nickWarns"), this.font)
-                .pos(5, 140)
-                .selected(IConfig.nickWarns)
-                .onValueChange((cb, value) -> IConfig.nickWarns = value)
-                .tooltip(Tooltip.create(Component.translatable("ias.config.nickWarns.tip")))
-                .build();
-        box.setTooltipDelay(Duration.ofMillis(250L));
-        this.addRenderableWidget(box);
+            // Update the label and tooltip.
+            button.setMessage(newMode.label());
+            tipSetter.accept(newMode.tip());
+        }, this::tooltip));
 
         // Password Echoing.
-        box = Checkbox.builder(Component.translatable("ias.config.passwordEchoing"), this.font)
-                .pos(10 + box.getWidth(), 140)
-                .selected(IConfig.passwordEchoing)
-                .onValueChange((cb, value) -> IConfig.passwordEchoing = value)
-                .tooltip(Tooltip.create(Component.translatable("ias.config.passwordEchoing.tip")))
-                .build();
-        box.setTooltipDelay(Duration.ofMillis(250L));
-        this.addRenderableWidget(box);
+        this.addRenderableWidget(IStonecutter.guiCheckbox(this.font, centerX, 20 + (24 * 9), IStonecutter.translate("ias.passwordEchoing"),
+                IStonecutter.translate("ias.passwordEchoing.tip"), IConfig.passwordEchoing(),
+                IConfig::passwordEchoing, this::tooltip));
 
-        // Bar Name.
-        box = Checkbox.builder(Component.translatable("ias.config.barNick"), this.font)
-                .pos(5, 188)
-                .selected(IConfig.barNick)
-                .onValueChange((cb, value) -> {
-                    IConfig.barNick = value;
-                    this.minecraft.updateTitle();
-                })
-                .tooltip(Tooltip.create(Component.translatable("ias.config.barNick.tip")))
-                .build();
-        box.setTooltipDelay(Duration.ofMillis(250L));
-        this.addRenderableWidget(box);
+        // Bar Nick.
+        this.addRenderableWidget(IStonecutter.guiCheckbox(this.font, centerX, 20 + (24 * 10), IStonecutter.translate("ias.barNick"),
+                IStonecutter.translate("ias.barNick.tip"), IConfig.barNick(),
+                IConfig::barNick, this::tooltip));
 
         // Add done button.
         this.addRenderableWidget(Button.builder(CommonComponents.GUI_DONE, btn -> this.onClose())
@@ -418,7 +288,7 @@ public final class IScreen extends Screen {
 
         // Save config.
         try {
-            IStorage.save();
+            IConfig.save();
         } catch (Throwable t) {
             LOGGER.error("IAS: Unable to save config.", t);
         }
@@ -443,6 +313,10 @@ public final class IScreen extends Screen {
             graphics.renderTooltip(this.font, Component.translatable("ias.config.mousePos", mouseX, mouseY), mouseX, mouseY);
             pose.popPose();
         }
+    }
+
+    private void tooltip(List<FormattedCharSequence> tooltip) {
+        // Currently NO-OP, will be handy <1.19.4
     }
 
     @Override

@@ -187,7 +187,7 @@ final class MicrosoftPopupScreen extends Screen implements CreateHandler {
                 this.init(this.minecraft, this.width, this.height);
             }, true);
             this.password.setHint(Component.translatable("ias.password.hint").withStyle(ChatFormatting.DARK_GRAY));
-            this.password.setFormatter((s, i) -> IConfig.passwordEchoing ? FormattedCharSequence.forward("*".repeat(s.length()), Style.EMPTY) : FormattedCharSequence.EMPTY);
+            this.password.setFormatter((s, i) -> IConfig.passwordEchoing() ? FormattedCharSequence.forward("*".repeat(s.length()), Style.EMPTY) : FormattedCharSequence.EMPTY);
             this.password.setMaxLength(32);
             this.addRenderableWidget(this.password);
 
@@ -216,7 +216,7 @@ final class MicrosoftPopupScreen extends Screen implements CreateHandler {
 
         // Try to open the server.
         IAS.EXECUTOR.execute(() -> {
-            if (IConfig.server.useSunServer()) {
+            if (IConfig.server().useSunServer()) {
                 this.server();
             } else {
                 this.client();

@@ -28,7 +28,6 @@ import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import org.lwjgl.glfw.GLFW;
 import ru.vidtu.ias.auth.microsoft.MSAuth;
-import ru.vidtu.ias.config.IConfig;
 import ru.vidtu.ias.storage.account.Account;
 import ru.vidtu.ias.storage.account.OfflineAccount;
 

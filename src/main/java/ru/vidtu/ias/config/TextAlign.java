@@ -32,7 +32,7 @@ import java.util.Locale;
  *
  * @author VidTu
  * @apiNote Internal use only
- * @see IConfig#titleTextAlign
+ * @see IConfig#titleTextAlign()
  * @see IConfig#serversTextAlign
  */
 @ApiStatus.Internal
@@ -78,15 +78,16 @@ public enum TextAlign {
      */
     @Contract(pure = true)
     TextAlign() {
-        // Create the translation key.
-        String key = ("ias.align." + this.name().toLowerCase(Locale.ROOT));
+        // Create the translation keys.
+        String id = this.name().toLowerCase(Locale.ROOT);
+        String titleKey = ("ias.title.align." + id);
+        String serversKey = ("ias.servers.align." + id);
 
         // Create the components.
-        Component type = IStonecutter.translate(key.intern());
-        this.titleLabel = IStonecutter.translate("options.generic_value", IStonecutter.translate("ias.align.title"), type);
-        this.titleTip = IStonecutter.translate((key + ".title.tip").intern());
-        this.serversLabel = IStonecutter.translate("options.generic_value", IStonecutter.translate("ias.align.servers"), type);
-        this.serversTip = IStonecutter.translate((key + ".servers.tip").intern());
+        this.titleLabel = IStonecutter.translate("options.generic_value", IStonecutter.translate("ias.title.align"), IStonecutter.translate(titleKey.intern()));
+        this.titleTip = IStonecutter.translate((titleKey + ".tip").intern());
+        this.serversLabel = IStonecutter.translate("options.generic_value", IStonecutter.translate("ias.servers.align"), IStonecutter.translate(serversKey.intern()));
+        this.serversTip = IStonecutter.translate((serversKey + ".tip").intern());
     }
 
     /**

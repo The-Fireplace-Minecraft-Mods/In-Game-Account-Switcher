@@ -52,7 +52,7 @@ public final class MinecraftMixin {
     @Inject(method = "createTitle", at = @At("RETURN"), cancellable = true)
     private void ias$createTitle$return(CallbackInfoReturnable<String> cir) {
         // Skip if not enabled or not fully loaded.
-        if (!IConfig.barNick || !I18n.exists("ias.bar") || this.user == null) return;
+        if (!IConfig.barNick() || !I18n.exists("ias.bar") || this.user == null) return;
 
         // Modify otherwise.
         String original = cir.getReturnValue();

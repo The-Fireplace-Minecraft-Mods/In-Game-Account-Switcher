@@ -26,7 +26,6 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import org.lwjgl.glfw.GLFW;
-import ru.vidtu.ias.config.IConfig;
 import ru.vidtu.ias.storage.account.Account;
 import ru.vidtu.ias.storage.crypt.DummyCrypt;
 import ru.vidtu.ias.storage.crypt.HardwareCrypt;
