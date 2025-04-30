@@ -66,6 +66,9 @@ loom {
             // Force UNIX newlines.
             "-Dline.separator=\n",
 
+            // Force datafixers not to do our CPU.
+            "-Dmax.bg.threads=1",
+
             // Debug arguments.
             "-ea",
             "-esa",
@@ -143,8 +146,12 @@ dependencies {
         "neoForge"("net.neoforged:neoforge:${property("stonecutter.neo")}")
     } else {
         // Fabric
+        val fabricApiVersion = property("stonecutter.fabric-api").toString()
         modImplementation(libs.fabric.loader)
-        modImplementation("net.fabricmc.fabric-api:fabric-api:${property("stonecutter.fabric-api")}")
+        modImplementation(fabricApi.module("fabric-lifecycle-events-v1", fabricApiVersion)) // Handles client stopping.
+        modImplementation(fabricApi.module("fabric-screen-api-v1", fabricApiVersion)) // Handles the UI addition into title/server screen.
+        modImplementation(fabricApi.module("fabric-resource-loader-v0", fabricApiVersion)) // Loads languages.
+        modImplementation(fabricApi.module("fabric-key-binding-api-v1", fabricApiVersion)) // ModMenu dependency.
         modImplementation("com.terraformersmc:modmenu:${property("stonecutter.modmenu")}")
     }
 }

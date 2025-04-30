@@ -24,6 +24,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jspecify.annotations.NullMarked;
 import ru.vidtu.ias.platform.IStonecutter;
+import ru.vidtu.ias.ui.config.ConfigScreen;
 
 import java.util.Locale;
 
@@ -97,10 +98,10 @@ public enum TextAlign {
      * @see #titleTip()
      * @see #serversLabel()
      * @see #serversTip()
-     * @see IScreen
+     * @see ConfigScreen
      */
     @Contract(pure = true)
-    Component titleLabel() {
+    public Component titleLabel() {
         return this.titleLabel;
     }
 
@@ -111,10 +112,10 @@ public enum TextAlign {
      * @see #titleLabel()
      * @see #serversLabel()
      * @see #serversTip()
-     * @see IScreen
+     * @see ConfigScreen
      */
     @Contract(pure = true)
-    Component titleTip() {
+    public Component titleTip() {
         return this.titleTip;
     }
 
@@ -125,10 +126,10 @@ public enum TextAlign {
      * @see #titleLabel()
      * @see #titleTip()
      * @see #serversTip()
-     * @see IScreen
+     * @see ConfigScreen
      */
     @Contract(pure = true)
-    Component serversLabel() {
+    public Component serversLabel() {
         return this.serversLabel;
     }
 
@@ -139,10 +140,10 @@ public enum TextAlign {
      * @see #titleLabel()
      * @see #titleTip()
      * @see #serversLabel()
-     * @see IScreen
+     * @see ConfigScreen
      */
     @Contract(pure = true)
-    Component serversTip() {
+    public Component serversTip() {
         return this.serversTip;
     }
 

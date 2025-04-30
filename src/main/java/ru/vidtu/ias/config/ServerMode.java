@@ -31,6 +31,7 @@ import org.jspecify.annotations.NullMarked;
 import ru.vidtu.ias.IAS;
 import ru.vidtu.ias.auth.microsoft.MSAuth;
 import ru.vidtu.ias.platform.IStonecutter;
+import ru.vidtu.ias.ui.config.ConfigScreen;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -57,7 +58,7 @@ import java.util.function.Supplier;
  *
  * @author VidTu
  * @apiNote Internal use only
- * @see IConfig#server
+ * @see IConfig#server()
  */
 @ApiStatus.Internal
 @NullMarked
@@ -202,10 +203,10 @@ public enum ServerMode {
      *
      * @return Mode button label
      * @see #tip()
-     * @see IScreen
+     * @see ConfigScreen
      */
     @Contract(pure = true)
-    Component label() {
+    public Component label() {
         return this.label;
     }
 
@@ -214,10 +215,10 @@ public enum ServerMode {
      *
      * @return Mode button tip
      * @see #label()
-     * @see IScreen
+     * @see ConfigScreen
      */
     @Contract(pure = true)
-    Component tip() {
+    public Component tip() {
         return this.tip;
     }
 

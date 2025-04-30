@@ -32,6 +32,7 @@ import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import ru.vidtu.ias.IAS;
 import ru.vidtu.ias.platform.IStonecutter;
+import ru.vidtu.ias.ui.config.ConfigScreen;
 import ru.vidtu.ias.utils.Expression;
 import ru.vidtu.ias.utils.GSONUtils;
 
@@ -48,6 +49,7 @@ import java.nio.file.StandardOpenOption;
  *
  * @author VidTu
  * @apiNote Internal use only
+ * @see ConfigScreen
  */
 @ApiStatus.Internal
 @NullMarked
@@ -278,7 +280,7 @@ public final class IConfig {
      * @see #titleTextY()
      * @see #titleTextAlign()
      */
-    static void titleText(boolean titleText) {
+    public static void titleText(boolean titleText) {
         IConfig.titleText = titleText;
     }
 
@@ -306,7 +308,7 @@ public final class IConfig {
      * @see #titleTextY()
      * @see #titleTextAlign()
      */
-    static void titleTextX(@Nullable String titleTextX) {
+    public static void titleTextX(@Nullable String titleTextX) {
         IConfig.titleTextX = (titleTextX == null || titleTextX.isBlank() ? null : Expression.SPACE_PATTERN.matcher(titleTextX.strip()).replaceAll(" "));
     }
 
@@ -334,7 +336,7 @@ public final class IConfig {
      * @see #titleTextY()
      * @see #titleTextAlign()
      */
-    static void titleTextY(@Nullable String titleTextY) {
+    public static void titleTextY(@Nullable String titleTextY) {
         IConfig.titleTextY = (titleTextY == null || titleTextY.isBlank() ? null : Expression.SPACE_PATTERN.matcher(titleTextY.strip()).replaceAll(" "));
     }
 
@@ -365,7 +367,7 @@ public final class IConfig {
      * @see #cycleTitleTextAlign(boolean)
      */
     @ApiStatus.Obsolete
-    static void titleTextAlign(TextAlign titleTextAlign) {
+    public static void titleTextAlign(TextAlign titleTextAlign) {
         IConfig.titleTextAlign = MoreObjects.firstNonNull(titleTextAlign, TextAlign.LEFT);
     }
 
@@ -381,7 +383,7 @@ public final class IConfig {
      * @see #titleTextAlign(TextAlign)
      */
     @CheckReturnValue
-    static TextAlign cycleTitleTextAlign(boolean back) {
+    public static TextAlign cycleTitleTextAlign(boolean back) {
         switch (titleTextAlign) {
             case LEFT: return (titleTextAlign = (back ? TextAlign.RIGHT : TextAlign.CENTER));
             case CENTER: return (titleTextAlign = (back ? TextAlign.LEFT : TextAlign.RIGHT));
@@ -411,7 +413,7 @@ public final class IConfig {
      * @see #titleButtonX()
      * @see #titleButtonY()
      */
-    static void titleButton(boolean titleButton) {
+    public static void titleButton(boolean titleButton) {
         IConfig.titleButton = titleButton;
     }
 
@@ -437,7 +439,7 @@ public final class IConfig {
      * @see #titleButtonX()
      * @see #titleButtonY()
      */
-    static void titleButtonX(@Nullable String titleButtonX) {
+    public static void titleButtonX(@Nullable String titleButtonX) {
         IConfig.titleButtonX = (titleButtonX == null || titleButtonX.isBlank() ? null : Expression.SPACE_PATTERN.matcher(titleButtonX.strip()).replaceAll(" "));
     }
 
@@ -463,7 +465,7 @@ public final class IConfig {
      * @see #titleButtonX()
      * @see #titleButtonY()
      */
-    static void titleButtonY(@Nullable String titleButtonY) {
+    public static void titleButtonY(@Nullable String titleButtonY) {
         IConfig.titleButtonY = (titleButtonY == null || titleButtonY.isBlank() ? null : Expression.SPACE_PATTERN.matcher(titleButtonY.strip()).replaceAll(" "));
     }
 
@@ -490,7 +492,7 @@ public final class IConfig {
      * @see #serversTextY()
      * @see #serversTextAlign()
      */
-    static void serversText(boolean serversText) {
+    public static void serversText(boolean serversText) {
         IConfig.serversText = serversText;
     }
 
@@ -518,7 +520,7 @@ public final class IConfig {
      * @see #serversTextY()
      * @see #serversTextAlign()
      */
-    static void serversTextX(@Nullable String serversTextX) {
+    public static void serversTextX(@Nullable String serversTextX) {
         IConfig.serversTextX = (serversTextX == null || serversTextX.isBlank() ? null : Expression.SPACE_PATTERN.matcher(serversTextX.strip()).replaceAll(" "));
     }
 
@@ -546,7 +548,7 @@ public final class IConfig {
      * @see #serversTextY()
      * @see #serversTextAlign()
      */
-    static void serversTextY(@Nullable String serversTextY) {
+    public static void serversTextY(@Nullable String serversTextY) {
         IConfig.serversTextY = (serversTextY == null || serversTextY.isBlank() ? null : Expression.SPACE_PATTERN.matcher(serversTextY.strip()).replaceAll(" "));
     }
 
@@ -577,7 +579,7 @@ public final class IConfig {
      * @see #cycleServersTextAlign(boolean)
      */
     @ApiStatus.Obsolete
-    static void serversTextAlign(TextAlign serversTextAlign) {
+    public static void serversTextAlign(TextAlign serversTextAlign) {
         IConfig.serversTextAlign = MoreObjects.firstNonNull(serversTextAlign, TextAlign.LEFT);
     }
 
@@ -593,7 +595,7 @@ public final class IConfig {
      * @see #serversTextAlign(TextAlign)
      */
     @CheckReturnValue
-    static TextAlign cycleServersTextAlign(boolean back) {
+    public static TextAlign cycleServersTextAlign(boolean back) {
         switch (serversTextAlign) {
             case LEFT: return (serversTextAlign = (back ? TextAlign.RIGHT : TextAlign.CENTER));
             case CENTER: return (serversTextAlign = (back ? TextAlign.LEFT : TextAlign.RIGHT));
@@ -623,7 +625,7 @@ public final class IConfig {
      * @see #serversButtonX()
      * @see #serversButtonY()
      */
-    static void serversButton(boolean serversButton) {
+    public static void serversButton(boolean serversButton) {
         IConfig.serversButton = serversButton;
     }
 
@@ -649,7 +651,7 @@ public final class IConfig {
      * @see #serversButtonX()
      * @see #serversButtonY()
      */
-    static void serversButtonX(@Nullable String serversButtonX) {
+    public static void serversButtonX(@Nullable String serversButtonX) {
         IConfig.serversButtonX = (serversButtonX == null || serversButtonX.isBlank() ? null : Expression.SPACE_PATTERN.matcher(serversButtonX.strip()).replaceAll(" "));
     }
 
@@ -675,7 +677,7 @@ public final class IConfig {
      * @see #serversButtonX()
      * @see #serversButtonY()
      */
-    static void serversButtonY(@Nullable String serversButtonY) {
+    public static void serversButtonY(@Nullable String serversButtonY) {
         IConfig.serversButtonY = (serversButtonY == null || serversButtonY.isBlank() ? null : Expression.SPACE_PATTERN.matcher(serversButtonY.strip()).replaceAll(" "));
     }
 
@@ -697,7 +699,7 @@ public final class IConfig {
      * @see #server()
      */
     @CheckReturnValue
-    static ServerMode cycleServer(boolean back) {
+    public static ServerMode cycleServer(boolean back) {
         switch (server) {
             case ALWAYS: return (server = (back ? ServerMode.NEVER : ServerMode.AVAILABLE));
             case AVAILABLE: return (server = (back ? ServerMode.ALWAYS : ServerMode.NEVER));
@@ -723,7 +725,7 @@ public final class IConfig {
      * @param barNick Whether to show the nick in the title bar, {@code false} by default
      * @see #barNick()
      */
-    static void barNick(boolean barNick) {
+    public static void barNick(boolean barNick) {
         IConfig.barNick = barNick;
     }
 
@@ -743,7 +745,7 @@ public final class IConfig {
      * @param passwordEchoing Crypt password echoing, {@code true} by default
      * @see #passwordEchoing()
      */
-    static void passwordEchoing(boolean passwordEchoing) {
+    public static void passwordEchoing(boolean passwordEchoing) {
         IConfig.passwordEchoing = passwordEchoing;
     }
 }

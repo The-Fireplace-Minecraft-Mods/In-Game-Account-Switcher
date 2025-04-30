@@ -17,11 +17,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
 
-package ru.vidtu.ias.config;
+package ru.vidtu.ias.ui.config;
 
 import com.google.common.base.Strings;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
@@ -30,42 +31,55 @@ import net.minecraft.client.gui.screens.AlertScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.util.FormattedCharSequence;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Contract;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import ru.vidtu.ias.IAS;
+import ru.vidtu.ias.config.IConfig;
+import ru.vidtu.ias.config.ServerMode;
+import ru.vidtu.ias.config.TextAlign;
 import ru.vidtu.ias.platform.IStonecutter;
+import ru.vidtu.ias.ui.IScreen;
 import ru.vidtu.ias.utils.Expression;
 
 import java.time.Duration;
-import java.util.List;
 
 /**
  * IAS config screen.
  *
  * @author VidTu
+ * @apiNote Internal use only
+ * @see IConfig
  */
-public final class IScreen extends Screen {
-    /**
-     * Logger for this class.
-     */
-    private static final Logger LOGGER = LogManager.getLogger("IAS/IScreen");
-
+@ApiStatus.Internal
+@NullMarked
+public final class ConfigScreen extends IScreen {
     /**
      * Parent screen, {@code null} if none.
      */
+    @Nullable
     private final Screen parent;
 
     /**
-     * Creates a new screen.
+     * Creates a new config screen.
      *
      * @param parent Parent screen, {@code null} if none
      */
-    public IScreen(Screen parent) {
+    @Contract(pure = true)
+    public ConfigScreen(@Nullable Screen parent) {
+        // Call super.
         super(Component.translatable("ias.config"));
+
+        // Assign.
         this.parent = parent;
     }
 
+    /**
+     * Adds the config widgets.
+     */
     @Override
     protected void init() {
         // Bruh.
@@ -276,32 +290,37 @@ public final class IScreen extends Screen {
                 IConfig::barNick, this::tooltip));
 
         // Add done button.
-        this.addRenderableWidget(Button.builder(CommonComponents.GUI_DONE, btn -> this.onClose())
-                .bounds(this.width / 2 - 100, this.height - 24, 200, 20)
-                .build());
+        this.add(IStonecutter.guiButton(this.font, leftX, this.height - 24, 200, 20,
+                CommonComponents.GUI_DONE, IStonecutter.translate("ias.close"),
+                (btn, tipSetter) -> this.onClose(), this::tooltip));
     }
 
+    /**
+     * Saves the config and closes the config screen to {@link #parent} screen.
+     */
     @Override
     public void onClose() {
-        // Bruh.
-        assert this.minecraft != null;
+        // Validate.
+        Minecraft minecraft = this.minecraft;
+        assert minecraft != null : "IAS: Minecraft client instance is not initialized at screen closing. (screen: " + this + ')';
 
-        // Save config.
-        try {
-            IConfig.save();
-        } catch (Throwable t) {
-            LOGGER.error("IAS: Unable to save config.", t);
-        }
+        // Save.
+        IConfig.save();
 
-        // Close to parent.
-        this.minecraft.setScreen(this.parent);
+        // Close.
+        minecraft.setScreen(this.parent);
     }
 
+    /**
+     * Renders this screen. Called by the implementation.
+     *
+     * @param graphics  Current graphics handler
+     * @param mouseX    Scaled mouse X position
+     * @param mouseY    Scaled mouse Y position
+     * @param tickDelta Current tick delta (not to be confused with the partial tick)
+     */
     @Override
-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
-        // Render background and widgets.
-        super.render(graphics, mouseX, mouseY, delta);
-
+    protected void renderContents(GuiGraphics graphics, int mouseX, int mouseY, float tickDelta) {
         // Render title.
         graphics.drawCenteredString(this.font, this.title, this.width / 2, 5, 0xFF_FF_FF_FF);
 
@@ -315,12 +334,13 @@ public final class IScreen extends Screen {
         }
     }
 
-    private void tooltip(List<FormattedCharSequence> tooltip) {
-        // Currently NO-OP, will be handy <1.19.4
-    }
-
+    @Contract(pure = true)
     @Override
     public String toString() {
-        return "ConfigScreen{}";
+        return "IAS/ConfigScreen{" +
+                "parent=" + this.parent +
+                //? if <1.19.4
+                /*", tooltip=" + this.tooltip +*/
+                '}';
     }
 }

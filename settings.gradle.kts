@@ -29,7 +29,7 @@ pluginManagement {
 
 plugins {
     id("org.gradle.toolchains.foojay-resolver-convention") version "0.10.0"
-    id("dev.kikugie.stonecutter") version "0.5.2"
+    id("dev.kikugie.stonecutter") version "0.6"
 }
 
 rootProject.name = "In-Game Account Switcher"

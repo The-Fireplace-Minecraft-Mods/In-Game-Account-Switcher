@@ -25,7 +25,7 @@ import com.terraformersmc.modmenu.api.ModMenuApi;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jspecify.annotations.NullMarked;
-import ru.vidtu.ias.config.IScreen;
+import ru.vidtu.ias.ui.config.ConfigScreen;
 
 /**
  * IAS entrypoint for the ModMenu API.
@@ -47,7 +47,7 @@ public final class IModMenu implements ModMenuApi {
     @Contract(pure = true)
     @Override
     public ConfigScreenFactory<?> getModConfigScreenFactory() {
-        return IScreen::new;
+        return ConfigScreen::new;
     }
 
     @Contract(pure = true)
