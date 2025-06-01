@@ -67,7 +67,7 @@
   "ias.microsoft.hardware": "Krypta Sprzętowa",
   "ias.microsoft.hardware.tip": "Zaszyfruj to konto za pomocą swojego sprzętu. To mniej bezpieczna, lecz wygodniejsza opcja. Jeśli zmienisz lub zaktualizujesz sprzęt, może być konieczne ponowne dodanie konta do moda. MOŻE chronić dane przechowywane w tym modzie przed NIEKTÓRYMI rodzajami złośliwego oprogramowania oraz przypadkowym udostępnieniem innym osobom.",
   "ias.microsoft.plain": "Wyłącz Kryptę",
-  "ias.microsoft.plain.tip.no": "Do not encrypt this account. This is *NOT SECURE* at all. This option is disabled in the config.",
+  "ias.microsoft.plain.tip.no": "Nie szyfruj tego konta. To opcja *CAŁKOWICIE NIEBEZPIECZNA*. Ta opcja jest wyłączona w konfiguracji.",
   "ias.microsoft.plain.tip.off": "Do not encrypt this account. This is *NOT SECURE* at all. Do not use this option unless you know what you're doing. Press %s + %s to enable this option.",
   "ias.microsoft.plain.tip.on": "Do not encrypt this account. This is *NOT SECURE* at all. Do not use this option unless you know what you're doing.",
   "ias.delete": "Delete",
