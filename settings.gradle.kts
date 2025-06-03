@@ -20,11 +20,10 @@
 pluginManagement {
     repositories {
         gradlePluginPortal()
-        maven("https://maven.fabricmc.net/")
-        maven("https://maven.architectury.dev/")
-        maven("https://maven.minecraftforge.net/")
-        maven("https://maven.neoforged.net/releases/")
-        maven("https://repo.spongepowered.org/repository/maven-public/")
+        maven("https://maven.fabricmc.net/") // Architectury Loom. (Fabric dependencies)
+        maven("https://maven.architectury.dev/") // Architectury Loom.
+        maven("https://maven.minecraftforge.net/") // Architectury Loom. (Forge dependencies)
+        maven("https://maven.neoforged.net/releases/") // Architectury Loom. (NeoForge dependencies)
     }
 }
 
@@ -35,7 +34,7 @@ plugins {
 rootProject.name = "In-Game Account Switcher"
 
 val types = listOf("fabric", "forge", "neoforge", "root")
-val versions = listOf("1.18.2", "1.19.2", "1.19.4", "1.20.1", "1.20.2", "1.20.4", "1.20.6", "1.21.1", "1.21.3", "1.21.4", "1.21.5")
+val versions = listOf("1.21.6", "1.21.5", "1.21.4", "1.21.3", "1.21.1", "1.20.6", "1.20.4", "1.20.2", "1.20.1", "1.19.4", "1.19.2", "1.18.2")
 for (version in versions) {
     for (type in types) {
         val subPath = file("$version/$type")

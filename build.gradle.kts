@@ -37,8 +37,9 @@ plugins {
 java.sourceCompatibility = JavaVersion.VERSION_17
 java.targetCompatibility = JavaVersion.VERSION_17
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+
 group = "ru.vidtu.ias"
-base.archivesName = "IAS-Root"
+base.archivesName = "IAS"
 description = "This mod allows you to change your logged in account in-game, without restarting Minecraft."
 
 repositories {
@@ -46,36 +47,40 @@ repositories {
 }
 
 dependencies {
-    // Annotations (Compile)
+    // Annotations.
     compileOnly(libs.jetbrains.annotations)
     compileOnly(libs.error.prone.annotations)
 
-    // Generic (Provided)
+    // Generic.
     implementation(libs.gson)
     implementation(libs.slf4j)
 }
 
+// Compile with UTF-8, Java 17, and with all debug options.
 tasks.withType<JavaCompile> {
     options.encoding = "UTF-8"
     options.compilerArgs.addAll(listOf("-g", "-parameters"))
     options.release = 17
 }
 
+// Reproducible builds.
 tasks.withType<AbstractArchiveTask> {
     isPreserveFileTimestamps = false
     isReproducibleFileOrder = true
 }
 
+// Add LICENSE and manifest into the JAR file.
+// Manifest also controls Mixin/mod loading on some loaders/versions.
 tasks.withType<Jar> {
     from(rootDir.resolve("LICENSE"))
     from(rootDir.resolve("GPL"))
     from(rootDir.resolve("NOTICE"))
     manifest {
         attributes(
-            "Specification-Title" to "In-Game Account Switcher",
+            "Specification-Title" to "IAS",
             "Specification-Version" to version,
             "Specification-Vendor" to "VidTu",
-            "Implementation-Title" to "IAS-Root",
+            "Implementation-Title" to "IAS",
             "Implementation-Version" to version,
             "Implementation-Vendor" to "VidTu"
         )
