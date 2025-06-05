@@ -49,10 +49,12 @@ import org.slf4j.LoggerFactory;
 import ru.vidtu.ias.auth.LoginData;
 import ru.vidtu.ias.config.IASConfig;
 import ru.vidtu.ias.mixins.MinecraftAccessor;
+import ru.vidtu.ias.platform.IStonecutter;
 import ru.vidtu.ias.screen.AccountScreen;
 import ru.vidtu.ias.utils.Expression;
 import ru.vidtu.ias.utils.IUtils;
 import ru.vidtu.ias.utils.exceptions.FriendlyException;
+
 import java.nio.file.Path;
 import java.time.Duration;
 import java.util.Optional;

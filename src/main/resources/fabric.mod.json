@@ -24,10 +24,10 @@
   "environment": "client",
   "entrypoints": {
     "client": [
-      "ru.vidtu.ias.IASFabric"
+      "ru.vidtu.ias.platform.IFabric"
     ],
     "modmenu": [
-      "ru.vidtu.ias.IASModMenu"
+      "ru.vidtu.ias.platform.IModMenu"
     ]
   },
   "mixins": [

@@ -43,8 +43,8 @@
       }
     ],
     "entrypoints": {
-      "client": "ru.vidtu.ias.IASFabric",
-      "modmenu": "ru.vidtu.ias.IASModMenu"
+      "client": "ru.vidtu.ias.platform.IFabric",
+      "modmenu": "ru.vidtu.ias.platform.IModMenu"
     }
   },
   "minecraft": {

@@ -129,7 +129,7 @@ repositories {
 
 dependencies {
     // Annotations.
-    // compileOnly(libs.jspecify) // TODO(VidTu): Use.
+    compileOnly(libs.jspecify)
     compileOnly(libs.jetbrains.annotations)
     compileOnly(libs.error.prone.annotations)
 
