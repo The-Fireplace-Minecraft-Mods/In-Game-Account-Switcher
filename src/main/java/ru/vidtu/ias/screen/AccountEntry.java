@@ -36,6 +36,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
 import org.jetbrains.annotations.NotNull;
+import ru.vidtu.ias.IStonecutter;
 import ru.vidtu.ias.account.Account;
 
 import java.util.List;
@@ -52,26 +53,26 @@ final class AccountEntry extends ObjectSelectionList.Entry<AccountEntry> {
      * Up button sprites.
      */
     private static final WidgetSprites UP = new WidgetSprites(
-            ResourceLocation.fromNamespaceAndPath("ias", "up_plain"),
-            ResourceLocation.fromNamespaceAndPath("ias", "up_disabled"),
-            ResourceLocation.fromNamespaceAndPath("ias", "up_focus")
+            IStonecutter.newIdentifier("up_plain"),
+            IStonecutter.newIdentifier("up_disabled"),
+            IStonecutter.newIdentifier("up_focus")
     );
 
     /**
      * Down button sprites.
      */
     private static final WidgetSprites DOWN = new WidgetSprites(
-            ResourceLocation.fromNamespaceAndPath("ias", "down_plain"),
-            ResourceLocation.fromNamespaceAndPath("ias", "down_disabled"),
-            ResourceLocation.fromNamespaceAndPath("ias", "down_focus")
+            IStonecutter.newIdentifier("down_plain"),
+            IStonecutter.newIdentifier("down_disabled"),
+            IStonecutter.newIdentifier("down_focus")
     );
 
     /**
      * Warning sprites.
      */
     private static final WidgetSprites WARNING = new WidgetSprites(
-            ResourceLocation.fromNamespaceAndPath("ias", "warning_off"),
-            ResourceLocation.fromNamespaceAndPath("ias", "warning_on")
+            IStonecutter.newIdentifier("warning_off"),
+            IStonecutter.newIdentifier("warning_on")
     );
 
     /**
@@ -158,7 +159,10 @@ final class AccountEntry extends ObjectSelectionList.Entry<AccountEntry> {
         // Render warning if insecure.
         if (this.account.insecure()) {
             boolean warning = (System.nanoTime() / 1_000_000_000L) % 2L == 0;
+            //? if >=1.21.3 {
             graphics.blitSprite(RenderType::guiTextured, warning ? WARNING.enabled() : WARNING.enabledFocused(), x - 6, y - 1, 2, 10);
+            //?} else
+            /*graphics.blitSprite(warning ? WARNING.enabled() : WARNING.enabledFocused(), x - 6, y - 1, 2, 10);*/
             if (mouseX >= x - 10 && mouseX <= x && mouseY >= y && mouseY <= y + height) {
                 this.list.screen().setTooltipForNextRenderPass(Tooltip.create(Component.translatable("ias.accounts.tip.insecure")), DefaultTooltipPositioner.INSTANCE, true);
             }
@@ -176,7 +180,10 @@ final class AccountEntry extends ObjectSelectionList.Entry<AccountEntry> {
             } else {
                 upTexture = UP.enabled();
             }
+            //? if >=1.21.3 {
             graphics.blitSprite(RenderType::guiTextured, upTexture, upX, y, 11, 7);
+            //?} else
+            /*graphics.blitSprite(upTexture, upX, y, 11, 7);*/
 
             // Render down widget.
             ResourceLocation downTexture;
@@ -188,7 +195,10 @@ final class AccountEntry extends ObjectSelectionList.Entry<AccountEntry> {
             } else {
                 downTexture = DOWN.enabled();
             }
+            //? if >=1.21.3 {
             graphics.blitSprite(RenderType::guiTextured, downTexture, downX, y, 11, 7);
+            //?} else
+            /*graphics.blitSprite(downTexture, downX, y, 11, 7);*/
         }
     }
 

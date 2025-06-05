@@ -33,7 +33,6 @@ import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.components.toasts.SystemToast;
-import net.minecraft.client.gui.components.toasts.ToastManager;
 import net.minecraft.client.gui.layouts.LayoutElement;
 import net.minecraft.client.gui.screens.ConnectScreen;
 import net.minecraft.client.gui.screens.Screen;
@@ -45,7 +44,6 @@ import net.minecraft.client.multiplayer.chat.report.ReportEnvironment;
 import net.minecraft.client.multiplayer.chat.report.ReportingContext;
 import net.minecraft.client.telemetry.ClientTelemetryManager;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.vidtu.ias.auth.LoginData;
@@ -81,9 +79,9 @@ public final class IASMinecraft {
      * Button widget sprites.
      */
     private static final WidgetSprites BUTTON = new WidgetSprites(
-            ResourceLocation.fromNamespaceAndPath("ias", "button_plain"),
-            ResourceLocation.fromNamespaceAndPath("ias", "button_disabled"),
-            ResourceLocation.fromNamespaceAndPath("ias", "button_focus")
+            IStonecutter.newIdentifier("button_plain"),
+            IStonecutter.newIdentifier("button_disabled"),
+            IStonecutter.newIdentifier("button_focus")
     );
 
     /**
@@ -262,7 +260,10 @@ public final class IASMinecraft {
         }
 
         // Warn about invalid names.
+        //? if >=1.21.3 {
         if (!IASConfig.nickWarns || !(screen instanceof ConnectScreen) || minecraft.getToastManager().getToast(SystemToast.class, NICK_WARN) != null) return;
+        //?} else
+        /*if (!IASConfig.nickWarns || !(screen instanceof ConnectScreen) || minecraft.getToasts().getToast(SystemToast.class, NICK_WARN) != null) return;*/
         User user = minecraft.getUser();
         // Mods break non-nullness.
         //noinspection ConstantValue
@@ -271,8 +272,13 @@ public final class IASMinecraft {
         if (key == null) return;
 
         // Display the toast.
-        ToastManager manager = minecraft.getToastManager();
+        //? if >=1.21.3 {
+        var manager = minecraft.getToastManager();
         manager.addToast(SystemToast.multiline(minecraft, NICK_WARN, Component.literal("In-Game Account Switcher"), Component.translatable(key, name)));
+        //?} else {
+        /*var toasts = minecraft.getToasts();
+        toasts.addToast(SystemToast.multiline(minecraft, NICK_WARN, Component.literal("In-Game Account Switcher"), Component.translatable(key, name)));
+        *///?}
     }
 
     /**

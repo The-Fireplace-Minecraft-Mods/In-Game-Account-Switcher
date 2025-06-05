@@ -313,9 +313,9 @@ final class AccountList extends ObjectSelectionList<AccountEntry> {
 
             // Put into map.
             //? if >=1.21.4 {
-            /*SKINS.put(uuid, loaded.get());
-            *///?} else
-            SKINS.put(uuid, loaded);
+            SKINS.put(uuid, loaded.get());
+            //?} else
+            /*SKINS.put(uuid, loaded);*/
         }, this.minecraft).exceptionally(t -> {
             // Log it.
             LOGGER.warn("IAS: Unable to load skin: {}", entry, t);

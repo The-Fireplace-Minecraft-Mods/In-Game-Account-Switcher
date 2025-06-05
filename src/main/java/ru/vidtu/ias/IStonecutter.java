@@ -17,23 +17,15 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
 
-plugins {
-    id("dev.kikugie.stonecutter")
-}
+package ru.vidtu.ias;
 
-stonecutter active "1.21.5-fabric" /* [SC] DO NOT EDIT */
+import net.minecraft.resources.ResourceLocation;
 
-stonecutter registerChiseled tasks.register("chiseledBuild", stonecutter.chiseled) {
-    group = "project"
-    ofTask("build")
-}
-
-stonecutter registerChiseled tasks.register("chiseledAssemble", stonecutter.chiseled) {
-    group = "project"
-    ofTask("assemble")
-}
-
-stonecutter registerChiseled tasks.register("chiseledClean", stonecutter.chiseled) {
-    group = "project"
-    ofTask("clean")
+public final class IStonecutter {
+    public static ResourceLocation newIdentifier(String path) {
+        //? if >=1.21.1 || (forge && (!hackyNeoForge) && >=1.18.2 && (!1.20.2)) {
+        return ResourceLocation.fromNamespaceAndPath("ias", path);
+        //?} else
+        /*return new ResourceLocation("ias", path);*/
+    }
 }
