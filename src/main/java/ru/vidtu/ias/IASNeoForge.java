@@ -18,7 +18,7 @@
  */
 
 //? if neoforge {
-package ru.vidtu.ias;
+/*package ru.vidtu.ias;
 
 import net.minecraft.client.gui.screens.Screen;
 import net.neoforged.api.distmarker.Dist;
@@ -37,16 +37,16 @@ import net.neoforged.neoforgespi.language.IModInfo;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import ru.vidtu.ias.screen.ConfigScreen;
 
-/**
+/^*
  * Main IAS class for NeoForge.
  *
  * @author VidTu
- */
+ ^/
 @Mod("ias")
 public final class IASNeoForge {
-    /**
+    /^*
      * Creates a new mod.
-     */
+     ^/
     @SuppressWarnings("ThisEscapedInObjectConstruction") // <- Minecraft Forge API.
     public IASNeoForge() {
         // New versions don't need the NeoForge/Forge difference check, because
@@ -102,4 +102,4 @@ public final class IASNeoForge {
         IASMinecraft.onDraw(screen, screen.getMinecraft().font, event.getGuiGraphics());
     }
 }
-//?}
+*///?}

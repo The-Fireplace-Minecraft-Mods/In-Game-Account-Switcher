@@ -18,7 +18,7 @@
  */
 
 //? if forge {
-package ru.vidtu.ias;
+/*package ru.vidtu.ias;
 
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraftforge.api.distmarker.Dist;
@@ -39,18 +39,18 @@ import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.jetbrains.annotations.NotNull;
 import ru.vidtu.ias.screen.ConfigScreen;
 
-/**
+/^*
  * Main IAS class for Forge.
  *
  * @author VidTu
- */
+ ^/
 @Mod("ias")
 public final class IASForge {
-    /**
+    /^*
      * Creates a new mod.
      *
      * @param context Mod loading context
-     */
+     ^/
     @SuppressWarnings("ThisEscapedInObjectConstruction") // <- Minecraft Forge API.
     public IASForge(@NotNull FMLJavaModLoadingContext context) {
         // New versions don't need the NeoForge/Forge difference check, because
@@ -107,4 +107,4 @@ public final class IASForge {
         IASMinecraft.onDraw(screen, screen.getMinecraft().font, event.getGuiGraphics());
     }
 }
-//?}
+*///?}
