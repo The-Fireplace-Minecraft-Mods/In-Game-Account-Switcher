@@ -20,8 +20,15 @@
 import com.github.mizosoft.methanol.Methanol
 import com.github.mizosoft.methanol.MultipartBodyPublisher
 import com.github.mizosoft.methanol.MutableRequest
+import com.google.gson.Gson
 import com.google.gson.JsonArray
+import com.google.gson.JsonElement
 import com.google.gson.JsonObject
+import net.fabricmc.loom.task.RemapJarTask
+import net.fabricmc.loom.task.RunGameTask
+import net.fabricmc.loom.util.ModPlatform
+import net.fabricmc.loom.util.ZipUtils
+import net.fabricmc.loom.util.ZipUtils.UnsafeUnaryOperator
 import java.net.http.HttpClient
 import java.net.http.HttpResponse
 import java.time.Duration
@@ -31,36 +38,167 @@ import kotlin.time.toDuration
 import kotlin.time.toJavaDuration
 
 plugins {
-    id("java")
+    alias(libs.plugins.architectury.loom)
 }
 
-java.sourceCompatibility = JavaVersion.VERSION_17
-java.targetCompatibility = JavaVersion.VERSION_17
-java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+// Extract the platform and Minecraft version.
+val platform = loom.platform.get()
+// NeoForge 1.20.1 is loosely Forge, but not Forge. It uses ModPlatform.FORGE loom platform
+// and Forge packages, but diverges from (can't keep up with) the (Lex/Upstream) MCForge 1.20.1.
+val hackyNeoForge = (name == "1.20.1-neoforge")
+val minecraft = stonecutter.current.version
+
+// Determine and set Java toolchain version.
+val javaTarget = if (stonecutter.eval(minecraft, ">=1.20.6")) 21 else 17
+val javaVersion = JavaVersion.toVersion(javaTarget)
+java.sourceCompatibility = javaVersion
+java.targetCompatibility = javaVersion
+java.toolchain.languageVersion = JavaLanguageVersion.of(javaTarget)
 
 group = "ru.vidtu.ias"
 base.archivesName = "IAS"
+version = "$version+$name"
 description = "This mod allows you to change your logged in account in-game, without restarting Minecraft."
+
+// Define Stonecutter preprocessor variables.
+stonecutter.const("hackyNeoForge", hackyNeoForge)
+ModPlatform.values().forEach {
+    stonecutter.const(it.id(), it == platform)
+}
+
+// Process the JSON files via Stonecutter.
+// This is needed for the Mixin configuration.
+stonecutter.allowExtensions("json")
+
+loom {
+    // Prepare development environment.
+    log4jConfigs.setFrom(rootDir.resolve("dev/log4j2.xml"))
+    silentMojangMappingsLicense()
+
+    // Setup JVM args, see that file.
+    runs.named("client") {
+        // Set up debug VM args.
+        vmArgs("@../dev/args.vm.txt")
+
+        // Set the run dir.
+        runDir = "../../run"
+    }
+
+    // Configure Mixin.
+    @Suppress("UnstableApiUsage") // <- Required to configure Mixin.
+    mixin {
+        // Some platforms don't set this and fail processing the Mixin.
+        useLegacyMixinAp = true
+
+        // Set the Mixin refmap name. This is completely optional.
+        defaultRefmapName = "ias.mixins.refmap.json"
+    }
+
+    // Add Mixin configs.
+    if (loom.isForge) {
+        forge {
+            mixinConfigs("ias.mixins.json")
+        }
+    } else if (loom.isNeoForge) {
+        neoForge {}
+    }
+}
+
+// Make the game run with the required Java path.
+tasks.withType<RunGameTask> {
+    javaLauncher = javaToolchains.launcherFor(java.toolchain)
+}
 
 repositories {
     mavenCentral()
+    if (loom.isForge) {
+        if (hackyNeoForge) {
+            maven("https://maven.neoforged.net/releases/") // NeoForge. (Legacy)
+        }
+        maven("https://maven.minecraftforge.net/") // Forge.
+    } else if (loom.isNeoForge) {
+        maven("https://maven.neoforged.net/releases/") // NeoForge.
+    } else {
+        maven("https://maven.fabricmc.net/") // Fabric.
+        maven("https://maven.terraformersmc.com/releases/") // ModMenu.
+        if (minecraft == "1.20.4") { // Fix for ModMenu not shading Text Placeholder API.
+            maven("https://maven.nucleoid.xyz/") // ModMenu. (Text Placeholder API)
+        }
+    }
 }
 
 dependencies {
-    // Annotations.
-    compileOnly(libs.jetbrains.annotations)
-    compileOnly(libs.error.prone.annotations)
+    // Minecraft.
+    val minecraftDependency = findProperty("stonecutter.minecraft-dependency") ?: minecraft
+    minecraft("com.mojang:minecraft:$minecraftDependency")
+    mappings(loom.officialMojangMappings())
 
-    // Generic.
-    implementation(libs.gson)
-    implementation(libs.slf4j)
+    // Loader.
+    if (loom.isForge) {
+        if (hackyNeoForge) {
+            // Legacy NeoForge.
+            "forge"("net.neoforged:forge:${property("stonecutter.neoforge")}")
+        } else {
+            // Forge.
+            "forge"("net.minecraftforge:forge:${property("stonecutter.forge")}")
+        }
+    } else if (loom.isNeoForge) {
+        // Forge.
+        "neoForge"("net.neoforged:neoforge:${property("stonecutter.neoforge")}")
+    } else {
+        // Fabric.
+        modImplementation(libs.fabric.loader)
+        modImplementation("net.fabricmc.fabric-api:fabric-api:${property("stonecutter.fabric-api")}")
+        modImplementation("com.terraformersmc:modmenu:${property("stonecutter.modmenu")}")
+    }
 }
 
-// Compile with UTF-8, Java 17, and with all debug options.
+// Compile with UTF-8, compatible Java, and with all debug options.
 tasks.withType<JavaCompile> {
     options.encoding = "UTF-8"
     options.compilerArgs.addAll(listOf("-g", "-parameters"))
-    options.release = 17
+    options.release = javaTarget
+}
+
+tasks.withType<ProcessResources> {
+    // Exclude not needed loader entrypoint files.
+    if (loom.isForge) {
+        exclude("fabric.mod.json", "quilt.mod.json", "META-INF/neoforge.mods.toml")
+    } else if (loom.isNeoForge) {
+        if (stonecutter.eval(minecraft, ">=1.20.6")) {
+            exclude("fabric.mod.json", "quilt.mod.json", "META-INF/mods.toml")
+        } else {
+            exclude("fabric.mod.json", "quilt.mod.json", "META-INF/neoforge.mods.toml")
+        }
+    } else {
+        exclude("META-INF/mods.toml", "META-INF/neoforge.mods.toml")
+    }
+
+    // Expand version and dependencies.
+    val minecraftRequirement = findProperty("stonecutter.minecraft-requirement") ?: minecraft
+    inputs.property("version", version)
+    inputs.property("minecraft", minecraftRequirement)
+    inputs.property("java", javaTarget)
+    inputs.property("platform", platform.id())
+    filesMatching(listOf("fabric.mod.json", "quilt.mod.json", "ias.mixins.json", "META-INF/mods.toml", "META-INF/neoforge.mods.toml")) {
+        expand(inputs.properties)
+    }
+
+    // Minify JSON (including ".mcmeta") and TOML files.
+    val files = fileTree(outputs.files.asPath)
+    doLast {
+        val jsonAlike = Regex("^.*\\.(?:json|mcmeta)$", RegexOption.IGNORE_CASE)
+        files.forEach {
+            if (it.name.matches(jsonAlike)) {
+                it.writeText(Gson().fromJson(it.readText(), JsonElement::class.java).toString())
+            } else if (it.name.endsWith(".toml", ignoreCase = true)) {
+                it.writeText(it.readLines()
+                    .filter { s -> s.isNotBlank() }
+                    .joinToString("\n")
+                    .replace(" = ", "="))
+            }
+        }
+    }
 }
 
 // Reproducible builds.
@@ -82,8 +220,23 @@ tasks.withType<Jar> {
             "Specification-Vendor" to "VidTu",
             "Implementation-Title" to "IAS",
             "Implementation-Version" to version,
-            "Implementation-Vendor" to "VidTu"
+            "Implementation-Vendor" to "VidTu",
+            "MixinConfigs" to "ias.mixins.json"
         )
+    }
+}
+
+tasks.withType<RemapJarTask> {
+    // Output into "build/libs" instead of "versions/<ver>/build/libs".
+    destinationDirectory = rootProject.layout.buildDirectory.file("libs").get().asFile
+
+    // Minify JSON files. (after Fabric Loom processing)
+    val minifier = UnsafeUnaryOperator<String> { Gson().fromJson(it, JsonElement::class.java).toString() }
+    doLast {
+        ZipUtils.transformString(archiveFile.get().asFile.toPath(), mapOf(
+            "ias.mixins.json" to minifier,
+            "ias.mixins.refmap.json" to minifier,
+        ))
     }
 }
 
@@ -94,7 +247,6 @@ buildscript {
     }
 
     dependencies {
-        classpath(libs.gson)
         classpath("com.github.mizosoft.methanol:methanol:1.8.2")
     }
 }
