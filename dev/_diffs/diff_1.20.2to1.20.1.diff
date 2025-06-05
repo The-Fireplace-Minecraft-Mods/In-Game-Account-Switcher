@@ -1,0 +1,1391 @@
+diff --recursive --unified --new-file 1.20.2/fabric/build.gradle.kts 1.20.1/fabric/build.gradle.kts
+--- 1.20.2/fabric/build.gradle.kts	2025-05-27 12:20:42.449837200 +0300
++++ 1.20.1/fabric/build.gradle.kts	2025-05-27 12:20:42.433283300 +0300
+@@ -25,10 +25,10 @@
+ java.targetCompatibility = JavaVersion.VERSION_17
+ java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+ group = "ru.vidtu.ias"
+-base.archivesName = "IAS-Fabric-1.20.2"
++base.archivesName = "IAS-Fabric-1.20.1"
+ description = "This mod allows you to change your logged in account in-game, without restarting Minecraft."
+-evaluationDependsOn(":1.20.2-root")
+-val shared = project(":1.20.2-root")
++evaluationDependsOn(":1.20.1-root")
++val shared = project(":1.20.1-root")
+ 
+ repositories {
+     mavenCentral()
+@@ -59,13 +59,13 @@
+     compileOnlyApi(libs.error.prone.annotations)
+ 
+     // Minecraft (Provided)
+-    minecraft(libs.minecraft.mc1202)
++    minecraft(libs.minecraft.mc1201)
+     mappings(loom.officialMojangMappings())
+ 
+     // Fabric (Provided)
+     modImplementation(libs.fabric.loader)
+-    modImplementation(libs.fabric.mc1202)
+-    modImplementation(libs.modmenu.mc1202)
++    modImplementation(libs.fabric.mc1201)
++    modImplementation(libs.modmenu.mc1201)
+ 
+     // Root
+     compileOnly(shared)
+@@ -102,7 +102,7 @@
+             "Specification-Title" to "In-Game Account Switcher",
+             "Specification-Version" to version,
+             "Specification-Vendor" to "VidTu",
+-            "Implementation-Title" to "IAS-Fabric-1.20.2",
++            "Implementation-Title" to "IAS-Fabric-1.20.1",
+             "Implementation-Version" to version,
+             "Implementation-Vendor" to "VidTu"
+         )
+diff --recursive --unified --new-file 1.20.2/fabric/gradle.properties 1.20.1/fabric/gradle.properties
+--- 1.20.2/fabric/gradle.properties	2025-05-27 12:20:42.449837200 +0300
++++ 1.20.1/fabric/gradle.properties	2025-05-27 12:20:42.433283300 +0300
+@@ -16,6 +16,6 @@
+ # along with this program.  If not, see <https://www.gnu.org/licenses/>
+ 
+ # Mod
+-display.type=Fabric/Quilt 1.20.2
+-modrinth.versions=1.20.2
++display.type=Fabric/Quilt 1.20.1
++modrinth.versions=1.20.1
+ modrinth.loaders=fabric,quilt
+diff --recursive --unified --new-file 1.20.2/fabric/src/main/resources/fabric.mod.json 1.20.1/fabric/src/main/resources/fabric.mod.json
+--- 1.20.2/fabric/src/main/resources/fabric.mod.json	2025-05-27 12:20:42.451930500 +0300
++++ 1.20.1/fabric/src/main/resources/fabric.mod.json	2025-05-27 12:20:42.435521000 +0300
+@@ -34,7 +34,7 @@
+     "ias.mixins.json"
+   ],
+   "depends": {
+-    "minecraft": "1.20.2",
++    "minecraft": "1.20.1",
+     "fabric-api": "*"
+   },
+   "recommends": {
+diff --recursive --unified --new-file 1.20.2/fabric/src/main/resources/quilt.mod.json 1.20.1/fabric/src/main/resources/quilt.mod.json
+--- 1.20.2/fabric/src/main/resources/quilt.mod.json	2025-05-27 12:20:42.451930500 +0300
++++ 1.20.1/fabric/src/main/resources/quilt.mod.json	2025-05-27 12:20:42.435521000 +0300
+@@ -27,8 +27,8 @@
+     "depends": [
+       {
+         "id": "minecraft",
+-        "versions": "1.20.2",
+-        "reason": "In-Game Account Switcher works only with Minecraft 1.20.2."
++        "versions": "1.20.1",
++        "reason": "In-Game Account Switcher works only with Minecraft 1.20.1."
+       },
+       {
+         "id": "fabric-api",
+diff --recursive --unified --new-file 1.20.2/forge/build.gradle.kts 1.20.1/forge/build.gradle.kts
+--- 1.20.2/forge/build.gradle.kts	2025-05-27 12:20:42.451930500 +0300
++++ 1.20.1/forge/build.gradle.kts	2025-05-27 12:20:42.436528800 +0300
+@@ -25,10 +25,10 @@
+ java.targetCompatibility = JavaVersion.VERSION_17
+ java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+ group = "ru.vidtu.ias"
+-base.archivesName = "IAS-Forge-1.20.2"
++base.archivesName = "IAS-Forge-1.20.1"
+ description = "This mod allows you to change your logged in account in-game, without restarting Minecraft."
+-evaluationDependsOn(":1.20.2-root")
+-val shared = project(":1.20.2-root")
++evaluationDependsOn(":1.20.1-root")
++val shared = project(":1.20.1-root")
+ 
+ loom {
+     silentMojangMappingsLicense()
+@@ -63,11 +63,11 @@
+     compileOnlyApi(libs.error.prone.annotations)
+ 
+     // Minecraft (Provided)
+-    minecraft(libs.minecraft.mc1202)
++    minecraft(libs.minecraft.mc1201)
+     mappings(loom.officialMojangMappings())
+ 
+     // Forge
+-    forge(libs.forge.mc1202)
++    forge(libs.forge.mc1201)
+ 
+     // Root
+     compileOnly(shared)
+@@ -104,7 +104,7 @@
+             "Specification-Title" to "In-Game Account Switcher",
+             "Specification-Version" to version,
+             "Specification-Vendor" to "VidTu",
+-            "Implementation-Title" to "IAS-Forge-1.20.4",
++            "Implementation-Title" to "IAS-Forge-1.20.1",
+             "Implementation-Version" to version,
+             "Implementation-Vendor" to "VidTu",
+             "MixinConfigs" to "ias.mixins.json"
+diff --recursive --unified --new-file 1.20.2/forge/gradle.properties 1.20.1/forge/gradle.properties
+--- 1.20.2/forge/gradle.properties	2025-05-27 12:20:42.452929900 +0300
++++ 1.20.1/forge/gradle.properties	2025-05-27 12:20:42.436528800 +0300
+@@ -19,6 +19,6 @@
+ loom.platform=forge
+ 
+ # Mod
+-display.type=Forge 1.20.2
+-modrinth.versions=1.20.2
++display.type=Forge 1.20.1
++modrinth.versions=1.20.1
+ modrinth.loaders=forge
+diff --recursive --unified --new-file 1.20.2/forge/src/main/java/ru/vidtu/ias/IASForge.java 1.20.1/forge/src/main/java/ru/vidtu/ias/IASForge.java
+--- 1.20.2/forge/src/main/java/ru/vidtu/ias/IASForge.java	2025-05-27 12:20:42.453435900 +0300
++++ 1.20.1/forge/src/main/java/ru/vidtu/ias/IASForge.java	2025-05-27 12:20:42.437534300 +0300
+@@ -29,12 +29,13 @@
+ import net.minecraftforge.fml.IExtensionPoint;
+ import net.minecraftforge.fml.ModContainer;
+ import net.minecraftforge.fml.ModList;
+-import net.minecraftforge.fml.ModLoadingContext;
+ import net.minecraftforge.fml.common.Mod;
++import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+ import net.minecraftforge.fml.loading.FMLEnvironment;
+ import net.minecraftforge.fml.loading.FMLPaths;
+ import net.minecraftforge.forgespi.language.IModInfo;
+ import org.apache.maven.artifact.versioning.ArtifactVersion;
++import org.jetbrains.annotations.NotNull;
+ import ru.vidtu.ias.screen.ConfigScreen;
+ 
+ /**
+@@ -46,12 +47,23 @@
+ public final class IASForge {
+     /**
+      * Creates a new mod.
++     *
++     * @param context Mod loading context
+      */
+     @SuppressWarnings("ThisEscapedInObjectConstruction") // <- Minecraft Forge API.
+-    public IASForge() {
+-        // New versions don't need the NeoForge/Forge difference check, because
+-        // packages are different. The newest NeoForge version also
+-        // change its location to "neoforge.mods.toml" from "mods.toml".
++    public IASForge(@NotNull FMLJavaModLoadingContext context) {
++        // Check for NeoForge.
++        boolean allowOnForge = Boolean.getBoolean("ias.allowForgeVersionOnNeoForge");
++        if (!allowOnForge) {
++            String forgeModName = ModList.get().getModContainerById("forge")
++                    .map(ModContainer::getModInfo)
++                    .map(IModInfo::getDisplayName)
++                    .orElse("UNKNOWN");
++            boolean isProbablyMcForge = "neoforge".equalsIgnoreCase(forgeModName);
++            if (isProbablyMcForge) {
++                throw new IllegalStateException("IAS: You've tried to use plain Forge version of the In-Game Account Switcher mod with NeoForge. This is not supported. The IAS mod has its own separate NeoForge version, use that one. If you still want to use Forge version on NeoForge without any support, add '-Dias.allowForgeVersionOnNeoForge=true' to your game JVM start-up flags.");
++            }
++        }
+ 
+         // Not sure how long the Forge does have the "clientSideOnly" field in the TOML,
+         // so I'll do an additional exception check here.
+@@ -63,8 +75,8 @@
+         MinecraftForge.EVENT_BUS.register(this);
+ 
+         // Register various display tests and config hooks.
+-        ModLoadingContext.get().registerExtensionPoint(IExtensionPoint.DisplayTest.class, () -> new IExtensionPoint.DisplayTest(() -> IExtensionPoint.DisplayTest.IGNORESERVERONLY, (version, server) -> true));
+-        ModLoadingContext.get().registerExtensionPoint(ConfigScreenHandler.ConfigScreenFactory.class, () -> new ConfigScreenHandler.ConfigScreenFactory((minecraft, screen) -> new ConfigScreen(screen)));
++        context.registerDisplayTest(IExtensionPoint.DisplayTest.IGNORE_ALL_VERSION);
++        context.registerExtensionPoint(ConfigScreenHandler.ConfigScreenFactory.class, () -> new ConfigScreenHandler.ConfigScreenFactory((minecraft, screen) -> new ConfigScreen(screen)));
+ 
+         // Create the UA and initialize.
+         String modVersion = ModList.get().getModContainerById("ias")
+diff --recursive --unified --new-file 1.20.2/forge/src/main/resources/META-INF/mods.toml 1.20.1/forge/src/main/resources/META-INF/mods.toml
+--- 1.20.2/forge/src/main/resources/META-INF/mods.toml	2025-05-27 12:20:42.453435900 +0300
++++ 1.20.1/forge/src/main/resources/META-INF/mods.toml	2025-05-27 12:20:42.438537600 +0300
+@@ -26,7 +26,7 @@
+ modId = "forge"
+ type = "required"
+ mandatory = true
+-versionRange = "[48,49)"
++versionRange = "[46,48)"
+ ordering = "NONE"
+ side = "CLIENT"
+ 
+@@ -34,7 +34,7 @@
+ modId = "minecraft"
+ type = "required"
+ mandatory = true
+-versionRange = "1.20.2"
++versionRange = "[1.20,1.20.1]"
+ ordering = "NONE"
+ side = "CLIENT"
+ 
+diff --recursive --unified --new-file 1.20.2/forge/src/main/resources/pack.mcmeta 1.20.1/forge/src/main/resources/pack.mcmeta
+--- 1.20.2/forge/src/main/resources/pack.mcmeta	2025-05-27 12:20:42.454940700 +0300
++++ 1.20.1/forge/src/main/resources/pack.mcmeta	2025-05-27 12:20:42.438537600 +0300
+@@ -1,6 +1,6 @@
+ {
+   "pack": {
+-    "pack_format": 18,
++    "pack_format": 15,
+     "description": "In-Game Account Switcher"
+   }
+ }
+diff --recursive --unified --new-file 1.20.2/neoforge/build.gradle.kts 1.20.1/neoforge/build.gradle.kts
+--- 1.20.2/neoforge/build.gradle.kts	2025-05-27 12:20:42.454940700 +0300
++++ 1.20.1/neoforge/build.gradle.kts	2025-05-27 12:20:42.438537600 +0300
+@@ -25,15 +25,15 @@
+ java.targetCompatibility = JavaVersion.VERSION_17
+ java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+ group = "ru.vidtu.ias"
+-base.archivesName = "IAS-NeoForge-1.20.2"
++base.archivesName = "IAS-NeoForge-1.20.1"
+ description = "This mod allows you to change your logged in account in-game, without restarting Minecraft."
+-evaluationDependsOn(":1.20.2-root")
+-val shared = project(":1.20.2-root")
++evaluationDependsOn(":1.20.1-root")
++val shared = project(":1.20.1-root")
+ 
+ loom {
+     silentMojangMappingsLicense()
+-    neoForge {
+-        // Empty
++    forge { // <- NeoForge in 1.20.1 is a fork of Forge, so we're using Forge platform.
++        mixinConfigs = setOf("ias.mixins.json")
+     }
+     runs.named("client") {
+         vmArgs(
+@@ -65,11 +65,11 @@
+     compileOnlyApi(libs.error.prone.annotations)
+ 
+     // Minecraft (Provided)
+-    minecraft(libs.minecraft.mc1202)
++    minecraft(libs.minecraft.mc1201)
+     mappings(loom.officialMojangMappings())
+ 
+     // NeoForge
+-    neoForge(libs.neoforge.mc1202)
++    forge(libs.neoforge.mc1201) // <- NeoForge in 1.20.1 is a fork of Forge, so we're using Forge platform.
+ 
+     // Root
+     compileOnly(shared)
+@@ -106,7 +106,7 @@
+             "Specification-Title" to "In-Game Account Switcher",
+             "Specification-Version" to version,
+             "Specification-Vendor" to "VidTu",
+-            "Implementation-Title" to "IAS-NeoForge-1.20.2",
++            "Implementation-Title" to "IAS-NeoForge-1.20.1",
+             "Implementation-Version" to version,
+             "Implementation-Vendor" to "VidTu",
+             "MixinConfigs" to "ias.mixins.json"
+diff --recursive --unified --new-file 1.20.2/neoforge/gradle.properties 1.20.1/neoforge/gradle.properties
+--- 1.20.2/neoforge/gradle.properties	2025-05-27 12:20:42.454940700 +0300
++++ 1.20.1/neoforge/gradle.properties	2025-05-27 12:20:42.439540800 +0300
+@@ -16,9 +16,10 @@
+ # along with this program.  If not, see <https://www.gnu.org/licenses/>
+ 
+ # Loom
+-loom.platform=neoforge
++# NeoForge in 1.20.1 is a fork of Forge, so we're using Forge platform.
++loom.platform=forge
+ 
+ # Mod
+-display.type=NeoForge 1.20.2
+-modrinth.versions=1.20.2
++display.type=NeoForge 1.20.1
++modrinth.versions=1.20.1
+ modrinth.loaders=neoforge
+diff --recursive --unified --new-file 1.20.2/neoforge/src/main/java/ru/vidtu/ias/IASNeoForge.java 1.20.1/neoforge/src/main/java/ru/vidtu/ias/IASNeoForge.java
+--- 1.20.2/neoforge/src/main/java/ru/vidtu/ias/IASNeoForge.java	2025-05-27 12:20:42.456057600 +0300
++++ 1.20.1/neoforge/src/main/java/ru/vidtu/ias/IASNeoForge.java	2025-05-27 12:20:42.440543900 +0300
+@@ -20,20 +20,20 @@
+ package ru.vidtu.ias;
+ 
+ import net.minecraft.client.gui.screens.Screen;
+-import net.neoforged.api.distmarker.Dist;
+-import net.neoforged.bus.api.SubscribeEvent;
+-import net.neoforged.fml.IExtensionPoint;
+-import net.neoforged.fml.ModContainer;
+-import net.neoforged.fml.ModList;
+-import net.neoforged.fml.ModLoadingContext;
+-import net.neoforged.fml.common.Mod;
+-import net.neoforged.fml.loading.FMLEnvironment;
+-import net.neoforged.fml.loading.FMLPaths;
+-import net.neoforged.neoforge.client.ConfigScreenHandler;
+-import net.neoforged.neoforge.client.event.ScreenEvent;
+-import net.neoforged.neoforge.common.NeoForge;
+-import net.neoforged.neoforge.event.GameShuttingDownEvent;
+-import net.neoforged.neoforgespi.language.IModInfo;
++import net.minecraftforge.api.distmarker.Dist;
++import net.minecraftforge.client.ConfigScreenHandler;
++import net.minecraftforge.client.event.ScreenEvent;
++import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.GameShuttingDownEvent;
++import net.minecraftforge.eventbus.api.SubscribeEvent;
++import net.minecraftforge.fml.IExtensionPoint;
++import net.minecraftforge.fml.ModContainer;
++import net.minecraftforge.fml.ModList;
++import net.minecraftforge.fml.ModLoadingContext;
++import net.minecraftforge.fml.common.Mod;
++import net.minecraftforge.fml.loading.FMLEnvironment;
++import net.minecraftforge.fml.loading.FMLPaths;
++import net.minecraftforge.forgespi.language.IModInfo;
+ import org.apache.maven.artifact.versioning.ArtifactVersion;
+ import ru.vidtu.ias.screen.ConfigScreen;
+ 
+@@ -49,9 +49,18 @@
+      */
+     @SuppressWarnings("ThisEscapedInObjectConstruction") // <- Minecraft Forge API.
+     public IASNeoForge() {
+-        // New versions don't need the NeoForge/Forge difference check, because
+-        // packages are different. The newest NeoForge version also
+-        // change its location to "neoforge.mods.toml" from "mods.toml".
++        // Check for plain Forge.
++        boolean allowOnForge = Boolean.getBoolean("ias.allowNeoForgeVersionOnForge");
++        if (!allowOnForge) {
++            String forgeModName = ModList.get().getModContainerById("forge")
++                    .map(ModContainer::getModInfo)
++                    .map(IModInfo::getDisplayName)
++                    .orElse("UNKNOWN");
++            boolean isProbablyMcForge = "forge".equalsIgnoreCase(forgeModName);
++            if (isProbablyMcForge) {
++                throw new IllegalStateException("IAS: You've tried to use NeoForge version of the In-Game Account Switcher mod with plain Forge. This is not supported. The IAS mod has its own separate Forge version, use that one. If you still want to use NeoForge version on Forge without any support, add '-Dias.allowNeoForgeVersionOnForge=true' to your game JVM start-up flags.");
++            }
++        }
+ 
+         // Not sure how long the Forge does have the "clientSideOnly" field in the TOML,
+         // so I'll do an additional exception check here.
+@@ -60,7 +69,7 @@
+         }
+ 
+         // Register events.
+-        NeoForge.EVENT_BUS.register(this);
++        MinecraftForge.EVENT_BUS.register(this);
+ 
+         // Register various display tests and config hooks.
+         ModLoadingContext.get().registerExtensionPoint(IExtensionPoint.DisplayTest.class, () -> new IExtensionPoint.DisplayTest(() -> IExtensionPoint.DisplayTest.IGNORESERVERONLY, (version, server) -> true));
+diff --recursive --unified --new-file 1.20.2/neoforge/src/main/resources/META-INF/mods.toml 1.20.1/neoforge/src/main/resources/META-INF/mods.toml
+--- 1.20.2/neoforge/src/main/resources/META-INF/mods.toml	2025-05-27 12:20:42.457066200 +0300
++++ 1.20.1/neoforge/src/main/resources/META-INF/mods.toml	2025-05-27 12:20:42.440543900 +0300
+@@ -26,10 +26,10 @@
+ config="ias.mixins.json"
+ 
+ [[dependencies.ias]]
+-modId = "neoforge"
++modId = "forge"
+ type = "required"
+ mandatory = true
+-versionRange = "[20.2,20.3)"
++versionRange = "[46,48)"
+ ordering = "NONE"
+ side = "CLIENT"
+ 
+@@ -37,7 +37,7 @@
+ modId = "minecraft"
+ type = "required"
+ mandatory = true
+-versionRange = "1.20.2"
++versionRange = "[1.20,1.20.1]"
+ ordering = "NONE"
+ side = "CLIENT"
+ 
+diff --recursive --unified --new-file 1.20.2/neoforge/src/main/resources/pack.mcmeta 1.20.1/neoforge/src/main/resources/pack.mcmeta
+--- 1.20.2/neoforge/src/main/resources/pack.mcmeta	2025-05-27 12:20:42.457066200 +0300
++++ 1.20.1/neoforge/src/main/resources/pack.mcmeta	2025-05-27 12:20:42.441548300 +0300
+@@ -1,6 +1,6 @@
+ {
+   "pack": {
+-    "pack_format": 18,
++    "pack_format": 15,
+     "description": "In-Game Account Switcher"
+   }
+ }
+diff --recursive --unified --new-file 1.20.2/root/build.gradle.kts 1.20.1/root/build.gradle.kts
+--- 1.20.2/root/build.gradle.kts	2025-05-27 12:20:42.458070800 +0300
++++ 1.20.1/root/build.gradle.kts	2025-05-27 12:20:42.441548300 +0300
+@@ -25,7 +25,7 @@
+ java.targetCompatibility = JavaVersion.VERSION_17
+ java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+ group = "ru.vidtu.ias"
+-base.archivesName = "IAS-1.20.2"
++base.archivesName = "IAS-1.20.1"
+ description = "This mod allows you to change your logged in account in-game, without restarting Minecraft."
+ 
+ repositories {
+@@ -43,7 +43,7 @@
+     compileOnlyApi(libs.error.prone.annotations)
+ 
+     // Minecraft (Provided)
+-    minecraft(libs.minecraft.mc1202)
++    minecraft(libs.minecraft.mc1201)
+     mappings(loom.officialMojangMappings())
+ 
+     // Mixin
+@@ -62,11 +62,10 @@
+ 
+ tasks.withType<ProcessResources> {
+     from(rootProject.sourceSets.main.get().resources)
+-}
+-
+-tasks.withType<AbstractArchiveTask> {
+-    isPreserveFileTimestamps = false
+-    isReproducibleFileOrder = true
++    inputs.property("version", version)
++    filesMatching(listOf("fabric.mod.json", "quilt.mod.json")) {
++        expand(inputs.properties)
++    }
+ }
+ 
+ tasks.withType<Jar> {
+@@ -78,7 +77,7 @@
+             "Specification-Title" to "In-Game Account Switcher",
+             "Specification-Version" to version,
+             "Specification-Vendor" to "VidTu",
+-            "Implementation-Title" to "IAS-1.20.2",
++            "Implementation-Title" to "IAS-1.20.1",
+             "Implementation-Version" to version,
+             "Implementation-Vendor" to "VidTu"
+         )
+diff --recursive --unified --new-file 1.20.2/root/src/main/java/ru/vidtu/ias/IASMinecraft.java 1.20.1/root/src/main/java/ru/vidtu/ias/IASMinecraft.java
+--- 1.20.2/root/src/main/java/ru/vidtu/ias/IASMinecraft.java	2025-05-27 12:20:42.459073900 +0300
++++ 1.20.1/root/src/main/java/ru/vidtu/ias/IASMinecraft.java	2025-05-27 12:20:42.442548600 +0300
+@@ -19,8 +19,9 @@
+ 
+ package ru.vidtu.ias;
+ 
++import com.mojang.authlib.GameProfile;
+ import com.mojang.authlib.minecraft.UserApiService;
+-import com.mojang.authlib.yggdrasil.ProfileResult;
++import com.mojang.authlib.properties.PropertyMap;
+ import net.minecraft.SharedConstants;
+ import net.minecraft.client.Minecraft;
+ import net.minecraft.client.User;
+@@ -30,7 +31,6 @@
+ import net.minecraft.client.gui.components.Button;
+ import net.minecraft.client.gui.components.ImageButton;
+ import net.minecraft.client.gui.components.Tooltip;
+-import net.minecraft.client.gui.components.WidgetSprites;
+ import net.minecraft.client.gui.components.events.GuiEventListener;
+ import net.minecraft.client.gui.components.toasts.SystemToast;
+ import net.minecraft.client.gui.components.toasts.ToastComponent;
+@@ -73,18 +73,14 @@
+     public static final SystemToast.SystemToastIds NICK_WARN = SystemToast.SystemToastIds.UNSECURE_SERVER_WARNING;
+ 
+     /**
+-     * Logger for this class.
++     * Main mod UI sprite.
+      */
+-    private static final Logger LOGGER = LoggerFactory.getLogger("IAS/IASMinecraft");
++    public static final ResourceLocation SPRITE = new ResourceLocation("ias", "textures/gui/sprite.png");
+ 
+     /**
+-     * Button widget sprites.
++     * Logger for this class.
+      */
+-    private static final WidgetSprites BUTTON = new WidgetSprites(
+-            new ResourceLocation("ias", "button_plain"),
+-            new ResourceLocation("ias", "button_disabled"),
+-            new ResourceLocation("ias", "button_focus")
+-    );
++    private static final Logger LOGGER = LoggerFactory.getLogger("IAS/IASMinecraft");
+ 
+     /**
+      * Text X.
+@@ -175,7 +171,7 @@
+             }
+ 
+             // Add the button.
+-            ImageButton button = new ImageButton(x, y, 20, 20, BUTTON, btn -> minecraft.setScreen(new AccountScreen(screen)), Component.literal("In-Game Account Switcher"));
++            ImageButton button = new ImageButton(x, y, 20, 20, 0, 0, 20, SPRITE, 256, 256, btn -> minecraft.setScreen(new AccountScreen(screen)), Component.literal("In-Game Account Switcher"));
+             button.setTooltip(Tooltip.create(button.getMessage()));
+             button.setTooltipDelay(250);
+             buttonAdder.accept(button);
+@@ -219,7 +215,7 @@
+             }
+ 
+             // Add the button.
+-            ImageButton button = new ImageButton(x, y, 20, 20, BUTTON, btn -> minecraft.setScreen(new AccountScreen(screen)), Component.literal("In-Game Account Switcher"));
++            ImageButton button = new ImageButton(x, y, 20, 20, 0, 0, 20, SPRITE, 256, 256, btn -> minecraft.setScreen(new AccountScreen(screen)), Component.literal("In-Game Account Switcher"));
+             button.setTooltip(Tooltip.create(button.getMessage()));
+             button.setTooltipDelay(250);
+             buttonAdder.accept(button);
+@@ -319,10 +315,9 @@
+             // I'm too lazy to fix anything related to telemetry or chat signatures/reports.
+             boolean online = data.online();
+             User.Type type = online ? User.Type.MSA : User.Type.LEGACY;
+-            User user = new User(data.name(), data.uuid(), data.token(), Optional.empty(), Optional.empty(), type);
++            User user = new User(data.name(), data.uuid().toString(), data.token(), Optional.empty(), Optional.empty(), type);
+ 
+             // Create various services.
+-            CompletableFuture<ProfileResult> profile = CompletableFuture.completedFuture(online ? minecraft.getMinecraftSessionService().fetchProfile(data.uuid(), true) : null);
+             @SuppressWarnings("CastToIncompatibleInterface") // <- Mixin Accessor.
+             MinecraftAccessor accessor = (MinecraftAccessor) minecraft;
+             UserApiService apiService;
+@@ -340,14 +335,17 @@
+             ClientTelemetryManager telemetry = new ClientTelemetryManager(minecraft, apiService, user);
+             ProfileKeyPairManager keyPair = ProfileKeyPairManager.create(apiService, user, minecraft.gameDirectory.toPath());
+             ReportingContext reporting = ReportingContext.create(ReportEnvironment.local(), apiService);
++            GameProfile gameProfile = minecraft.getMinecraftSessionService().fillProfileProperties(user.getGameProfile(), false);
++            PropertyMap propertyMap = new PropertyMap();
++            propertyMap.putAll(gameProfile.getProperties());
+ 
+             // Schedule to the main thread
+             minecraft.execute(() -> {
+                 // Flush everything.
+                 LOGGER.info("IAS: Flushing user...");
+                 accessor.ias$user(user);
+-                accessor.ias$profileFuture(profile);
+                 accessor.ias$userApiService(apiService);
++                accessor.ias$profileProperties(propertyMap);
+                 accessor.ias$playerSocialManager(social);
+                 accessor.ias$telemetryManager(telemetry);
+                 accessor.ias$profileKeyPairManager(keyPair);
+diff --recursive --unified --new-file 1.20.2/root/src/main/java/ru/vidtu/ias/legacy/Skin.java 1.20.1/root/src/main/java/ru/vidtu/ias/legacy/Skin.java
+--- 1.20.2/root/src/main/java/ru/vidtu/ias/legacy/Skin.java	1970-01-01 03:00:00.000000000 +0300
++++ 1.20.1/root/src/main/java/ru/vidtu/ias/legacy/Skin.java	2025-05-27 12:20:42.443669000 +0300
+@@ -0,0 +1,46 @@
++/*
++ * In-Game Account Switcher is a mod for Minecraft that allows you to change your logged in account in-game, without restarting Minecraft.
++ * Copyright (C) 2015-2022 The_Fireplace
++ * Copyright (C) 2021-2025 VidTu
++ *
++ * This program is free software: you can redistribute it and/or modify
++ * it under the terms of the GNU Lesser General Public License as published by
++ * the Free Software Foundation, either version 3 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU Lesser General Public License for more details.
++ *
++ * You should have received a copy of the GNU Lesser General Public License
++ * along with this program.  If not, see <https://www.gnu.org/licenses/>
++ */
++
++package ru.vidtu.ias.legacy;
++
++import net.minecraft.client.resources.DefaultPlayerSkin;
++import net.minecraft.resources.ResourceLocation;
++
++import java.util.UUID;
++
++/**
++ * Legacy helper class of a player skin.
++ *
++ * @param skin Skin location
++ * @param slim Skin slimness
++ * @author VidTu
++ */
++public record Skin(ResourceLocation skin, boolean slim) {
++    /**
++     * Gets the default skin for UUID.
++     *
++     * @param uuid Target UUID
++     * @return Default skin for target UUID
++     */
++    public static Skin getDefault(UUID uuid) {
++        ResourceLocation skin = DefaultPlayerSkin.getDefaultSkin(uuid);
++        boolean slim = "slim".equalsIgnoreCase(DefaultPlayerSkin.getSkinModelName(uuid));
++        return new Skin(skin, slim);
++    }
++}
+diff --recursive --unified --new-file 1.20.2/root/src/main/java/ru/vidtu/ias/legacy/SkinWidget.java 1.20.1/root/src/main/java/ru/vidtu/ias/legacy/SkinWidget.java
+--- 1.20.2/root/src/main/java/ru/vidtu/ias/legacy/SkinWidget.java	1970-01-01 03:00:00.000000000 +0300
++++ 1.20.1/root/src/main/java/ru/vidtu/ias/legacy/SkinWidget.java	2025-05-27 12:20:42.443669000 +0300
+@@ -0,0 +1,153 @@
++/*
++ * In-Game Account Switcher is a mod for Minecraft that allows you to change your logged in account in-game, without restarting Minecraft.
++ * Copyright (C) 2015-2022 The_Fireplace
++ * Copyright (C) 2021-2025 VidTu
++ *
++ * This program is free software: you can redistribute it and/or modify
++ * it under the terms of the GNU Lesser General Public License as published by
++ * the Free Software Foundation, either version 3 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU Lesser General Public License for more details.
++ *
++ * You should have received a copy of the GNU Lesser General Public License
++ * along with this program.  If not, see <https://www.gnu.org/licenses/>
++ */
++
++package ru.vidtu.ias.legacy;
++
++import com.mojang.blaze3d.platform.Lighting;
++import com.mojang.blaze3d.vertex.PoseStack;
++import com.mojang.math.Axis;
++import net.minecraft.client.gui.ComponentPath;
++import net.minecraft.client.gui.GuiGraphics;
++import net.minecraft.client.gui.components.AbstractWidget;
++import net.minecraft.client.gui.narration.NarrationElementOutput;
++import net.minecraft.client.gui.navigation.FocusNavigationEvent;
++import net.minecraft.client.model.PlayerModel;
++import net.minecraft.client.model.geom.EntityModelSet;
++import net.minecraft.client.model.geom.ModelLayers;
++import net.minecraft.client.renderer.RenderType;
++import net.minecraft.client.renderer.texture.OverlayTexture;
++import net.minecraft.client.sounds.SoundManager;
++import net.minecraft.network.chat.CommonComponents;
++import net.minecraft.util.Mth;
++import org.jetbrains.annotations.Nullable;
++import org.joml.Matrix4f;
++
++import java.util.function.Supplier;
++
++/**
++ * Legacy widget class of a player skin.
++ *
++ * @author VidTu
++ */
++public class SkinWidget extends AbstractWidget {
++    /**
++     * Classic model.
++     */
++    private final PlayerModel<?> classic;
++
++    /**
++     * Slim model.
++     */
++    private final PlayerModel<?> slim;
++
++    /**
++     * Skin provider.
++     */
++    private final Supplier<Skin> skin;
++
++    /**
++     * Skin rotation X.
++     */
++    private float rotationX = -5.0F;
++
++    /**
++     * Skin rotation Y.
++     */
++    private float rotationY = 30.0F;
++
++    /**
++     * Creates a new skin widget.
++     *
++     * @param x      Target X
++     * @param y      Target Y
++     * @param width  Widget width
++     * @param height Widget height
++     * @param models Entity models
++     * @param skin   Skin provider
++     */
++    public SkinWidget(int x, int y, int width, int height, EntityModelSet models, Supplier<Skin> skin) {
++        // Assign.
++        super(x, y, width, height, CommonComponents.EMPTY);
++        this.skin = skin;
++
++        // Prepare models.
++        this.classic = new PlayerModel<>(models.bakeLayer(ModelLayers.PLAYER), false);
++        this.slim = new PlayerModel<>(models.bakeLayer(ModelLayers.PLAYER_SLIM), true);
++        this.classic.young = false;
++        this.slim.young = false;
++    }
++
++    @Override
++    protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
++        // Prepare.
++        PoseStack pose = graphics.pose();
++        float scale = this.getHeight() / 2.125F;
++        pose.pushPose();
++        pose.translate(this.getX() + this.getWidth() / 2.0F, this.getY() + this.getHeight(), 100.0F);
++        pose.scale(scale, scale, scale);
++        pose.translate(0.0F, -0.0625F, 0.0F);
++        Matrix4f matrix = pose.last().pose();
++        matrix.rotateAround(Axis.XP.rotationDegrees(this.rotationX), 0.0F, -1.0625F, 0.0F);
++        pose.mulPose(Axis.YP.rotationDegrees(this.rotationY));
++
++        // Render.
++        Skin skin = this.skin.get();
++        graphics.flush();
++        Lighting.setupForEntityInInventory();
++        pose.pushPose();
++        pose.mulPoseMatrix(new Matrix4f().scaling(1.0F, 1.0F, -1.0F));
++        pose.translate(0.0F, -1.5F, 0.0F);
++        PlayerModel<?> model = skin.slim() ? this.slim : this.classic;
++        RenderType renderType = model.renderType(skin.skin());
++        model.renderToBuffer(pose, graphics.bufferSource().getBuffer(renderType), 0xF000F0, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
++        pose.popPose();
++        graphics.flush();
++        Lighting.setupFor3DItems();
++
++        // End.
++        pose.popPose();
++    }
++
++    @Override
++    protected void onDrag(double mouseX, double mouseY, double dragX, double dragY) {
++        this.rotationX = Mth.clamp(this.rotationX - (float)dragY * 2.5F, -50.0F, 50.0F);
++        this.rotationY += (float)dragX * 2.5F;
++    }
++
++    @Override
++    public void playDownSound(SoundManager manager) {
++        // NO-OP
++    }
++
++    @Override
++    protected void updateWidgetNarration(NarrationElementOutput out) {
++        // NO-OP
++    }
++
++    @Override
++    public boolean isActive() {
++        return false;
++    }
++
++    @Override
++    @Nullable
++    public ComponentPath nextFocusPath(FocusNavigationEvent event) {
++        return null;
++    }
++}
+diff --recursive --unified --new-file 1.20.2/root/src/main/java/ru/vidtu/ias/mixins/EditBoxMixin.java 1.20.1/root/src/main/java/ru/vidtu/ias/mixins/EditBoxMixin.java
+--- 1.20.2/root/src/main/java/ru/vidtu/ias/mixins/EditBoxMixin.java	1970-01-01 03:00:00.000000000 +0300
++++ 1.20.1/root/src/main/java/ru/vidtu/ias/mixins/EditBoxMixin.java	2025-05-27 12:20:42.444668100 +0300
+@@ -0,0 +1,44 @@
++/*
++ * In-Game Account Switcher is a mod for Minecraft that allows you to change your logged in account in-game, without restarting Minecraft.
++ * Copyright (C) 2015-2022 The_Fireplace
++ * Copyright (C) 2021-2025 VidTu
++ *
++ * This program is free software: you can redistribute it and/or modify
++ * it under the terms of the GNU Lesser General Public License as published by
++ * the Free Software Foundation, either version 3 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU Lesser General Public License for more details.
++ *
++ * You should have received a copy of the GNU Lesser General Public License
++ * along with this program.  If not, see <https://www.gnu.org/licenses/>
++ */
++
++package ru.vidtu.ias.mixins;
++
++import net.minecraft.client.gui.components.EditBox;
++import org.spongepowered.asm.mixin.Mixin;
++import org.spongepowered.asm.mixin.injection.At;
++import org.spongepowered.asm.mixin.injection.Inject;
++import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
++import ru.vidtu.ias.screen.PopupBox;
++
++/**
++ * Legacy Mixin for hacky way to disable bordering of {@link EditBox} without changing offsets.
++ * This works because it checks offsets via field access and rendering via method.
++ *
++ * @author VidTu
++ */
++@SuppressWarnings("DollarSignInName") // <- Mixin.
++@Mixin(EditBox.class)
++public final class EditBoxMixin {
++    @SuppressWarnings({"ConstantValue", "InstanceofThis"}) // <- Very hacky check for popup boxes.
++    @Inject(method = "isBordered", at = @At("HEAD"), cancellable = true)
++    public void ias$isBordered$head(CallbackInfoReturnable<Boolean> cir) {
++        if (!((Object) this instanceof PopupBox)) return;
++        cir.setReturnValue(false);
++    }
++}
+diff --recursive --unified --new-file 1.20.2/root/src/main/java/ru/vidtu/ias/mixins/MinecraftAccessor.java 1.20.1/root/src/main/java/ru/vidtu/ias/mixins/MinecraftAccessor.java
+--- 1.20.2/root/src/main/java/ru/vidtu/ias/mixins/MinecraftAccessor.java	2025-05-27 12:20:42.460159500 +0300
++++ 1.20.1/root/src/main/java/ru/vidtu/ias/mixins/MinecraftAccessor.java	2025-05-27 12:20:42.444668100 +0300
+@@ -20,7 +20,7 @@
+ package ru.vidtu.ias.mixins;
+ 
+ import com.mojang.authlib.minecraft.UserApiService;
+-import com.mojang.authlib.yggdrasil.ProfileResult;
++import com.mojang.authlib.properties.PropertyMap;
+ import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
+ import net.minecraft.client.Minecraft;
+ import net.minecraft.client.User;
+@@ -32,8 +32,6 @@
+ import org.spongepowered.asm.mixin.Mutable;
+ import org.spongepowered.asm.mixin.gen.Accessor;
+ 
+-import java.util.concurrent.CompletableFuture;
+-
+ /**
+  * Mixin accessor for changing session-related data in {@link Minecraft}.
+  *
+@@ -53,16 +51,6 @@
+     void ias$user(User user);
+ 
+     /**
+-     * Sets the profile future.
+-     *
+-     * @param future New profile future
+-     * @see Minecraft#getGameProfile()
+-     */
+-    @Accessor("profileFuture")
+-    @Mutable
+-    void ias$profileFuture(CompletableFuture<ProfileResult> future);
+-
+-    /**
+      * Gets the authentication service.
+      *
+      * @return Current authentication service
+@@ -80,6 +68,15 @@
+     void ias$userApiService(UserApiService service);
+ 
+     /**
++     * Sets the profile properties.
++     *
++     * @param map New property map
++     */
++    @Accessor("profileProperties")
++    @Mutable
++    void ias$profileProperties(PropertyMap map);
++
++    /**
+      * Sets the player social manager.
+      *
+      * @param manager New player social manager
+diff --recursive --unified --new-file 1.20.2/root/src/main/java/ru/vidtu/ias/screen/AccountEntry.java 1.20.1/root/src/main/java/ru/vidtu/ias/screen/AccountEntry.java
+--- 1.20.2/root/src/main/java/ru/vidtu/ias/screen/AccountEntry.java	2025-05-27 12:20:42.460159500 +0300
++++ 1.20.1/root/src/main/java/ru/vidtu/ias/screen/AccountEntry.java	2025-05-27 12:20:42.445702300 +0300
+@@ -26,16 +26,15 @@
+ import net.minecraft.client.gui.components.ObjectSelectionList;
+ import net.minecraft.client.gui.components.PlayerFaceRenderer;
+ import net.minecraft.client.gui.components.Tooltip;
+-import net.minecraft.client.gui.components.WidgetSprites;
+ import net.minecraft.client.gui.screens.Screen;
+ import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
+-import net.minecraft.client.resources.PlayerSkin;
+ import net.minecraft.network.chat.CommonComponents;
+ import net.minecraft.network.chat.Component;
+-import net.minecraft.resources.ResourceLocation;
+ import net.minecraft.util.FormattedCharSequence;
+ import org.jetbrains.annotations.NotNull;
++import ru.vidtu.ias.IASMinecraft;
+ import ru.vidtu.ias.account.Account;
++import ru.vidtu.ias.legacy.Skin;
+ 
+ import java.util.List;
+ import java.util.Objects;
+@@ -48,32 +47,6 @@
+  */
+ final class AccountEntry extends ObjectSelectionList.Entry<AccountEntry> {
+     /**
+-     * Up button sprites.
+-     */
+-    private static final WidgetSprites UP = new WidgetSprites(
+-            new ResourceLocation("ias", "up_plain"),
+-            new ResourceLocation("ias", "up_disabled"),
+-            new ResourceLocation("ias", "up_focus")
+-    );
+-
+-    /**
+-     * Down button sprites.
+-     */
+-    private static final WidgetSprites DOWN = new WidgetSprites(
+-            new ResourceLocation("ias", "down_plain"),
+-            new ResourceLocation("ias", "down_disabled"),
+-            new ResourceLocation("ias", "down_focus")
+-    );
+-
+-    /**
+-     * Warning sprites.
+-     */
+-    private static final WidgetSprites WARNING = new WidgetSprites(
+-            new ResourceLocation("ias", "warning_off"),
+-            new ResourceLocation("ias", "warning_on")
+-    );
+-
+-    /**
+      * Minecraft instance.
+      */
+     private final Minecraft minecraft;
+@@ -133,8 +106,8 @@
+         }
+ 
+         // Render the skin.
+-        PlayerSkin skin = this.list.skin(this);
+-        PlayerFaceRenderer.draw(graphics, skin, x, y, 8);
++        Skin skin = this.list.skin(this);
++        PlayerFaceRenderer.draw(graphics, skin.skin(), x, y, 8);
+ 
+         // Get the name color.
+         User user = this.minecraft.getUser();
+@@ -157,7 +130,7 @@
+         // Render warning if insecure.
+         if (this.account.insecure()) {
+             boolean warning = (System.nanoTime() / 1_000_000_000L) % 2L == 0;
+-            graphics.blitSprite(warning ? WARNING.enabled() : WARNING.enabledFocused(), x - 6, y - 1, 2, 10);
++            graphics.blit(IASMinecraft.SPRITE, x - 6, y - 1, 31, warning ? 10 : 0, 2, 10);
+             if (mouseX >= x - 10 && mouseX <= x && mouseY >= y && mouseY <= y + height) {
+                 this.list.screen().setTooltipForNextRenderPass(Tooltip.create(Component.translatable("ias.accounts.tip.insecure")), DefaultTooltipPositioner.INSTANCE, true);
+             }
+@@ -166,28 +139,28 @@
+         // Render only for focused, selected or hovered.
+         if (this.equals(this.list.getFocused()) || this.equals(this.list.getSelected())) {
+             // Render up widget.
+-            ResourceLocation upTexture;
++            int upV;
+             int upX = x + width - 28;
+             if (this == this.list.children().get(0)) {
+-                upTexture = UP.disabled();
++                upV = 14;
+             } else if (mouseX >= upX && mouseY >= y && mouseX <= upX + 11 && mouseY <= y + height) {
+-                upTexture = UP.enabledFocused();
++                upV = 7;
+             } else {
+-                upTexture = UP.enabled();
++                upV = 0;
+             }
+-            graphics.blitSprite(upTexture, upX, y, 11, 7);
++            graphics.blit(IASMinecraft.SPRITE, upX, y, 20, upV, 11, 7);
+ 
+             // Render down widget.
+-            ResourceLocation downTexture;
++            int downV;
+             int downX = x + width - 15;
+             if (this == this.list.children().get(this.list.children().size() - 1)) {
+-                downTexture = DOWN.disabled();
++                downV = 35;
+             } else if (mouseX >= downX && mouseY >= y && mouseX <= downX + 11 && mouseY <= y + height) {
+-                downTexture = DOWN.enabledFocused();
++                downV = 28;
+             } else {
+-                downTexture = DOWN.enabled();
++                downV = 21;
+             }
+-            graphics.blitSprite(downTexture, downX, y, 11, 7);
++            graphics.blit(IASMinecraft.SPRITE, downX, y, 20, downV, 11, 7);
+         }
+     }
+ 
+diff --recursive --unified --new-file 1.20.2/root/src/main/java/ru/vidtu/ias/screen/AccountList.java 1.20.1/root/src/main/java/ru/vidtu/ias/screen/AccountList.java
+--- 1.20.2/root/src/main/java/ru/vidtu/ias/screen/AccountList.java	2025-05-27 12:20:42.461174500 +0300
++++ 1.20.1/root/src/main/java/ru/vidtu/ias/screen/AccountList.java	2025-05-27 12:20:42.445702300 +0300
+@@ -19,11 +19,11 @@
+ 
+ package ru.vidtu.ias.screen;
+ 
+-import com.mojang.authlib.yggdrasil.ProfileResult;
++import com.mojang.authlib.GameProfile;
++import com.mojang.authlib.minecraft.MinecraftProfileTexture;
+ import net.minecraft.client.Minecraft;
+ import net.minecraft.client.gui.components.ObjectSelectionList;
+-import net.minecraft.client.resources.DefaultPlayerSkin;
+-import net.minecraft.client.resources.PlayerSkin;
++import net.minecraft.resources.ResourceLocation;
+ import org.jetbrains.annotations.Nullable;
+ import org.slf4j.Logger;
+ import org.slf4j.LoggerFactory;
+@@ -32,6 +32,7 @@
+ import ru.vidtu.ias.account.OfflineAccount;
+ import ru.vidtu.ias.auth.LoginData;
+ import ru.vidtu.ias.config.IASStorage;
++import ru.vidtu.ias.legacy.Skin;
+ 
+ import java.util.Locale;
+ import java.util.Map;
+@@ -49,7 +50,7 @@
+     /**
+      * Skins cache.
+      */
+-    private static final Map<UUID, PlayerSkin> SKINS = new WeakHashMap<>(4);
++    private static final Map<UUID, Skin> SKINS = new WeakHashMap<>(4);
+ 
+     /**
+      * Logger for this class.
+@@ -75,6 +76,7 @@
+         super(minecraft, width, height, top, bottom, item);
+         this.screen = screen;
+         this.update(this.screen.search().getValue());
++        this.setRenderTopAndBottom(false);
+     }
+ 
+     @Override
+@@ -279,14 +281,14 @@
+      * @param entry Target account entry
+      * @return Player skin, fetched or default
+      */
+-    PlayerSkin skin(AccountEntry entry) {
++    Skin skin(AccountEntry entry) {
+         // Get and return the skin if already stored.
+         UUID uuid = entry.account().skin();
+-        PlayerSkin skin = SKINS.get(uuid);
++        Skin skin = SKINS.get(uuid);
+         if (skin != null) return skin;
+ 
+         // Quickly put the replacer to avoid fetch spam.
+-        skin = DefaultPlayerSkin.get(uuid);
++        skin = Skin.getDefault(uuid);
+         SKINS.put(uuid, skin);
+ 
+         // Skip fetching offline skins.
+@@ -295,25 +297,24 @@
+         // Load the skin.
+         CompletableFuture.supplyAsync(() -> {
+             // Fetch the profile
+-            ProfileResult result = this.minecraft.getMinecraftSessionService().fetchProfile(uuid, false);
+-
+-            // Skip if profile is null.
+-            if (result == null) return null;
+-
+-            // Return the profile.
+-            return result.profile();
+-        }, IAS.executor()).thenComposeAsync(profile -> {
++            GameProfile profile = new GameProfile(uuid, entry.account().name());
++            return this.minecraft.getMinecraftSessionService().fillProfileProperties(profile, false);
++        }, IAS.executor()).thenApplyAsync(profile -> {
+             // Skip if profile is null.
+-            if (profile == null) return CompletableFuture.completedFuture(null);
++            if (profile == null) return null;
+ 
+             // Load the skin.
+-            return this.minecraft.getSkinManager().getOrLoad(profile);
++            return this.minecraft.getSkinManager().getInsecureSkinInformation(profile);
+         }, IAS.executor()).thenAcceptAsync(loaded -> {
+             // Skip if skin is null.
+             if (loaded == null) return;
++            MinecraftProfileTexture skinInfo = loaded.get(MinecraftProfileTexture.Type.SKIN);
++            if (skinInfo == null) return;
++            ResourceLocation skinTexture = this.minecraft.getSkinManager().registerTexture(skinInfo, MinecraftProfileTexture.Type.SKIN);
++            boolean slim = "slim".equalsIgnoreCase(skinInfo.getMetadata("model"));
+ 
+             // Put into map.
+-            SKINS.put(uuid, loaded);
++            SKINS.put(uuid, new Skin(skinTexture, slim));
+         }, this.minecraft).exceptionally(t -> {
+             // Log it.
+             LOGGER.warn("IAS: Unable to load skin: {}", entry, t);
+diff --recursive --unified --new-file 1.20.2/root/src/main/java/ru/vidtu/ias/screen/AccountScreen.java 1.20.1/root/src/main/java/ru/vidtu/ias/screen/AccountScreen.java
+--- 1.20.2/root/src/main/java/ru/vidtu/ias/screen/AccountScreen.java	2025-05-27 12:20:42.461174500 +0300
++++ 1.20.1/root/src/main/java/ru/vidtu/ias/screen/AccountScreen.java	2025-05-27 12:20:42.445702300 +0300
+@@ -24,12 +24,10 @@
+ import net.minecraft.client.gui.GuiGraphics;
+ import net.minecraft.client.gui.components.Button;
+ import net.minecraft.client.gui.components.EditBox;
+-import net.minecraft.client.gui.components.PlayerSkinWidget;
+ import net.minecraft.client.gui.components.Tooltip;
+ import net.minecraft.client.gui.navigation.CommonInputs;
+ import net.minecraft.client.gui.screens.AlertScreen;
+ import net.minecraft.client.gui.screens.Screen;
+-import net.minecraft.client.resources.DefaultPlayerSkin;
+ import net.minecraft.network.chat.CommonComponents;
+ import net.minecraft.network.chat.Component;
+ import org.lwjgl.glfw.GLFW;
+@@ -38,6 +36,8 @@
+ import ru.vidtu.ias.IAS;
+ import ru.vidtu.ias.account.Account;
+ import ru.vidtu.ias.config.IASStorage;
++import ru.vidtu.ias.legacy.Skin;
++import ru.vidtu.ias.legacy.SkinWidget;
+ 
+ public final class AccountScreen extends Screen {
+     /**
+@@ -63,7 +63,7 @@
+     /**
+      * Player skin widget.
+      */
+-    private PlayerSkinWidget skin;
++    private SkinWidget skin;
+ 
+     /**
+      * Login button.
+@@ -131,19 +131,18 @@
+ 
+         // Add skin renderer.
+         if (this.skin == null) {
+-            this.skin = new PlayerSkinWidget(85, 120, this.minecraft.getEntityModels(), () -> {
++            this.skin = new SkinWidget(5, this.height / 2 - 60, 85, 120, this.minecraft.getEntityModels(), () -> {
+                 // Return default if list is removed. (for whatever reason)
+-                if (this.list == null) return DefaultPlayerSkin.get(Util.NIL_UUID);
++                if (this.list == null) return Skin.getDefault(Util.NIL_UUID);
+ 
+                 // Return default if nothing is selected. (for whatever reason)
+                 AccountEntry selected = this.list.getSelected();
+-                if (selected == null) return DefaultPlayerSkin.get(Util.NIL_UUID);
++                if (selected == null) return Skin.getDefault(Util.NIL_UUID);
+ 
+                 // Return skin of selected.
+                 return this.list.skin(selected);
+             });
+         }
+-        this.skin.setPosition(5, this.height / 2 - 60);
+         this.addRenderableWidget(this.skin);
+ 
+         // Add login button.
+@@ -205,12 +204,19 @@
+     @Override
+     public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
+         // Render background and widgets.
++        this.renderBackground(graphics);
+         super.render(graphics, mouseX, mouseY, delta);
+ 
+         // Render title.
+         graphics.drawCenteredString(this.font, this.title, this.width / 2, 1, 0xFF_FF_FF_FF);
+     }
+ 
++    @Override
++    public void tick() {
++        super.tick();
++        this.search.tick();
++    }
++
+     /**
+      * Gets the search.
+      *
+diff --recursive --unified --new-file 1.20.2/root/src/main/java/ru/vidtu/ias/screen/AddPopupScreen.java 1.20.1/root/src/main/java/ru/vidtu/ias/screen/AddPopupScreen.java
+--- 1.20.2/root/src/main/java/ru/vidtu/ias/screen/AddPopupScreen.java	2025-05-27 12:20:42.461174500 +0300
++++ 1.20.1/root/src/main/java/ru/vidtu/ias/screen/AddPopupScreen.java	2025-05-27 12:20:42.445702300 +0300
+@@ -105,6 +105,7 @@
+         }
+ 
+         // Render background and widgets.
++        this.renderBackground(graphics);
+         super.render(graphics, mouseX, mouseY, delta);
+ 
+         // Render the title.
+@@ -115,7 +116,7 @@
+     }
+ 
+     @Override
+-    public void renderBackground(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
++    public void renderBackground(GuiGraphics graphics) {
+         // Bruh.
+         assert this.minecraft != null;
+ 
+@@ -124,7 +125,7 @@
+             // Render gradient.
+             graphics.fill(0, 0, this.width, this.height, 0x80_00_00_00);
+         } else {
+-            super.renderBackground(graphics, mouseX, mouseY, delta);
++            super.renderBackground(graphics);
+         }
+ 
+         // Render "form".
+diff --recursive --unified --new-file 1.20.2/root/src/main/java/ru/vidtu/ias/screen/ConfigScreen.java 1.20.1/root/src/main/java/ru/vidtu/ias/screen/ConfigScreen.java
+--- 1.20.2/root/src/main/java/ru/vidtu/ias/screen/ConfigScreen.java	2025-05-27 12:20:42.461174500 +0300
++++ 1.20.1/root/src/main/java/ru/vidtu/ias/screen/ConfigScreen.java	2025-05-27 12:20:42.446813400 +0300
+@@ -419,7 +419,7 @@
+     @Override
+     public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
+         // Render background and widgets.
+-        this.renderBackground(graphics, mouseX, mouseY, delta);
++        this.renderBackground(graphics);
+         super.render(graphics, mouseX, mouseY, delta);
+ 
+         // Render title.
+diff --recursive --unified --new-file 1.20.2/root/src/main/java/ru/vidtu/ias/screen/DeletePopupScreen.java 1.20.1/root/src/main/java/ru/vidtu/ias/screen/DeletePopupScreen.java
+--- 1.20.2/root/src/main/java/ru/vidtu/ias/screen/DeletePopupScreen.java	2025-05-27 12:20:42.462179100 +0300
++++ 1.20.1/root/src/main/java/ru/vidtu/ias/screen/DeletePopupScreen.java	2025-05-27 12:20:42.446813400 +0300
+@@ -117,6 +117,7 @@
+         }
+ 
+         // Render background and widgets.
++        this.renderBackground(graphics);
+         super.render(graphics, mouseX, mouseY, delta);
+ 
+         // Render the title.
+@@ -130,7 +131,7 @@
+     }
+ 
+     @Override
+-    public void renderBackground(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
++    public void renderBackground(GuiGraphics graphics) {
+         // Bruh.
+         assert this.minecraft != null;
+ 
+@@ -139,7 +140,7 @@
+             // Render gradient.
+             graphics.fill(0, 0, this.width, this.height, 0x80_00_00_00);
+         } else {
+-            super.renderBackground(graphics, mouseX, mouseY, delta);
++            super.renderBackground(graphics);
+         }
+ 
+         // Render "form".
+diff --recursive --unified --new-file 1.20.2/root/src/main/java/ru/vidtu/ias/screen/LoginPopupScreen.java 1.20.1/root/src/main/java/ru/vidtu/ias/screen/LoginPopupScreen.java
+--- 1.20.2/root/src/main/java/ru/vidtu/ias/screen/LoginPopupScreen.java	2025-05-27 12:20:42.462179100 +0300
++++ 1.20.1/root/src/main/java/ru/vidtu/ias/screen/LoginPopupScreen.java	2025-05-27 12:20:42.446813400 +0300
+@@ -176,6 +176,13 @@
+     }
+ 
+     @Override
++    public void tick() {
++        super.tick();
++        if (this.password == null) return;
++        this.password.tick();
++    }
++
++    @Override
+     public void onClose() {
+         // Bruh.
+         assert this.minecraft != null;
+@@ -205,6 +212,7 @@
+         }
+ 
+         // Render background and widgets.
++        this.renderBackground(graphics);
+         super.render(graphics, mouseX, mouseY, delta);
+ 
+         // Render the title.
+@@ -276,7 +284,7 @@
+     }
+ 
+     @Override
+-    public void renderBackground(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
++    public void renderBackground(GuiGraphics graphics) {
+         // Bruh.
+         assert this.minecraft != null;
+ 
+@@ -285,7 +293,7 @@
+             // Render gradient.
+             graphics.fill(0, 0, this.width, this.height, 0x80_00_00_00);
+         } else {
+-            super.renderBackground(graphics, mouseX, mouseY, delta);
++            super.renderBackground(graphics);
+         }
+ 
+         // Render "form".
+diff --recursive --unified --new-file 1.20.2/root/src/main/java/ru/vidtu/ias/screen/MicrosoftCryptPopupScreen.java 1.20.1/root/src/main/java/ru/vidtu/ias/screen/MicrosoftCryptPopupScreen.java
+--- 1.20.2/root/src/main/java/ru/vidtu/ias/screen/MicrosoftCryptPopupScreen.java	2025-05-27 12:20:42.462179100 +0300
++++ 1.20.1/root/src/main/java/ru/vidtu/ias/screen/MicrosoftCryptPopupScreen.java	2025-05-27 12:20:42.447815700 +0300
+@@ -126,6 +126,7 @@
+         }
+ 
+         // Render background and widgets.
++        this.renderBackground(graphics);
+         super.render(graphics, mouseX, mouseY, delta);
+ 
+         // Render the title.
+@@ -136,7 +137,7 @@
+     }
+ 
+     @Override
+-    public void renderBackground(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
++    public void renderBackground(GuiGraphics graphics) {
+         // Bruh.
+         assert this.minecraft != null;
+ 
+@@ -145,7 +146,7 @@
+             // Render gradient.
+             graphics.fill(0, 0, this.width, this.height, 0x80_00_00_00);
+         } else {
+-            super.renderBackground(graphics, mouseX, mouseY, delta);
++            super.renderBackground(graphics);
+         }
+ 
+         // Render "form".
+diff --recursive --unified --new-file 1.20.2/root/src/main/java/ru/vidtu/ias/screen/MicrosoftPopupScreen.java 1.20.1/root/src/main/java/ru/vidtu/ias/screen/MicrosoftPopupScreen.java
+--- 1.20.2/root/src/main/java/ru/vidtu/ias/screen/MicrosoftPopupScreen.java	2025-05-27 12:20:42.463179000 +0300
++++ 1.20.1/root/src/main/java/ru/vidtu/ias/screen/MicrosoftPopupScreen.java	2025-05-27 12:20:42.447815700 +0300
+@@ -298,6 +298,13 @@
+     }
+ 
+     @Override
++    public void tick() {
++        super.tick();
++        if (this.password == null) return;
++        this.password.tick();
++    }
++
++    @Override
+     public void onClose() {
+         // Bruh.
+         assert this.minecraft != null;
+@@ -352,6 +359,7 @@
+         }
+ 
+         // Render background and widgets.
++        this.renderBackground(graphics);
+         super.render(graphics, mouseX, mouseY, delta);
+ 
+         // Render the title.
+@@ -423,7 +431,7 @@
+     }
+ 
+     @Override
+-    public void renderBackground(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
++    public void renderBackground(GuiGraphics graphics) {
+         // Bruh.
+         assert this.minecraft != null;
+ 
+@@ -432,7 +440,7 @@
+             // Render gradient.
+             graphics.fill(0, 0, this.width, this.height, 0x80_00_00_00);
+         } else {
+-            super.renderBackground(graphics, mouseX, mouseY, delta);
++            super.renderBackground(graphics);
+         }
+ 
+         // Render "form".
+diff --recursive --unified --new-file 1.20.2/root/src/main/java/ru/vidtu/ias/screen/OfflinePopupScreen.java 1.20.1/root/src/main/java/ru/vidtu/ias/screen/OfflinePopupScreen.java
+--- 1.20.2/root/src/main/java/ru/vidtu/ias/screen/OfflinePopupScreen.java	2025-05-27 12:20:42.463179000 +0300
++++ 1.20.1/root/src/main/java/ru/vidtu/ias/screen/OfflinePopupScreen.java	2025-05-27 12:20:42.447815700 +0300
+@@ -285,6 +285,12 @@
+     }
+ 
+     @Override
++    public void tick() {
++        super.tick();
++        this.name.tick();
++    }
++
++    @Override
+     public boolean keyPressed(int key, int scan, int mods) {
+         boolean res = super.keyPressed(key, scan, mods);
+         if (key == GLFW.GLFW_KEY_LEFT_ALT || key == GLFW.GLFW_KEY_RIGHT_ALT) {
+@@ -317,6 +323,7 @@
+         }
+ 
+         // Render background and widgets.
++        this.renderBackground(graphics);
+         super.render(graphics, mouseX, mouseY, delta);
+ 
+         // Render the title.
+@@ -332,7 +339,7 @@
+     }
+ 
+     @Override
+-    public void renderBackground(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
++    public void renderBackground(GuiGraphics graphics) {
+         // Bruh.
+         assert this.minecraft != null;
+ 
+@@ -341,7 +348,7 @@
+             // Render gradient.
+             graphics.fill(0, 0, this.width, this.height, 0x80_00_00_00);
+         } else {
+-            super.renderBackground(graphics, mouseX, mouseY, delta);
++            super.renderBackground(graphics);
+         }
+ 
+         // Render "form".
+diff --recursive --unified --new-file 1.20.2/root/src/main/java/ru/vidtu/ias/screen/PopupBox.java 1.20.1/root/src/main/java/ru/vidtu/ias/screen/PopupBox.java
+--- 1.20.2/root/src/main/java/ru/vidtu/ias/screen/PopupBox.java	2025-05-27 12:20:42.463179000 +0300
++++ 1.20.1/root/src/main/java/ru/vidtu/ias/screen/PopupBox.java	2025-05-27 12:20:42.447815700 +0300
+@@ -33,7 +33,7 @@
+  *
+  * @author VidTu
+  */
+-final class PopupBox extends EditBox {
++public final class PopupBox extends EditBox {
+     /**
+      * Enter action.
+      */
+@@ -111,12 +111,6 @@
+         return Component.translatable("gui.narrate.editBox", this.getMessage(), Component.empty());
+     }
+ 
+-    // Has design - no.
+-    @Override
+-    public boolean isBordered() {
+-        return false;
+-    }
+-
+     @Override
+     public String toString() {
+         return "PopupBox{" +
+diff --recursive --unified --new-file 1.20.2/root/src/main/resources/ias.mixins.json 1.20.1/root/src/main/resources/ias.mixins.json
+--- 1.20.2/root/src/main/resources/ias.mixins.json	2025-05-27 12:20:42.464315000 +0300
++++ 1.20.1/root/src/main/resources/ias.mixins.json	2025-05-27 12:20:42.448833500 +0300
+@@ -5,6 +5,7 @@
+   "package": "ru.vidtu.ias.mixins",
+   "refmap": "ias.mixins.refmap.json",
+   "client": [
++    "EditBoxMixin",
+     "MinecraftAccessor",
+     "MinecraftMixin"
+   ],

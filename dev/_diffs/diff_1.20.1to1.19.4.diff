@@ -1,0 +1,1448 @@
+diff --recursive --unified --new-file 1.20.1/fabric/build.gradle.kts 1.19.4/fabric/build.gradle.kts
+--- 1.20.1/fabric/build.gradle.kts	2025-05-27 12:20:42.433283300 +0300
++++ 1.19.4/fabric/build.gradle.kts	2025-05-27 12:20:42.419384500 +0300
+@@ -25,10 +25,10 @@
+ java.targetCompatibility = JavaVersion.VERSION_17
+ java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+ group = "ru.vidtu.ias"
+-base.archivesName = "IAS-Fabric-1.20.1"
++base.archivesName = "IAS-Fabric-1.19.4"
+ description = "This mod allows you to change your logged in account in-game, without restarting Minecraft."
+-evaluationDependsOn(":1.20.1-root")
+-val shared = project(":1.20.1-root")
++evaluationDependsOn(":1.19.4-root")
++val shared = project(":1.19.4-root")
+ 
+ repositories {
+     mavenCentral()
+@@ -59,13 +59,13 @@
+     compileOnlyApi(libs.error.prone.annotations)
+ 
+     // Minecraft (Provided)
+-    minecraft(libs.minecraft.mc1201)
++    minecraft(libs.minecraft.mc1194)
+     mappings(loom.officialMojangMappings())
+ 
+     // Fabric (Provided)
+     modImplementation(libs.fabric.loader)
+-    modImplementation(libs.fabric.mc1201)
+-    modImplementation(libs.modmenu.mc1201)
++    modImplementation(libs.fabric.mc1194)
++    modImplementation(libs.modmenu.mc1194)
+ 
+     // Root
+     compileOnly(shared)
+@@ -102,7 +102,7 @@
+             "Specification-Title" to "In-Game Account Switcher",
+             "Specification-Version" to version,
+             "Specification-Vendor" to "VidTu",
+-            "Implementation-Title" to "IAS-Fabric-1.20.1",
++            "Implementation-Title" to "IAS-Fabric-1.19.4",
+             "Implementation-Version" to version,
+             "Implementation-Vendor" to "VidTu"
+         )
+diff --recursive --unified --new-file 1.20.1/fabric/gradle.properties 1.19.4/fabric/gradle.properties
+--- 1.20.1/fabric/gradle.properties	2025-05-27 12:20:42.433283300 +0300
++++ 1.19.4/fabric/gradle.properties	2025-05-27 12:20:42.419384500 +0300
+@@ -16,6 +16,6 @@
+ # along with this program.  If not, see <https://www.gnu.org/licenses/>
+ 
+ # Mod
+-display.type=Fabric/Quilt 1.20.1
+-modrinth.versions=1.20.1
++display.type=Fabric/Quilt 1.19.4
++modrinth.versions=1.19.4
+ modrinth.loaders=fabric,quilt
+diff --recursive --unified --new-file 1.20.1/fabric/src/main/java/ru/vidtu/ias/IASFabric.java 1.19.4/fabric/src/main/java/ru/vidtu/ias/IASFabric.java
+--- 1.20.1/fabric/src/main/java/ru/vidtu/ias/IASFabric.java	2025-05-27 12:20:42.434283100 +0300
++++ 1.19.4/fabric/src/main/java/ru/vidtu/ias/IASFabric.java	2025-05-27 12:20:42.420389100 +0300
+@@ -64,7 +64,7 @@
+             if (screen instanceof TitleScreen || screen instanceof JoinMultiplayerScreen) {
+                 // Draw.
+                 Font font = client.font;
+-                ScreenEvents.afterRender(screen).register((scr, graphics, mouseX, mouseY, delta) -> IASMinecraft.onDraw(scr, font, graphics));
++                ScreenEvents.afterRender(screen).register((scr, pose, mouseX, mouseY, delta) -> IASMinecraft.onDraw(scr, font, pose));
+             }
+         });
+     }
+diff --recursive --unified --new-file 1.20.1/fabric/src/main/resources/fabric.mod.json 1.19.4/fabric/src/main/resources/fabric.mod.json
+--- 1.20.1/fabric/src/main/resources/fabric.mod.json	2025-05-27 12:20:42.435521000 +0300
++++ 1.19.4/fabric/src/main/resources/fabric.mod.json	2025-05-27 12:20:42.421393200 +0300
+@@ -34,7 +34,7 @@
+     "ias.mixins.json"
+   ],
+   "depends": {
+-    "minecraft": "1.20.1",
++    "minecraft": "1.19.4",
+     "fabric-api": "*"
+   },
+   "recommends": {
+diff --recursive --unified --new-file 1.20.1/fabric/src/main/resources/quilt.mod.json 1.19.4/fabric/src/main/resources/quilt.mod.json
+--- 1.20.1/fabric/src/main/resources/quilt.mod.json	2025-05-27 12:20:42.435521000 +0300
++++ 1.19.4/fabric/src/main/resources/quilt.mod.json	2025-05-27 12:20:42.422391100 +0300
+@@ -27,8 +27,8 @@
+     "depends": [
+       {
+         "id": "minecraft",
+-        "versions": "1.20.1",
+-        "reason": "In-Game Account Switcher works only with Minecraft 1.20.1."
++        "versions": "1.19.4",
++        "reason": "In-Game Account Switcher works only with Minecraft 1.19.4."
+       },
+       {
+         "id": "fabric-api",
+diff --recursive --unified --new-file 1.20.1/forge/build.gradle.kts 1.19.4/forge/build.gradle.kts
+--- 1.20.1/forge/build.gradle.kts	2025-05-27 12:20:42.436528800 +0300
++++ 1.19.4/forge/build.gradle.kts	2025-05-27 12:20:42.422391100 +0300
+@@ -25,10 +25,10 @@
+ java.targetCompatibility = JavaVersion.VERSION_17
+ java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+ group = "ru.vidtu.ias"
+-base.archivesName = "IAS-Forge-1.20.1"
++base.archivesName = "IAS-Forge-1.19.4"
+ description = "This mod allows you to change your logged in account in-game, without restarting Minecraft."
+-evaluationDependsOn(":1.20.1-root")
+-val shared = project(":1.20.1-root")
++evaluationDependsOn(":1.19.4-root")
++val shared = project(":1.19.4-root")
+ 
+ loom {
+     silentMojangMappingsLicense()
+@@ -63,11 +63,11 @@
+     compileOnlyApi(libs.error.prone.annotations)
+ 
+     // Minecraft (Provided)
+-    minecraft(libs.minecraft.mc1201)
++    minecraft(libs.minecraft.mc1194)
+     mappings(loom.officialMojangMappings())
+ 
+     // Forge
+-    forge(libs.forge.mc1201)
++    forge(libs.forge.mc1194)
+ 
+     // Root
+     compileOnly(shared)
+@@ -104,7 +104,7 @@
+             "Specification-Title" to "In-Game Account Switcher",
+             "Specification-Version" to version,
+             "Specification-Vendor" to "VidTu",
+-            "Implementation-Title" to "IAS-Forge-1.20.1",
++            "Implementation-Title" to "IAS-Forge-1.19.4",
+             "Implementation-Version" to version,
+             "Implementation-Vendor" to "VidTu",
+             "MixinConfigs" to "ias.mixins.json"
+diff --recursive --unified --new-file 1.20.1/forge/gradle.properties 1.19.4/forge/gradle.properties
+--- 1.20.1/forge/gradle.properties	2025-05-27 12:20:42.436528800 +0300
++++ 1.19.4/forge/gradle.properties	2025-05-27 12:20:42.422391100 +0300
+@@ -19,6 +19,6 @@
+ loom.platform=forge
+ 
+ # Mod
+-display.type=Forge 1.20.1
+-modrinth.versions=1.20.1
++display.type=Forge 1.19.4
++modrinth.versions=1.19.4
+ modrinth.loaders=forge
+diff --recursive --unified --new-file 1.20.1/forge/src/main/java/ru/vidtu/ias/IASForge.java 1.19.4/forge/src/main/java/ru/vidtu/ias/IASForge.java
+--- 1.20.1/forge/src/main/java/ru/vidtu/ias/IASForge.java	2025-05-27 12:20:42.437534300 +0300
++++ 1.19.4/forge/src/main/java/ru/vidtu/ias/IASForge.java	2025-05-27 12:20:42.423402000 +0300
+@@ -52,19 +52,6 @@
+      */
+     @SuppressWarnings("ThisEscapedInObjectConstruction") // <- Minecraft Forge API.
+     public IASForge(@NotNull FMLJavaModLoadingContext context) {
+-        // Check for NeoForge.
+-        boolean allowOnForge = Boolean.getBoolean("ias.allowForgeVersionOnNeoForge");
+-        if (!allowOnForge) {
+-            String forgeModName = ModList.get().getModContainerById("forge")
+-                    .map(ModContainer::getModInfo)
+-                    .map(IModInfo::getDisplayName)
+-                    .orElse("UNKNOWN");
+-            boolean isProbablyMcForge = "neoforge".equalsIgnoreCase(forgeModName);
+-            if (isProbablyMcForge) {
+-                throw new IllegalStateException("IAS: You've tried to use plain Forge version of the In-Game Account Switcher mod with NeoForge. This is not supported. The IAS mod has its own separate NeoForge version, use that one. If you still want to use Forge version on NeoForge without any support, add '-Dias.allowForgeVersionOnNeoForge=true' to your game JVM start-up flags.");
+-            }
+-        }
+-
+         // Not sure how long the Forge does have the "clientSideOnly" field in the TOML,
+         // so I'll do an additional exception check here.
+         if (FMLEnvironment.dist != Dist.CLIENT) {
+@@ -112,6 +99,6 @@
+     public void onScreenDraw(ScreenEvent.Render.Post event) {
+         // Draw.
+         Screen screen = event.getScreen();
+-        IASMinecraft.onDraw(screen, screen.getMinecraft().font, event.getGuiGraphics());
++        IASMinecraft.onDraw(screen, screen.getMinecraft().font, event.getPoseStack());
+     }
+ }
+diff --recursive --unified --new-file 1.20.1/forge/src/main/resources/META-INF/mods.toml 1.19.4/forge/src/main/resources/META-INF/mods.toml
+--- 1.20.1/forge/src/main/resources/META-INF/mods.toml	2025-05-27 12:20:42.438537600 +0300
++++ 1.19.4/forge/src/main/resources/META-INF/mods.toml	2025-05-27 12:20:42.424404900 +0300
+@@ -26,7 +26,7 @@
+ modId = "forge"
+ type = "required"
+ mandatory = true
+-versionRange = "[46,48)"
++versionRange = "[45,46)"
+ ordering = "NONE"
+ side = "CLIENT"
+ 
+@@ -34,7 +34,7 @@
+ modId = "minecraft"
+ type = "required"
+ mandatory = true
+-versionRange = "[1.20,1.20.1]"
++versionRange = "1.19.4"
+ ordering = "NONE"
+ side = "CLIENT"
+ 
+diff --recursive --unified --new-file 1.20.1/forge/src/main/resources/pack.mcmeta 1.19.4/forge/src/main/resources/pack.mcmeta
+--- 1.20.1/forge/src/main/resources/pack.mcmeta	2025-05-27 12:20:42.438537600 +0300
++++ 1.19.4/forge/src/main/resources/pack.mcmeta	2025-05-27 12:20:42.424404900 +0300
+@@ -1,6 +1,6 @@
+ {
+   "pack": {
+-    "pack_format": 15,
++    "pack_format": 13,
+     "description": "In-Game Account Switcher"
+   }
+ }
+diff --recursive --unified --new-file 1.20.1/neoforge/build.gradle.kts 1.19.4/neoforge/build.gradle.kts
+--- 1.20.1/neoforge/build.gradle.kts	2025-05-27 12:20:42.438537600 +0300
++++ 1.19.4/neoforge/build.gradle.kts	1970-01-01 03:00:00.000000000 +0300
+@@ -1,115 +0,0 @@
+-/*
+- * In-Game Account Switcher is a mod for Minecraft that allows you to change your logged in account in-game, without restarting Minecraft.
+- * Copyright (C) 2015-2022 The_Fireplace
+- * Copyright (C) 2021-2025 VidTu
+- *
+- * This program is free software: you can redistribute it and/or modify
+- * it under the terms of the GNU Lesser General Public License as published by
+- * the Free Software Foundation, either version 3 of the License, or
+- * (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU Lesser General Public License for more details.
+- *
+- * You should have received a copy of the GNU Lesser General Public License
+- * along with this program.  If not, see <https://www.gnu.org/licenses/>
+- */
+-
+-plugins {
+-    alias(libs.plugins.architectury.loom)
+-}
+-
+-java.sourceCompatibility = JavaVersion.VERSION_17
+-java.targetCompatibility = JavaVersion.VERSION_17
+-java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+-group = "ru.vidtu.ias"
+-base.archivesName = "IAS-NeoForge-1.20.1"
+-description = "This mod allows you to change your logged in account in-game, without restarting Minecraft."
+-evaluationDependsOn(":1.20.1-root")
+-val shared = project(":1.20.1-root")
+-
+-loom {
+-    silentMojangMappingsLicense()
+-    forge { // <- NeoForge in 1.20.1 is a fork of Forge, so we're using Forge platform.
+-        mixinConfigs = setOf("ias.mixins.json")
+-    }
+-    runs.named("client") {
+-        vmArgs(
+-            "-XX:+IgnoreUnrecognizedVMOptions",
+-            "-Xmx2G",
+-            "-XX:+AllowEnhancedClassRedefinition",
+-            "-XX:HotswapAgent=fatjar",
+-            "-Dfabric.debug.disableClassPathIsolation=true"
+-        )
+-        programArgs("--mixin", "ias.mixins.json")
+-    }
+-    @Suppress("UnstableApiUsage")
+-    mixin {
+-        useLegacyMixinAp = true
+-        defaultRefmapName = "ias.mixins.refmap.json"
+-    }
+-}
+-
+-repositories {
+-    mavenCentral()
+-    maven("https://maven.architectury.dev/")
+-    maven("https://maven.neoforged.net/releases/")
+-    maven("https://maven.minecraftforge.net/")
+-}
+-
+-dependencies {
+-    // Annotations (Compile)
+-    compileOnlyApi(libs.jetbrains.annotations)
+-    compileOnlyApi(libs.error.prone.annotations)
+-
+-    // Minecraft (Provided)
+-    minecraft(libs.minecraft.mc1201)
+-    mappings(loom.officialMojangMappings())
+-
+-    // NeoForge
+-    forge(libs.neoforge.mc1201) // <- NeoForge in 1.20.1 is a fork of Forge, so we're using Forge platform.
+-
+-    // Root
+-    compileOnly(shared)
+-}
+-
+-tasks.withType<JavaCompile> {
+-    source(rootProject.sourceSets.main.get().java)
+-    source(shared.sourceSets.main.get().java)
+-    options.encoding = "UTF-8"
+-    options.compilerArgs.addAll(listOf("-g", "-parameters"))
+-    options.release = 17
+-}
+-
+-tasks.withType<ProcessResources> {
+-    from(rootProject.sourceSets.main.get().resources)
+-    from(shared.sourceSets.main.get().resources)
+-    inputs.property("version", version)
+-    filesMatching("META-INF/mods.toml") {
+-        expand(inputs.properties)
+-    }
+-}
+-
+-tasks.withType<AbstractArchiveTask> {
+-    isPreserveFileTimestamps = false
+-    isReproducibleFileOrder = true
+-}
+-
+-tasks.withType<Jar> {
+-    from(rootDir.resolve("LICENSE"))
+-    from(rootDir.resolve("GPL"))
+-    from(rootDir.resolve("NOTICE"))
+-    manifest {
+-        attributes(
+-            "Specification-Title" to "In-Game Account Switcher",
+-            "Specification-Version" to version,
+-            "Specification-Vendor" to "VidTu",
+-            "Implementation-Title" to "IAS-NeoForge-1.20.1",
+-            "Implementation-Version" to version,
+-            "Implementation-Vendor" to "VidTu",
+-            "MixinConfigs" to "ias.mixins.json"
+-        )
+-    }
+-}
+diff --recursive --unified --new-file 1.20.1/neoforge/gradle.properties 1.19.4/neoforge/gradle.properties
+--- 1.20.1/neoforge/gradle.properties	2025-05-27 12:20:42.439540800 +0300
++++ 1.19.4/neoforge/gradle.properties	1970-01-01 03:00:00.000000000 +0300
+@@ -1,25 +0,0 @@
+-# In-Game Account Switcher is a mod for Minecraft that allows you to change your logged in account in-game, without restarting Minecraft.
+-# Copyright (C) 2015-2022 The_Fireplace
+-# Copyright (C) 2021-2025 VidTu
+-#
+-# This program is free software: you can redistribute it and/or modify
+-# it under the terms of the GNU Lesser General Public License as published by
+-# the Free Software Foundation, either version 3 of the License, or
+-# (at your option) any later version.
+-#
+-# This program is distributed in the hope that it will be useful,
+-# but WITHOUT ANY WARRANTY; without even the implied warranty of
+-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+-# GNU Lesser General Public License for more details.
+-#
+-# You should have received a copy of the GNU Lesser General Public License
+-# along with this program.  If not, see <https://www.gnu.org/licenses/>
+-
+-# Loom
+-# NeoForge in 1.20.1 is a fork of Forge, so we're using Forge platform.
+-loom.platform=forge
+-
+-# Mod
+-display.type=NeoForge 1.20.1
+-modrinth.versions=1.20.1
+-modrinth.loaders=neoforge
+diff --recursive --unified --new-file 1.20.1/neoforge/src/main/java/ru/vidtu/ias/IASNeoForge.java 1.19.4/neoforge/src/main/java/ru/vidtu/ias/IASNeoForge.java
+--- 1.20.1/neoforge/src/main/java/ru/vidtu/ias/IASNeoForge.java	2025-05-27 12:20:42.440543900 +0300
++++ 1.19.4/neoforge/src/main/java/ru/vidtu/ias/IASNeoForge.java	1970-01-01 03:00:00.000000000 +0300
+@@ -1,114 +0,0 @@
+-/*
+- * In-Game Account Switcher is a mod for Minecraft that allows you to change your logged in account in-game, without restarting Minecraft.
+- * Copyright (C) 2015-2022 The_Fireplace
+- * Copyright (C) 2021-2025 VidTu
+- *
+- * This program is free software: you can redistribute it and/or modify
+- * it under the terms of the GNU Lesser General Public License as published by
+- * the Free Software Foundation, either version 3 of the License, or
+- * (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU Lesser General Public License for more details.
+- *
+- * You should have received a copy of the GNU Lesser General Public License
+- * along with this program.  If not, see <https://www.gnu.org/licenses/>
+- */
+-
+-package ru.vidtu.ias;
+-
+-import net.minecraft.client.gui.screens.Screen;
+-import net.minecraftforge.api.distmarker.Dist;
+-import net.minecraftforge.client.ConfigScreenHandler;
+-import net.minecraftforge.client.event.ScreenEvent;
+-import net.minecraftforge.common.MinecraftForge;
+-import net.minecraftforge.event.GameShuttingDownEvent;
+-import net.minecraftforge.eventbus.api.SubscribeEvent;
+-import net.minecraftforge.fml.IExtensionPoint;
+-import net.minecraftforge.fml.ModContainer;
+-import net.minecraftforge.fml.ModList;
+-import net.minecraftforge.fml.ModLoadingContext;
+-import net.minecraftforge.fml.common.Mod;
+-import net.minecraftforge.fml.loading.FMLEnvironment;
+-import net.minecraftforge.fml.loading.FMLPaths;
+-import net.minecraftforge.forgespi.language.IModInfo;
+-import org.apache.maven.artifact.versioning.ArtifactVersion;
+-import ru.vidtu.ias.screen.ConfigScreen;
+-
+-/**
+- * Main IAS class for NeoForge.
+- *
+- * @author VidTu
+- */
+-@Mod("ias")
+-public final class IASNeoForge {
+-    /**
+-     * Creates a new mod.
+-     */
+-    @SuppressWarnings("ThisEscapedInObjectConstruction") // <- Minecraft Forge API.
+-    public IASNeoForge() {
+-        // Check for plain Forge.
+-        boolean allowOnForge = Boolean.getBoolean("ias.allowNeoForgeVersionOnForge");
+-        if (!allowOnForge) {
+-            String forgeModName = ModList.get().getModContainerById("forge")
+-                    .map(ModContainer::getModInfo)
+-                    .map(IModInfo::getDisplayName)
+-                    .orElse("UNKNOWN");
+-            boolean isProbablyMcForge = "forge".equalsIgnoreCase(forgeModName);
+-            if (isProbablyMcForge) {
+-                throw new IllegalStateException("IAS: You've tried to use NeoForge version of the In-Game Account Switcher mod with plain Forge. This is not supported. The IAS mod has its own separate Forge version, use that one. If you still want to use NeoForge version on Forge without any support, add '-Dias.allowNeoForgeVersionOnForge=true' to your game JVM start-up flags.");
+-            }
+-        }
+-
+-        // Not sure how long the Forge does have the "clientSideOnly" field in the TOML,
+-        // so I'll do an additional exception check here.
+-        if (FMLEnvironment.dist != Dist.CLIENT) {
+-            throw new UnsupportedOperationException("IAS: You've tried to load the In-Game Account Switcher mod on a server. This won't work.");
+-        }
+-
+-        // Register events.
+-        MinecraftForge.EVENT_BUS.register(this);
+-
+-        // Register various display tests and config hooks.
+-        ModLoadingContext.get().registerExtensionPoint(IExtensionPoint.DisplayTest.class, () -> new IExtensionPoint.DisplayTest(() -> IExtensionPoint.DisplayTest.IGNORESERVERONLY, (version, server) -> true));
+-        ModLoadingContext.get().registerExtensionPoint(ConfigScreenHandler.ConfigScreenFactory.class, () -> new ConfigScreenHandler.ConfigScreenFactory((minecraft, screen) -> new ConfigScreen(screen)));
+-
+-        // Create the UA and initialize.
+-        String modVersion = ModList.get().getModContainerById("ias")
+-                .map(ModContainer::getModInfo)
+-                .map(IModInfo::getVersion)
+-                .map(ArtifactVersion::toString)
+-                .orElse("UNKNOWN");
+-        String loaderVersion = ModList.get().getModContainerById("neoforge")
+-                .map(ModContainer::getModInfo)
+-                .map(IModInfo::getVersion)
+-                .map(ArtifactVersion::toString)
+-                .orElse("UNKNOWN");
+-        IASMinecraft.init(FMLPaths.GAMEDIR.get(), FMLPaths.CONFIGDIR.get(), "NeoForge", modVersion, loaderVersion);
+-    }
+-
+-    // Register closer.
+-    @SubscribeEvent
+-    public void onShutDown(GameShuttingDownEvent event) {
+-        // Close.
+-        IAS.close();
+-    }
+-
+-    // Register screen handlers.
+-    @SubscribeEvent
+-    public void onScreenInit(ScreenEvent.Init.Post event) {
+-        // Init.
+-        Screen screen = event.getScreen();
+-        IASMinecraft.onInit(screen.getMinecraft(), screen, event::addListener);
+-    }
+-
+-    // Register drawer.
+-    @SubscribeEvent
+-    public void onScreenDraw(ScreenEvent.Render.Post event) {
+-        // Draw.
+-        Screen screen = event.getScreen();
+-        IASMinecraft.onDraw(screen, screen.getMinecraft().font, event.getGuiGraphics());
+-    }
+-}
+diff --recursive --unified --new-file 1.20.1/neoforge/src/main/resources/META-INF/mods.toml 1.19.4/neoforge/src/main/resources/META-INF/mods.toml
+--- 1.20.1/neoforge/src/main/resources/META-INF/mods.toml	2025-05-27 12:20:42.440543900 +0300
++++ 1.19.4/neoforge/src/main/resources/META-INF/mods.toml	1970-01-01 03:00:00.000000000 +0300
+@@ -1,47 +0,0 @@
+-modLoader = "javafml"
+-loaderVersion = "[0,)"
+-license = "LGPL-3.0-or-later"
+-issueTrackerURL = "https://github.com/The-Fireplace-Minecraft-Mods/In-Game-Account-Switcher/issues"
+-clientSideOnly = true
+-
+-[[mods]]
+-modId = "ias"
+-version = "${version}"
+-displayName = "In-Game Account Switcher"
+-updateJSONURL = "https://raw.githubusercontent.com/The-Fireplace-Minecraft-Mods/In-Game-Account-Switcher/main/updater-neoforge.json"
+-displayURL = "https://modrinth.com/mod/in-game-account-switcher"
+-issueTrackerURL = "https://github.com/The-Fireplace-Minecraft-Mods/In-Game-Account-Switcher/issues"
+-catalogueImageIcon = "ias_64.png"
+-catalogueItemIcon = "minecraft:player_head"
+-itemIcon = "minecraft:player_head"
+-logoFile = "ias_240.png"
+-credits = "The_Fireplace, The_BrainStone, 2xsaiko, Elvm"
+-authors = "VidTu"
+-displayTest = "IGNORE_ALL_VERSION"
+-description = '''
+-Allows you to change which account you are signed in to in-game without restarting Minecraft.
+-'''
+-
+-[[mixins]]
+-config="ias.mixins.json"
+-
+-[[dependencies.ias]]
+-modId = "forge"
+-type = "required"
+-mandatory = true
+-versionRange = "[46,48)"
+-ordering = "NONE"
+-side = "CLIENT"
+-
+-[[dependencies.ias]]
+-modId = "minecraft"
+-type = "required"
+-mandatory = true
+-versionRange = "[1.20,1.20.1]"
+-ordering = "NONE"
+-side = "CLIENT"
+-
+-[modproperties.ias]
+-catalogueImageIcon = "ias_64.png"
+-catalogueItemIcon = "minecraft:player_head"
+-itemIcon = "minecraft:player_head"
+diff --recursive --unified --new-file 1.20.1/neoforge/src/main/resources/pack.mcmeta 1.19.4/neoforge/src/main/resources/pack.mcmeta
+--- 1.20.1/neoforge/src/main/resources/pack.mcmeta	2025-05-27 12:20:42.441548300 +0300
++++ 1.19.4/neoforge/src/main/resources/pack.mcmeta	1970-01-01 03:00:00.000000000 +0300
+@@ -1,6 +0,0 @@
+-{
+-  "pack": {
+-    "pack_format": 15,
+-    "description": "In-Game Account Switcher"
+-  }
+-}
+diff --recursive --unified --new-file 1.20.1/root/build.gradle.kts 1.19.4/root/build.gradle.kts
+--- 1.20.1/root/build.gradle.kts	2025-05-27 12:20:42.441548300 +0300
++++ 1.19.4/root/build.gradle.kts	2025-05-27 12:20:42.424404900 +0300
+@@ -25,7 +25,7 @@
+ java.targetCompatibility = JavaVersion.VERSION_17
+ java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+ group = "ru.vidtu.ias"
+-base.archivesName = "IAS-1.20.1"
++base.archivesName = "IAS-1.19.4"
+ description = "This mod allows you to change your logged in account in-game, without restarting Minecraft."
+ 
+ repositories {
+@@ -43,7 +43,7 @@
+     compileOnlyApi(libs.error.prone.annotations)
+ 
+     // Minecraft (Provided)
+-    minecraft(libs.minecraft.mc1201)
++    minecraft(libs.minecraft.mc1194)
+     mappings(loom.officialMojangMappings())
+ 
+     // Mixin
+@@ -62,10 +62,11 @@
+ 
+ tasks.withType<ProcessResources> {
+     from(rootProject.sourceSets.main.get().resources)
+-    inputs.property("version", version)
+-    filesMatching(listOf("fabric.mod.json", "quilt.mod.json")) {
+-        expand(inputs.properties)
+-    }
++}
++
++tasks.withType<AbstractArchiveTask> {
++    isPreserveFileTimestamps = false
++    isReproducibleFileOrder = true
+ }
+ 
+ tasks.withType<Jar> {
+@@ -77,7 +78,7 @@
+             "Specification-Title" to "In-Game Account Switcher",
+             "Specification-Version" to version,
+             "Specification-Vendor" to "VidTu",
+-            "Implementation-Title" to "IAS-1.20.1",
++            "Implementation-Title" to "IAS-1.19.4",
+             "Implementation-Version" to version,
+             "Implementation-Vendor" to "VidTu"
+         )
+diff --recursive --unified --new-file 1.20.1/root/src/main/java/ru/vidtu/ias/IASMinecraft.java 1.19.4/root/src/main/java/ru/vidtu/ias/IASMinecraft.java
+--- 1.20.1/root/src/main/java/ru/vidtu/ias/IASMinecraft.java	2025-05-27 12:20:42.442548600 +0300
++++ 1.19.4/root/src/main/java/ru/vidtu/ias/IASMinecraft.java	2025-05-27 12:20:42.426682200 +0300
+@@ -22,11 +22,11 @@
+ import com.mojang.authlib.GameProfile;
+ import com.mojang.authlib.minecraft.UserApiService;
+ import com.mojang.authlib.properties.PropertyMap;
++import com.mojang.blaze3d.vertex.PoseStack;
+ import net.minecraft.SharedConstants;
+ import net.minecraft.client.Minecraft;
+ import net.minecraft.client.User;
+ import net.minecraft.client.gui.Font;
+-import net.minecraft.client.gui.GuiGraphics;
+ import net.minecraft.client.gui.components.AbstractSelectionList;
+ import net.minecraft.client.gui.components.Button;
+ import net.minecraft.client.gui.components.ImageButton;
+@@ -274,17 +274,17 @@
+     /**
+      * Called on title screen drawing.
+      *
+-     * @param screen   Target screen
+-     * @param font     Screen font
+-     * @param graphics Drawing graphics
++     * @param screen Target screen
++     * @param font   Screen font
++     * @param pose   Drawing stack
+      */
+     @SuppressWarnings("ChainOfInstanceofChecks") // <- Abstraction for Minecraft is not possible.
+-    public static void onDraw(Screen screen, Font font, GuiGraphics graphics) {
++    public static void onDraw(Screen screen, Font font, PoseStack pose) {
+         if (IASConfig.titleText && screen instanceof TitleScreen) {
+-            graphics.drawString(font, text, textX, textY, 0xFF_CC_88_88);
++            font.drawShadow(pose, text, textX, textY, 0xFF_CC_88_88);
+         }
+         if (IASConfig.serversText && screen instanceof JoinMultiplayerScreen) {
+-            graphics.drawString(font, text, textX, textY, 0xFF_CC_88_88);
++            font.drawShadow(pose, text, textX, textY, 0xFF_CC_88_88);
+         }
+     }
+ 
+diff --recursive --unified --new-file 1.20.1/root/src/main/java/ru/vidtu/ias/legacy/SkinWidget.java 1.19.4/root/src/main/java/ru/vidtu/ias/legacy/SkinWidget.java
+--- 1.20.1/root/src/main/java/ru/vidtu/ias/legacy/SkinWidget.java	2025-05-27 12:20:42.443669000 +0300
++++ 1.19.4/root/src/main/java/ru/vidtu/ias/legacy/SkinWidget.java	2025-05-27 12:20:42.427686600 +0300
+@@ -22,14 +22,15 @@
+ import com.mojang.blaze3d.platform.Lighting;
+ import com.mojang.blaze3d.vertex.PoseStack;
+ import com.mojang.math.Axis;
++import net.minecraft.client.Minecraft;
+ import net.minecraft.client.gui.ComponentPath;
+-import net.minecraft.client.gui.GuiGraphics;
+ import net.minecraft.client.gui.components.AbstractWidget;
+ import net.minecraft.client.gui.narration.NarrationElementOutput;
+ import net.minecraft.client.gui.navigation.FocusNavigationEvent;
+ import net.minecraft.client.model.PlayerModel;
+ import net.minecraft.client.model.geom.EntityModelSet;
+ import net.minecraft.client.model.geom.ModelLayers;
++import net.minecraft.client.renderer.MultiBufferSource;
+ import net.minecraft.client.renderer.RenderType;
+ import net.minecraft.client.renderer.texture.OverlayTexture;
+ import net.minecraft.client.sounds.SoundManager;
+@@ -94,9 +95,8 @@
+     }
+ 
+     @Override
+-    protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
++    public void renderWidget(PoseStack pose, int mouseX, int mouseY, float delta) {
+         // Prepare.
+-        PoseStack pose = graphics.pose();
+         float scale = this.getHeight() / 2.125F;
+         pose.pushPose();
+         pose.translate(this.getX() + this.getWidth() / 2.0F, this.getY() + this.getHeight(), 100.0F);
+@@ -108,16 +108,15 @@
+ 
+         // Render.
+         Skin skin = this.skin.get();
+-        graphics.flush();
+         Lighting.setupForEntityInInventory();
+         pose.pushPose();
+         pose.mulPoseMatrix(new Matrix4f().scaling(1.0F, 1.0F, -1.0F));
+         pose.translate(0.0F, -1.5F, 0.0F);
+         PlayerModel<?> model = skin.slim() ? this.slim : this.classic;
+         RenderType renderType = model.renderType(skin.skin());
+-        model.renderToBuffer(pose, graphics.bufferSource().getBuffer(renderType), 0xF000F0, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
++        MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
++        model.renderToBuffer(pose, bufferSource.getBuffer(renderType), 0xF000F0, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+         pose.popPose();
+-        graphics.flush();
+         Lighting.setupFor3DItems();
+ 
+         // End.
+diff --recursive --unified --new-file 1.20.1/root/src/main/java/ru/vidtu/ias/screen/AccountEntry.java 1.19.4/root/src/main/java/ru/vidtu/ias/screen/AccountEntry.java
+--- 1.20.1/root/src/main/java/ru/vidtu/ias/screen/AccountEntry.java	2025-05-27 12:20:42.445702300 +0300
++++ 1.19.4/root/src/main/java/ru/vidtu/ias/screen/AccountEntry.java	2025-05-27 12:20:42.428736200 +0300
+@@ -19,10 +19,12 @@
+ 
+ package ru.vidtu.ias.screen;
+ 
++import com.mojang.blaze3d.systems.RenderSystem;
++import com.mojang.blaze3d.vertex.PoseStack;
+ import net.minecraft.Util;
+ import net.minecraft.client.Minecraft;
+ import net.minecraft.client.User;
+-import net.minecraft.client.gui.GuiGraphics;
++import net.minecraft.client.gui.GuiComponent;
+ import net.minecraft.client.gui.components.ObjectSelectionList;
+ import net.minecraft.client.gui.components.PlayerFaceRenderer;
+ import net.minecraft.client.gui.components.Tooltip;
+@@ -95,7 +97,7 @@
+     }
+ 
+     @Override
+-    public void render(GuiGraphics graphics, int index, int y, int x, int width, int height, int mouseX, int mouseY, boolean hovered, float delta) {
++    public void render(PoseStack pose, int index, int y, int x, int width, int height, int mouseX, int mouseY, boolean hovered, float delta) {
+         // Render tooltip.
+         if (hovered) {
+             if ((System.nanoTime() - this.lastFree) >= 500_000_000L) {
+@@ -107,7 +109,8 @@
+ 
+         // Render the skin.
+         Skin skin = this.list.skin(this);
+-        PlayerFaceRenderer.draw(graphics, skin.skin(), x, y, 8);
++        RenderSystem.setShaderTexture(0, skin.skin());
++        PlayerFaceRenderer.draw(pose, x, y, 8);
+ 
+         // Get the name color.
+         User user = this.minecraft.getUser();
+@@ -125,12 +128,13 @@
+         }
+ 
+         // Render name.
+-        graphics.drawString(this.minecraft.font, this.account.name(), x + 10, y, color);
++        this.minecraft.font.drawShadow(pose, this.account.name(), x + 10, y, color);
+ 
+         // Render warning if insecure.
+         if (this.account.insecure()) {
+             boolean warning = (System.nanoTime() / 1_000_000_000L) % 2L == 0;
+-            graphics.blit(IASMinecraft.SPRITE, x - 6, y - 1, 31, warning ? 10 : 0, 2, 10);
++            RenderSystem.setShaderTexture(0, IASMinecraft.SPRITE);
++            GuiComponent.blit(pose, x - 6, y - 1, 31, warning ? 10 : 0, 2, 10);
+             if (mouseX >= x - 10 && mouseX <= x && mouseY >= y && mouseY <= y + height) {
+                 this.list.screen().setTooltipForNextRenderPass(Tooltip.create(Component.translatable("ias.accounts.tip.insecure")), DefaultTooltipPositioner.INSTANCE, true);
+             }
+@@ -148,7 +152,8 @@
+             } else {
+                 upV = 0;
+             }
+-            graphics.blit(IASMinecraft.SPRITE, upX, y, 20, upV, 11, 7);
++            RenderSystem.setShaderTexture(0, IASMinecraft.SPRITE);
++            GuiComponent.blit(pose, upX, y, 20, upV, 11, 7);
+ 
+             // Render down widget.
+             int downV;
+@@ -160,7 +165,8 @@
+             } else {
+                 downV = 21;
+             }
+-            graphics.blit(IASMinecraft.SPRITE, downX, y, 20, downV, 11, 7);
++            RenderSystem.setShaderTexture(0, IASMinecraft.SPRITE);
++            GuiComponent.blit(pose, downX, y, 20, downV, 11, 7);
+         }
+     }
+ 
+diff --recursive --unified --new-file 1.20.1/root/src/main/java/ru/vidtu/ias/screen/AccountScreen.java 1.19.4/root/src/main/java/ru/vidtu/ias/screen/AccountScreen.java
+--- 1.20.1/root/src/main/java/ru/vidtu/ias/screen/AccountScreen.java	2025-05-27 12:20:42.445702300 +0300
++++ 1.19.4/root/src/main/java/ru/vidtu/ias/screen/AccountScreen.java	2025-05-27 12:20:42.429740700 +0300
+@@ -19,13 +19,12 @@
+ 
+ package ru.vidtu.ias.screen;
+ 
++import com.mojang.blaze3d.vertex.PoseStack;
+ import net.minecraft.ChatFormatting;
+ import net.minecraft.Util;
+-import net.minecraft.client.gui.GuiGraphics;
+ import net.minecraft.client.gui.components.Button;
+ import net.minecraft.client.gui.components.EditBox;
+ import net.minecraft.client.gui.components.Tooltip;
+-import net.minecraft.client.gui.navigation.CommonInputs;
+ import net.minecraft.client.gui.screens.AlertScreen;
+ import net.minecraft.client.gui.screens.Screen;
+ import net.minecraft.network.chat.CommonComponents;
+@@ -202,13 +201,13 @@
+     }
+ 
+     @Override
+-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
++    public void render(PoseStack pose, int mouseX, int mouseY, float delta) {
+         // Render background and widgets.
+-        this.renderBackground(graphics);
+-        super.render(graphics, mouseX, mouseY, delta);
++        this.renderBackground(pose);
++        super.render(pose, mouseX, mouseY, delta);
+ 
+         // Render title.
+-        graphics.drawCenteredString(this.font, this.title, this.width / 2, 1, 0xFF_FF_FF_FF);
++        drawCenteredString(pose, this.font, this.title, this.width / 2, 1, 0xFF_FF_FF_FF);
+     }
+ 
+     @Override
+@@ -298,7 +297,7 @@
+         }
+ 
+         // Enter or Numpad Enter to log in.
+-        if (CommonInputs.selected(key)) {
++        if (key == GLFW.GLFW_KEY_ENTER || key == GLFW.GLFW_KEY_KP_ENTER) {
+             this.list.login(!Screen.hasShiftDown());
+             return true;
+         }
+diff --recursive --unified --new-file 1.20.1/root/src/main/java/ru/vidtu/ias/screen/AddPopupScreen.java 1.19.4/root/src/main/java/ru/vidtu/ias/screen/AddPopupScreen.java
+--- 1.20.1/root/src/main/java/ru/vidtu/ias/screen/AddPopupScreen.java	2025-05-27 12:20:42.445702300 +0300
++++ 1.19.4/root/src/main/java/ru/vidtu/ias/screen/AddPopupScreen.java	2025-05-27 12:20:42.429740700 +0300
+@@ -20,7 +20,6 @@
+ package ru.vidtu.ias.screen;
+ 
+ import com.mojang.blaze3d.vertex.PoseStack;
+-import net.minecraft.client.gui.GuiGraphics;
+ import net.minecraft.client.gui.components.Tooltip;
+ import net.minecraft.client.gui.screens.Screen;
+ import net.minecraft.network.chat.CommonComponents;
+@@ -91,49 +90,48 @@
+     }
+ 
+     @Override
+-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
++    public void render(PoseStack pose, int mouseX, int mouseY, float delta) {
+         // Bruh.
+         assert this.minecraft != null;
+-        PoseStack pose = graphics.pose();
+ 
+         // Render parent behind.
+         if (this.parent != null) {
+             pose.pushPose();
+-            pose.translate(0.0F, 0.0F, -1000.0F);
+-            this.parent.render(graphics, 0, 0, delta);
++            pose.translate(0.0F, 0.0F, -500.0F);
++            this.parent.render(pose, 0, 0, delta);
+             pose.popPose();
+         }
+ 
+         // Render background and widgets.
+-        this.renderBackground(graphics);
+-        super.render(graphics, mouseX, mouseY, delta);
++        this.renderBackground(pose);
++        super.render(pose, mouseX, mouseY, delta);
+ 
+         // Render the title.
+         pose.pushPose();
+         pose.scale(2.0F, 2.0F, 2.0F);
+-        graphics.drawCenteredString(this.font, this.title, this.width / 4, this.height / 4 - 49 / 2, 0xFF_FF_FF_FF);
++        drawCenteredString(pose, this.font, this.title, this.width / 4, this.height / 4 - 49 / 2, 0xFF_FF_FF_FF);
+         pose.popPose();
+     }
+ 
+     @Override
+-    public void renderBackground(GuiGraphics graphics) {
++    public void renderBackground(PoseStack pose) {
+         // Bruh.
+         assert this.minecraft != null;
+ 
+         // Render transparent background if parent exists.
+         if (this.parent != null) {
+             // Render gradient.
+-            graphics.fill(0, 0, this.width, this.height, 0x80_00_00_00);
++            fill(pose, 0, 0, this.width, this.height, 0x80_00_00_00);
+         } else {
+-            super.renderBackground(graphics);
++            super.renderBackground(pose);
+         }
+ 
+         // Render "form".
+         int centerX = this.width / 2;
+         int centerY = this.height / 2;
+-        graphics.fill(centerX - 80, centerY - 50, centerX + 80, centerY + 50, 0xF8_20_20_30);
+-        graphics.fill(centerX - 79, centerY - 51, centerX + 79, centerY - 50, 0xF8_20_20_30);
+-        graphics.fill(centerX - 79, centerY + 50, centerX + 79, centerY + 51, 0xF8_20_20_30);
++        fill(pose, centerX - 80, centerY - 50, centerX + 80, centerY + 50, 0xF8_20_20_30);
++        fill(pose, centerX - 79, centerY - 51, centerX + 79, centerY - 50, 0xF8_20_20_30);
++        fill(pose, centerX - 79, centerY + 50, centerX + 79, centerY + 51, 0xF8_20_20_30);
+     }
+ 
+     @Override
+diff --recursive --unified --new-file 1.20.1/root/src/main/java/ru/vidtu/ias/screen/ConfigScreen.java 1.19.4/root/src/main/java/ru/vidtu/ias/screen/ConfigScreen.java
+--- 1.20.1/root/src/main/java/ru/vidtu/ias/screen/ConfigScreen.java	2025-05-27 12:20:42.446813400 +0300
++++ 1.19.4/root/src/main/java/ru/vidtu/ias/screen/ConfigScreen.java	2025-05-27 12:20:42.429740700 +0300
+@@ -21,7 +21,6 @@
+ 
+ import com.mojang.blaze3d.vertex.PoseStack;
+ import net.minecraft.ChatFormatting;
+-import net.minecraft.client.gui.GuiGraphics;
+ import net.minecraft.client.gui.components.Button;
+ import net.minecraft.client.gui.components.EditBox;
+ import net.minecraft.client.gui.components.Tooltip;
+@@ -417,20 +416,19 @@
+     }
+ 
+     @Override
+-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
++    public void render(PoseStack pose, int mouseX, int mouseY, float delta) {
+         // Render background and widgets.
+-        this.renderBackground(graphics);
+-        super.render(graphics, mouseX, mouseY, delta);
++        this.renderBackground(pose);
++        super.render(pose, mouseX, mouseY, delta);
+ 
+         // Render title.
+-        graphics.drawCenteredString(this.font, this.title, this.width / 2, 5, 0xFF_FF_FF_FF);
++        drawCenteredString(pose, this.font, this.title, this.width / 2, 5, 0xFF_FF_FF_FF);
+ 
+         // Render current mouse pos if alt is held.
+         if (Screen.hasAltDown()) {
+-            PoseStack pose = graphics.pose();
+             pose.pushPose();
+             pose.translate(0.0F, 0.0F, 2.0F);
+-            graphics.renderTooltip(this.font, Component.translatable("ias.config.mousePos", mouseX, mouseY), mouseX, mouseY);
++            this.renderTooltip(pose, Component.translatable("ias.config.mousePos", mouseX, mouseY), mouseX, mouseY);
+             pose.popPose();
+         }
+     }
+diff --recursive --unified --new-file 1.20.1/root/src/main/java/ru/vidtu/ias/screen/DeletePopupScreen.java 1.19.4/root/src/main/java/ru/vidtu/ias/screen/DeletePopupScreen.java
+--- 1.20.1/root/src/main/java/ru/vidtu/ias/screen/DeletePopupScreen.java	2025-05-27 12:20:42.446813400 +0300
++++ 1.19.4/root/src/main/java/ru/vidtu/ias/screen/DeletePopupScreen.java	2025-05-27 12:20:42.430756800 +0300
+@@ -20,13 +20,12 @@
+ package ru.vidtu.ias.screen;
+ 
+ import com.mojang.blaze3d.vertex.PoseStack;
+-import net.minecraft.client.gui.GuiGraphics;
+ import net.minecraft.client.gui.components.MultiLineLabel;
+ import net.minecraft.client.gui.components.Tooltip;
+-import net.minecraft.client.gui.navigation.CommonInputs;
+ import net.minecraft.client.gui.screens.Screen;
+ import net.minecraft.network.chat.CommonComponents;
+ import net.minecraft.network.chat.Component;
++import org.lwjgl.glfw.GLFW;
+ import ru.vidtu.ias.account.Account;
+ 
+ import java.util.function.Supplier;
+@@ -103,58 +102,57 @@
+     }
+ 
+     @Override
+-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
++    public void render(PoseStack pose, int mouseX, int mouseY, float delta) {
+         // Bruh.
+         assert this.minecraft != null;
+-        PoseStack pose = graphics.pose();
+ 
+         // Render parent behind.
+         if (this.parent != null) {
+             pose.pushPose();
+-            pose.translate(0.0F, 0.0F, -1000.0F);
+-            this.parent.render(graphics, 0, 0, delta);
++            pose.translate(0.0F, 0.0F, -500.0F);
++            this.parent.render(pose, 0, 0, delta);
+             pose.popPose();
+         }
+ 
+         // Render background and widgets.
+-        this.renderBackground(graphics);
+-        super.render(graphics, mouseX, mouseY, delta);
++        this.renderBackground(pose);
++        super.render(pose, mouseX, mouseY, delta);
+ 
+         // Render the title.
+         pose.pushPose();
+         pose.scale(2.0F, 2.0F, 2.0F);
+-        graphics.drawCenteredString(this.font, this.title, this.width / 4, this.height / 4 - 49 / 2, 0xFF_FF_FF_FF);
++        drawCenteredString(pose, this.font, this.title, this.width / 4, this.height / 4 - 49 / 2, 0xFF_FF_FF_FF);
+         pose.popPose();
+ 
+         // Render the prompt.
+-        this.label.renderCentered(graphics, this.width / 2, (this.height - this.label.getLineCount() * 9) / 2 - 4);
++        this.label.renderCentered(pose, this.width / 2, (this.height - this.label.getLineCount() * 9) / 2 - 4);
+     }
+ 
+     @Override
+-    public void renderBackground(GuiGraphics graphics) {
++    public void renderBackground(PoseStack pose) {
+         // Bruh.
+         assert this.minecraft != null;
+ 
+         // Render transparent background if parent exists.
+         if (this.parent != null) {
+             // Render gradient.
+-            graphics.fill(0, 0, this.width, this.height, 0x80_00_00_00);
++            fill(pose, 0, 0, this.width, this.height, 0x80_00_00_00);
+         } else {
+-            super.renderBackground(graphics);
++            super.renderBackground(pose);
+         }
+ 
+         // Render "form".
+         int centerX = this.width / 2;
+         int centerY = this.height / 2;
+-        graphics.fill(centerX - 80, centerY - 50, centerX + 80, centerY + 50, 0xF8_20_20_30);
+-        graphics.fill(centerX - 79, centerY - 51, centerX + 79, centerY - 50, 0xF8_20_20_30);
+-        graphics.fill(centerX - 79, centerY + 50, centerX + 79, centerY + 51, 0xF8_20_20_30);
++        fill(pose, centerX - 80, centerY - 50, centerX + 80, centerY + 50, 0xF8_20_20_30);
++        fill(pose, centerX - 79, centerY - 51, centerX + 79, centerY - 50, 0xF8_20_20_30);
++        fill(pose, centerX - 79, centerY + 50, centerX + 79, centerY + 51, 0xF8_20_20_30);
+     }
+ 
+     @Override
+     public boolean keyPressed(int key, int scan, int mods) {
+         // Enter to confirm.
+-        if (CommonInputs.selected(key)) {
++        if (key == GLFW.GLFW_KEY_ENTER || key == GLFW.GLFW_KEY_KP_ENTER) {
+             // Delete.
+             this.handler.run();
+ 
+diff --recursive --unified --new-file 1.20.1/root/src/main/java/ru/vidtu/ias/screen/LoginPopupScreen.java 1.19.4/root/src/main/java/ru/vidtu/ias/screen/LoginPopupScreen.java
+--- 1.20.1/root/src/main/java/ru/vidtu/ias/screen/LoginPopupScreen.java	2025-05-27 12:20:42.446813400 +0300
++++ 1.19.4/root/src/main/java/ru/vidtu/ias/screen/LoginPopupScreen.java	2025-05-27 12:20:42.430756800 +0300
+@@ -21,7 +21,6 @@
+ 
+ import com.mojang.blaze3d.vertex.PoseStack;
+ import net.minecraft.ChatFormatting;
+-import net.minecraft.client.gui.GuiGraphics;
+ import net.minecraft.client.gui.components.MultiLineLabel;
+ import net.minecraft.client.gui.screens.Screen;
+ import net.minecraft.network.chat.CommonComponents;
+@@ -198,35 +197,34 @@
+ 
+     @SuppressWarnings("NonPrivateFieldAccessedInSynchronizedContext") // <- Supertype.
+     @Override
+-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
++    public void render(PoseStack pose, int mouseX, int mouseY, float delta) {
+         // Bruh.
+         assert this.minecraft != null;
+-        PoseStack pose = graphics.pose();
+ 
+         // Render parent behind.
+         if (this.parent != null) {
+             pose.pushPose();
+-            pose.translate(0.0F, 0.0F, -1000.0F);
+-            this.parent.render(graphics, 0, 0, delta);
++            pose.translate(0.0F, 0.0F, -500.0F);
++            this.parent.render(pose, 0, 0, delta);
+             pose.popPose();
+         }
+ 
+         // Render background and widgets.
+-        this.renderBackground(graphics);
+-        super.render(graphics, mouseX, mouseY, delta);
++        this.renderBackground(pose);
++        super.render(pose, mouseX, mouseY, delta);
+ 
+         // Render the title.
+         pose.pushPose();
+         pose.scale(2.0F, 2.0F, 2.0F);
+-        graphics.drawCenteredString(this.font, this.title, this.width / 4, this.height / 4 - 74 / 2, 0xFF_FF_FF_FF);
++        drawCenteredString(pose, this.font, this.title, this.width / 4, this.height / 4 - 74 / 2, 0xFF_FF_FF_FF);
+         pose.popPose();
+ 
+         // Render password OR label.
+         if (this.passFuture != null && this.password != null && this.cryptPasswordTip != null) {
+-            graphics.drawCenteredString(this.font, this.password.getMessage(), this.width / 2, this.height / 2 - 10 - 5, 0xFF_FF_FF_FF);
++            drawCenteredString(pose, this.font, this.password.getMessage(), this.width / 2, this.height / 2 - 10 - 5, 0xFF_FF_FF_FF);
+             pose.pushPose();
+             pose.scale(0.5F, 0.5F, 0.5F);
+-            this.cryptPasswordTip.renderCentered(graphics, this.width, this.height + 40, 10, 0xFF_FF_FF_00);
++            this.cryptPasswordTip.renderCentered(pose, this.width, this.height + 40, 10, 0xFF_FF_FF_00);
+             pose.popPose();
+         } else {
+             // Synchronize to prevent funny things.
+@@ -244,7 +242,7 @@
+                 }
+ 
+                 // Render the label.
+-                this.label.renderCentered(graphics, this.width / 2, (this.height - this.label.getLineCount() * 9) / 2 - 4, 9, 0xFF_FF_FF_FF);
++                this.label.renderCentered(pose, this.width / 2, (this.height - this.label.getLineCount() * 9) / 2 - 4, 9, 0xFF_FF_FF_FF);
+             }
+ 
+             // Render the error note, if errored.
+@@ -270,38 +268,38 @@
+                 int h = (this.errorNote.getLineCount() * 9) / 2 + 1;
+                 int cx = this.width / 2;
+                 int sy = this.height / 2 + 87;
+-                graphics.fill(cx - w, sy, cx + w, sy + h, 0x101010 | opacityMask);
+-                graphics.fill(cx - w + 1, sy - 1, cx + w - 1, sy, 0x101010 | opacityMask);
+-                graphics.fill(cx - w + 1, sy + h, cx + w - 1, sy + h + 1, 0x101010 | opacityMask);
++                fill(pose, cx - w, sy, cx + w, sy + h, 0x101010 | opacityMask);
++                fill(pose, cx - w + 1, sy - 1, cx + w - 1, sy, 0x101010 | opacityMask);
++                fill(pose, cx - w + 1, sy + h, cx + w - 1, sy + h + 1, 0x101010 | opacityMask);
+ 
+                 // Render scaled.
+                 pose.pushPose();
+                 pose.scale(0.5F, 0.5F, 0.5F);
+-                this.errorNote.renderCentered(graphics, this.width, this.height + 174, 9, 0xFF_FF_FF | opacityMask);
++                this.errorNote.renderCentered(pose, this.width, this.height + 174, 9, 0xFF_FF_FF | opacityMask);
+                 pose.popPose();
+             }
+         }
+     }
+ 
+     @Override
+-    public void renderBackground(GuiGraphics graphics) {
++    public void renderBackground(PoseStack pose) {
+         // Bruh.
+         assert this.minecraft != null;
+ 
+         // Render transparent background if parent exists.
+         if (this.parent != null) {
+             // Render gradient.
+-            graphics.fill(0, 0, this.width, this.height, 0x80_00_00_00);
++            fill(pose, 0, 0, this.width, this.height, 0x80_00_00_00);
+         } else {
+-            super.renderBackground(graphics);
++            super.renderBackground(pose);
+         }
+ 
+         // Render "form".
+         int centerX = this.width / 2;
+         int centerY = this.height / 2;
+-        graphics.fill(centerX - 125, centerY - 75, centerX + 125, centerY + 75, 0xF8_20_20_30);
+-        graphics.fill(centerX - 124, centerY - 76, centerX + 124, centerY - 75, 0xF8_20_20_30);
+-        graphics.fill(centerX - 124, centerY + 75, centerX + 124, centerY + 76, 0xF8_20_20_30);
++        fill(pose, centerX - 125, centerY - 75, centerX + 125, centerY + 75, 0xF8_20_20_30);
++        fill(pose, centerX - 124, centerY - 76, centerX + 124, centerY - 75, 0xF8_20_20_30);
++        fill(pose, centerX - 124, centerY + 75, centerX + 124, centerY + 76, 0xF8_20_20_30);
+     }
+ 
+     @Override
+diff --recursive --unified --new-file 1.20.1/root/src/main/java/ru/vidtu/ias/screen/MicrosoftCryptPopupScreen.java 1.19.4/root/src/main/java/ru/vidtu/ias/screen/MicrosoftCryptPopupScreen.java
+--- 1.20.1/root/src/main/java/ru/vidtu/ias/screen/MicrosoftCryptPopupScreen.java	2025-05-27 12:20:42.447815700 +0300
++++ 1.19.4/root/src/main/java/ru/vidtu/ias/screen/MicrosoftCryptPopupScreen.java	2025-05-27 12:20:42.430756800 +0300
+@@ -20,7 +20,6 @@
+ package ru.vidtu.ias.screen;
+ 
+ import com.mojang.blaze3d.vertex.PoseStack;
+-import net.minecraft.client.gui.GuiGraphics;
+ import net.minecraft.client.gui.components.Tooltip;
+ import net.minecraft.client.gui.screens.Screen;
+ import net.minecraft.network.chat.CommonComponents;
+@@ -112,49 +111,48 @@
+     }
+ 
+     @Override
+-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
++    public void render(PoseStack pose, int mouseX, int mouseY, float delta) {
+         // Bruh.
+         assert this.minecraft != null;
+-        PoseStack pose = graphics.pose();
+ 
+         // Render parent behind.
+         if (this.parent != null) {
+             pose.pushPose();
+-            pose.translate(0.0F, 0.0F, -1000.0F);
+-            this.parent.render(graphics, 0, 0, delta);
++            pose.translate(0.0F, 0.0F, -500.0F);
++            this.parent.render(pose, 0, 0, delta);
+             pose.popPose();
+         }
+ 
+         // Render background and widgets.
+-        this.renderBackground(graphics);
+-        super.render(graphics, mouseX, mouseY, delta);
++        this.renderBackground(pose);
++        super.render(pose, mouseX, mouseY, delta);
+ 
+         // Render the title.
+         pose.pushPose();
+         pose.scale(2.0F, 2.0F, 2.0F);
+-        graphics.drawCenteredString(this.font, this.title, this.width / 4, this.height / 4 - 79 / 2, 0xFF_FF_FF_FF);
++        drawCenteredString(pose, this.font, this.title, this.width / 4, this.height / 4 - 79 / 2, 0xFF_FF_FF_FF);
+         pose.popPose();
+     }
+ 
+     @Override
+-    public void renderBackground(GuiGraphics graphics) {
++    public void renderBackground(PoseStack pose) {
+         // Bruh.
+         assert this.minecraft != null;
+ 
+         // Render transparent background if parent exists.
+         if (this.parent != null) {
+             // Render gradient.
+-            graphics.fill(0, 0, this.width, this.height, 0x80_00_00_00);
++            fill(pose, 0, 0, this.width, this.height, 0x80_00_00_00);
+         } else {
+-            super.renderBackground(graphics);
++            super.renderBackground(pose);
+         }
+ 
+         // Render "form".
+         int centerX = this.width / 2;
+         int centerY = this.height / 2;
+-        graphics.fill(centerX - 80, centerY - 80, centerX + 80, centerY + 80, 0xF8_20_20_30);
+-        graphics.fill(centerX - 79, centerY - 81, centerX + 79, centerY - 80, 0xF8_20_20_30);
+-        graphics.fill(centerX - 79, centerY + 80, centerX + 79, centerY + 81, 0xF8_20_20_30);
++        fill(pose, centerX - 80, centerY - 80, centerX + 80, centerY + 80, 0xF8_20_20_30);
++        fill(pose, centerX - 79, centerY - 81, centerX + 79, centerY - 80, 0xF8_20_20_30);
++        fill(pose, centerX - 79, centerY + 80, centerX + 79, centerY + 81, 0xF8_20_20_30);
+     }
+ 
+     @Override
+diff --recursive --unified --new-file 1.20.1/root/src/main/java/ru/vidtu/ias/screen/MicrosoftPopupScreen.java 1.19.4/root/src/main/java/ru/vidtu/ias/screen/MicrosoftPopupScreen.java
+--- 1.20.1/root/src/main/java/ru/vidtu/ias/screen/MicrosoftPopupScreen.java	2025-05-27 12:20:42.447815700 +0300
++++ 1.19.4/root/src/main/java/ru/vidtu/ias/screen/MicrosoftPopupScreen.java	2025-05-27 12:20:42.430756800 +0300
+@@ -23,7 +23,6 @@
+ import net.minecraft.ChatFormatting;
+ import net.minecraft.Util;
+ import net.minecraft.client.KeyboardHandler;
+-import net.minecraft.client.gui.GuiGraphics;
+ import net.minecraft.client.gui.components.Button;
+ import net.minecraft.client.gui.components.MultiLineLabel;
+ import net.minecraft.client.gui.screens.Screen;
+@@ -345,35 +344,34 @@
+ 
+     @SuppressWarnings("NonPrivateFieldAccessedInSynchronizedContext") // <- Supertype.
+     @Override
+-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
++    public void render(PoseStack pose, int mouseX, int mouseY, float delta) {
+         // Bruh.
+         assert this.minecraft != null;
+-        PoseStack pose = graphics.pose();
+ 
+         // Render parent behind.
+         if (this.parent != null) {
+             pose.pushPose();
+-            pose.translate(0.0F, 0.0F, -1000.0F);
+-            this.parent.render(graphics, 0, 0, delta);
++            pose.translate(0.0F, 0.0F, -500.0F);
++            this.parent.render(pose, 0, 0, delta);
+             pose.popPose();
+         }
+ 
+         // Render background and widgets.
+-        this.renderBackground(graphics);
+-        super.render(graphics, mouseX, mouseY, delta);
++        this.renderBackground(pose);
++        super.render(pose, mouseX, mouseY, delta);
+ 
+         // Render the title.
+         pose.pushPose();
+         pose.scale(2.0F, 2.0F, 2.0F);
+-        graphics.drawCenteredString(this.font, this.title, this.width / 4, this.height / 4 - 74 / 2, 0xFF_FF_FF_FF);
++        drawCenteredString(pose, this.font, this.title, this.width / 4, this.height / 4 - 74 / 2, 0xFF_FF_FF_FF);
+         pose.popPose();
+ 
+         // Render password OR label.
+         if (this.crypt == null && this.password != null && this.cryptPasswordTip != null) {
+-            graphics.drawCenteredString(this.font, this.password.getMessage(), this.width / 2, this.height / 2 - 10 - 5, 0xFF_FF_FF_FF);
++            drawCenteredString(pose, this.font, this.password.getMessage(), this.width / 2, this.height / 2 - 10 - 5, 0xFF_FF_FF_FF);
+             pose.pushPose();
+             pose.scale(0.5F, 0.5F, 0.5F);
+-            this.cryptPasswordTip.renderCentered(graphics, this.width, this.height + 40, 10, 0xFF_FF_FF_00);
++            this.cryptPasswordTip.renderCentered(pose, this.width, this.height + 40, 10, 0xFF_FF_FF_00);
+             pose.popPose();
+         } else {
+             // Synchronize to prevent funny things.
+@@ -391,7 +389,7 @@
+                 }
+ 
+                 // Render the label.
+-                this.label.renderCentered(graphics, this.width / 2, (this.height - this.label.getLineCount() * 9) / 2 - 4, 9, 0xFF_FF_FF_FF);
++                this.label.renderCentered(pose, this.width / 2, (this.height - this.label.getLineCount() * 9) / 2 - 4, 9, 0xFF_FF_FF_FF);
+             }
+ 
+             // Render the error note, if errored.
+@@ -417,38 +415,38 @@
+                 int h = (this.errorNote.getLineCount() * 9) / 2 + 1;
+                 int cx = this.width / 2;
+                 int sy = this.height / 2 + 87;
+-                graphics.fill(cx - w, sy, cx + w, sy + h, 0x101010 | opacityMask);
+-                graphics.fill(cx - w + 1, sy - 1, cx + w - 1, sy, 0x101010 | opacityMask);
+-                graphics.fill(cx - w + 1, sy + h, cx + w - 1, sy + h + 1, 0x101010 | opacityMask);
++                fill(pose, cx - w, sy, cx + w, sy + h, 0x101010 | opacityMask);
++                fill(pose, cx - w + 1, sy - 1, cx + w - 1, sy, 0x101010 | opacityMask);
++                fill(pose, cx - w + 1, sy + h, cx + w - 1, sy + h + 1, 0x101010 | opacityMask);
+ 
+                 // Render scaled.
+                 pose.pushPose();
+                 pose.scale(0.5F, 0.5F, 0.5F);
+-                this.errorNote.renderCentered(graphics, this.width, this.height + 174, 9, 0xFF_FF_FF | opacityMask);
++                this.errorNote.renderCentered(pose, this.width, this.height + 174, 9, 0xFF_FF_FF | opacityMask);
+                 pose.popPose();
+             }
+         }
+     }
+ 
+     @Override
+-    public void renderBackground(GuiGraphics graphics) {
++    public void renderBackground(PoseStack pose) {
+         // Bruh.
+         assert this.minecraft != null;
+ 
+         // Render transparent background if parent exists.
+         if (this.parent != null) {
+             // Render gradient.
+-            graphics.fill(0, 0, this.width, this.height, 0x80_00_00_00);
++            fill(pose, 0, 0, this.width, this.height, 0x80_00_00_00);
+         } else {
+-            super.renderBackground(graphics);
++            super.renderBackground(pose);
+         }
+ 
+         // Render "form".
+         int centerX = this.width / 2;
+         int centerY = this.height / 2;
+-        graphics.fill(centerX - 125, centerY - 75, centerX + 125, centerY + 75, 0xF8_20_20_30);
+-        graphics.fill(centerX - 124, centerY - 76, centerX + 124, centerY - 75, 0xF8_20_20_30);
+-        graphics.fill(centerX - 124, centerY + 75, centerX + 124, centerY + 76, 0xF8_20_20_30);
++        fill(pose, centerX - 125, centerY - 75, centerX + 125, centerY + 75, 0xF8_20_20_30);
++        fill(pose, centerX - 124, centerY - 76, centerX + 124, centerY - 75, 0xF8_20_20_30);
++        fill(pose, centerX - 124, centerY + 75, centerX + 124, centerY + 76, 0xF8_20_20_30);
+     }
+ 
+     @Override
+diff --recursive --unified --new-file 1.20.1/root/src/main/java/ru/vidtu/ias/screen/OfflinePopupScreen.java 1.19.4/root/src/main/java/ru/vidtu/ias/screen/OfflinePopupScreen.java
+--- 1.20.1/root/src/main/java/ru/vidtu/ias/screen/OfflinePopupScreen.java	2025-05-27 12:20:42.447815700 +0300
++++ 1.19.4/root/src/main/java/ru/vidtu/ias/screen/OfflinePopupScreen.java	2025-05-27 12:20:42.430756800 +0300
+@@ -21,7 +21,6 @@
+ 
+ import com.mojang.blaze3d.vertex.PoseStack;
+ import net.minecraft.ChatFormatting;
+-import net.minecraft.client.gui.GuiGraphics;
+ import net.minecraft.client.gui.components.Tooltip;
+ import net.minecraft.client.gui.screens.Screen;
+ import net.minecraft.network.chat.CommonComponents;
+@@ -309,54 +308,53 @@
+     }
+ 
+     @Override
+-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
++    public void render(PoseStack pose, int mouseX, int mouseY, float delta) {
+         // Bruh.
+         assert this.minecraft != null;
+-        PoseStack pose = graphics.pose();
+ 
+         // Render parent behind.
+         if (this.parent != null) {
+             pose.pushPose();
+-            pose.translate(0.0F, 0.0F, -1000.0F);
+-            this.parent.render(graphics, 0, 0, delta);
++            pose.translate(0.0F, 0.0F, -500.0F);
++            this.parent.render(pose, 0, 0, delta);
+             pose.popPose();
+         }
+ 
+         // Render background and widgets.
+-        this.renderBackground(graphics);
+-        super.render(graphics, mouseX, mouseY, delta);
++        this.renderBackground(pose);
++        super.render(pose, mouseX, mouseY, delta);
+ 
+         // Render the title.
+         pose.pushPose();
+         pose.scale(2.0F, 2.0F, 2.0F);
+-        graphics.drawCenteredString(this.font, this.title, this.width / 4, this.height / 4 - 49 / 2, 0xFF_FF_FF_FF);
++        drawCenteredString(pose, this.font, this.title, this.width / 4, this.height / 4 - 49 / 2, 0xFF_FF_FF_FF);
+         pose.popPose();
+ 
+         // Render the nick title.
+         if (this.name != null) {
+-            graphics.drawCenteredString(this.font, this.name.getMessage(), this.width / 2, this.height / 2 - 10 - 5, 0xFF_FF_FF_FF);
++            drawCenteredString(pose, this.font, this.name.getMessage(), this.width / 2, this.height / 2 - 10 - 5, 0xFF_FF_FF_FF);
+         }
+     }
+ 
+     @Override
+-    public void renderBackground(GuiGraphics graphics) {
++    public void renderBackground(PoseStack pose) {
+         // Bruh.
+         assert this.minecraft != null;
+ 
+         // Render transparent background if parent exists.
+         if (this.parent != null) {
+             // Render gradient.
+-            graphics.fill(0, 0, this.width, this.height, 0x80_00_00_00);
++            fill(pose, 0, 0, this.width, this.height, 0x80_00_00_00);
+         } else {
+-            super.renderBackground(graphics);
++            super.renderBackground(pose);
+         }
+ 
+         // Render "form".
+         int centerX = this.width / 2;
+         int centerY = this.height / 2;
+-        graphics.fill(centerX - 80, centerY - 50, centerX + 80, centerY + 50, 0xF8_20_20_30);
+-        graphics.fill(centerX - 79, centerY - 51, centerX + 79, centerY - 50, 0xF8_20_20_30);
+-        graphics.fill(centerX - 79, centerY + 50, centerX + 79, centerY + 51, 0xF8_20_20_30);
++        fill(pose, centerX - 80, centerY - 50, centerX + 80, centerY + 50, 0xF8_20_20_30);
++        fill(pose, centerX - 79, centerY - 51, centerX + 79, centerY - 50, 0xF8_20_20_30);
++        fill(pose, centerX - 79, centerY + 50, centerX + 79, centerY + 51, 0xF8_20_20_30);
+     }
+ 
+     @Override
+diff --recursive --unified --new-file 1.20.1/root/src/main/java/ru/vidtu/ias/screen/PopupBox.java 1.19.4/root/src/main/java/ru/vidtu/ias/screen/PopupBox.java
+--- 1.20.1/root/src/main/java/ru/vidtu/ias/screen/PopupBox.java	2025-05-27 12:20:42.447815700 +0300
++++ 1.19.4/root/src/main/java/ru/vidtu/ias/screen/PopupBox.java	2025-05-27 12:20:42.432261100 +0300
+@@ -19,8 +19,8 @@
+ 
+ package ru.vidtu.ias.screen;
+ 
++import com.mojang.blaze3d.vertex.PoseStack;
+ import net.minecraft.client.gui.Font;
+-import net.minecraft.client.gui.GuiGraphics;
+ import net.minecraft.client.gui.components.EditBox;
+ import net.minecraft.client.gui.screens.Screen;
+ import net.minecraft.network.chat.Component;
+@@ -64,20 +64,20 @@
+     }
+ 
+     @Override
+-    public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
++    public void renderWidget(PoseStack pose, int mouseX, int mouseY, float delta) {
+         // Render background.
+         int x = this.getX();
+         int y = this.getY();
+         int width = this.getWidth();
+         int height = this.getHeight();
+-        graphics.fill(x + 1, y + 1, x + width - 1, y + height - 1, 0xFF_00_00_00);
+-        graphics.fill(x + 1, y, x + width - 1, y + 1, 0xFF_FF_FF_FF);
+-        graphics.fill(x + 1, y + height - 1, x + width - 1, y + height, 0xFF_FF_FF_FF);
+-        graphics.fill(x, y + 1, x + 1, y + height - 1, 0xFF_FF_FF_FF);
+-        graphics.fill(x + width - 1, y + 1, x + width, y + height - 1, 0xFF_FF_FF_FF);
++        fill(pose, x + 1, y + 1, x + width - 1, y + height - 1, 0xFF_00_00_00);
++        fill(pose, x + 1, y, x + width - 1, y + 1, 0xFF_FF_FF_FF);
++        fill(pose, x + 1, y + height - 1, x + width - 1, y + height, 0xFF_FF_FF_FF);
++        fill(pose, x, y + 1, x + 1, y + height - 1, 0xFF_FF_FF_FF);
++        fill(pose, x + width - 1, y + 1, x + width, y + height - 1, 0xFF_FF_FF_FF);
+ 
+         // Render other.
+-        super.renderWidget(graphics, mouseX, mouseY, delta);
++        super.renderWidget(pose, mouseX, mouseY, delta);
+     }
+ 
+     @Override
+diff --recursive --unified --new-file 1.20.1/root/src/main/java/ru/vidtu/ias/screen/PopupButton.java 1.19.4/root/src/main/java/ru/vidtu/ias/screen/PopupButton.java
+--- 1.20.1/root/src/main/java/ru/vidtu/ias/screen/PopupButton.java	2025-05-27 12:20:42.448833500 +0300
++++ 1.19.4/root/src/main/java/ru/vidtu/ias/screen/PopupButton.java	2025-05-27 12:20:42.432261100 +0300
+@@ -19,9 +19,9 @@
+ 
+ package ru.vidtu.ias.screen;
+ 
++import com.mojang.blaze3d.vertex.PoseStack;
+ import net.minecraft.client.Minecraft;
+ import net.minecraft.client.gui.Font;
+-import net.minecraft.client.gui.GuiGraphics;
+ import net.minecraft.client.gui.components.Button;
+ import net.minecraft.network.chat.Component;
+ import net.minecraft.util.Mth;
+@@ -101,7 +101,7 @@
+     }
+ 
+     @Override
+-    protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
++    public void renderWidget(PoseStack pose, int mouseX, int mouseY, float delta) {
+         // Get values.
+         Minecraft minecraft = Minecraft.getInstance();
+         Font font = minecraft.font;
+@@ -126,12 +126,12 @@
+         int g = (int) (this.multiplier * 255.0F * this.currentGreen);
+         int b = (int) (this.multiplier * 255.0F * this.currentBlue);
+         int color = -16777216 | r << 16 | g << 8 | b;
+-        graphics.fill(x, y + 1, x + width, y + height - 1, color);
+-        graphics.fill(x + 1, y, x + width - 1, y + 1, color);
+-        graphics.fill(x + 1, y + height - 1, x + width - 1, y + height, color);
++        fill(pose, x, y + 1, x + width, y + height - 1, color);
++        fill(pose, x + 1, y, x + width - 1, y + 1, color);
++        fill(pose, x + 1, y + height - 1, x + width - 1, y + height, color);
+ 
+         // Render string.
+-        graphics.drawString(font, message, x + (width - font.width(message)) / 2, y + height / 2 - 4, 0xFF_00_00_00, false);
++        font.draw(pose, message, x + (width - font.width(message)) / 2, y + height / 2 - 4, 0xFF_00_00_00);
+     }
+ 
+     @Override

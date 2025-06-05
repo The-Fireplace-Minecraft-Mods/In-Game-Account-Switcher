@@ -1,0 +1,265 @@
+diff --recursive --unified --new-file 1.21.5/fabric/build.gradle.kts 1.21.4/fabric/build.gradle.kts
+--- 1.21.5/fabric/build.gradle.kts	2025-05-27 12:20:42.541456500 +0300
++++ 1.21.4/fabric/build.gradle.kts	2025-05-27 12:20:42.525567700 +0300
+@@ -25,10 +25,10 @@
+ java.targetCompatibility = JavaVersion.VERSION_21
+ java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+ group = "ru.vidtu.ias"
+-base.archivesName = "IAS-Fabric-1.21.5"
++base.archivesName = "IAS-Fabric-1.21.4"
+ description = "This mod allows you to change your logged in account in-game, without restarting Minecraft."
+-evaluationDependsOn(":1.21.5-root")
+-val shared = project(":1.21.5-root")
++evaluationDependsOn(":1.21.4-root")
++val shared = project(":1.21.4-root")
+ 
+ repositories {
+     mavenCentral()
+@@ -59,13 +59,13 @@
+     compileOnlyApi(libs.error.prone.annotations)
+ 
+     // Minecraft (Provided)
+-    minecraft(libs.minecraft.mc1215)
++    minecraft(libs.minecraft.mc1214)
+     mappings(loom.officialMojangMappings())
+ 
+     // Fabric
+     modImplementation(libs.fabric.loader)
+-    modImplementation(libs.fabric.mc1215)
+-    modImplementation(libs.modmenu.mc1215)
++    modImplementation(libs.fabric.mc1214)
++    modImplementation(libs.modmenu.mc1214)
+ 
+     // Root
+     compileOnly(shared)
+@@ -102,7 +102,7 @@
+             "Specification-Title" to "In-Game Account Switcher",
+             "Specification-Version" to version,
+             "Specification-Vendor" to "VidTu",
+-            "Implementation-Title" to "IAS-Fabric-1.21.5",
++            "Implementation-Title" to "IAS-Fabric-1.21.4",
+             "Implementation-Version" to version,
+             "Implementation-Vendor" to "VidTu"
+         )
+diff --recursive --unified --new-file 1.21.5/fabric/gradle.properties 1.21.4/fabric/gradle.properties
+--- 1.21.5/fabric/gradle.properties	2025-05-27 12:20:42.541456500 +0300
++++ 1.21.4/fabric/gradle.properties	2025-05-27 12:20:42.525567700 +0300
+@@ -16,6 +16,6 @@
+ # along with this program.  If not, see <https://www.gnu.org/licenses/>
+ 
+ # Mod
+-display.type=Fabric/Quilt 1.21.5
+-modrinth.versions=1.21.5
++display.type=Fabric/Quilt 1.21.4
++modrinth.versions=1.21.4
+ modrinth.loaders=fabric,quilt
+diff --recursive --unified --new-file 1.21.5/fabric/src/main/resources/fabric.mod.json 1.21.4/fabric/src/main/resources/fabric.mod.json
+--- 1.21.5/fabric/src/main/resources/fabric.mod.json	2025-05-27 12:20:42.543592500 +0300
++++ 1.21.4/fabric/src/main/resources/fabric.mod.json	2025-05-27 12:20:42.528001100 +0300
+@@ -34,7 +34,7 @@
+     "ias.mixins.json"
+   ],
+   "depends": {
+-    "minecraft": "1.21.5",
++    "minecraft": "1.21.4",
+     "fabric-api": "*"
+   },
+   "recommends": {
+diff --recursive --unified --new-file 1.21.5/fabric/src/main/resources/quilt.mod.json 1.21.4/fabric/src/main/resources/quilt.mod.json
+--- 1.21.5/fabric/src/main/resources/quilt.mod.json	2025-05-27 12:20:42.544592300 +0300
++++ 1.21.4/fabric/src/main/resources/quilt.mod.json	2025-05-27 12:20:42.528001100 +0300
+@@ -27,8 +27,8 @@
+     "depends": [
+       {
+         "id": "minecraft",
+-        "versions": "1.21.5",
+-        "reason": "In-Game Account Switcher works only with Minecraft 1.21.5."
++        "versions": "1.21.4",
++        "reason": "In-Game Account Switcher works only with Minecraft 1.21.4."
+       },
+       {
+         "id": "fabric-api",
+diff --recursive --unified --new-file 1.21.5/forge/build.gradle.kts 1.21.4/forge/build.gradle.kts
+--- 1.21.5/forge/build.gradle.kts	2025-05-27 12:20:42.545646600 +0300
++++ 1.21.4/forge/build.gradle.kts	2025-05-27 12:20:42.529078500 +0300
+@@ -25,10 +25,10 @@
+ java.targetCompatibility = JavaVersion.VERSION_21
+ java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+ group = "ru.vidtu.ias"
+-base.archivesName = "IAS-Forge-1.21.5"
++base.archivesName = "IAS-Forge-1.21.4"
+ description = "This mod allows you to change your logged in account in-game, without restarting Minecraft."
+-evaluationDependsOn(":1.21.5-root")
+-val shared = project(":1.21.5-root")
++evaluationDependsOn(":1.21.4-root")
++val shared = project(":1.21.4-root")
+ 
+ loom {
+     silentMojangMappingsLicense()
+@@ -63,11 +63,11 @@
+     compileOnlyApi(libs.error.prone.annotations)
+ 
+     // Minecraft (Provided)
+-    minecraft(libs.minecraft.mc1215)
++    minecraft(libs.minecraft.mc1214)
+     mappings(loom.officialMojangMappings())
+ 
+     // Forge
+-    forge(libs.forge.mc1215)
++    forge(libs.forge.mc1214)
+ 
+     // Root
+     compileOnly(shared)
+@@ -104,7 +104,7 @@
+             "Specification-Title" to "In-Game Account Switcher",
+             "Specification-Version" to version,
+             "Specification-Vendor" to "VidTu",
+-            "Implementation-Title" to "IAS-Forge-1.21.5",
++            "Implementation-Title" to "IAS-Forge-1.21.4",
+             "Implementation-Version" to version,
+             "Implementation-Vendor" to "VidTu",
+             "MixinConfigs" to "ias.mixins.json"
+diff --recursive --unified --new-file 1.21.5/forge/gradle.properties 1.21.4/forge/gradle.properties
+--- 1.21.5/forge/gradle.properties	2025-05-27 12:20:42.545646600 +0300
++++ 1.21.4/forge/gradle.properties	2025-05-27 12:20:42.529078500 +0300
+@@ -19,6 +19,6 @@
+ loom.platform=forge
+ 
+ # Mod
+-display.type=Forge 1.21.5
+-modrinth.versions=1.21.5
++display.type=Forge 1.21.4
++modrinth.versions=1.21.4
+ modrinth.loaders=forge
+diff --recursive --unified --new-file 1.21.5/forge/src/main/resources/META-INF/mods.toml 1.21.4/forge/src/main/resources/META-INF/mods.toml
+--- 1.21.5/forge/src/main/resources/META-INF/mods.toml	2025-05-27 12:20:42.547957600 +0300
++++ 1.21.4/forge/src/main/resources/META-INF/mods.toml	2025-05-27 12:20:42.531104500 +0300
+@@ -26,7 +26,7 @@
+ modId = "forge"
+ type = "required"
+ mandatory = true
+-versionRange = "[55,56)"
++versionRange = "[54,55)"
+ ordering = "NONE"
+ side = "CLIENT"
+ 
+@@ -34,7 +34,7 @@
+ modId = "minecraft"
+ type = "required"
+ mandatory = true
+-versionRange = "1.21.5"
++versionRange = "1.21.4"
+ ordering = "NONE"
+ side = "CLIENT"
+ 
+diff --recursive --unified --new-file 1.21.5/forge/src/main/resources/pack.mcmeta 1.21.4/forge/src/main/resources/pack.mcmeta
+--- 1.21.5/forge/src/main/resources/pack.mcmeta	2025-05-27 12:20:42.547957600 +0300
++++ 1.21.4/forge/src/main/resources/pack.mcmeta	2025-05-27 12:20:42.531104500 +0300
+@@ -1,6 +1,6 @@
+ {
+   "pack": {
+-    "pack_format": 55,
++    "pack_format": 46,
+     "description": "In-Game Account Switcher"
+   }
+ }
+diff --recursive --unified --new-file 1.21.5/neoforge/build.gradle.kts 1.21.4/neoforge/build.gradle.kts
+--- 1.21.5/neoforge/build.gradle.kts	2025-05-27 12:20:42.549205900 +0300
++++ 1.21.4/neoforge/build.gradle.kts	2025-05-27 12:20:42.531104500 +0300
+@@ -25,10 +25,10 @@
+ java.targetCompatibility = JavaVersion.VERSION_21
+ java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+ group = "ru.vidtu.ias"
+-base.archivesName = "IAS-NeoForge-1.21.5"
++base.archivesName = "IAS-NeoForge-1.21.4"
+ description = "This mod allows you to change your logged in account in-game, without restarting Minecraft."
+-evaluationDependsOn(":1.21.5-root")
+-val shared = project(":1.21.5-root")
++evaluationDependsOn(":1.21.4-root")
++val shared = project(":1.21.4-root")
+ 
+ loom {
+     silentMojangMappingsLicense()
+@@ -106,7 +106,7 @@
+             "Specification-Title" to "In-Game Account Switcher",
+             "Specification-Version" to version,
+             "Specification-Vendor" to "VidTu",
+-            "Implementation-Title" to "IAS-NeoForge-1.21.5",
++            "Implementation-Title" to "IAS-NeoForge-1.21.4",
+             "Implementation-Version" to version,
+             "Implementation-Vendor" to "VidTu",
+             "MixinConfigs" to "ias.mixins.json"
+diff --recursive --unified --new-file 1.21.5/neoforge/gradle.properties 1.21.4/neoforge/gradle.properties
+--- 1.21.5/neoforge/gradle.properties	2025-05-27 12:20:42.550210200 +0300
++++ 1.21.4/neoforge/gradle.properties	2025-05-27 12:20:42.532108700 +0300
+@@ -19,6 +19,6 @@
+ loom.platform=neoforge
+ 
+ # Mod
+-display.type=NeoForge 1.21.5
+-modrinth.versions=1.21.5
++display.type=NeoForge 1.21.4
++modrinth.versions=1.21.4
+ modrinth.loaders=neoforge
+diff --recursive --unified --new-file 1.21.5/neoforge/src/main/resources/META-INF/neoforge.mods.toml 1.21.4/neoforge/src/main/resources/META-INF/neoforge.mods.toml
+--- 1.21.5/neoforge/src/main/resources/META-INF/neoforge.mods.toml	2025-05-27 12:20:42.552228600 +0300
++++ 1.21.4/neoforge/src/main/resources/META-INF/neoforge.mods.toml	2025-05-27 12:20:42.533117600 +0300
+@@ -29,7 +29,7 @@
+ modId = "neoforge"
+ type = "required"
+ mandatory = true
+-versionRange = "[21.5,21.6)"
++versionRange = "[21.4,21.5)"
+ ordering = "NONE"
+ side = "CLIENT"
+ 
+@@ -37,7 +37,7 @@
+ modId = "minecraft"
+ type = "required"
+ mandatory = true
+-versionRange = "1.21.5"
++versionRange = "1.21.4"
+ ordering = "NONE"
+ side = "CLIENT"
+ 
+diff --recursive --unified --new-file 1.21.5/neoforge/src/main/resources/pack.mcmeta 1.21.4/neoforge/src/main/resources/pack.mcmeta
+--- 1.21.5/neoforge/src/main/resources/pack.mcmeta	2025-05-27 12:20:42.552228600 +0300
++++ 1.21.4/neoforge/src/main/resources/pack.mcmeta	2025-05-27 12:20:42.533117600 +0300
+@@ -1,6 +1,6 @@
+ {
+   "pack": {
+-    "pack_format": 55,
++    "pack_format": 46,
+     "description": "In-Game Account Switcher"
+   }
+ }
+diff --recursive --unified --new-file 1.21.5/root/build.gradle.kts 1.21.4/root/build.gradle.kts
+--- 1.21.5/root/build.gradle.kts	2025-06-03 11:02:42.952657600 +0300
++++ 1.21.4/root/build.gradle.kts	2025-05-27 12:20:42.533117600 +0300
+@@ -25,7 +25,7 @@
+ java.targetCompatibility = JavaVersion.VERSION_21
+ java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+ group = "ru.vidtu.ias"
+-base.archivesName = "IAS-1.21.5"
++base.archivesName = "IAS-1.21.4"
+ description = "This mod allows you to change your logged in account in-game, without restarting Minecraft."
+ 
+ repositories {
+@@ -43,7 +43,7 @@
+     compileOnlyApi(libs.error.prone.annotations)
+ 
+     // Minecraft (Provided)
+-    minecraft(libs.minecraft.mc1215)
++    minecraft(libs.minecraft.mc1214)
+     mappings(loom.officialMojangMappings())
+ 
+     // Mixin
+@@ -78,7 +78,7 @@
+             "Specification-Title" to "In-Game Account Switcher",
+             "Specification-Version" to version,
+             "Specification-Vendor" to "VidTu",
+-            "Implementation-Title" to "IAS-1.21.5",
++            "Implementation-Title" to "IAS-1.21.4",
+             "Implementation-Version" to version,
+             "Implementation-Vendor" to "VidTu"
+         )

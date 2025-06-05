@@ -1,0 +1,2272 @@
+diff --recursive --unified --new-file 1.19.4/fabric/build.gradle.kts 1.19.2/fabric/build.gradle.kts
+--- 1.19.4/fabric/build.gradle.kts	2025-05-27 12:20:42.419384500 +0300
++++ 1.19.2/fabric/build.gradle.kts	2025-05-27 12:20:42.403686000 +0300
+@@ -25,10 +25,10 @@
+ java.targetCompatibility = JavaVersion.VERSION_17
+ java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+ group = "ru.vidtu.ias"
+-base.archivesName = "IAS-Fabric-1.19.4"
++base.archivesName = "IAS-Fabric-1.19.2"
+ description = "This mod allows you to change your logged in account in-game, without restarting Minecraft."
+-evaluationDependsOn(":1.19.4-root")
+-val shared = project(":1.19.4-root")
++evaluationDependsOn(":1.19.2-root")
++val shared = project(":1.19.2-root")
+ 
+ repositories {
+     mavenCentral()
+@@ -59,13 +59,13 @@
+     compileOnlyApi(libs.error.prone.annotations)
+ 
+     // Minecraft (Provided)
+-    minecraft(libs.minecraft.mc1194)
++    minecraft(libs.minecraft.mc1192)
+     mappings(loom.officialMojangMappings())
+ 
+     // Fabric (Provided)
+     modImplementation(libs.fabric.loader)
+-    modImplementation(libs.fabric.mc1194)
+-    modImplementation(libs.modmenu.mc1194)
++    modImplementation(libs.fabric.mc1192)
++    modImplementation(libs.modmenu.mc1192)
+ 
+     // Root
+     compileOnly(shared)
+@@ -102,7 +102,7 @@
+             "Specification-Title" to "In-Game Account Switcher",
+             "Specification-Version" to version,
+             "Specification-Vendor" to "VidTu",
+-            "Implementation-Title" to "IAS-Fabric-1.19.4",
++            "Implementation-Title" to "IAS-Fabric-1.19.2",
+             "Implementation-Version" to version,
+             "Implementation-Vendor" to "VidTu"
+         )
+diff --recursive --unified --new-file 1.19.4/fabric/gradle.properties 1.19.2/fabric/gradle.properties
+--- 1.19.4/fabric/gradle.properties	2025-05-27 12:20:42.419384500 +0300
++++ 1.19.2/fabric/gradle.properties	2025-05-27 12:20:42.404698400 +0300
+@@ -16,6 +16,6 @@
+ # along with this program.  If not, see <https://www.gnu.org/licenses/>
+ 
+ # Mod
+-display.type=Fabric/Quilt 1.19.4
+-modrinth.versions=1.19.4
++display.type=Fabric/Quilt 1.19.2
++modrinth.versions=1.19.2
+ modrinth.loaders=fabric,quilt
+diff --recursive --unified --new-file 1.19.4/fabric/src/main/resources/fabric.mod.json 1.19.2/fabric/src/main/resources/fabric.mod.json
+--- 1.19.4/fabric/src/main/resources/fabric.mod.json	2025-05-27 12:20:42.421393200 +0300
++++ 1.19.2/fabric/src/main/resources/fabric.mod.json	2025-05-27 12:20:42.406708300 +0300
+@@ -34,7 +34,7 @@
+     "ias.mixins.json"
+   ],
+   "depends": {
+-    "minecraft": "1.19.4",
++    "minecraft": "1.19.2",
+     "fabric-api": "*"
+   },
+   "recommends": {
+diff --recursive --unified --new-file 1.19.4/fabric/src/main/resources/quilt.mod.json 1.19.2/fabric/src/main/resources/quilt.mod.json
+--- 1.19.4/fabric/src/main/resources/quilt.mod.json	2025-05-27 12:20:42.422391100 +0300
++++ 1.19.2/fabric/src/main/resources/quilt.mod.json	2025-05-27 12:20:42.406708300 +0300
+@@ -27,8 +27,8 @@
+     "depends": [
+       {
+         "id": "minecraft",
+-        "versions": "1.19.4",
+-        "reason": "In-Game Account Switcher works only with Minecraft 1.19.4."
++        "versions": "1.19.2",
++        "reason": "In-Game Account Switcher works only with Minecraft 1.19.2."
+       },
+       {
+         "id": "fabric-api",
+diff --recursive --unified --new-file 1.19.4/forge/build.gradle.kts 1.19.2/forge/build.gradle.kts
+--- 1.19.4/forge/build.gradle.kts	2025-05-27 12:20:42.422391100 +0300
++++ 1.19.2/forge/build.gradle.kts	2025-05-27 12:20:42.406708300 +0300
+@@ -25,10 +25,10 @@
+ java.targetCompatibility = JavaVersion.VERSION_17
+ java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+ group = "ru.vidtu.ias"
+-base.archivesName = "IAS-Forge-1.19.4"
++base.archivesName = "IAS-Forge-1.19.2"
+ description = "This mod allows you to change your logged in account in-game, without restarting Minecraft."
+-evaluationDependsOn(":1.19.4-root")
+-val shared = project(":1.19.4-root")
++evaluationDependsOn(":1.19.2-root")
++val shared = project(":1.19.2-root")
+ 
+ loom {
+     silentMojangMappingsLicense()
+@@ -63,11 +63,11 @@
+     compileOnlyApi(libs.error.prone.annotations)
+ 
+     // Minecraft (Provided)
+-    minecraft(libs.minecraft.mc1194)
++    minecraft(libs.minecraft.mc1192)
+     mappings(loom.officialMojangMappings())
+ 
+     // Forge
+-    forge(libs.forge.mc1194)
++    forge(libs.forge.mc1192)
+ 
+     // Root
+     compileOnly(shared)
+@@ -104,7 +104,7 @@
+             "Specification-Title" to "In-Game Account Switcher",
+             "Specification-Version" to version,
+             "Specification-Vendor" to "VidTu",
+-            "Implementation-Title" to "IAS-Forge-1.19.4",
++            "Implementation-Title" to "IAS-Forge-1.19.2",
+             "Implementation-Version" to version,
+             "Implementation-Vendor" to "VidTu",
+             "MixinConfigs" to "ias.mixins.json"
+diff --recursive --unified --new-file 1.19.4/forge/gradle.properties 1.19.2/forge/gradle.properties
+--- 1.19.4/forge/gradle.properties	2025-05-27 12:20:42.422391100 +0300
++++ 1.19.2/forge/gradle.properties	2025-05-27 12:20:42.406708300 +0300
+@@ -19,6 +19,6 @@
+ loom.platform=forge
+ 
+ # Mod
+-display.type=Forge 1.19.4
+-modrinth.versions=1.19.4
++display.type=Forge 1.19.2
++modrinth.versions=1.19.2
+ modrinth.loaders=forge
+diff --recursive --unified --new-file 1.19.4/forge/src/main/resources/META-INF/mods.toml 1.19.2/forge/src/main/resources/META-INF/mods.toml
+--- 1.19.4/forge/src/main/resources/META-INF/mods.toml	2025-05-27 12:20:42.424404900 +0300
++++ 1.19.2/forge/src/main/resources/META-INF/mods.toml	2025-05-27 12:20:42.408916700 +0300
+@@ -26,7 +26,7 @@
+ modId = "forge"
+ type = "required"
+ mandatory = true
+-versionRange = "[45,46)"
++versionRange = "[42,44)"
+ ordering = "NONE"
+ side = "CLIENT"
+ 
+@@ -34,7 +34,7 @@
+ modId = "minecraft"
+ type = "required"
+ mandatory = true
+-versionRange = "1.19.4"
++versionRange = "[1.19.1,1.19.2]"
+ ordering = "NONE"
+ side = "CLIENT"
+ 
+diff --recursive --unified --new-file 1.19.4/forge/src/main/resources/pack.mcmeta 1.19.2/forge/src/main/resources/pack.mcmeta
+--- 1.19.4/forge/src/main/resources/pack.mcmeta	2025-05-27 12:20:42.424404900 +0300
++++ 1.19.2/forge/src/main/resources/pack.mcmeta	2025-05-27 12:20:42.409924300 +0300
+@@ -1,6 +1,6 @@
+ {
+   "pack": {
+-    "pack_format": 13,
++    "pack_format": 9,
+     "description": "In-Game Account Switcher"
+   }
+ }
+diff --recursive --unified --new-file 1.19.4/root/build.gradle.kts 1.19.2/root/build.gradle.kts
+--- 1.19.4/root/build.gradle.kts	2025-05-27 12:20:42.424404900 +0300
++++ 1.19.2/root/build.gradle.kts	2025-05-27 12:20:42.409924300 +0300
+@@ -25,7 +25,7 @@
+ java.targetCompatibility = JavaVersion.VERSION_17
+ java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+ group = "ru.vidtu.ias"
+-base.archivesName = "IAS-1.19.4"
++base.archivesName = "IAS-1.19.2"
+ description = "This mod allows you to change your logged in account in-game, without restarting Minecraft."
+ 
+ repositories {
+@@ -43,7 +43,7 @@
+     compileOnlyApi(libs.error.prone.annotations)
+ 
+     // Minecraft (Provided)
+-    minecraft(libs.minecraft.mc1194)
++    minecraft(libs.minecraft.mc1192)
+     mappings(loom.officialMojangMappings())
+ 
+     // Mixin
+@@ -78,7 +78,7 @@
+             "Specification-Title" to "In-Game Account Switcher",
+             "Specification-Version" to version,
+             "Specification-Vendor" to "VidTu",
+-            "Implementation-Title" to "IAS-1.19.4",
++            "Implementation-Title" to "IAS-1.19.2",
+             "Implementation-Version" to version,
+             "Implementation-Vendor" to "VidTu"
+         )
+diff --recursive --unified --new-file 1.19.4/root/src/main/java/ru/vidtu/ias/IASMinecraft.java 1.19.2/root/src/main/java/ru/vidtu/ias/IASMinecraft.java
+--- 1.19.4/root/src/main/java/ru/vidtu/ias/IASMinecraft.java	2025-05-27 12:20:42.426682200 +0300
++++ 1.19.2/root/src/main/java/ru/vidtu/ias/IASMinecraft.java	2025-05-27 12:20:42.410928800 +0300
+@@ -28,13 +28,12 @@
+ import net.minecraft.client.User;
+ import net.minecraft.client.gui.Font;
+ import net.minecraft.client.gui.components.AbstractSelectionList;
++import net.minecraft.client.gui.components.AbstractWidget;
+ import net.minecraft.client.gui.components.Button;
+ import net.minecraft.client.gui.components.ImageButton;
+-import net.minecraft.client.gui.components.Tooltip;
+ import net.minecraft.client.gui.components.events.GuiEventListener;
+ import net.minecraft.client.gui.components.toasts.SystemToast;
+ import net.minecraft.client.gui.components.toasts.ToastComponent;
+-import net.minecraft.client.gui.layouts.LayoutElement;
+ import net.minecraft.client.gui.screens.ConnectScreen;
+ import net.minecraft.client.gui.screens.Screen;
+ import net.minecraft.client.gui.screens.TitleScreen;
+@@ -43,13 +42,13 @@
+ import net.minecraft.client.multiplayer.ProfileKeyPairManager;
+ import net.minecraft.client.multiplayer.chat.report.ReportEnvironment;
+ import net.minecraft.client.multiplayer.chat.report.ReportingContext;
+-import net.minecraft.client.telemetry.ClientTelemetryManager;
+ import net.minecraft.network.chat.Component;
+ import net.minecraft.resources.ResourceLocation;
+ import org.slf4j.Logger;
+ import org.slf4j.LoggerFactory;
+ import ru.vidtu.ias.auth.LoginData;
+ import ru.vidtu.ias.config.IASConfig;
++import ru.vidtu.ias.legacy.LegacyTooltip;
+ import ru.vidtu.ias.mixins.MinecraftAccessor;
+ import ru.vidtu.ias.screen.AccountScreen;
+ import ru.vidtu.ias.utils.Expression;
+@@ -152,13 +151,13 @@
+                     boolean overlapping = false;
+                     for (GuiEventListener child : screen.children()) {
+                         // Skip if doesn't have pos.
+-                        if (!(child instanceof LayoutElement le) || child instanceof AbstractSelectionList<?>) continue;
++                        if (!(child instanceof AbstractWidget w) || child instanceof AbstractSelectionList<?>) continue;
+ 
+                         // Skip if not overlapping.
+-                        int x1 = le.getX() - 4;
+-                        int y1 = le.getY() - 4;
+-                        int x2 = x1 + le.getWidth() + 8;
+-                        int y2 = y1 + le.getHeight() + 8;
++                        int x1 = w.x - 4;
++                        int y1 = w.y - 4;
++                        int x2 = x1 + w.getWidth() + 8;
++                        int y2 = y1 + w.getHeight() + 8;
+                         if (x < x1 || y < y1 || (x + 20) > x2 || (y + 20) > y2) continue;
+ 
+                         // Otherwise move.
+@@ -171,9 +170,7 @@
+             }
+ 
+             // Add the button.
+-            ImageButton button = new ImageButton(x, y, 20, 20, 0, 0, 20, SPRITE, 256, 256, btn -> minecraft.setScreen(new AccountScreen(screen)), Component.literal("In-Game Account Switcher"));
+-            button.setTooltip(Tooltip.create(button.getMessage()));
+-            button.setTooltipDelay(250);
++            ImageButton button = new ImageButton(x, y, 20, 20, 0, 0, 20, SPRITE, 256, 256, btn -> minecraft.setScreen(new AccountScreen(screen)), new LegacyTooltip(screen, minecraft.font, Component.literal("In-Game Account Switcher"), 250), Component.literal("In-Game Account Switcher"));
+             buttonAdder.accept(button);
+         }
+ 
+@@ -189,20 +186,20 @@
+             if (x == null || y == null) {
+                 // Use default position.
+                 x = width / 2 + 158;
+-                y = height - 30;
++                y = height - 28;
+ 
+                 // Move out of any overlapping elements.
+                 for (int i = 0; i < 64; i++) {
+                     boolean overlapping = false;
+                     for (GuiEventListener child : screen.children()) {
+                         // Skip if doesn't have pos.
+-                        if (!(child instanceof LayoutElement le) || child instanceof AbstractSelectionList<?>) continue;
++                        if (!(child instanceof AbstractWidget w) || child instanceof AbstractSelectionList<?>) continue;
+ 
+                         // Skip if not overlapping.
+-                        int x1 = le.getX() - 4;
+-                        int y1 = le.getY() - 4;
+-                        int x2 = x1 + le.getWidth() + 8;
+-                        int y2 = y1 + le.getHeight() + 8;
++                        int x1 = w.x - 4;
++                        int y1 = w.y - 4;
++                        int x2 = x1 + w.getWidth() + 8;
++                        int y2 = y1 + w.getHeight() + 8;
+                         if (x < x1 || y < y1 || (x + 20) > x2 || (y + 20) > y2) continue;
+ 
+                         // Otherwise move.
+@@ -215,9 +212,7 @@
+             }
+ 
+             // Add the button.
+-            ImageButton button = new ImageButton(x, y, 20, 20, 0, 0, 20, SPRITE, 256, 256, btn -> minecraft.setScreen(new AccountScreen(screen)), Component.literal("In-Game Account Switcher"));
+-            button.setTooltip(Tooltip.create(button.getMessage()));
+-            button.setTooltipDelay(250);
++            ImageButton button = new ImageButton(x, y, 20, 20, 0, 0, 20, SPRITE, 256, 256, btn -> minecraft.setScreen(new AccountScreen(screen)), new LegacyTooltip(screen, minecraft.font, Component.literal("In-Game Account Switcher"), 250), Component.literal("In-Game Account Switcher"));
+             buttonAdder.accept(button);
+         }
+ 
+@@ -300,7 +295,7 @@
+         // Check if not in-game.
+         LOGGER.info("IAS: Received login request: {}", data);
+         if (minecraft.player != null || minecraft.level != null || minecraft.getConnection() != null ||
+-                minecraft.cameraEntity != null || minecraft.gameMode != null || minecraft.isSingleplayer()) {
++                minecraft.cameraEntity != null || minecraft.gameMode != null || minecraft.hasSingleplayerServer()) {
+             return CompletableFuture.failedFuture(new FriendlyException("Changing accounts in world.", "ias.error.world"));
+         }
+ 
+@@ -332,8 +327,7 @@
+                 apiService = UserApiService.OFFLINE;
+             }
+             PlayerSocialManager social = new PlayerSocialManager(minecraft, apiService);
+-            ClientTelemetryManager telemetry = new ClientTelemetryManager(minecraft, apiService, user);
+-            ProfileKeyPairManager keyPair = ProfileKeyPairManager.create(apiService, user, minecraft.gameDirectory.toPath());
++            ProfileKeyPairManager keyPair = new ProfileKeyPairManager(apiService, user.getProfileId(), minecraft.gameDirectory.toPath());
+             ReportingContext reporting = ReportingContext.create(ReportEnvironment.local(), apiService);
+             GameProfile gameProfile = minecraft.getMinecraftSessionService().fillProfileProperties(user.getGameProfile(), false);
+             PropertyMap propertyMap = new PropertyMap();
+@@ -347,7 +341,6 @@
+                 accessor.ias$userApiService(apiService);
+                 accessor.ias$profileProperties(propertyMap);
+                 accessor.ias$playerSocialManager(social);
+-                accessor.ias$telemetryManager(telemetry);
+                 accessor.ias$profileKeyPairManager(keyPair);
+                 accessor.ias$reportingContext(reporting);
+                 minecraft.updateTitle();
+diff --recursive --unified --new-file 1.19.4/root/src/main/java/ru/vidtu/ias/legacy/LastPassRenderCallback.java 1.19.2/root/src/main/java/ru/vidtu/ias/legacy/LastPassRenderCallback.java
+--- 1.19.4/root/src/main/java/ru/vidtu/ias/legacy/LastPassRenderCallback.java	1970-01-01 03:00:00.000000000 +0300
++++ 1.19.2/root/src/main/java/ru/vidtu/ias/legacy/LastPassRenderCallback.java	2025-05-27 12:20:42.411928100 +0300
+@@ -0,0 +1,36 @@
++/*
++ * In-Game Account Switcher is a mod for Minecraft that allows you to change your logged in account in-game, without restarting Minecraft.
++ * Copyright (C) 2015-2022 The_Fireplace
++ * Copyright (C) 2021-2025 VidTu
++ *
++ * This program is free software: you can redistribute it and/or modify
++ * it under the terms of the GNU Lesser General Public License as published by
++ * the Free Software Foundation, either version 3 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU Lesser General Public License for more details.
++ *
++ * You should have received a copy of the GNU Lesser General Public License
++ * along with this program.  If not, see <https://www.gnu.org/licenses/>
++ */
++
++package ru.vidtu.ias.legacy;
++
++import org.jetbrains.annotations.NotNull;
++
++/**
++ * Last pass renderer callback.
++ *
++ * @author VidTu
++ */
++public interface LastPassRenderCallback {
++    /**
++     * Sets the callback.
++     *
++     * @param callback Target callback
++     */
++    void lastPass(@NotNull Runnable callback);
++}
+diff --recursive --unified --new-file 1.19.4/root/src/main/java/ru/vidtu/ias/legacy/LegacyCheckbox.java 1.19.2/root/src/main/java/ru/vidtu/ias/legacy/LegacyCheckbox.java
+--- 1.19.4/root/src/main/java/ru/vidtu/ias/legacy/LegacyCheckbox.java	2025-05-27 12:20:42.426682200 +0300
++++ 1.19.2/root/src/main/java/ru/vidtu/ias/legacy/LegacyCheckbox.java	2025-05-27 12:20:42.411928100 +0300
+@@ -19,6 +19,7 @@
+ 
+ package ru.vidtu.ias.legacy;
+ 
++import com.mojang.blaze3d.vertex.PoseStack;
+ import it.unimi.dsi.fastutil.booleans.BooleanConsumer;
+ import net.minecraft.client.gui.Font;
+ import net.minecraft.client.gui.components.Checkbox;
+@@ -36,17 +37,24 @@
+     private final BooleanConsumer callback;
+ 
+     /**
++     * Check tooltip.
++     */
++    private final LegacyTooltip tooltip;
++
++    /**
+      * Creates a new check callback.
+      *
+      * @param font     Target font
+      * @param x        Target X
+      * @param y        Target Y
+      * @param label    Checkbox label
++     * @param tooltip  Checkbox tooltip
+      * @param check    Checkbox check status
+      * @param callback Checkbox check callback
+      */
+-    public LegacyCheckbox(Font font, int x, int y, Component label, boolean check, BooleanConsumer callback) {
++    public LegacyCheckbox(Font font, int x, int y, Component label, LegacyTooltip tooltip, boolean check, BooleanConsumer callback) {
+         super(x, y, font.width(label) + 24, 20, label, check);
++        this.tooltip = tooltip;
+         this.callback = callback;
+     }
+ 
+@@ -55,4 +63,10 @@
+         super.onPress();
+         this.callback.accept(this.selected());
+     }
++
++    @Override
++    public void renderButton(PoseStack pose, int mouseX, int mouseY, float delta) {
++        super.renderButton(pose, mouseX, mouseY, delta);
++        this.tooltip.render(this, pose, mouseX, mouseY);
++    }
+ }
+diff --recursive --unified --new-file 1.19.4/root/src/main/java/ru/vidtu/ias/legacy/LegacyEditBox.java 1.19.2/root/src/main/java/ru/vidtu/ias/legacy/LegacyEditBox.java
+--- 1.19.4/root/src/main/java/ru/vidtu/ias/legacy/LegacyEditBox.java	1970-01-01 03:00:00.000000000 +0300
++++ 1.19.2/root/src/main/java/ru/vidtu/ias/legacy/LegacyEditBox.java	2025-05-27 12:20:42.411928100 +0300
+@@ -0,0 +1,78 @@
++/*
++ * In-Game Account Switcher is a mod for Minecraft that allows you to change your logged in account in-game, without restarting Minecraft.
++ * Copyright (C) 2015-2022 The_Fireplace
++ * Copyright (C) 2021-2025 VidTu
++ *
++ * This program is free software: you can redistribute it and/or modify
++ * it under the terms of the GNU Lesser General Public License as published by
++ * the Free Software Foundation, either version 3 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU Lesser General Public License for more details.
++ *
++ * You should have received a copy of the GNU Lesser General Public License
++ * along with this program.  If not, see <https://www.gnu.org/licenses/>
++ */
++
++package ru.vidtu.ias.legacy;
++
++import com.mojang.blaze3d.vertex.PoseStack;
++import net.minecraft.client.gui.Font;
++import net.minecraft.client.gui.components.EditBox;
++import net.minecraft.network.chat.Component;
++import org.jetbrains.annotations.Nullable;
++
++/**
++ * An edit box with a tooltip.
++ *
++ * @author VidTu
++ */
++public final class LegacyEditBox extends EditBox {
++    /**
++     * A font of IAS.
++     */
++    private final Font iasFont;
++
++    /**
++     * Box tooltip.
++     */
++    private final LegacyTooltip tooltip;
++
++    /**
++     * Box hint.
++     */
++    private final Component hint;
++
++    /**
++     * Creates a new edit box.
++     *
++     * @param font      Target font
++     * @param x         Box X
++     * @param y         Box Y
++     * @param width     Box width
++     * @param height    Box height
++     * @param inherit   Box inheriting
++     * @param component Box title
++     * @param tooltip   Box tooltip
++     * @param hint      Box hint, {@code null} if none
++     */
++    public LegacyEditBox(Font font, int x, int y, int width, int height, @Nullable EditBox inherit, Component component,
++                         LegacyTooltip tooltip, Component hint) {
++        super(font, x, y, width, height, inherit, component);
++        this.iasFont = font;
++        this.tooltip = tooltip;
++        this.hint = hint;
++    }
++
++    @Override
++    public void renderButton(PoseStack pose, int mouseX, int mouseY, float delta) {
++        super.renderButton(pose, mouseX, mouseY, delta);
++        if (this.hint != null && this.getValue().isEmpty() && !this.isFocused()) {
++            this.iasFont.drawShadow(pose, this.hint, this.x + 4, this.y + (this.height - 8) / 2, -1);
++        }
++        this.tooltip.render(this, pose, mouseX, mouseY);
++    }
++}
+diff --recursive --unified --new-file 1.19.4/root/src/main/java/ru/vidtu/ias/legacy/LegacyTooltip.java 1.19.2/root/src/main/java/ru/vidtu/ias/legacy/LegacyTooltip.java
+--- 1.19.4/root/src/main/java/ru/vidtu/ias/legacy/LegacyTooltip.java	1970-01-01 03:00:00.000000000 +0300
++++ 1.19.2/root/src/main/java/ru/vidtu/ias/legacy/LegacyTooltip.java	2025-05-27 12:20:42.413098700 +0300
+@@ -0,0 +1,140 @@
++/*
++ * In-Game Account Switcher is a mod for Minecraft that allows you to change your logged in account in-game, without restarting Minecraft.
++ * Copyright (C) 2015-2022 The_Fireplace
++ * Copyright (C) 2021-2025 VidTu
++ *
++ * This program is free software: you can redistribute it and/or modify
++ * it under the terms of the GNU Lesser General Public License as published by
++ * the Free Software Foundation, either version 3 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU Lesser General Public License for more details.
++ *
++ * You should have received a copy of the GNU Lesser General Public License
++ * along with this program.  If not, see <https://www.gnu.org/licenses/>
++ */
++
++package ru.vidtu.ias.legacy;
++
++import com.mojang.blaze3d.vertex.PoseStack;
++import net.minecraft.Util;
++import net.minecraft.client.gui.Font;
++import net.minecraft.client.gui.components.AbstractWidget;
++import net.minecraft.client.gui.components.Button;
++import net.minecraft.client.gui.screens.Screen;
++import net.minecraft.network.chat.Component;
++import net.minecraft.util.FormattedCharSequence;
++
++import java.util.List;
++
++/**
++ * An emulation of delayed tooltips from newer versions.
++ *
++ * @author VidTu
++ */
++public final class LegacyTooltip implements Button.OnTooltip {
++    /**
++     * Empty tooltip.
++     */
++    public static final LegacyTooltip EMPTY = new LegacyTooltip(null, null, null, 0);
++
++    /**
++     * Parent screen.
++     */
++    private final Screen screen;
++
++    /**
++     * Parent font.
++     */
++    private final Font font;
++
++    /**
++     * Tooltip component.
++     */
++    private List<FormattedCharSequence> tooltip;
++
++    /**
++     * Required tooltip delay in millis.
++     */
++    private int delay;
++
++    /**
++     * Last mouse move.
++     */
++    private long lastFree = Util.getMillis();
++
++    /**
++     * Creates a new tooltip.
++     *
++     * @param screen  Parent screen
++     * @param font    Parent font
++     * @param tooltip Tooltip component, {@code null} to hide
++     * @param delay   Required tooltip delay in millis
++     */
++    public LegacyTooltip(Screen screen, Font font, Component tooltip, int delay) {
++        if (screen == null || font == null) {
++            this.screen = null;
++            this.font = null;
++            return;
++        }
++        this.screen = screen;
++        this.font = font;
++        this.tooltip = tooltip == null ? null : font.split(tooltip, screen.width / 2);
++        this.delay = delay;
++    }
++
++    @Override
++    public void onTooltip(Button btn, PoseStack pose, int mouseX, int mouseY) {
++        this.render(btn, pose, mouseX, mouseY);
++    }
++
++    /**
++     * Renders the tooltip.
++     *
++     * @param widget Parent widget
++     * @param pose   Render pose stack
++     * @param mouseX Mouse X
++     * @param mouseY Mouse Y
++     */
++    public void render(AbstractWidget widget, PoseStack pose, int mouseX, int mouseY) {
++        // Skip if no tooltip.
++        if (this.screen == null || this.tooltip == null) return;
++
++        // Skip if not hovered.
++        if (!widget.isHoveredOrFocused()) {
++            this.lastFree = Util.getMillis();
++            return;
++        }
++
++        // Render if hovered long enough.
++        if ((Util.getMillis() - this.lastFree) < this.delay) return;
++        if (this.screen instanceof LastPassRenderCallback callback) {
++            callback.lastPass(() -> this.screen.renderTooltip(pose, this.tooltip, mouseX, mouseY));
++        } else {
++            this.screen.renderTooltip(pose, this.tooltip, mouseX, mouseY);
++        }
++    }
++
++    /**
++     * Sets the tooltip.
++     *
++     * @param tooltip New tooltip, {@code null} to hide
++     */
++    public void tooltip(Component tooltip) {
++        if (this.screen == null || this.font == null) return;
++        this.tooltip = tooltip == null ? null : this.font.split(tooltip, this.screen.width / 2);
++    }
++
++    /**
++     * Sets the delay.
++     *
++     * @param delay Required tooltip delay in millis
++     */
++    public void delay(int delay) {
++        if (this.screen == null || this.font == null) return;
++        this.delay = delay;
++    }
++}
+diff --recursive --unified --new-file 1.19.4/root/src/main/java/ru/vidtu/ias/legacy/SkinWidget.java 1.19.2/root/src/main/java/ru/vidtu/ias/legacy/SkinWidget.java
+--- 1.19.4/root/src/main/java/ru/vidtu/ias/legacy/SkinWidget.java	2025-05-27 12:20:42.427686600 +0300
++++ 1.19.2/root/src/main/java/ru/vidtu/ias/legacy/SkinWidget.java	2025-05-27 12:20:42.413098700 +0300
+@@ -21,12 +21,10 @@
+ 
+ import com.mojang.blaze3d.platform.Lighting;
+ import com.mojang.blaze3d.vertex.PoseStack;
+-import com.mojang.math.Axis;
++import com.mojang.math.Matrix4f;
+ import net.minecraft.client.Minecraft;
+-import net.minecraft.client.gui.ComponentPath;
+ import net.minecraft.client.gui.components.AbstractWidget;
+ import net.minecraft.client.gui.narration.NarrationElementOutput;
+-import net.minecraft.client.gui.navigation.FocusNavigationEvent;
+ import net.minecraft.client.model.PlayerModel;
+ import net.minecraft.client.model.geom.EntityModelSet;
+ import net.minecraft.client.model.geom.ModelLayers;
+@@ -34,10 +32,8 @@
+ import net.minecraft.client.renderer.RenderType;
+ import net.minecraft.client.renderer.texture.OverlayTexture;
+ import net.minecraft.client.sounds.SoundManager;
+-import net.minecraft.network.chat.CommonComponents;
++import net.minecraft.network.chat.Component;
+ import net.minecraft.util.Mth;
+-import org.jetbrains.annotations.Nullable;
+-import org.joml.Matrix4f;
+ 
+ import java.util.function.Supplier;
+ 
+@@ -84,7 +80,7 @@
+      */
+     public SkinWidget(int x, int y, int width, int height, EntityModelSet models, Supplier<Skin> skin) {
+         // Assign.
+-        super(x, y, width, height, CommonComponents.EMPTY);
++        super(x, y, width, height, Component.empty());
+         this.skin = skin;
+ 
+         // Prepare models.
+@@ -95,22 +91,24 @@
+     }
+ 
+     @Override
+-    public void renderWidget(PoseStack pose, int mouseX, int mouseY, float delta) {
++    public void renderButton(PoseStack pose, int mouseX, int mouseY, float delta) {
++        if (true) return;
+         // Prepare.
+         float scale = this.getHeight() / 2.125F;
+         pose.pushPose();
+-        pose.translate(this.getX() + this.getWidth() / 2.0F, this.getY() + this.getHeight(), 100.0F);
++        pose.translate(this.x + this.getWidth() / 2.0F, this.y + this.getHeight(), 100.0F);
+         pose.scale(scale, scale, scale);
+         pose.translate(0.0F, -0.0625F, 0.0F);
+         Matrix4f matrix = pose.last().pose();
+-        matrix.rotateAround(Axis.XP.rotationDegrees(this.rotationX), 0.0F, -1.0625F, 0.0F);
+-        pose.mulPose(Axis.YP.rotationDegrees(this.rotationY));
++        // FIXME
++//        matrix.rotateAround(Axis.XP.rotationDegrees(this.rotationX), 0.0F, -1.0625F, 0.0F);
++//        pose.mulPose(Axis.YP.rotationDegrees(this.rotationY));
+ 
+         // Render.
+         Skin skin = this.skin.get();
+         Lighting.setupForEntityInInventory();
+         pose.pushPose();
+-        pose.mulPoseMatrix(new Matrix4f().scaling(1.0F, 1.0F, -1.0F));
++        pose.mulPoseMatrix(Matrix4f.createScaleMatrix(1.0F, 1.0F, -1.0F));
+         pose.translate(0.0F, -1.5F, 0.0F);
+         PlayerModel<?> model = skin.slim() ? this.slim : this.classic;
+         RenderType renderType = model.renderType(skin.skin());
+@@ -135,7 +133,7 @@
+     }
+ 
+     @Override
+-    protected void updateWidgetNarration(NarrationElementOutput out) {
++    public void updateNarration(NarrationElementOutput out) {
+         // NO-OP
+     }
+ 
+@@ -143,10 +141,4 @@
+     public boolean isActive() {
+         return false;
+     }
+-
+-    @Override
+-    @Nullable
+-    public ComponentPath nextFocusPath(FocusNavigationEvent event) {
+-        return null;
+-    }
+ }
+diff --recursive --unified --new-file 1.19.4/root/src/main/java/ru/vidtu/ias/mixins/MinecraftAccessor.java 1.19.2/root/src/main/java/ru/vidtu/ias/mixins/MinecraftAccessor.java
+--- 1.19.4/root/src/main/java/ru/vidtu/ias/mixins/MinecraftAccessor.java	2025-05-27 12:20:42.427686600 +0300
++++ 1.19.2/root/src/main/java/ru/vidtu/ias/mixins/MinecraftAccessor.java	2025-05-27 12:20:42.414099200 +0300
+@@ -27,7 +27,6 @@
+ import net.minecraft.client.gui.screens.social.PlayerSocialManager;
+ import net.minecraft.client.multiplayer.ProfileKeyPairManager;
+ import net.minecraft.client.multiplayer.chat.report.ReportingContext;
+-import net.minecraft.client.telemetry.ClientTelemetryManager;
+ import org.spongepowered.asm.mixin.Mixin;
+ import org.spongepowered.asm.mixin.Mutable;
+ import org.spongepowered.asm.mixin.gen.Accessor;
+@@ -87,16 +86,6 @@
+     void ias$playerSocialManager(PlayerSocialManager manager);
+ 
+     /**
+-     * Sets the telemetry manager.
+-     *
+-     * @param manager New client telemetry manager
+-     * @see Minecraft#getTelemetryManager()
+-     */
+-    @Accessor("telemetryManager")
+-    @Mutable
+-    void ias$telemetryManager(ClientTelemetryManager manager);
+-
+-    /**
+      * Sets the new profile key pair manager.
+      *
+      * @param manager New profile key pair manager
+diff --recursive --unified --new-file 1.19.4/root/src/main/java/ru/vidtu/ias/screen/AccountEntry.java 1.19.2/root/src/main/java/ru/vidtu/ias/screen/AccountEntry.java
+--- 1.19.4/root/src/main/java/ru/vidtu/ias/screen/AccountEntry.java	2025-05-27 12:20:42.428736200 +0300
++++ 1.19.2/root/src/main/java/ru/vidtu/ias/screen/AccountEntry.java	2025-05-27 12:20:42.415239100 +0300
+@@ -26,10 +26,7 @@
+ import net.minecraft.client.User;
+ import net.minecraft.client.gui.GuiComponent;
+ import net.minecraft.client.gui.components.ObjectSelectionList;
+-import net.minecraft.client.gui.components.PlayerFaceRenderer;
+-import net.minecraft.client.gui.components.Tooltip;
+ import net.minecraft.client.gui.screens.Screen;
+-import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
+ import net.minecraft.network.chat.CommonComponents;
+ import net.minecraft.network.chat.Component;
+ import net.minecraft.util.FormattedCharSequence;
+@@ -101,7 +98,7 @@
+         // Render tooltip.
+         if (hovered) {
+             if ((System.nanoTime() - this.lastFree) >= 500_000_000L) {
+-                this.list.screen().setTooltipForNextRenderPass(this.tooltip);
++                this.list.screen().lastPass(() -> this.list.screen().renderTooltip(pose, this.tooltip, mouseX, mouseY));
+             }
+         } else {
+             this.lastFree = System.nanoTime();
+@@ -109,8 +106,11 @@
+ 
+         // Render the skin.
+         Skin skin = this.list.skin(this);
++        RenderSystem.enableTexture();
+         RenderSystem.setShaderTexture(0, skin.skin());
+-        PlayerFaceRenderer.draw(pose, x, y, 8);
++        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
++        GuiComponent.blit(pose, x, y, 8, 8, 8.0F, 8, 8, 8, 64, 64);
++        GuiComponent.blit(pose, x, y, 8, 8, 40.0F, 8, 8, 8, 64, 64);
+ 
+         // Get the name color.
+         User user = this.minecraft.getUser();
+@@ -119,7 +119,7 @@
+         //noinspection ConstantValue
+         if (user == null || !this.account.name().equalsIgnoreCase(user.getName())) {
+             color = 0xFF_FF_FF_FF;
+-        } else if (this.account.uuid().equals(user.getProfileId())) {
++        } else if (this.account.uuid().equals(user.getGameProfile().getId())) {
+             color = 0xFF_00_FF_00;
+         } else if (this.account.name().equals(user.getName())) {
+             color = 0xFF_FF_FF_00;
+@@ -133,15 +133,22 @@
+         // Render warning if insecure.
+         if (this.account.insecure()) {
+             boolean warning = (System.nanoTime() / 1_000_000_000L) % 2L == 0;
++            RenderSystem.enableTexture();
+             RenderSystem.setShaderTexture(0, IASMinecraft.SPRITE);
+-            GuiComponent.blit(pose, x - 6, y - 1, 31, warning ? 10 : 0, 2, 10);
++            RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
++            this.list.screen().blit(pose, x - 6, y - 1, 31, warning ? 10 : 0, 2, 10);
+             if (mouseX >= x - 10 && mouseX <= x && mouseY >= y && mouseY <= y + height) {
+-                this.list.screen().setTooltipForNextRenderPass(Tooltip.create(Component.translatable("ias.accounts.tip.insecure")), DefaultTooltipPositioner.INSTANCE, true);
++                this.list.screen().lastPass(() -> this.list.screen().renderTooltip(pose, Component.translatable("ias.accounts.tip.insecure"), mouseX, mouseY));
+             }
+         }
+ 
+         // Render only for focused, selected or hovered.
+         if (this.equals(this.list.getFocused()) || this.equals(this.list.getSelected())) {
++            // Bind.
++            RenderSystem.enableTexture();
++            RenderSystem.setShaderTexture(0, IASMinecraft.SPRITE);
++            RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
++
+             // Render up widget.
+             int upV;
+             int upX = x + width - 28;
+@@ -152,8 +159,7 @@
+             } else {
+                 upV = 0;
+             }
+-            RenderSystem.setShaderTexture(0, IASMinecraft.SPRITE);
+-            GuiComponent.blit(pose, upX, y, 20, upV, 11, 7);
++            this.list.screen().blit(pose, upX, y, 20, upV, 11, 7);
+ 
+             // Render down widget.
+             int downV;
+@@ -165,8 +171,7 @@
+             } else {
+                 downV = 21;
+             }
+-            RenderSystem.setShaderTexture(0, IASMinecraft.SPRITE);
+-            GuiComponent.blit(pose, downX, y, 20, downV, 11, 7);
++            this.list.screen().blit(pose, downX, y, 20, downV, 11, 7);
+         }
+     }
+ 
+@@ -198,6 +203,7 @@
+ 
+         // Set time for double click.
+         this.clicked = Util.getMillis();
++        this.list.setSelected(this);
+         return true;
+     }
+ 
+diff --recursive --unified --new-file 1.19.4/root/src/main/java/ru/vidtu/ias/screen/AccountList.java 1.19.2/root/src/main/java/ru/vidtu/ias/screen/AccountList.java
+--- 1.19.4/root/src/main/java/ru/vidtu/ias/screen/AccountList.java	2025-05-27 12:20:42.428736200 +0300
++++ 1.19.2/root/src/main/java/ru/vidtu/ias/screen/AccountList.java	2025-05-27 12:20:42.415239100 +0300
+@@ -80,6 +80,11 @@
+     }
+ 
+     @Override
++    protected boolean isFocused() {
++        return this.screen.getFocused() == this;
++    }
++
++    @Override
+     public int getRowWidth() {
+         return Math.min(super.getRowWidth(), this.screen.width - (85 + 10) * 2);
+     }
+diff --recursive --unified --new-file 1.19.4/root/src/main/java/ru/vidtu/ias/screen/AccountScreen.java 1.19.2/root/src/main/java/ru/vidtu/ias/screen/AccountScreen.java
+--- 1.19.4/root/src/main/java/ru/vidtu/ias/screen/AccountScreen.java	2025-05-27 12:20:42.429740700 +0300
++++ 1.19.2/root/src/main/java/ru/vidtu/ias/screen/AccountScreen.java	2025-05-27 12:20:42.415239100 +0300
+@@ -24,21 +24,27 @@
+ import net.minecraft.Util;
+ import net.minecraft.client.gui.components.Button;
+ import net.minecraft.client.gui.components.EditBox;
+-import net.minecraft.client.gui.components.Tooltip;
+ import net.minecraft.client.gui.screens.AlertScreen;
+ import net.minecraft.client.gui.screens.Screen;
+ import net.minecraft.network.chat.CommonComponents;
+ import net.minecraft.network.chat.Component;
++import org.jetbrains.annotations.NotNull;
+ import org.lwjgl.glfw.GLFW;
+ import org.slf4j.Logger;
+ import org.slf4j.LoggerFactory;
+ import ru.vidtu.ias.IAS;
+ import ru.vidtu.ias.account.Account;
+ import ru.vidtu.ias.config.IASStorage;
++import ru.vidtu.ias.legacy.LastPassRenderCallback;
++import ru.vidtu.ias.legacy.LegacyEditBox;
++import ru.vidtu.ias.legacy.LegacyTooltip;
+ import ru.vidtu.ias.legacy.Skin;
+ import ru.vidtu.ias.legacy.SkinWidget;
+ 
+-public final class AccountScreen extends Screen {
++import java.util.LinkedList;
++import java.util.List;
++
++public final class AccountScreen extends Screen implements LastPassRenderCallback {
+     /**
+      * Logger for this class.
+      */
+@@ -50,6 +56,11 @@
+     private final Screen parent;
+ 
+     /**
++     * Last pass callbacks list.
++     */
++    private final List<Runnable> lastPass = new LinkedList<>();
++
++    /**
+      * Search widget.
+      */
+     private EditBox search;
+@@ -85,6 +96,11 @@
+     private Button delete;
+ 
+     /**
++     * Login button tooltip.
++     */
++    private LegacyTooltip loginTooltip;
++
++    /**
+      * Creates a new screen.
+      *
+      * @param parent Parent screen, {@code null} if none
+@@ -119,13 +135,12 @@
+                 // Set screen.
+                 this.minecraft.setScreen(this);
+             }, Component.translatable("ias.disclaimer.title").withStyle(ChatFormatting.YELLOW),
+-                    Component.translatable("ias.disclaimer.text"), CommonComponents.GUI_CONTINUE, false));
++                    Component.translatable("ias.disclaimer.text"), Component.translatable("gui.proceed"), false));
+             return;
+         }
+ 
+         // Add search widget.
+-        this.search = new EditBox(this.font, this.width / 2 - 75, 11, 150, 20, this.search, Component.translatable("ias.accounts.search"));
+-        this.search.setHint(this.search.getMessage().copy().withStyle(ChatFormatting.DARK_GRAY));
++        this.search = new LegacyEditBox(this.font, this.width / 2 - 75, 11, 150, 20, this.search, Component.translatable("ias.accounts.search"), LegacyTooltip.EMPTY, Component.translatable("ias.accounts.search").withStyle(ChatFormatting.DARK_GRAY));
+         this.addRenderableWidget(this.search);
+ 
+         // Add skin renderer.
+@@ -145,37 +160,27 @@
+         this.addRenderableWidget(this.skin);
+ 
+         // Add login button.
+-        this.login = Button.builder(Component.translatable("ias.accounts.login"), btn -> this.list.login(true))
+-                .bounds(this.width / 2 - 50 - 100 - 4, this.height - 24 - 24, 100, 20).build();
++        this.loginTooltip = new LegacyTooltip(this, this.font, null, -1);
++        this.login = new Button(this.width / 2 - 50 - 100 - 4, this.height - 24 - 24, 100, 20, Component.translatable("ias.accounts.login"), btn -> this.list.login(true), this.loginTooltip);
+         this.addRenderableWidget(this.login);
+ 
+         // Add offline login button.
+-        this.offlineLogin = Button.builder(Component.translatable("ias.accounts.offlineLogin"), btn -> this.list.login(false))
+-                .bounds(this.width / 2 - 50 - 100 - 4, this.height - 24, 100, 20)
+-                .build();
++        this.offlineLogin = new Button(this.width / 2 - 50 - 100 - 4, this.height - 24, 100, 20, Component.translatable("ias.accounts.offlineLogin"), btn -> this.list.login(false));
+         this.addRenderableWidget(this.offlineLogin);
+ 
+         // Add edit button.
+-        this.edit = Button.builder(Component.translatable("ias.accounts.edit"), btn -> this.list.edit())
+-                .bounds(this.width / 2 - 50, this.height - 24 - 24, 100, 20)
+-                .build();
++        this.edit = new Button(this.width / 2 - 50, this.height - 24 - 24, 100, 20, Component.translatable("ias.accounts.edit"), btn -> this.list.edit());
+         this.addRenderableWidget(this.edit);
+ 
+         // Add delete button.
+-        this.delete = Button.builder(Component.translatable("ias.accounts.delete"), btn -> this.list.delete(!Screen.hasShiftDown()))
+-                .bounds(this.width / 2 - 50, this.height - 24, 100, 20)
+-                .build();
++        this.delete = new Button(this.width / 2 - 50, this.height - 24, 100, 20, Component.translatable("ias.accounts.delete"), btn -> this.list.delete(!Screen.hasShiftDown()));
+         this.addRenderableWidget(this.delete);
+ 
+         // Add edit button.
+-        this.addRenderableWidget(Button.builder(Component.translatable("ias.accounts.add"), btn -> this.list.add())
+-                .bounds(this.width / 2 + 50 + 4, this.height - 24 - 24, 100, 20)
+-                .build());
++        this.addRenderableWidget(new Button(this.width / 2 + 50 + 4, this.height - 24 - 24, 100, 20, Component.translatable("ias.accounts.add"), btn -> this.list.add()));
+ 
+         // Add delete button.
+-        this.addRenderableWidget(Button.builder(CommonComponents.GUI_BACK, btn -> this.minecraft.setScreen(this.parent))
+-                .bounds(this.width / 2 + 50 + 4, this.height - 24, 100, 20)
+-                .build());
++        this.addRenderableWidget(new Button(this.width / 2 + 50 + 4, this.height - 24, 100, 20, CommonComponents.GUI_BACK, btn -> this.minecraft.setScreen(this.parent)));
+ 
+         // Add account list.
+         if (this.list != null) {
+@@ -208,6 +213,12 @@
+ 
+         // Render title.
+         drawCenteredString(pose, this.font, this.title, this.width / 2, 1, 0xFF_FF_FF_FF);
++
++        // Last pass.
++        for (Runnable callback : this.lastPass) {
++            callback.run();
++        }
++        this.lastPass.clear();
+     }
+ 
+     @Override
+@@ -238,7 +249,7 @@
+             this.login.active = this.offlineLogin.active = this.edit.active = this.delete.active = false;
+ 
+             // Hide tooltip, if exists.
+-            this.login.setTooltip(null);
++            this.loginTooltip.tooltip(null);
+ 
+             // Hide skin.
+             this.skin.visible = false;
+@@ -253,11 +264,10 @@
+         // Enable online login button if we can log in.
+         if (selected.account().canLogin()) {
+             this.login.active = true;
+-            this.login.setTooltip(null);
++            this.loginTooltip.tooltip(null);
+         } else {
+             this.login.active = false;
+-            this.login.setTooltip(Tooltip.create(Component.translatable("ias.accounts.login.offline")));
+-            this.login.setTooltipDelay(-1);
++            this.loginTooltip.tooltip(Component.translatable("ias.accounts.login.offline"));
+         }
+ 
+         // Show skin.
+@@ -325,6 +335,11 @@
+     }
+ 
+     @Override
++    public void lastPass(@NotNull Runnable callback) {
++        this.lastPass.add(callback);
++    }
++
++    @Override
+     public String toString() {
+         return "AccountScreen{" +
+                 "list=" + this.list +
+diff --recursive --unified --new-file 1.19.4/root/src/main/java/ru/vidtu/ias/screen/AddPopupScreen.java 1.19.2/root/src/main/java/ru/vidtu/ias/screen/AddPopupScreen.java
+--- 1.19.4/root/src/main/java/ru/vidtu/ias/screen/AddPopupScreen.java	2025-05-27 12:20:42.429740700 +0300
++++ 1.19.2/root/src/main/java/ru/vidtu/ias/screen/AddPopupScreen.java	2025-05-27 12:20:42.416296200 +0300
+@@ -20,27 +20,35 @@
+ package ru.vidtu.ias.screen;
+ 
+ import com.mojang.blaze3d.vertex.PoseStack;
+-import net.minecraft.client.gui.components.Tooltip;
+ import net.minecraft.client.gui.screens.Screen;
+ import net.minecraft.network.chat.CommonComponents;
+ import net.minecraft.network.chat.Component;
++import org.jetbrains.annotations.NotNull;
+ import ru.vidtu.ias.account.Account;
++import ru.vidtu.ias.legacy.LastPassRenderCallback;
++import ru.vidtu.ias.legacy.LegacyTooltip;
+ 
++import java.util.LinkedList;
++import java.util.List;
+ import java.util.function.Consumer;
+-import java.util.function.Supplier;
+ 
+ /**
+  * Add popup screen.
+  *
+  * @author VidTu
+  */
+-final class AddPopupScreen extends Screen {
++final class AddPopupScreen extends Screen implements LastPassRenderCallback {
+     /**
+      * Parent screen.
+      */
+     private final Screen parent;
+ 
+     /**
++     * Last pass callbacks list.
++     */
++    private final List<Runnable> lastPass = new LinkedList<>();
++
++    /**
+      * Account handler.
+      */
+     private final Consumer<Account> handler;
+@@ -70,23 +78,21 @@
+ 
+         // Add offline button.
+         PopupButton button = new PopupButton(this.width / 2 - 75, this.height / 2 - 24, 150, 20,
+-                Component.translatable("ias.add.microsoft"), btn -> this.minecraft.setScreen(new MicrosoftCryptPopupScreen(this.parent, this.handler)), Supplier::get);
+-        button.setTooltip(Tooltip.create(Component.translatable("ias.add.microsoft.tip")));
+-        button.setTooltipDelay(250);
++                Component.translatable("ias.add.microsoft"), btn -> this.minecraft.setScreen(new MicrosoftCryptPopupScreen(this.parent, this.handler)),
++                new LegacyTooltip(this, this.font, Component.translatable("ias.add.microsoft.tip"), 250));
+         button.color(0.5F, 1.0F, 0.5F, true);
+         this.addRenderableWidget(button);
+ 
+         // Add offline button.
+         button = new PopupButton(this.width / 2 - 75, this.height / 2, 150, 20,
+-                Component.translatable("ias.add.offline"), btn -> this.minecraft.setScreen(new OfflinePopupScreen(this.parent, this.handler)), Supplier::get);
+-        button.setTooltip(Tooltip.create(Component.translatable("ias.add.offline.tip")));
+-        button.setTooltipDelay(250);
++                Component.translatable("ias.add.offline"), btn -> this.minecraft.setScreen(new OfflinePopupScreen(this.parent, this.handler)),
++                new LegacyTooltip(this, this.font, Component.translatable("ias.add.offline.tip"), 250));
+         button.color(1.0F, 0.5F, 0.5F, true);
+         this.addRenderableWidget(button);
+ 
+         // Add cancel button.
+         this.addRenderableWidget(new PopupButton(this.width / 2 - 75, this.height / 2 + 49 - 22, 150, 20,
+-                CommonComponents.GUI_CANCEL, btn -> this.onClose(), Supplier::get));
++                CommonComponents.GUI_CANCEL, btn -> this.onClose(), LegacyTooltip.EMPTY));
+     }
+ 
+     @Override
+@@ -111,6 +117,12 @@
+         pose.scale(2.0F, 2.0F, 2.0F);
+         drawCenteredString(pose, this.font, this.title, this.width / 4, this.height / 4 - 49 / 2, 0xFF_FF_FF_FF);
+         pose.popPose();
++
++        // Last pass.
++        for (Runnable callback : this.lastPass) {
++            callback.run();
++        }
++        this.lastPass.clear();
+     }
+ 
+     @Override
+@@ -144,6 +156,11 @@
+     }
+ 
+     @Override
++    public void lastPass(@NotNull Runnable callback) {
++        this.lastPass.add(callback);
++    }
++
++    @Override
+     public String toString() {
+         return "AddPopupScreen{}";
+     }
+diff --recursive --unified --new-file 1.19.4/root/src/main/java/ru/vidtu/ias/screen/ConfigScreen.java 1.19.2/root/src/main/java/ru/vidtu/ias/screen/ConfigScreen.java
+--- 1.19.4/root/src/main/java/ru/vidtu/ias/screen/ConfigScreen.java	2025-05-27 12:20:42.429740700 +0300
++++ 1.19.2/root/src/main/java/ru/vidtu/ias/screen/ConfigScreen.java	2025-05-27 12:20:42.416296200 +0300
+@@ -22,23 +22,27 @@
+ import com.mojang.blaze3d.vertex.PoseStack;
+ import net.minecraft.ChatFormatting;
+ import net.minecraft.client.gui.components.Button;
+-import net.minecraft.client.gui.components.EditBox;
+-import net.minecraft.client.gui.components.Tooltip;
+ import net.minecraft.client.gui.screens.AlertScreen;
+ import net.minecraft.client.gui.screens.Screen;
+ import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+ import net.minecraft.network.chat.CommonComponents;
+ import net.minecraft.network.chat.Component;
+ import net.minecraft.sounds.SoundEvents;
++import org.jetbrains.annotations.NotNull;
+ import org.slf4j.Logger;
+ import org.slf4j.LoggerFactory;
+ import ru.vidtu.ias.IAS;
+ import ru.vidtu.ias.config.IASConfig;
+ import ru.vidtu.ias.config.ServerMode;
+ import ru.vidtu.ias.config.TextAlign;
++import ru.vidtu.ias.legacy.LastPassRenderCallback;
+ import ru.vidtu.ias.legacy.LegacyCheckbox;
++import ru.vidtu.ias.legacy.LegacyEditBox;
++import ru.vidtu.ias.legacy.LegacyTooltip;
+ import ru.vidtu.ias.utils.Expression;
+ 
++import java.util.LinkedList;
++import java.util.List;
+ import java.util.Objects;
+ 
+ /**
+@@ -46,7 +50,7 @@
+  *
+  * @author VidTu
+  */
+-public final class ConfigScreen extends Screen {
++public final class ConfigScreen extends Screen implements LastPassRenderCallback {
+     /**
+      * Logger for this class.
+      */
+@@ -58,14 +62,19 @@
+     private final Screen parent;
+ 
+     /**
++     * Last pass callbacks list.
++     */
++    private final List<Runnable> lastPass = new LinkedList<>();
++
++    /**
+      * Title text X.
+      */
+-    private EditBox titleTextX;
++    private LegacyEditBox titleTextX;
+ 
+     /**
+      * Title text Y.
+      */
+-    private EditBox titleTextY;
++    private LegacyEditBox titleTextY;
+ 
+     /**
+      * Title text align.
+@@ -75,22 +84,22 @@
+     /**
+      * Title button X.
+      */
+-    private EditBox titleButtonX;
++    private LegacyEditBox titleButtonX;
+ 
+     /**
+      * Title button Y.
+      */
+-    private EditBox titleButtonY;
++    private LegacyEditBox titleButtonY;
+ 
+     /**
+      * Servers text X.
+      */
+-    private EditBox serversTextX;
++    private LegacyEditBox serversTextX;
+ 
+     /**
+      * Servers text Y.
+      */
+-    private EditBox serversTextY;
++    private LegacyEditBox serversTextY;
+ 
+     /**
+      * Servers text align.
+@@ -100,12 +109,12 @@
+     /**
+      * Servers button X.
+      */
+-    private EditBox serversButtonX;
++    private LegacyEditBox serversButtonX;
+ 
+     /**
+      * Servers button Y.
+      */
+-    private EditBox serversButtonY;
++    private LegacyEditBox serversButtonY;
+ 
+     /**
+      * Creates a new screen.
+@@ -130,7 +139,7 @@
+         }
+ 
+         // Title Text.
+-        LegacyCheckbox box = new LegacyCheckbox(this.font, 5, 20, Component.translatable("ias.config.titleText"), IASConfig.titleText, value -> {
++        LegacyCheckbox box = new LegacyCheckbox(this.font, 5, 20, Component.translatable("ias.config.titleText"), new LegacyTooltip(this, this.font, Component.translatable("ias.config.titleText.tip"), 250), IASConfig.titleText, value -> {
+             IASConfig.titleText = value;
+             this.titleTextX.active = value;
+             this.titleTextY.active = value;
+@@ -138,15 +147,10 @@
+             this.titleTextY.setEditable(value);
+             this.titleTextAlign.active = value;
+         });
+-        box.setTooltip(Tooltip.create(Component.translatable("ias.config.titleText.tip")));
+-        box.setTooltipDelay(250);
+         this.addRenderableWidget(box);
+ 
+         // Title Text X.
+-        this.titleTextX = new EditBox(this.font, 9 + box.getWidth(), 20, 75, 20, this.titleTextX, Component.translatable("ias.config.titleText.x"));
+-        this.titleTextX.setHint(this.titleTextX.getMessage().copy().withStyle(ChatFormatting.DARK_GRAY));
+-        this.titleTextX.setTooltip(Tooltip.create(Component.translatable("ias.config.titleText.x.tip", Component.translatable("key.keyboard.left.alt"))));
+-        this.titleTextX.setTooltipDelay(250);
++        this.titleTextX = new LegacyEditBox(this.font, 9 + box.getWidth(), 20, 75, 20, this.titleTextX, Component.translatable("ias.config.titleText.x"), new LegacyTooltip(this, this.font, Component.translatable("ias.config.titleText.x.tip", Component.translatable("key.keyboard.left.alt")), 250), Component.translatable("ias.config.titleText.x").withStyle(ChatFormatting.DARK_GRAY));
+         this.titleTextX.active = box.selected();
+         this.titleTextX.setEditable(box.selected());
+         this.titleTextX.setMaxLength(128);
+@@ -159,10 +163,7 @@
+         this.addRenderableWidget(this.titleTextX);
+ 
+         // Title Text Y.
+-        this.titleTextY = new EditBox(this.font, 88 + box.getWidth(), 20, 75, 20, this.titleTextY, Component.translatable("ias.config.titleText.y"));
+-        this.titleTextY.setHint(this.titleTextY.getMessage().copy().withStyle(ChatFormatting.DARK_GRAY));
+-        this.titleTextY.setTooltip(Tooltip.create(Component.translatable("ias.config.titleText.y.tip", Component.translatable("key.keyboard.left.alt"))));
+-        this.titleTextY.setTooltipDelay(250);
++        this.titleTextY = new LegacyEditBox(this.font, 88 + box.getWidth(), 20, 75, 20, this.titleTextY, Component.translatable("ias.config.titleText.y"), new LegacyTooltip(this, this.font, Component.translatable("ias.config.titleText.y.tip", Component.translatable("key.keyboard.left.alt")), 250), Component.translatable("ias.config.titleText.y").withStyle(ChatFormatting.DARK_GRAY));
+         this.titleTextY.active = box.selected();
+         this.titleTextY.setEditable(box.selected());
+         this.titleTextY.setMaxLength(128);
+@@ -175,39 +176,30 @@
+         this.addRenderableWidget(this.titleTextY);
+ 
+         // Title Text Align.
+-        this.titleTextAlign = Button.builder(CommonComponents.optionNameValue(Component.translatable("ias.config.titleTextAlign"), Component.translatable(IASConfig.titleTextAlign.toString())), btn -> {
+-                    // This could be implemented with indexing, but there aren't too many options.
+-                    IASConfig.titleTextAlign = switch (IASConfig.titleTextAlign) {
+-                        case LEFT -> TextAlign.CENTER;
+-                        case CENTER -> TextAlign.RIGHT;
+-                        case RIGHT -> TextAlign.LEFT;
+-                    };
+-                    btn.setMessage(CommonComponents.optionNameValue(Component.translatable("ias.config.titleTextAlign"), Component.translatable(IASConfig.titleTextAlign.toString())));
+-                })
+-                .bounds(167 + box.getWidth(), 20, Math.min(150, Math.max(20, this.width - 171 - box.getWidth())), 20)
+-                .build();
++        this.titleTextAlign = new Button(167 + box.getWidth(), 20, Math.min(150, Math.max(20, this.width - 171 - box.getWidth())), 20, CommonComponents.optionNameValue(Component.translatable("ias.config.titleTextAlign"), Component.translatable(IASConfig.titleTextAlign.toString())), btn -> {
++            // This could be implemented with indexing, but there aren't too many options.
++            IASConfig.titleTextAlign = switch (IASConfig.titleTextAlign) {
++                case LEFT -> TextAlign.CENTER;
++                case CENTER -> TextAlign.RIGHT;
++                case RIGHT -> TextAlign.LEFT;
++            };
++            btn.setMessage(CommonComponents.optionNameValue(Component.translatable("ias.config.titleTextAlign"), Component.translatable(IASConfig.titleTextAlign.toString())));
++        }, new LegacyTooltip(this, this.font, Component.translatable("ias.config.titleTextAlign.tip"), 250));
+         this.titleTextAlign.active = box.selected();
+-        this.titleTextAlign.setTooltip(Tooltip.create(Component.translatable("ias.config.titleTextAlign.tip")));
+-        this.titleTextAlign.setTooltipDelay(250);
+         this.addRenderableWidget(this.titleTextAlign);
+ 
+         // Title Button.
+-        box = new LegacyCheckbox(this.font, 5, 44, Component.translatable("ias.config.titleButton"), IASConfig.titleButton, value -> {
++        box = new LegacyCheckbox(this.font, 5, 44, Component.translatable("ias.config.titleButton"), new LegacyTooltip(this, this.font, Component.translatable("ias.config.titleButton.tip"), 250), IASConfig.titleButton, value -> {
+             IASConfig.titleButton = value;
+             this.titleButtonX.active = value;
+             this.titleButtonY.active = value;
+             this.titleButtonX.setEditable(value);
+             this.titleButtonY.setEditable(value);
+         });
+-        box.setTooltip(Tooltip.create(Component.translatable("ias.config.titleButton.tip")));
+-        box.setTooltipDelay(250);
+         this.addRenderableWidget(box);
+ 
+         // Title Button X.
+-        this.titleButtonX = new EditBox(this.font, 9 + box.getWidth(), 44, 75, 20, this.titleButtonX, Component.translatable("ias.config.titleButton.x"));
+-        this.titleButtonX.setHint(this.titleButtonX.getMessage().copy().withStyle(ChatFormatting.DARK_GRAY));
+-        this.titleButtonX.setTooltip(Tooltip.create(Component.translatable("ias.config.titleButton.x.tip", Component.translatable("key.keyboard.left.alt"))));
+-        this.titleButtonX.setTooltipDelay(250);
++        this.titleButtonX = new LegacyEditBox(this.font, 9 + box.getWidth(), 44, 75, 20, this.titleButtonX, Component.translatable("ias.config.titleButton.x"), new LegacyTooltip(this, this.font, Component.translatable("ias.config.titleButton.x.tip", Component.translatable("key.keyboard.left.alt")), 250), Component.translatable("ias.config.titleButton.x").withStyle(ChatFormatting.DARK_GRAY));
+         this.titleButtonX.active = box.selected();
+         this.titleButtonX.setEditable(box.selected());
+         this.titleButtonX.setMaxLength(128);
+@@ -220,10 +212,7 @@
+         this.addRenderableWidget(this.titleButtonX);
+ 
+         // Title Button Y.
+-        this.titleButtonY = new EditBox(this.font, 88 + box.getWidth(), 44, 75, 20, this.titleButtonY, Component.translatable("ias.config.titleButton.y"));
+-        this.titleButtonY.setHint(this.titleButtonY.getMessage().copy().withStyle(ChatFormatting.DARK_GRAY));
+-        this.titleButtonY.setTooltip(Tooltip.create(Component.translatable("ias.config.titleButton.y.tip", Component.translatable("key.keyboard.left.alt"))));
+-        this.titleButtonY.setTooltipDelay(250);
++        this.titleButtonY = new LegacyEditBox(this.font, 88 + box.getWidth(), 44, 75, 20, this.titleButtonY, Component.translatable("ias.config.titleButton.y"), new LegacyTooltip(this, this.font, Component.translatable("ias.config.titleButton.y.tip", Component.translatable("key.keyboard.left.alt")), 250), Component.translatable("ias.config.titleButton.y").withStyle(ChatFormatting.DARK_GRAY));
+         this.titleButtonY.active = box.selected();
+         this.titleButtonY.setEditable(box.selected());
+         this.titleButtonY.setMaxLength(128);
+@@ -236,7 +225,7 @@
+         this.addRenderableWidget(this.titleButtonY);
+ 
+         // Servers Text.
+-        box = new LegacyCheckbox(this.font, 5, 68, Component.translatable("ias.config.serversText"), IASConfig.serversText, value -> {
++        box = new LegacyCheckbox(this.font, 5, 68, Component.translatable("ias.config.serversText"), new LegacyTooltip(this, this.font, Component.translatable("ias.config.serversText.tip"), 250), IASConfig.serversText, value -> {
+             IASConfig.serversText = value;
+             this.serversTextX.active = value;
+             this.serversTextY.active = value;
+@@ -244,15 +233,10 @@
+             this.serversTextY.setEditable(value);
+             this.serversTextAlign.active = value;
+         });
+-        box.setTooltip(Tooltip.create(Component.translatable("ias.config.serversText.tip")));
+-        box.setTooltipDelay(250);
+         this.addRenderableWidget(box);
+ 
+         // Servers Text X.
+-        this.serversTextX = new EditBox(this.font, 9 + box.getWidth(), 68, 75, 20, this.serversTextX, Component.translatable("ias.config.serversText.x"));
+-        this.serversTextX.setHint(this.serversTextX.getMessage().copy().withStyle(ChatFormatting.DARK_GRAY));
+-        this.serversTextX.setTooltip(Tooltip.create(Component.translatable("ias.config.serversText.x.tip", Component.translatable("key.keyboard.left.alt"))));
+-        this.serversTextX.setTooltipDelay(250);
++        this.serversTextX = new LegacyEditBox(this.font, 9 + box.getWidth(), 68, 75, 20, this.serversTextX, Component.translatable("ias.config.serversText.x"), new LegacyTooltip(this, this.font, Component.translatable("ias.config.serversText.x.tip", Component.translatable("key.keyboard.left.alt")), 250), Component.translatable("ias.config.serversText.x").withStyle(ChatFormatting.DARK_GRAY));
+         this.serversTextX.active = box.selected();
+         this.serversTextX.setEditable(box.selected());
+         this.serversTextX.setMaxLength(128);
+@@ -265,10 +249,7 @@
+         this.addRenderableWidget(this.serversTextX);
+ 
+         // Servers Text Y.
+-        this.serversTextY = new EditBox(this.font, 88 + box.getWidth(), 68, 75, 20, this.serversTextY, Component.translatable("ias.config.serversText.y"));
+-        this.serversTextY.setHint(this.serversTextY.getMessage().copy().withStyle(ChatFormatting.DARK_GRAY));
+-        this.serversTextY.setTooltip(Tooltip.create(Component.translatable("ias.config.serversText.y.tip", Component.translatable("key.keyboard.left.alt"))));
+-        this.serversTextY.setTooltipDelay(250);
++        this.serversTextY = new LegacyEditBox(this.font, 88 + box.getWidth(), 68, 75, 20, this.serversTextY, Component.translatable("ias.config.serversText.y"), new LegacyTooltip(this, this.font, Component.translatable("ias.config.serversText.y.tip", Component.translatable("key.keyboard.left.alt")), 250), Component.translatable("ias.config.serversText.y").withStyle(ChatFormatting.DARK_GRAY));
+         this.serversTextY.active = box.selected();
+         this.serversTextY.setEditable(box.selected());
+         this.serversTextY.setMaxLength(128);
+@@ -281,39 +262,30 @@
+         this.addRenderableWidget(this.serversTextY);
+ 
+         // Servers Text Align.
+-        this.serversTextAlign = Button.builder(CommonComponents.optionNameValue(Component.translatable("ias.config.serversTextAlign"), Component.translatable(IASConfig.serversTextAlign.toString())), btn -> {
+-                    // This could be implemented with indexing, but there aren't too many options.
+-                    IASConfig.serversTextAlign = switch (IASConfig.serversTextAlign) {
+-                        case LEFT -> TextAlign.CENTER;
+-                        case CENTER -> TextAlign.RIGHT;
+-                        case RIGHT -> TextAlign.LEFT;
+-                    };
+-                    btn.setMessage(CommonComponents.optionNameValue(Component.translatable("ias.config.serversTextAlign"), Component.translatable(IASConfig.serversTextAlign.toString())));
+-                })
+-                .bounds(167 + box.getWidth(), 68, Math.min(150, Math.max(20, this.width - 171 - box.getWidth())), 20)
+-                .build();
++        this.serversTextAlign = new Button(167 + box.getWidth(), 68, Math.min(150, Math.max(20, this.width - 171 - box.getWidth())), 20, CommonComponents.optionNameValue(Component.translatable("ias.config.serversTextAlign"), Component.translatable(IASConfig.serversTextAlign.toString())), btn -> {
++            // This could be implemented with indexing, but there aren't too many options.
++            IASConfig.serversTextAlign = switch (IASConfig.serversTextAlign) {
++                case LEFT -> TextAlign.CENTER;
++                case CENTER -> TextAlign.RIGHT;
++                case RIGHT -> TextAlign.LEFT;
++            };
++            btn.setMessage(CommonComponents.optionNameValue(Component.translatable("ias.config.serversTextAlign"), Component.translatable(IASConfig.serversTextAlign.toString())));
++        }, new LegacyTooltip(this, this.font, Component.translatable("ias.config.serversTextAlign.tip"), 250));
+         this.serversTextAlign.active = box.selected();
+-        this.serversTextAlign.setTooltip(Tooltip.create(Component.translatable("ias.config.serversTextAlign.tip")));
+-        this.serversTextAlign.setTooltipDelay(250);
+         this.addRenderableWidget(this.serversTextAlign);
+ 
+         // Servers Button.
+-        box = new LegacyCheckbox(this.font, 5, 92, Component.translatable("ias.config.serversButton"), IASConfig.serversButton, value -> {
++        box = new LegacyCheckbox(this.font, 5, 92, Component.translatable("ias.config.serversButton"), new LegacyTooltip(this, this.font, Component.translatable("ias.config.serversButton.tip"), 250), IASConfig.serversButton, value -> {
+             IASConfig.serversButton = value;
+             this.serversButtonX.active = value;
+             this.serversButtonY.active = value;
+             this.serversButtonX.setEditable(value);
+             this.serversButtonY.setEditable(value);
+         });
+-        box.setTooltip(Tooltip.create(Component.translatable("ias.config.serversButton.tip")));
+-        box.setTooltipDelay(250);
+         this.addRenderableWidget(box);
+ 
+         // Servers Button X.
+-        this.serversButtonX = new EditBox(this.font, 9 + box.getWidth(), 92, 75, 20, this.serversButtonX, Component.translatable("ias.config.serversButton.x"));
+-        this.serversButtonX.setHint(this.serversButtonX.getMessage().copy().withStyle(ChatFormatting.DARK_GRAY));
+-        this.serversButtonX.setTooltip(Tooltip.create(Component.translatable("ias.config.serversButton.x.tip", Component.translatable("key.keyboard.left.alt"))));
+-        this.serversButtonX.setTooltipDelay(250);
++        this.serversButtonX = new LegacyEditBox(this.font, 9 + box.getWidth(), 92, 75, 20, this.serversButtonX, Component.translatable("ias.config.serversButton.x"), new LegacyTooltip(this, this.font, Component.translatable("ias.config.serversButton.x.tip", Component.translatable("key.keyboard.left.alt")), 250), Component.translatable("ias.config.serversButton.x").withStyle(ChatFormatting.DARK_GRAY));
+         this.serversButtonX.active = box.selected();
+         this.serversButtonX.setEditable(box.selected());
+         this.serversButtonX.setMaxLength(128);
+@@ -326,10 +298,7 @@
+         this.addRenderableWidget(this.serversButtonX);
+ 
+         // Servers Button Y.
+-        this.serversButtonY = new EditBox(this.font, 88 + box.getWidth(), 92, 75, 20, this.serversButtonY, Component.translatable("ias.config.serversButton.y"));
+-        this.serversButtonY.setHint(this.serversButtonY.getMessage().copy().withStyle(ChatFormatting.DARK_GRAY));
+-        this.serversButtonY.setTooltip(Tooltip.create(Component.translatable("ias.config.serversButton.y.tip", Component.translatable("key.keyboard.left.alt"))));
+-        this.serversButtonY.setTooltipDelay(250);
++        this.serversButtonY = new LegacyEditBox(this.font, 88 + box.getWidth(), 92, 75, 20, this.serversButtonY, Component.translatable("ias.config.serversButton.y"), new LegacyTooltip(this, this.font, Component.translatable("ias.config.serversButton.y.tip", Component.translatable("key.keyboard.left.alt")), 250), Component.translatable("ias.config.serversButton.y").withStyle(ChatFormatting.DARK_GRAY));
+         this.serversButtonY.active = box.selected();
+         this.serversButtonY.setEditable(box.selected());
+         this.serversButtonY.setMaxLength(128);
+@@ -342,13 +311,11 @@
+         this.addRenderableWidget(this.serversButtonY);
+ 
+         // No Crypt Button.
+-        box = new LegacyCheckbox(this.font, 5, 116, Component.translatable("ias.config.allowNoCrypt"), IASConfig.allowNoCrypt, value -> IASConfig.allowNoCrypt = value);
+-        box.setTooltip(Tooltip.create(Component.translatable("ias.config.allowNoCrypt.tip")));
+-        box.setTooltipDelay(250);
++        box = new LegacyCheckbox(this.font, 5, 116, Component.translatable("ias.config.allowNoCrypt"), new LegacyTooltip(this, this.font, Component.translatable("ias.config.allowNoCrypt.tip"), 250), IASConfig.allowNoCrypt, value -> IASConfig.allowNoCrypt = value);
+         this.addRenderableWidget(box);
+ 
+         // Sun Server.
+-        Button button = Button.builder(CommonComponents.optionNameValue(Component.translatable("ias.config.server"), Component.translatable(IASConfig.server.toString())), btn -> {
++        Button button = new Button(9 + box.getWidth(), 116, 200, 20, CommonComponents.optionNameValue(Component.translatable("ias.config.server"), Component.translatable(IASConfig.server.toString())), btn -> {
+             // Update the value.
+             IASConfig.server = switch (IASConfig.server) {
+                 case ALWAYS -> ServerMode.AVAILABLE;
+@@ -358,44 +325,33 @@
+ 
+             // Set the message.
+             btn.setMessage(CommonComponents.optionNameValue(Component.translatable("ias.config.server"), Component.translatable(IASConfig.server.toString())));
+-        }).bounds(9 + box.getWidth(), 116, 200, 20).tooltip(Tooltip.create(Component.translatable("ias.config.server.tip"))).build();
+-        button.setTooltipDelay(250);
++        }, new LegacyTooltip(this, this.font, Component.translatable("ias.config.server.tip"), 250));
+         this.addRenderableWidget(button);
+ 
+         // Nick Warns.
+-        box = new LegacyCheckbox(this.font, 5, 140, Component.translatable("ias.config.nickWarns"), IASConfig.nickWarns, value -> IASConfig.nickWarns = value);
+-        box.setTooltip(Tooltip.create(Component.translatable("ias.config.nickWarns.tip")));
+-        box.setTooltipDelay(250);
++        box = new LegacyCheckbox(this.font, 5, 140, Component.translatable("ias.config.nickWarns"), new LegacyTooltip(this, this.font, Component.translatable("ias.config.nickWarns.tip"), 250), IASConfig.nickWarns, value -> IASConfig.nickWarns = value);
+         this.addRenderableWidget(box);
+ 
+         // Password Echoing.
+-        box = new LegacyCheckbox(this.font, 10 + box.getWidth(), 140, Component.translatable("ias.config.passwordEchoing"), IASConfig.passwordEchoing, value -> IASConfig.passwordEchoing = value);
+-        box.setTooltip(Tooltip.create(Component.translatable("ias.config.passwordEchoing.tip")));
+-        box.setTooltipDelay(250);
++        box = new LegacyCheckbox(this.font, 10 + box.getWidth(), 140, Component.translatable("ias.config.passwordEchoing"), new LegacyTooltip(this, this.font, Component.translatable("ias.config.passwordEchoing.tip"), 250), IASConfig.passwordEchoing, value -> IASConfig.passwordEchoing = value);
+         this.addRenderableWidget(box);
+ 
+         // Unexpected Pigs.
+-        box = new LegacyCheckbox(this.font, 5, 164, Component.translatable("ias.config.unexpectedPigs"), IASConfig.unexpectedPigs, value -> {
++        box = new LegacyCheckbox(this.font, 5, 164, Component.translatable("ias.config.unexpectedPigs"), new LegacyTooltip(this, this.font, Component.translatable("ias.config.unexpectedPigs.tip"), 250), IASConfig.unexpectedPigs, value -> {
+             IASConfig.unexpectedPigs = value;
+             this.minecraft.getSoundManager().play(SimpleSoundInstance.forUI(value ? SoundEvents.PIG_AMBIENT : SoundEvents.PIG_DEATH, 1.0F));
+         });
+-        box.setTooltip(Tooltip.create(Component.translatable("ias.config.unexpectedPigs.tip")));
+-        box.setTooltipDelay(250);
+         this.addRenderableWidget(box);
+ 
+         // Bar Name.
+-        box = new LegacyCheckbox(this.font, 5, 188, Component.translatable("ias.config.barNick"), IASConfig.barNick, value -> {
++        box = new LegacyCheckbox(this.font, 5, 188, Component.translatable("ias.config.barNick"), new LegacyTooltip(this, this.font, Component.translatable("ias.config.barNick.tip"), 250), IASConfig.barNick, value -> {
+             IASConfig.barNick = value;
+             this.minecraft.updateTitle();
+         });
+-        box.setTooltip(Tooltip.create(Component.translatable("ias.config.barNick.tip")));
+-        box.setTooltipDelay(250);
+         this.addRenderableWidget(box);
+ 
+         // Add done button.
+-        this.addRenderableWidget(Button.builder(CommonComponents.GUI_DONE, btn -> this.onClose())
+-                .bounds(this.width / 2 - 100, this.height - 24, 200, 20)
+-                .build());
++        this.addRenderableWidget(new Button(this.width / 2 - 100, this.height - 24, 200, 20, CommonComponents.GUI_DONE, btn -> this.onClose()));
+     }
+ 
+     @Override
+@@ -427,10 +383,21 @@
+         // Render current mouse pos if alt is held.
+         if (Screen.hasAltDown()) {
+             pose.pushPose();
+-            pose.translate(0.0F, 0.0F, 2.0F);
++            pose.translate(0.0F, 0.0F, 100.0F);
+             this.renderTooltip(pose, Component.translatable("ias.config.mousePos", mouseX, mouseY), mouseX, mouseY);
+             pose.popPose();
+         }
++
++        // Last pass.
++        for (Runnable callback : this.lastPass) {
++            callback.run();
++        }
++        this.lastPass.clear();
++    }
++
++    @Override
++    public void lastPass(@NotNull Runnable callback) {
++        this.lastPass.add(callback);
+     }
+ 
+     @Override
+diff --recursive --unified --new-file 1.19.4/root/src/main/java/ru/vidtu/ias/screen/DeletePopupScreen.java 1.19.2/root/src/main/java/ru/vidtu/ias/screen/DeletePopupScreen.java
+--- 1.19.4/root/src/main/java/ru/vidtu/ias/screen/DeletePopupScreen.java	2025-05-27 12:20:42.430756800 +0300
++++ 1.19.2/root/src/main/java/ru/vidtu/ias/screen/DeletePopupScreen.java	2025-05-27 12:20:42.416296200 +0300
+@@ -21,27 +21,35 @@
+ 
+ import com.mojang.blaze3d.vertex.PoseStack;
+ import net.minecraft.client.gui.components.MultiLineLabel;
+-import net.minecraft.client.gui.components.Tooltip;
+ import net.minecraft.client.gui.screens.Screen;
+ import net.minecraft.network.chat.CommonComponents;
+ import net.minecraft.network.chat.Component;
++import org.jetbrains.annotations.NotNull;
+ import org.lwjgl.glfw.GLFW;
+ import ru.vidtu.ias.account.Account;
++import ru.vidtu.ias.legacy.LastPassRenderCallback;
++import ru.vidtu.ias.legacy.LegacyTooltip;
+ 
+-import java.util.function.Supplier;
++import java.util.LinkedList;
++import java.util.List;
+ 
+ /**
+  * Delete confirmation screen.
+  *
+  * @author VidTu
+  */
+-final class DeletePopupScreen extends Screen {
++final class DeletePopupScreen extends Screen implements LastPassRenderCallback {
+     /**
+      * Parent screen.
+      */
+     private final Screen parent;
+ 
+     /**
++     * Last pass callbacks list.
++     */
++    private final List<Runnable> lastPass = new LinkedList<>();
++
++    /**
+      * Confirmation prompt.
+      */
+     private final Component prompt;
+@@ -87,15 +95,13 @@
+ 
+             // Close.
+             this.onClose();
+-        }, Supplier::get);
+-        button.setTooltip(Tooltip.create(Component.translatable("ias.delete.hint", Component.translatable("key.keyboard.left.shift"))));
+-        button.setTooltipDelay(250);
++        }, new LegacyTooltip(this, this.font, Component.translatable("ias.delete.hint", Component.translatable("key.keyboard.left.shift")), 250));
+         button.color(1.0F, 0.5F, 0.5F, true);
+         this.addRenderableWidget(button);
+ 
+         // Add cancel button.
+         this.addRenderableWidget(new PopupButton(this.width / 2 + 1, this.height / 2 + 49 - 22, 74, 20,
+-                CommonComponents.GUI_CANCEL, btn -> this.onClose(), Supplier::get));
++                CommonComponents.GUI_CANCEL, btn -> this.onClose(), LegacyTooltip.EMPTY));
+ 
+         // Build label.
+         this.label = MultiLineLabel.create(this.font, this.prompt, 150);
+@@ -126,6 +132,12 @@
+ 
+         // Render the prompt.
+         this.label.renderCentered(pose, this.width / 2, (this.height - this.label.getLineCount() * 9) / 2 - 4);
++
++        // Last pass.
++        for (Runnable callback : this.lastPass) {
++            callback.run();
++        }
++        this.lastPass.clear();
+     }
+ 
+     @Override
+@@ -174,6 +186,11 @@
+     }
+ 
+     @Override
++    public void lastPass(@NotNull Runnable callback) {
++        this.lastPass.add(callback);
++    }
++
++    @Override
+     public String toString() {
+         return "DeletePopupScreen{}";
+     }
+diff --recursive --unified --new-file 1.19.4/root/src/main/java/ru/vidtu/ias/screen/LoginPopupScreen.java 1.19.2/root/src/main/java/ru/vidtu/ias/screen/LoginPopupScreen.java
+--- 1.19.4/root/src/main/java/ru/vidtu/ias/screen/LoginPopupScreen.java	2025-05-27 12:20:42.430756800 +0300
++++ 1.19.2/root/src/main/java/ru/vidtu/ias/screen/LoginPopupScreen.java	2025-05-27 12:20:42.417373100 +0300
+@@ -27,6 +27,7 @@
+ import net.minecraft.network.chat.Component;
+ import net.minecraft.network.chat.Style;
+ import net.minecraft.util.FormattedCharSequence;
++import org.jetbrains.annotations.NotNull;
+ import org.slf4j.Logger;
+ import org.slf4j.LoggerFactory;
+ import ru.vidtu.ias.IAS;
+@@ -35,18 +36,21 @@
+ import ru.vidtu.ias.auth.LoginData;
+ import ru.vidtu.ias.auth.handlers.LoginHandler;
+ import ru.vidtu.ias.config.IASConfig;
++import ru.vidtu.ias.legacy.LastPassRenderCallback;
++import ru.vidtu.ias.legacy.LegacyTooltip;
+ import ru.vidtu.ias.utils.exceptions.FriendlyException;
+ 
++import java.util.LinkedList;
++import java.util.List;
+ import java.util.Objects;
+ import java.util.concurrent.CompletableFuture;
+-import java.util.function.Supplier;
+ 
+ /**
+  * Login popup screen.
+  *
+  * @author VidTu
+  */
+-final class LoginPopupScreen extends Screen implements LoginHandler {
++final class LoginPopupScreen extends Screen implements LoginHandler, LastPassRenderCallback {
+     /**
+      * Logger for this class.
+      */
+@@ -58,6 +62,11 @@
+     private final Screen parent;
+ 
+     /**
++     * Last pass callbacks list.
++     */
++    private final List<Runnable> lastPass = new LinkedList<>();
++
++    /**
+      * Synchronization lock.
+      */
+     private final Object lock = new Object();
+@@ -136,7 +145,7 @@
+ 
+         // Add cancel button.
+         this.addRenderableWidget(new PopupButton(this.width / 2 - 75, this.height / 2 + 74 - 22, 150, 20,
+-                CommonComponents.GUI_CANCEL, btn -> this.onClose(), Supplier::get));
++                CommonComponents.GUI_CANCEL, btn -> this.onClose(), LegacyTooltip.EMPTY));
+ 
+         // Add password box, if future exists.
+         if (this.passFuture != null) {
+@@ -149,8 +158,7 @@
+ 
+                 // Complete the future.
+                 this.passFuture.complete(value);
+-            }, true);
+-            this.password.setHint(Component.translatable("ias.password.hint").withStyle(ChatFormatting.DARK_GRAY));
++            }, true, Component.translatable("ias.password.hint").withStyle(ChatFormatting.DARK_GRAY));
+             this.password.setFormatter((s, i) -> IASConfig.passwordEchoing ? FormattedCharSequence.forward("*".repeat(s.length()), Style.EMPTY) : FormattedCharSequence.EMPTY);
+             this.password.setMaxLength(32);
+             this.addRenderableWidget(this.password);
+@@ -164,7 +172,7 @@
+ 
+                 // Complete the future.
+                 this.passFuture.complete(value);
+-            }, Supplier::get);
++            }, LegacyTooltip.EMPTY);
+             button.active = !this.password.getValue().isBlank();
+             this.addRenderableWidget(button);
+             this.password.setResponder(value -> button.active = !value.isBlank());
+@@ -238,7 +246,7 @@
+                     this.label = MultiLineLabel.create(this.font, component, 240);
+ 
+                     // Narrate.
+-                    this.minecraft.getNarrator().say(component);
++                    this.minecraft.getNarrator().sayNow(component);
+                 }
+ 
+                 // Render the label.
+@@ -279,6 +287,12 @@
+                 pose.popPose();
+             }
+         }
++
++        // Last pass.
++        for (Runnable callback : this.lastPass) {
++            callback.run();
++        }
++        this.lastPass.clear();
+     }
+ 
+     @Override
+@@ -421,6 +435,11 @@
+     }
+ 
+     @Override
++    public void lastPass(@NotNull Runnable callback) {
++        this.lastPass.add(callback);
++    }
++
++    @Override
+     public String toString() {
+         return "LoginPopupScreen{" +
+                 "stage=" + this.stage +
+diff --recursive --unified --new-file 1.19.4/root/src/main/java/ru/vidtu/ias/screen/MicrosoftCryptPopupScreen.java 1.19.2/root/src/main/java/ru/vidtu/ias/screen/MicrosoftCryptPopupScreen.java
+--- 1.19.4/root/src/main/java/ru/vidtu/ias/screen/MicrosoftCryptPopupScreen.java	2025-05-27 12:20:42.430756800 +0300
++++ 1.19.2/root/src/main/java/ru/vidtu/ias/screen/MicrosoftCryptPopupScreen.java	2025-05-27 12:20:42.417373100 +0300
+@@ -20,31 +20,39 @@
+ package ru.vidtu.ias.screen;
+ 
+ import com.mojang.blaze3d.vertex.PoseStack;
+-import net.minecraft.client.gui.components.Tooltip;
+ import net.minecraft.client.gui.screens.Screen;
+ import net.minecraft.network.chat.CommonComponents;
+ import net.minecraft.network.chat.Component;
++import org.jetbrains.annotations.NotNull;
+ import org.lwjgl.glfw.GLFW;
+ import ru.vidtu.ias.account.Account;
+ import ru.vidtu.ias.config.IASConfig;
+ import ru.vidtu.ias.crypt.DummyCrypt;
+ import ru.vidtu.ias.crypt.HardwareCrypt;
++import ru.vidtu.ias.legacy.LastPassRenderCallback;
++import ru.vidtu.ias.legacy.LegacyTooltip;
+ 
++import java.util.LinkedList;
++import java.util.List;
+ import java.util.function.Consumer;
+-import java.util.function.Supplier;
+ 
+ /**
+  * Microsoft crypt type popup screen.
+  *
+  * @author VidTu
+  */
+-final class MicrosoftCryptPopupScreen extends Screen {
++final class MicrosoftCryptPopupScreen extends Screen implements LastPassRenderCallback {
+     /**
+      * Parent screen.
+      */
+     private final Screen parent;
+ 
+     /**
++     * Last pass callbacks list.
++     */
++    private final List<Runnable> lastPass = new LinkedList<>();
++
++    /**
+      * Account handler.
+      */
+     private final Consumer<Account> handler;
+@@ -55,6 +63,11 @@
+     private PopupButton plain;
+ 
+     /**
++     * Plain tooltip.
++     */
++    private LegacyTooltip plainTooltip;
++
++    /**
+      * Creates a new add screen.
+      *
+      * @param parent  Parent screen
+@@ -78,36 +91,33 @@
+ 
+         // Add password button.
+         PopupButton button = new PopupButton(this.width / 2 - 75, this.height / 2 - 24 - 12, 150, 20,
+-                Component.translatable("ias.microsoft.password"), btn -> this.minecraft.setScreen(new MicrosoftPopupScreen(this.parent, this.handler, null)), Supplier::get);
+-        button.setTooltip(Tooltip.create(Component.translatable("ias.microsoft.password.tip")));
+-        button.setTooltipDelay(250);
++                Component.translatable("ias.microsoft.password"), btn -> this.minecraft.setScreen(new MicrosoftPopupScreen(this.parent, this.handler, null)),
++                new LegacyTooltip(this, this.font, Component.translatable("ias.microsoft.password.tip"), 250));
+         button.color(0.5F, 1.0F, 0.5F, true);
+         this.addRenderableWidget(button);
+ 
+         // Add hardware button.
+         button = new PopupButton(this.width / 2 - 75, this.height / 2 - 12, 150, 20,
+-                Component.translatable("ias.microsoft.hardware"), btn -> this.minecraft.setScreen(new MicrosoftPopupScreen(this.parent, this.handler, HardwareCrypt.INSTANCE_V2)), Supplier::get);
+-        button.setTooltip(Tooltip.create(Component.translatable("ias.microsoft.hardware.tip")));
+-        button.setTooltipDelay(250);
++                Component.translatable("ias.microsoft.hardware"), btn -> this.minecraft.setScreen(new MicrosoftPopupScreen(this.parent, this.handler, HardwareCrypt.INSTANCE_V2)),
++                new LegacyTooltip(this, this.font, Component.translatable("ias.microsoft.hardware.tip"), 250));
+         button.color(1.0F, 1.0F, 0.5F, true);
+         this.addRenderableWidget(button);
+ 
+         // Add plain button.
+-        this.plain = new PopupButton(this.width / 2 - 75, this.height / 2 + 12, 150, 20,
+-                Component.translatable("ias.microsoft.plain"), btn -> this.minecraft.setScreen(new MicrosoftPopupScreen(this.parent, this.handler, DummyCrypt.INSTANCE)), Supplier::get);
+         if (IASConfig.allowNoCrypt) {
+-            this.plain.setTooltip(Tooltip.create(Component.translatable("ias.microsoft.plain.tip.off", Component.translatable("key.keyboard.left.alt"), GLFW.glfwGetKeyName(GLFW.GLFW_KEY_Y, GLFW.GLFW_KEY_UNKNOWN))));
++            this.plainTooltip = new LegacyTooltip(this, this.font, Component.translatable("ias.microsoft.plain.tip.off", Component.translatable("key.keyboard.left.alt"), GLFW.glfwGetKeyName(GLFW.GLFW_KEY_Y, GLFW.GLFW_KEY_UNKNOWN)), 250);
+         } else {
+-            this.plain.setTooltip(Tooltip.create(Component.translatable("ias.microsoft.plain.tip.no")));
++            this.plainTooltip = new LegacyTooltip(this, this.font, Component.translatable("ias.microsoft.plain.tip.no"), 250);
+         }
+-        this.plain.setTooltipDelay(250);
++        this.plain = new PopupButton(this.width / 2 - 75, this.height / 2 + 12, 150, 20,
++                Component.translatable("ias.microsoft.plain"), btn -> this.minecraft.setScreen(new MicrosoftPopupScreen(this.parent, this.handler, DummyCrypt.INSTANCE)), this.plainTooltip);
+         this.plain.color(1.0F, 0.5F, 0.5F, true);
+         this.plain.active = false;
+         this.addRenderableWidget(this.plain);
+ 
+         // Add cancel button.
+         this.addRenderableWidget(new PopupButton(this.width / 2 - 75, this.height / 2 + 79 - 22, 150, 20,
+-                CommonComponents.GUI_CANCEL, btn -> this.onClose(), Supplier::get));
++                CommonComponents.GUI_CANCEL, btn -> this.onClose(), LegacyTooltip.EMPTY));
+     }
+ 
+     @Override
+@@ -132,6 +142,12 @@
+         pose.scale(2.0F, 2.0F, 2.0F);
+         drawCenteredString(pose, this.font, this.title, this.width / 4, this.height / 4 - 79 / 2, 0xFF_FF_FF_FF);
+         pose.popPose();
++
++        // Last pass.
++        for (Runnable callback : this.lastPass) {
++            callback.run();
++        }
++        this.lastPass.clear();
+     }
+ 
+     @Override
+@@ -172,8 +188,7 @@
+             this.plain.active = true;
+ 
+             // Recolor button and update tooltip.
+-            this.plain.setTooltip(Tooltip.create(Component.translatable("ias.microsoft.plain.tip.on")));
+-            this.plain.setTooltipDelay(250);
++            this.plainTooltip.tooltip(Component.translatable("ias.microsoft.plain.tip.on"));
+             this.plain.color(1.0F, 0.25F, 0.25F, false);
+         }
+ 
+@@ -182,6 +197,11 @@
+     }
+ 
+     @Override
++    public void lastPass(@NotNull Runnable callback) {
++        this.lastPass.add(callback);
++    }
++
++    @Override
+     public String toString() {
+         return "MicrosoftCryptPopupScreen{}";
+     }
+diff --recursive --unified --new-file 1.19.4/root/src/main/java/ru/vidtu/ias/screen/MicrosoftPopupScreen.java 1.19.2/root/src/main/java/ru/vidtu/ias/screen/MicrosoftPopupScreen.java
+--- 1.19.4/root/src/main/java/ru/vidtu/ias/screen/MicrosoftPopupScreen.java	2025-05-27 12:20:42.430756800 +0300
++++ 1.19.2/root/src/main/java/ru/vidtu/ias/screen/MicrosoftPopupScreen.java	2025-05-27 12:20:42.417373100 +0300
+@@ -31,6 +31,7 @@
+ import net.minecraft.network.chat.Component;
+ import net.minecraft.network.chat.Style;
+ import net.minecraft.util.FormattedCharSequence;
++import org.jetbrains.annotations.NotNull;
+ import org.lwjgl.glfw.GLFW;
+ import org.slf4j.Logger;
+ import org.slf4j.LoggerFactory;
+@@ -43,20 +44,23 @@
+ import ru.vidtu.ias.config.IASConfig;
+ import ru.vidtu.ias.crypt.Crypt;
+ import ru.vidtu.ias.crypt.PasswordCrypt;
++import ru.vidtu.ias.legacy.LastPassRenderCallback;
++import ru.vidtu.ias.legacy.LegacyTooltip;
+ import ru.vidtu.ias.utils.exceptions.FriendlyException;
+ 
++import java.util.LinkedList;
++import java.util.List;
+ import java.util.Locale;
+ import java.util.Objects;
+ import java.util.concurrent.CompletableFuture;
+ import java.util.function.Consumer;
+-import java.util.function.Supplier;
+ 
+ /**
+  * Microsoft popup screen.
+  *
+  * @author VidTu
+  */
+-final class MicrosoftPopupScreen extends Screen implements CreateHandler {
++final class MicrosoftPopupScreen extends Screen implements CreateHandler, LastPassRenderCallback {
+     /**
+      * Logger for this class.
+      */
+@@ -68,6 +72,11 @@
+     private final Screen parent;
+ 
+     /**
++     * Last pass callbacks list.
++     */
++    private final List<Runnable> lastPass = new LinkedList<>();
++
++    /**
+      * Synchronization lock.
+      */
+     private final Object lock = new Object();
+@@ -165,7 +174,7 @@
+ 
+         // Add back button.
+         this.addRenderableWidget(new PopupButton(this.width / 2 - 75, this.height / 2 + 74 - 22, 150, 20,
+-                CommonComponents.GUI_BACK, btn -> this.onClose(), Supplier::get));
++                CommonComponents.GUI_BACK, btn -> this.onClose(), LegacyTooltip.EMPTY));
+ 
+         // Add password box, if future exists.
+         if (this.crypt == null) {
+@@ -183,8 +192,7 @@
+ 
+                 // Rebuild the UI.
+                 this.init(this.minecraft, this.width, this.height);
+-            }, true);
+-            this.password.setHint(Component.translatable("ias.password.hint").withStyle(ChatFormatting.DARK_GRAY));
++            }, true, Component.translatable("ias.password.hint").withStyle(ChatFormatting.DARK_GRAY));
+             this.password.setFormatter((s, i) -> IASConfig.passwordEchoing ? FormattedCharSequence.forward("*".repeat(s.length()), Style.EMPTY) : FormattedCharSequence.EMPTY);
+             this.password.setMaxLength(32);
+             this.addRenderableWidget(this.password);
+@@ -203,7 +211,7 @@
+ 
+                 // Rebuild the UI.
+                 this.init(this.minecraft, this.width, this.height);
+-            }, Supplier::get);
++            }, LegacyTooltip.EMPTY);
+             enterPassword.active = !this.password.getValue().isBlank();
+             this.addRenderableWidget(enterPassword);
+             this.password.setResponder(value -> enterPassword.active = !value.isBlank());
+@@ -385,7 +393,7 @@
+                     this.label = MultiLineLabel.create(this.font, component, 240);
+ 
+                     // Narrate.
+-                    this.minecraft.getNarrator().say(component);
++                    this.minecraft.getNarrator().sayNow(component);
+                 }
+ 
+                 // Render the label.
+@@ -426,6 +434,12 @@
+                 pose.popPose();
+             }
+         }
++
++        // Last pass.
++        for (Runnable callback : this.lastPass) {
++            callback.run();
++        }
++        this.lastPass.clear();
+     }
+ 
+     @Override
+@@ -523,6 +537,11 @@
+     }
+ 
+     @Override
++    public void lastPass(@NotNull Runnable callback) {
++        this.lastPass.add(callback);
++    }
++
++    @Override
+     public String toString() {
+         return "MicrosoftPopupScreen{" +
+                 "crypt=" + this.crypt +
+diff --recursive --unified --new-file 1.19.4/root/src/main/java/ru/vidtu/ias/screen/OfflinePopupScreen.java 1.19.2/root/src/main/java/ru/vidtu/ias/screen/OfflinePopupScreen.java
+--- 1.19.4/root/src/main/java/ru/vidtu/ias/screen/OfflinePopupScreen.java	2025-05-27 12:20:42.430756800 +0300
++++ 1.19.2/root/src/main/java/ru/vidtu/ias/screen/OfflinePopupScreen.java	2025-05-27 12:20:42.417373100 +0300
+@@ -21,32 +21,40 @@
+ 
+ import com.mojang.blaze3d.vertex.PoseStack;
+ import net.minecraft.ChatFormatting;
+-import net.minecraft.client.gui.components.Tooltip;
+ import net.minecraft.client.gui.screens.Screen;
+ import net.minecraft.network.chat.CommonComponents;
+ import net.minecraft.network.chat.Component;
++import org.jetbrains.annotations.NotNull;
+ import org.lwjgl.glfw.GLFW;
+ import ru.vidtu.ias.account.Account;
+ import ru.vidtu.ias.account.OfflineAccount;
+ import ru.vidtu.ias.auth.microsoft.MSAuth;
+ import ru.vidtu.ias.config.IASConfig;
++import ru.vidtu.ias.legacy.LastPassRenderCallback;
++import ru.vidtu.ias.legacy.LegacyTooltip;
+ 
++import java.util.LinkedList;
++import java.util.List;
+ import java.util.UUID;
+ import java.util.function.Consumer;
+-import java.util.function.Supplier;
+ 
+ /**
+  * Offline popup screen.
+  *
+  * @author VidTu
+  */
+-public final class OfflinePopupScreen extends Screen {
++public final class OfflinePopupScreen extends Screen implements LastPassRenderCallback {
+     /**
+      * Parent screen.
+      */
+     private final Screen parent;
+ 
+     /**
++     * Last pass callbacks list.
++     */
++    private final List<Runnable> lastPass = new LinkedList<>();
++
++    /**
+      * Account handler.
+      */
+     private final Consumer<Account> handler;
+@@ -62,6 +70,11 @@
+     private PopupButton done;
+ 
+     /**
++     * Done tooltip.
++     */
++    private LegacyTooltip doneTooltip;
++
++    /**
+      * Whether the account is already being added and UI should be locked.
+      */
+     private boolean locked = false;
+@@ -89,25 +102,21 @@
+         }
+ 
+         // Add name box.
+-        this.name = new PopupBox(this.font, this.width / 2 - 75, this.height / 2 - 10 + 5, 148, 20, this.name, Component.translatable("ias.offline.nick"), this::done, false);
++        //noinspection StringConcatenationMissingWhitespace
++        this.name = new PopupBox(this.font, this.width / 2 - 75, this.height / 2 - 10 + 5, 148, 20, this.name, Component.translatable("ias.offline.nick"), this::done, false, Component.literal(IASConfig.unexpectedPigs ? ("Boar" + this.hashCode()) : "Steve").withStyle(ChatFormatting.DARK_GRAY));
+         this.name.setMaxLength(16);
+-        if (IASConfig.unexpectedPigs) {
+-            //noinspection StringConcatenationMissingWhitespace
+-            this.name.setHint(Component.literal("Boar" + this.hashCode()).withStyle(ChatFormatting.DARK_GRAY));
+-        } else {
+-            this.name.setHint(Component.literal("Steve").withStyle(ChatFormatting.DARK_GRAY));
+-        }
+         this.addRenderableWidget(this.name);
+ 
+         // Add done button.
++        this.doneTooltip = new LegacyTooltip(this, this.font, null, -1);
+         this.done = new PopupButton(this.width / 2 - 75, this.height / 2 + 49 - 22, 74, 20,
+-                CommonComponents.GUI_DONE, btn -> this.done(), Supplier::get);
++                CommonComponents.GUI_DONE, btn -> this.done(), this.doneTooltip);
+         this.done.color(1.0F, 0.5F, 0.5F, true);
+         this.addRenderableWidget(this.done);
+ 
+         // Add cancel button.
+         PopupButton button = new PopupButton(this.width / 2 + 1, this.height / 2 + 49 - 22, 74, 20,
+-                CommonComponents.GUI_CANCEL, btn -> this.onClose(), Supplier::get);
++                CommonComponents.GUI_CANCEL, btn -> this.onClose(), LegacyTooltip.EMPTY);
+         button.color(1.0F, 1.0F, 1.0F, true);
+         this.addRenderableWidget(button);
+ 
+@@ -181,7 +190,7 @@
+             this.name.active = false;
+ 
+             // Tooltip.
+-            this.done.setTooltip(null);
++            this.doneTooltip.tooltip(null);
+ 
+             // Update color.
+             this.done.color(0.5F, 0.5F, 0.5F, instant);
+@@ -200,8 +209,7 @@
+             this.done.active = false;
+ 
+             // Tooltip.
+-            this.done.setTooltip(Tooltip.create(Component.translatable("ias.offline.nick.blank")));
+-            this.done.setTooltipDelay(-1);
++            this.doneTooltip.tooltip(Component.translatable("ias.offline.nick.blank"));
+ 
+             // Update color.
+             this.done.color(1.0F, 0.5F, 0.5F, instant);
+@@ -226,8 +234,7 @@
+             }
+ 
+             // Tooltip.
+-            this.done.setTooltip(Tooltip.create(Component.translatable("ias.offline.nick.short", Component.translatable("key.keyboard.left.alt"))));
+-            this.done.setTooltipDelay(-1);
++            this.doneTooltip.tooltip(Component.translatable("ias.offline.nick.short", Component.translatable("key.keyboard.left.alt")));
+ 
+             // Don't process.
+             return;
+@@ -245,8 +252,7 @@
+             }
+ 
+             // Tooltip.
+-            this.done.setTooltip(Tooltip.create(Component.translatable("ias.offline.nick.long", Component.translatable("key.keyboard.left.alt"))));
+-            this.done.setTooltipDelay(-1);
++            this.doneTooltip.tooltip(Component.translatable("ias.offline.nick.long", Component.translatable("key.keyboard.left.alt")));
+ 
+             // Don't process.
+             return;
+@@ -269,8 +275,7 @@
+             }
+ 
+             // Tooltip.
+-            this.done.setTooltip(Tooltip.create(Component.translatable("ias.offline.nick.chars", Character.toString(c), Component.translatable("key.keyboard.left.alt"))));
+-            this.done.setTooltipDelay(-1);
++            this.doneTooltip.tooltip(Component.translatable("ias.offline.nick.chars", Character.toString(c), Component.translatable("key.keyboard.left.alt")));
+ 
+             // Don't process.
+             return;
+@@ -280,7 +285,7 @@
+         this.done.color(0.5F, 1.0F, 0.5F, instant);
+ 
+         // Tooltip.
+-        this.done.setTooltip(null);
++        this.doneTooltip.tooltip(null);
+     }
+ 
+     @Override
+@@ -334,6 +339,12 @@
+         if (this.name != null) {
+             drawCenteredString(pose, this.font, this.name.getMessage(), this.width / 2, this.height / 2 - 10 - 5, 0xFF_FF_FF_FF);
+         }
++
++        // Last pass.
++        for (Runnable callback : this.lastPass) {
++            callback.run();
++        }
++        this.lastPass.clear();
+     }
+ 
+     @Override
+@@ -367,6 +378,11 @@
+     }
+ 
+     @Override
++    public void lastPass(@NotNull Runnable callback) {
++        this.lastPass.add(callback);
++    }
++
++    @Override
+     public String toString() {
+         return "OfflinePopupScreen{}";
+     }
+diff --recursive --unified --new-file 1.19.4/root/src/main/java/ru/vidtu/ias/screen/PopupBox.java 1.19.2/root/src/main/java/ru/vidtu/ias/screen/PopupBox.java
+--- 1.19.4/root/src/main/java/ru/vidtu/ias/screen/PopupBox.java	2025-05-27 12:20:42.432261100 +0300
++++ 1.19.2/root/src/main/java/ru/vidtu/ias/screen/PopupBox.java	2025-05-27 12:20:42.418380800 +0300
+@@ -35,6 +35,11 @@
+  */
+ public final class PopupBox extends EditBox {
+     /**
++     * A font of IAS.
++     */
++    private final Font iasFont;
++
++    /**
+      * Enter action.
+      */
+     private final Runnable enterAction;
+@@ -45,6 +50,11 @@
+     private final boolean secure;
+ 
+     /**
++     * Box hint.
++     */
++    private final Component hint;
++
++    /**
+      * Creates a new box.
+      *
+      * @param font        Font renderer
+@@ -56,18 +66,22 @@
+      * @param title       Box title
+      * @param enterAction Action on enter key
+      * @param secure      Whether to prevent copying
++     * @param hint        Box hint, {@code null} if none
+      */
+-    PopupBox(Font font, int x, int y, int width, int height, PopupBox inherit, Component title, Runnable enterAction, boolean secure) {
++    PopupBox(Font font, int x, int y, int width, int height, PopupBox inherit, Component title,
++             Runnable enterAction, boolean secure, Component hint) {
+         super(font, x, y, width, height, inherit, title);
++        this.iasFont = font;
+         this.enterAction = enterAction;
+         this.secure = secure;
++        this.hint = hint;
+     }
+ 
+     @Override
+-    public void renderWidget(PoseStack pose, int mouseX, int mouseY, float delta) {
++    public void renderButton(PoseStack pose, int mouseX, int mouseY, float delta) {
+         // Render background.
+-        int x = this.getX();
+-        int y = this.getY();
++        int x = this.x;
++        int y = this.y;
+         int width = this.getWidth();
+         int height = this.getHeight();
+         fill(pose, x + 1, y + 1, x + width - 1, y + height - 1, 0xFF_00_00_00);
+@@ -77,7 +91,12 @@
+         fill(pose, x + width - 1, y + 1, x + width, y + height - 1, 0xFF_FF_FF_FF);
+ 
+         // Render other.
+-        super.renderWidget(pose, mouseX, mouseY, delta);
++        super.renderButton(pose, mouseX, mouseY, delta);
++
++        // Render hint.
++        if (this.hint != null && this.getValue().isEmpty() && !this.isFocused()) {
++            this.iasFont.drawShadow(pose, this.hint, this.x + 4, this.y + (this.height - 8) / 2, -1);
++        }
+     }
+ 
+     @Override
+diff --recursive --unified --new-file 1.19.4/root/src/main/java/ru/vidtu/ias/screen/PopupButton.java 1.19.2/root/src/main/java/ru/vidtu/ias/screen/PopupButton.java
+--- 1.19.4/root/src/main/java/ru/vidtu/ias/screen/PopupButton.java	2025-05-27 12:20:42.432261100 +0300
++++ 1.19.2/root/src/main/java/ru/vidtu/ias/screen/PopupButton.java	2025-05-27 12:20:42.418380800 +0300
+@@ -25,6 +25,7 @@
+ import net.minecraft.client.gui.components.Button;
+ import net.minecraft.network.chat.Component;
+ import net.minecraft.util.Mth;
++import ru.vidtu.ias.legacy.LegacyTooltip;
+ 
+ /**
+  * Styled button with popup design.
+@@ -70,16 +71,16 @@
+     /**
+      * Creates a new button.
+      *
+-     * @param x         Button X
+-     * @param y         Button Y
+-     * @param width     Button width
+-     * @param height    Button height
+-     * @param text      Button text
+-     * @param press     Button press handler
+-     * @param narration Button narration
++     * @param x       Button X
++     * @param y       Button Y
++     * @param width   Button width
++     * @param height  Button height
++     * @param text    Button text
++     * @param press   Button press handler
++     * @param tooltip Button tooltip
+      */
+-    PopupButton(int x, int y, int width, int height, Component text, OnPress press, CreateNarration narration) {
+-        super(x, y, width, height, text, press, narration);
++    PopupButton(int x, int y, int width, int height, Component text, OnPress press, LegacyTooltip tooltip) {
++        super(x, y, width, height, text, press, tooltip);
+     }
+ 
+     /**
+@@ -101,12 +102,12 @@
+     }
+ 
+     @Override
+-    public void renderWidget(PoseStack pose, int mouseX, int mouseY, float delta) {
++    public void renderButton(PoseStack pose, int mouseX, int mouseY, float delta) {
+         // Get values.
+         Minecraft minecraft = Minecraft.getInstance();
+         Font font = minecraft.font;
+-        int x = this.getX();
+-        int y = this.getY();
++        int x = this.x;
++        int y = this.y;
+         int width = this.getWidth();
+         int height = this.getHeight();
+         Component message = this.getMessage();
+@@ -132,6 +133,7 @@
+ 
+         // Render string.
+         font.draw(pose, message, x + (width - font.width(message)) / 2, y + height / 2 - 4, 0xFF_00_00_00);
++        this.renderToolTip(pose, mouseX, mouseY);
+     }
+ 
+     @Override
