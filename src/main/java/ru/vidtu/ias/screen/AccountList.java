@@ -308,8 +308,14 @@ final class AccountList extends ObjectSelectionList<AccountEntry> {
             // Load the skin.
             return this.minecraft.getSkinManager().getOrLoad(profile);
         }, IAS.executor()).thenAcceptAsync(loaded -> {
+            // Skip if skin is null.
+            if (loaded == null) return;
+
             // Put into map.
-            loaded.ifPresent(newSkin -> SKINS.put(uuid, newSkin));
+            //? if >=1.21.4 {
+            /*SKINS.put(uuid, loaded.get());
+            *///?} else
+            SKINS.put(uuid, loaded);
         }, this.minecraft).exceptionally(t -> {
             // Log it.
             LOGGER.warn("IAS: Unable to load skin: {}", entry, t);
