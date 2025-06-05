@@ -128,6 +128,11 @@ repositories {
 }
 
 dependencies {
+    // Annotations.
+    // compileOnly(libs.jspecify) // TODO(VidTu): Use.
+    compileOnly(libs.jetbrains.annotations)
+    compileOnly(libs.error.prone.annotations)
+
     // Minecraft.
     val minecraftDependency = findProperty("stonecutter.minecraft-dependency") ?: minecraft
     minecraft("com.mojang:minecraft:$minecraftDependency")
@@ -148,7 +153,7 @@ dependencies {
     } else {
         // Fabric.
         modImplementation(libs.fabric.loader)
-        modImplementation("net.fabricmc.fabric-api:fabric-api:${property("stonecutter.fabric-api")}")
+        modImplementation("net.fabricmc.fabric-api:fabric-api:${property("stonecutter.fabric-api")}") // TODO(VidTu): Modularize Fabric API.
         modImplementation("com.terraformersmc:modmenu:${property("stonecutter.modmenu")}")
     }
 }
