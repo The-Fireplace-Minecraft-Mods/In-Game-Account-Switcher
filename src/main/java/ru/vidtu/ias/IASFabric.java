@@ -17,6 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
 
+//? if fabric {
 package ru.vidtu.ias;
 
 import net.fabricmc.api.ClientModInitializer;
@@ -69,3 +70,4 @@ public final class IASFabric implements ClientModInitializer {
         });
     }
 }
+//?}

@@ -17,37 +17,42 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
 
+//? if forge {
 package ru.vidtu.ias;
 
 import net.minecraft.client.gui.screens.Screen;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.ModContainer;
-import net.neoforged.fml.ModList;
-import net.neoforged.fml.ModLoadingContext;
-import net.neoforged.fml.common.Mod;
-import net.neoforged.fml.loading.FMLEnvironment;
-import net.neoforged.fml.loading.FMLPaths;
-import net.neoforged.neoforge.client.event.ScreenEvent;
-import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
-import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.event.GameShuttingDownEvent;
-import net.neoforged.neoforgespi.language.IModInfo;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.ConfigScreenHandler;
+import net.minecraftforge.client.event.ScreenEvent;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.GameShuttingDownEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.IExtensionPoint;
+import net.minecraftforge.fml.ModContainer;
+import net.minecraftforge.fml.ModList;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.loading.FMLEnvironment;
+import net.minecraftforge.fml.loading.FMLPaths;
+import net.minecraftforge.forgespi.language.IModInfo;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
+import org.jetbrains.annotations.NotNull;
 import ru.vidtu.ias.screen.ConfigScreen;
 
 /**
- * Main IAS class for NeoForge.
+ * Main IAS class for Forge.
  *
  * @author VidTu
  */
 @Mod("ias")
-public final class IASNeoForge {
+public final class IASForge {
     /**
      * Creates a new mod.
+     *
+     * @param context Mod loading context
      */
     @SuppressWarnings("ThisEscapedInObjectConstruction") // <- Minecraft Forge API.
-    public IASNeoForge() {
+    public IASForge(@NotNull FMLJavaModLoadingContext context) {
         // New versions don't need the NeoForge/Forge difference check, because
         // packages are different. The newest NeoForge version also
         // change its location to "neoforge.mods.toml" from "mods.toml".
@@ -59,10 +64,11 @@ public final class IASNeoForge {
         }
 
         // Register events.
-        NeoForge.EVENT_BUS.register(this);
+        MinecraftForge.EVENT_BUS.register(this);
 
         // Register various display tests and config hooks.
-        ModLoadingContext.get().registerExtensionPoint(IConfigScreenFactory.class, () -> (minecraft, screen) -> new ConfigScreen(screen));
+        context.registerDisplayTest(IExtensionPoint.DisplayTest.IGNORE_ALL_VERSION);
+        context.registerExtensionPoint(ConfigScreenHandler.ConfigScreenFactory.class, () -> new ConfigScreenHandler.ConfigScreenFactory((minecraft, screen) -> new ConfigScreen(screen)));
 
         // Create the UA and initialize.
         String modVersion = ModList.get().getModContainerById("ias")
@@ -70,12 +76,12 @@ public final class IASNeoForge {
                 .map(IModInfo::getVersion)
                 .map(ArtifactVersion::toString)
                 .orElse("UNKNOWN");
-        String loaderVersion = ModList.get().getModContainerById("neoforge")
+        String loaderVersion = ModList.get().getModContainerById("forge")
                 .map(ModContainer::getModInfo)
                 .map(IModInfo::getVersion)
                 .map(ArtifactVersion::toString)
                 .orElse("UNKNOWN");
-        IASMinecraft.init(FMLPaths.GAMEDIR.get(), FMLPaths.CONFIGDIR.get(), "NeoForge", modVersion, loaderVersion);
+        IASMinecraft.init(FMLPaths.GAMEDIR.get(), FMLPaths.CONFIGDIR.get(), "Forge", modVersion, loaderVersion);
     }
 
     // Register closer.
@@ -101,3 +107,4 @@ public final class IASNeoForge {
         IASMinecraft.onDraw(screen, screen.getMinecraft().font, event.getGuiGraphics());
     }
 }
+//?}

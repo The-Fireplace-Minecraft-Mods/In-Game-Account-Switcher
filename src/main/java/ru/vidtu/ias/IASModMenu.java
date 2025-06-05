@@ -17,6 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
 
+//? if fabric {
 package ru.vidtu.ias;
 
 import com.terraformersmc.modmenu.api.ConfigScreenFactory;
@@ -34,3 +35,4 @@ public final class IASModMenu implements ModMenuApi {
         return ConfigScreen::new;
     }
 }
+//?}
