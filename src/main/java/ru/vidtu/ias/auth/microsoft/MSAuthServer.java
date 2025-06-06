@@ -237,7 +237,7 @@ public final class MSAuthServer implements Runnable, Closeable {
                     Headers headers = ex.getResponseHeaders();
                     headers.add("Content-Type", "text/html; charset=UTF-8");
                     headers.add("Content-Length", Integer.toString(data.length));
-                    headers.add("Server", IAS.userAgent());
+                    headers.add("Server", IAS.HTTP_USER_AGENT);
                     headers.add("Location", END_URI.formatted(this.port));
                     ex.sendResponseHeaders(302, data.length);
 
@@ -304,7 +304,7 @@ public final class MSAuthServer implements Runnable, Closeable {
                     Headers headers = ex.getResponseHeaders();
                     headers.add("Content-Type", "text/html; charset=UTF-8");
                     headers.add("Content-Length", Integer.toString(data.length));
-                    headers.add("Server", IAS.userAgent());
+                    headers.add("Server", IAS.HTTP_USER_AGENT);
                     ex.sendResponseHeaders(200, data.length);
 
                     // Write the response.

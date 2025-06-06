@@ -25,15 +25,10 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ScreenEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.GameShuttingDownEvent;
-import net.minecraftforge.fml.ModContainer;
-import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
-import net.minecraftforge.forgespi.language.IModInfo;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jspecify.annotations.NullMarked;
@@ -74,7 +69,7 @@ public final class IForge {
      *
      * @param ctx Loading context
      ^/
-    public IForge(FMLJavaModLoadingContext ctx) {
+    public IForge(net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext ctx) {
         // Validate.
         assert ctx != null : "IAS: Parameter 'ctx' is null. (mod: " + this + ')';
     //?} else {
@@ -122,17 +117,7 @@ public final class IForge {
         ^///?}
 
         // Create the UA and initialize.
-        String modVersion = ModList.get().getModContainerById("ias")
-                .map(ModContainer::getModInfo)
-                .map(IModInfo::getVersion)
-                .map(ArtifactVersion::toString)
-                .orElse("UNKNOWN");
-        String loaderVersion = ModList.get().getModContainerById("forge")
-                .map(ModContainer::getModInfo)
-                .map(IModInfo::getVersion)
-                .map(ArtifactVersion::toString)
-                .orElse("UNKNOWN");
-        IASMinecraft.init("Forge", modVersion, loaderVersion);
+        IAS.init();
     }
 
     @Contract(pure = true)

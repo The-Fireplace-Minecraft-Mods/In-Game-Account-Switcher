@@ -21,7 +21,6 @@ package ru.vidtu.ias;
 
 import com.mojang.authlib.minecraft.UserApiService;
 import com.mojang.authlib.yggdrasil.ProfileResult;
-import net.minecraft.SharedConstants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.User;
 import net.minecraft.client.gui.Font;
@@ -107,22 +106,6 @@ public final class IASMinecraft {
      */
     private IASMinecraft() {
         throw new AssertionError("No instances.");
-    }
-
-    /**
-     * Initializes the IAS.
-     *
-     * @param loader        Loader name
-     * @param loaderVersion Loader version
-     * @param modVersion    Mod version
-     */
-    public static void init(String loader, String modVersion, String loaderVersion) {
-        // Log the info.
-        String gameVersion = SharedConstants.getCurrentVersion().getName();
-        LOGGER.info("IAS: Booting up... (version: {}, loader: {}, loader version: {}, game version: {})", modVersion, loader, loaderVersion, gameVersion);
-
-        // Initialize the IAS.
-        IAS.init(modVersion, loader, loaderVersion, gameVersion);
     }
 
     /**
