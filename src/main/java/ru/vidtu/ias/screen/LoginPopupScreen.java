@@ -36,6 +36,7 @@ import ru.vidtu.ias.account.MicrosoftAccount;
 import ru.vidtu.ias.auth.LoginData;
 import ru.vidtu.ias.auth.handlers.LoginHandler;
 import ru.vidtu.ias.config.IASConfig;
+import ru.vidtu.ias.config.IASStorage;
 import ru.vidtu.ias.utils.exceptions.FriendlyException;
 
 import java.util.Objects;
@@ -381,8 +382,8 @@ final class LoginPopupScreen extends Screen implements LoginHandler {
         // Save storage.
         if (changed) {
             try {
-                IAS.disclaimersStorage();
-                IAS.saveStorage();
+                IASStorage.disclaimers();
+                IASStorage.save();
             } catch (Throwable t) {
                 LOGGER.error("IAS: Unable to save storage.", t);
             }

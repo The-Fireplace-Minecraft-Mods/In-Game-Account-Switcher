@@ -93,7 +93,7 @@ public final class IFabric implements ClientModInitializer {
                 .map(ModMetadata::getVersion)
                 .map(Version::getFriendlyString)
                 .orElse("UNKNOWN");
-        IASMinecraft.init(FabricLoader.getInstance().getGameDir(), FabricLoader.getInstance().getConfigDir(), "Fabric", modVersion, loaderVersion);
+        IASMinecraft.init("Fabric", modVersion, loaderVersion);
     }
 
     @Contract(pure = true)

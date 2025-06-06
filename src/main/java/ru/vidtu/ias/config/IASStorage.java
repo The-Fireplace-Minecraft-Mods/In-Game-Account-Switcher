@@ -25,6 +25,7 @@ import org.jetbrains.annotations.Unmodifiable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.vidtu.ias.account.Account;
+import ru.vidtu.ias.platform.IStonecutter;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -125,16 +126,15 @@ public final class IASStorage {
     /**
      * Writes the disclaimers.
      *
-     * @param path Game directory
      * @throws RuntimeException If unable to write the disclaimers
      */
-    public static void disclaimers(@NotNull Path path) {
+    public static void disclaimers() {
         try {
             // Log.
-            LOGGER.debug("IAS: Writing disclaimers into {}...", path);
+            LOGGER.debug("IAS: Writing disclaimers...");
 
             // Get the path.
-            path = path.resolve("_IAS_ACCOUNTS_DO_NOT_SEND_TO_ANYONE");
+            Path path = IStonecutter.ROOT_DIRECTORY.resolve("_IAS_ACCOUNTS_DO_NOT_SEND_TO_ANYONE");
 
             // Create the path.
             Files.createDirectories(path);
@@ -161,23 +161,22 @@ public final class IASStorage {
     /**
      * Loads the storage.
      *
-     * @param path Game directory
      * @throws RuntimeException If unable to load the storage
      */
-    public static void load(@NotNull Path path) {
+    public static void load() {
         try {
             // Log.
-            LOGGER.debug("IAS: Loading storage for {}...", path);
+            LOGGER.debug("IAS: Loading storage...");
 
             // Get the file.
-            Path folder = path.resolve("_IAS_ACCOUNTS_DO_NOT_SEND_TO_ANYONE/.hidden");
+            Path folder = IStonecutter.ROOT_DIRECTORY.resolve("_IAS_ACCOUNTS_DO_NOT_SEND_TO_ANYONE/.hidden");
             Path file = folder.resolve("accounts_v1.do_not_send_to_anyone");
             gameDisclaimerShown = Files.isRegularFile(folder.resolve("game_disclaimer_shown"), LinkOption.NOFOLLOW_LINKS);
 
             // Skip if it doesn't exist.
             if (!Files.isRegularFile(file, LinkOption.NOFOLLOW_LINKS)) {
                 LOGGER.debug("IAS: Storage not found. Saving...");
-                save(path);
+                save();
                 return;
             }
             file = file.toRealPath(LinkOption.NOFOLLOW_LINKS);
@@ -216,16 +215,15 @@ public final class IASStorage {
     /**
      * Saves the storage.
      *
-     * @param path Game directory
      * @throws RuntimeException If unable to save the storage
      */
-    public static void save(@NotNull Path path) {
+    public static void save() {
         try {
             // Log.
-            LOGGER.debug("IAS: Saving storage into {}...", path);
+            LOGGER.debug("IAS: Saving storage...");
 
             // Get the file.
-            Path file = path.resolve("_IAS_ACCOUNTS_DO_NOT_SEND_TO_ANYONE/.hidden/accounts_v1.do_not_send_to_anyone");
+            Path file = IStonecutter.ROOT_DIRECTORY.resolve("_IAS_ACCOUNTS_DO_NOT_SEND_TO_ANYONE/.hidden/accounts_v1.do_not_send_to_anyone");
 
             // Encode the data.
             byte[] data;
@@ -283,19 +281,18 @@ public final class IASStorage {
     /**
      * Sets the {@link #gameDisclaimerShown} to {@code true} and writes the persistent state file.
      *
-     * @param path Game directory
      * @throws RuntimeException If unable to set or write game disclaimer shown persistent state
      */
-    public static void gameDisclaimerShown(@NotNull Path path) {
+    public static void gameDisclaimerShown() {
         try {
             // Log it.
-            LOGGER.debug("IAS: Marking in-game disclaimers as shown into {}...", path);
+            LOGGER.debug("IAS: Marking in-game disclaimers as shown...");
 
             // Set the parameter.
             gameDisclaimerShown = true;
 
             // Create the file.
-            Path file = path.resolve("_IAS_ACCOUNTS_DO_NOT_SEND_TO_ANYONE/.hidden/game_disclaimer_shown");
+            Path file = IStonecutter.ROOT_DIRECTORY.resolve("_IAS_ACCOUNTS_DO_NOT_SEND_TO_ANYONE/.hidden/game_disclaimer_shown");
             Files.createDirectories(file.getParent());
             Files.createFile(file);
 

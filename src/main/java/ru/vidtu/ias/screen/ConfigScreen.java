@@ -36,6 +36,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.vidtu.ias.IAS;
 import ru.vidtu.ias.config.IASConfig;
+import ru.vidtu.ias.config.IASStorage;
 import ru.vidtu.ias.config.ServerMode;
 import ru.vidtu.ias.config.TextAlign;
 import ru.vidtu.ias.utils.Expression;
@@ -443,8 +444,8 @@ public final class ConfigScreen extends Screen {
 
         // Save config.
         try {
-            IAS.disclaimersStorage();
-            IAS.saveConfig();
+            IASStorage.disclaimers();
+            IASConfig.save();
         } catch (Throwable t) {
             LOGGER.error("IAS: Unable to save config.", t);
         }

@@ -33,7 +33,6 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.nio.file.Path;
 import java.time.Duration;
 import java.util.Objects;
 import java.util.UUID;
@@ -86,16 +85,6 @@ public final class IAS {
     private static String userAgent;
 
     /**
-     * Current IAS game directory.
-     */
-    private static Path gameDirectory;
-
-    /**
-     * Current IAS config directory.
-     */
-    private static Path configDirectory;
-
-    /**
      * Whether the mod is disabled remotely.
      */
     @SuppressWarnings("NegativelyNamedBooleanVariable") // <- The negative naming is intended.
@@ -114,21 +103,14 @@ public final class IAS {
     /**
      * Initializes the IAS.
      *
-     * @param gamePath      Game directory
-     * @param configPath    Config directory
      * @param version       Mod version
      * @param loader        Mod loader
      * @param loaderVersion Mod loader version
      * @param gameVersion   Game version
      */
-    public static void init(@NotNull Path gamePath, @NotNull Path configPath, @NotNull String version,
-                            @NotNull String loader, @NotNull String loaderVersion, @NotNull String gameVersion) {
+    public static void init(@NotNull String version, @NotNull String loader, @NotNull String loaderVersion, @NotNull String gameVersion) {
         // Log.
         LOGGER.info("IAS: Initializing IAS...");
-
-        // Initialize the dirs.
-        gameDirectory = gamePath;
-        configDirectory = configPath;
 
         // Set up IAS.
         UUID randomSessionId = UUID.randomUUID();
@@ -137,21 +119,21 @@ public final class IAS {
 
         // Write the disclaimers.
         try {
-            disclaimersStorage();
+            IASStorage.disclaimers();
         } catch (Throwable t) {
             LOGGER.error("IAS: Unable to write disclaimers.", t);
         }
 
         // Read the config.
         try {
-            loadConfig();
+            IASConfig.load();
         } catch (Throwable t) {
             LOGGER.error("IAS: Unable to load IAS config.", t);
         }
 
         // Read the storage.
         try {
-            loadStorage();
+            IASStorage.load();
         } catch (Throwable t) {
             LOGGER.error("IAS: Unable to load IAS storage.", t);
         }
@@ -272,12 +254,10 @@ public final class IAS {
         userAgent = null;
 
         // Write the disclaimers, if we can.
-        if (gameDirectory != null) {
-            try {
-                disclaimersStorage();
-            } catch (Throwable ignored) {
-                // NO-OP
-            }
+        try {
+            IASStorage.disclaimers();
+        } catch (Throwable ignored) {
+            // NO-OP
         }
 
         // Log.
@@ -320,59 +300,5 @@ public final class IAS {
     @Contract(pure = true)
     public static boolean disabled() {
         return disabled;
-    }
-
-    /**
-     * Delegates to {@link IASConfig#load(Path)} with {@link #configDirectory}.
-     *
-     * @throws RuntimeException If unable to load the config
-     */
-    public static void loadConfig() {
-        IASConfig.load(configDirectory);
-    }
-
-    /**
-     * Delegates to {@link IASConfig#save(Path)} with {@link #configDirectory}.
-     *
-     * @throws RuntimeException If unable to save the config
-     */
-    public static void saveConfig() {
-        IASConfig.save(configDirectory);
-    }
-
-    /**
-     * Delegates to {@link IASStorage#load(Path)} with {@link #gameDirectory}.
-     *
-     * @throws RuntimeException If unable to load the storage
-     */
-    public static void loadStorage() {
-        IASStorage.load(gameDirectory);
-    }
-
-    /**
-     * Delegates to {@link IASStorage#save(Path)} with {@link #gameDirectory}.
-     *
-     * @throws RuntimeException If unable to save the storage
-     */
-    public static void saveStorage() {
-        IASStorage.save(gameDirectory);
-    }
-
-    /**
-     * Delegates to {@link IASStorage#disclaimers(Path)} with {@link #gameDirectory}.
-     *
-     * @throws RuntimeException If unable to write the disclaimers
-     */
-    public static void disclaimersStorage() {
-        IASStorage.disclaimers(gameDirectory);
-    }
-
-    /**
-     * Delegates to {@link IASStorage#gameDisclaimerShown(Path)} with {@link #gameDirectory}.
-     *
-     * @throws RuntimeException If unable to set or write game disclaimer shown persistent state
-     */
-    public static void gameDisclaimerShownStorage() {
-        IASStorage.gameDisclaimerShown(gameDirectory);
     }
 }

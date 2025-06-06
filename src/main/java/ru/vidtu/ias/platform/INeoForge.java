@@ -26,7 +26,6 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.Mod;
-import net.neoforged.fml.loading.FMLPaths;
 import net.neoforged.neoforge.client.event.ScreenEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.GameShuttingDownEvent;
@@ -115,7 +114,7 @@ public final class INeoForge {
                 .map(IModInfo::getVersion)
                 .map(ArtifactVersion::toString)
                 .orElse("UNKNOWN");
-        IASMinecraft.init(FMLPaths.GAMEDIR.get(), FMLPaths.CONFIGDIR.get(), "NeoForge", modVersion, loaderVersion);
+        IASMinecraft.init("NeoForge", modVersion, loaderVersion);
     }
 
     @Contract(pure = true)

@@ -55,7 +55,6 @@ import ru.vidtu.ias.utils.Expression;
 import ru.vidtu.ias.utils.IUtils;
 import ru.vidtu.ias.utils.exceptions.FriendlyException;
 
-import java.nio.file.Path;
 import java.time.Duration;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -113,19 +112,17 @@ public final class IASMinecraft {
     /**
      * Initializes the IAS.
      *
-     * @param gameDir       Game directory
-     * @param configDir     Config directory
      * @param loader        Loader name
      * @param loaderVersion Loader version
      * @param modVersion    Mod version
      */
-    public static void init(Path gameDir, Path configDir, String loader, String modVersion, String loaderVersion) {
+    public static void init(String loader, String modVersion, String loaderVersion) {
         // Log the info.
         String gameVersion = SharedConstants.getCurrentVersion().getName();
         LOGGER.info("IAS: Booting up... (version: {}, loader: {}, loader version: {}, game version: {})", modVersion, loader, loaderVersion, gameVersion);
 
         // Initialize the IAS.
-        IAS.init(gameDir, configDir, modVersion, loader, loaderVersion, gameVersion);
+        IAS.init(modVersion, loader, loaderVersion, gameVersion);
     }
 
     /**
