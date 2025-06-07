@@ -1,0 +1,696 @@
+diff --recursive --unified --new-file 1.20.4/fabric/build.gradle.kts 1.20.2/fabric/build.gradle.kts
+--- 1.20.4/fabric/build.gradle.kts	2025-05-27 12:20:42.464315000 +0300
++++ 1.20.2/fabric/build.gradle.kts	2025-05-27 12:20:42.449837200 +0300
+@@ -25,16 +25,15 @@
+ java.targetCompatibility = JavaVersion.VERSION_17
+ java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+ group = "ru.vidtu.ias"
+-base.archivesName = "IAS-Fabric-1.20.4"
++base.archivesName = "IAS-Fabric-1.20.2"
+ description = "This mod allows you to change your logged in account in-game, without restarting Minecraft."
+-evaluationDependsOn(":1.20.4-root")
+-val shared = project(":1.20.4-root")
++evaluationDependsOn(":1.20.2-root")
++val shared = project(":1.20.2-root")
+ 
+ repositories {
+     mavenCentral()
+     maven("https://maven.fabricmc.net/")
+     maven("https://maven.terraformersmc.com/releases/")
+-    maven("https://maven.nucleoid.xyz/") // TODO: Remove when ModMenu fixes dependency issues.
+ }
+ 
+ loom {
+@@ -60,13 +59,13 @@
+     compileOnlyApi(libs.error.prone.annotations)
+ 
+     // Minecraft (Provided)
+-    minecraft(libs.minecraft.mc1204)
++    minecraft(libs.minecraft.mc1202)
+     mappings(loom.officialMojangMappings())
+ 
+-    // Fabric
++    // Fabric (Provided)
+     modImplementation(libs.fabric.loader)
+-    modImplementation(libs.fabric.mc1204)
+-    modImplementation(libs.modmenu.mc1204)
++    modImplementation(libs.fabric.mc1202)
++    modImplementation(libs.modmenu.mc1202)
+ 
+     // Root
+     compileOnly(shared)
+@@ -103,7 +102,7 @@
+             "Specification-Title" to "In-Game Account Switcher",
+             "Specification-Version" to version,
+             "Specification-Vendor" to "VidTu",
+-            "Implementation-Title" to "IAS-Fabric-1.20.4",
++            "Implementation-Title" to "IAS-Fabric-1.20.2",
+             "Implementation-Version" to version,
+             "Implementation-Vendor" to "VidTu"
+         )
+diff --recursive --unified --new-file 1.20.4/fabric/gradle.properties 1.20.2/fabric/gradle.properties
+--- 1.20.4/fabric/gradle.properties	2025-05-27 12:20:42.465314700 +0300
++++ 1.20.2/fabric/gradle.properties	2025-05-27 12:20:42.449837200 +0300
+@@ -16,6 +16,6 @@
+ # along with this program.  If not, see <https://www.gnu.org/licenses/>
+ 
+ # Mod
+-display.type=Fabric/Quilt 1.20.4
+-modrinth.versions=1.20.4
++display.type=Fabric/Quilt 1.20.2
++modrinth.versions=1.20.2
+ modrinth.loaders=fabric,quilt
+diff --recursive --unified --new-file 1.20.4/fabric/src/main/resources/fabric.mod.json 1.20.2/fabric/src/main/resources/fabric.mod.json
+--- 1.20.4/fabric/src/main/resources/fabric.mod.json	2025-05-27 12:20:42.467367700 +0300
++++ 1.20.2/fabric/src/main/resources/fabric.mod.json	2025-05-27 12:20:42.451930500 +0300
+@@ -34,7 +34,7 @@
+     "ias.mixins.json"
+   ],
+   "depends": {
+-    "minecraft": "1.20.4",
++    "minecraft": "1.20.2",
+     "fabric-api": "*"
+   },
+   "recommends": {
+diff --recursive --unified --new-file 1.20.4/fabric/src/main/resources/quilt.mod.json 1.20.2/fabric/src/main/resources/quilt.mod.json
+--- 1.20.4/fabric/src/main/resources/quilt.mod.json	2025-05-27 12:20:42.467367700 +0300
++++ 1.20.2/fabric/src/main/resources/quilt.mod.json	2025-05-27 12:20:42.451930500 +0300
+@@ -27,8 +27,8 @@
+     "depends": [
+       {
+         "id": "minecraft",
+-        "versions": "1.20.4",
+-        "reason": "In-Game Account Switcher works only with Minecraft 1.20.4."
++        "versions": "1.20.2",
++        "reason": "In-Game Account Switcher works only with Minecraft 1.20.2."
+       },
+       {
+         "id": "fabric-api",
+diff --recursive --unified --new-file 1.20.4/forge/build.gradle.kts 1.20.2/forge/build.gradle.kts
+--- 1.20.4/forge/build.gradle.kts	2025-05-27 12:20:42.467367700 +0300
++++ 1.20.2/forge/build.gradle.kts	2025-05-27 12:20:42.451930500 +0300
+@@ -25,10 +25,10 @@
+ java.targetCompatibility = JavaVersion.VERSION_17
+ java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+ group = "ru.vidtu.ias"
+-base.archivesName = "IAS-Forge-1.20.4"
++base.archivesName = "IAS-Forge-1.20.2"
+ description = "This mod allows you to change your logged in account in-game, without restarting Minecraft."
+-evaluationDependsOn(":1.20.4-root")
+-val shared = project(":1.20.4-root")
++evaluationDependsOn(":1.20.2-root")
++val shared = project(":1.20.2-root")
+ 
+ loom {
+     silentMojangMappingsLicense()
+@@ -63,11 +63,11 @@
+     compileOnlyApi(libs.error.prone.annotations)
+ 
+     // Minecraft (Provided)
+-    minecraft(libs.minecraft.mc1204)
++    minecraft(libs.minecraft.mc1202)
+     mappings(loom.officialMojangMappings())
+ 
+     // Forge
+-    forge(libs.forge.mc1204)
++    forge(libs.forge.mc1202)
+ 
+     // Root
+     compileOnly(shared)
+diff --recursive --unified --new-file 1.20.4/forge/gradle.properties 1.20.2/forge/gradle.properties
+--- 1.20.4/forge/gradle.properties	2025-05-27 12:20:42.467367700 +0300
++++ 1.20.2/forge/gradle.properties	2025-05-27 12:20:42.452929900 +0300
+@@ -19,6 +19,6 @@
+ loom.platform=forge
+ 
+ # Mod
+-display.type=Forge 1.20.4
+-modrinth.versions=1.20.4
++display.type=Forge 1.20.2
++modrinth.versions=1.20.2
+ modrinth.loaders=forge
+diff --recursive --unified --new-file 1.20.4/forge/src/main/java/ru/vidtu/ias/IASForge.java 1.20.2/forge/src/main/java/ru/vidtu/ias/IASForge.java
+--- 1.20.4/forge/src/main/java/ru/vidtu/ias/IASForge.java	2025-05-27 12:20:42.469421300 +0300
++++ 1.20.2/forge/src/main/java/ru/vidtu/ias/IASForge.java	2025-05-27 12:20:42.453435900 +0300
+@@ -29,13 +29,12 @@
+ import net.minecraftforge.fml.IExtensionPoint;
+ import net.minecraftforge.fml.ModContainer;
+ import net.minecraftforge.fml.ModList;
++import net.minecraftforge.fml.ModLoadingContext;
+ import net.minecraftforge.fml.common.Mod;
+-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+ import net.minecraftforge.fml.loading.FMLEnvironment;
+ import net.minecraftforge.fml.loading.FMLPaths;
+ import net.minecraftforge.forgespi.language.IModInfo;
+ import org.apache.maven.artifact.versioning.ArtifactVersion;
+-import org.jetbrains.annotations.NotNull;
+ import ru.vidtu.ias.screen.ConfigScreen;
+ 
+ /**
+@@ -47,11 +46,9 @@
+ public final class IASForge {
+     /**
+      * Creates a new mod.
+-     *
+-     * @param context Mod loading context
+      */
+     @SuppressWarnings("ThisEscapedInObjectConstruction") // <- Minecraft Forge API.
+-    public IASForge(@NotNull FMLJavaModLoadingContext context) {
++    public IASForge() {
+         // New versions don't need the NeoForge/Forge difference check, because
+         // packages are different. The newest NeoForge version also
+         // change its location to "neoforge.mods.toml" from "mods.toml".
+@@ -66,8 +63,8 @@
+         MinecraftForge.EVENT_BUS.register(this);
+ 
+         // Register various display tests and config hooks.
+-        context.registerDisplayTest(IExtensionPoint.DisplayTest.IGNORE_ALL_VERSION);
+-        context.registerExtensionPoint(ConfigScreenHandler.ConfigScreenFactory.class, () -> new ConfigScreenHandler.ConfigScreenFactory((minecraft, screen) -> new ConfigScreen(screen)));
++        ModLoadingContext.get().registerExtensionPoint(IExtensionPoint.DisplayTest.class, () -> new IExtensionPoint.DisplayTest(() -> IExtensionPoint.DisplayTest.IGNORESERVERONLY, (version, server) -> true));
++        ModLoadingContext.get().registerExtensionPoint(ConfigScreenHandler.ConfigScreenFactory.class, () -> new ConfigScreenHandler.ConfigScreenFactory((minecraft, screen) -> new ConfigScreen(screen)));
+ 
+         // Create the UA and initialize.
+         String modVersion = ModList.get().getModContainerById("ias")
+diff --recursive --unified --new-file 1.20.4/forge/src/main/resources/META-INF/mods.toml 1.20.2/forge/src/main/resources/META-INF/mods.toml
+--- 1.20.4/forge/src/main/resources/META-INF/mods.toml	2025-05-27 12:20:42.469421300 +0300
++++ 1.20.2/forge/src/main/resources/META-INF/mods.toml	2025-05-27 12:20:42.453435900 +0300
+@@ -26,7 +26,7 @@
+ modId = "forge"
+ type = "required"
+ mandatory = true
+-versionRange = "[49,50)"
++versionRange = "[48,49)"
+ ordering = "NONE"
+ side = "CLIENT"
+ 
+@@ -34,7 +34,7 @@
+ modId = "minecraft"
+ type = "required"
+ mandatory = true
+-versionRange = "[1.20.3,1.20.4]"
++versionRange = "1.20.2"
+ ordering = "NONE"
+ side = "CLIENT"
+ 
+diff --recursive --unified --new-file 1.20.4/forge/src/main/resources/pack.mcmeta 1.20.2/forge/src/main/resources/pack.mcmeta
+--- 1.20.4/forge/src/main/resources/pack.mcmeta	2025-05-27 12:20:42.469421300 +0300
++++ 1.20.2/forge/src/main/resources/pack.mcmeta	2025-05-27 12:20:42.454940700 +0300
+@@ -1,6 +1,6 @@
+ {
+   "pack": {
+-    "pack_format": 22,
++    "pack_format": 18,
+     "description": "In-Game Account Switcher"
+   }
+ }
+diff --recursive --unified --new-file 1.20.4/neoforge/build.gradle.kts 1.20.2/neoforge/build.gradle.kts
+--- 1.20.4/neoforge/build.gradle.kts	2025-05-27 12:20:42.470424800 +0300
++++ 1.20.2/neoforge/build.gradle.kts	2025-05-27 12:20:42.454940700 +0300
+@@ -25,10 +25,10 @@
+ java.targetCompatibility = JavaVersion.VERSION_17
+ java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+ group = "ru.vidtu.ias"
+-base.archivesName = "IAS-NeoForge-1.20.4"
++base.archivesName = "IAS-NeoForge-1.20.2"
+ description = "This mod allows you to change your logged in account in-game, without restarting Minecraft."
+-evaluationDependsOn(":1.20.4-root")
+-val shared = project(":1.20.4-root")
++evaluationDependsOn(":1.20.2-root")
++val shared = project(":1.20.2-root")
+ 
+ loom {
+     silentMojangMappingsLicense()
+@@ -65,11 +65,11 @@
+     compileOnlyApi(libs.error.prone.annotations)
+ 
+     // Minecraft (Provided)
+-    minecraft(libs.minecraft.mc1204)
++    minecraft(libs.minecraft.mc1202)
+     mappings(loom.officialMojangMappings())
+ 
+     // NeoForge
+-    neoForge(libs.neoforge.mc1204)
++    neoForge(libs.neoforge.mc1202)
+ 
+     // Root
+     compileOnly(shared)
+@@ -106,7 +106,7 @@
+             "Specification-Title" to "In-Game Account Switcher",
+             "Specification-Version" to version,
+             "Specification-Vendor" to "VidTu",
+-            "Implementation-Title" to "IAS-NeoForge-1.20.4",
++            "Implementation-Title" to "IAS-NeoForge-1.20.2",
+             "Implementation-Version" to version,
+             "Implementation-Vendor" to "VidTu",
+             "MixinConfigs" to "ias.mixins.json"
+diff --recursive --unified --new-file 1.20.4/neoforge/gradle.properties 1.20.2/neoforge/gradle.properties
+--- 1.20.4/neoforge/gradle.properties	2025-05-27 12:20:42.470424800 +0300
++++ 1.20.2/neoforge/gradle.properties	2025-05-27 12:20:42.454940700 +0300
+@@ -19,6 +19,6 @@
+ loom.platform=neoforge
+ 
+ # Mod
+-display.type=NeoForge 1.20.4
+-modrinth.versions=1.20.4
++display.type=NeoForge 1.20.2
++modrinth.versions=1.20.2
+ modrinth.loaders=neoforge
+diff --recursive --unified --new-file 1.20.4/neoforge/src/main/resources/META-INF/mods.toml 1.20.2/neoforge/src/main/resources/META-INF/mods.toml
+--- 1.20.4/neoforge/src/main/resources/META-INF/mods.toml	2025-05-27 12:20:42.472433500 +0300
++++ 1.20.2/neoforge/src/main/resources/META-INF/mods.toml	2025-05-27 12:20:42.457066200 +0300
+@@ -29,7 +29,7 @@
+ modId = "neoforge"
+ type = "required"
+ mandatory = true
+-versionRange = "[20.3,20.5)"
++versionRange = "[20.2,20.3)"
+ ordering = "NONE"
+ side = "CLIENT"
+ 
+@@ -37,7 +37,7 @@
+ modId = "minecraft"
+ type = "required"
+ mandatory = true
+-versionRange = "[1.20.3,1.20.4]"
++versionRange = "1.20.2"
+ ordering = "NONE"
+ side = "CLIENT"
+ 
+diff --recursive --unified --new-file 1.20.4/neoforge/src/main/resources/pack.mcmeta 1.20.2/neoforge/src/main/resources/pack.mcmeta
+--- 1.20.4/neoforge/src/main/resources/pack.mcmeta	2025-05-27 12:20:42.472433500 +0300
++++ 1.20.2/neoforge/src/main/resources/pack.mcmeta	2025-05-27 12:20:42.457066200 +0300
+@@ -1,6 +1,6 @@
+ {
+   "pack": {
+-    "pack_format": 22,
++    "pack_format": 18,
+     "description": "In-Game Account Switcher"
+   }
+ }
+diff --recursive --unified --new-file 1.20.4/root/build.gradle.kts 1.20.2/root/build.gradle.kts
+--- 1.20.4/root/build.gradle.kts	2025-05-27 12:20:42.473431900 +0300
++++ 1.20.2/root/build.gradle.kts	2025-05-27 12:20:42.458070800 +0300
+@@ -25,7 +25,7 @@
+ java.targetCompatibility = JavaVersion.VERSION_17
+ java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+ group = "ru.vidtu.ias"
+-base.archivesName = "IAS-1.20.4"
++base.archivesName = "IAS-1.20.2"
+ description = "This mod allows you to change your logged in account in-game, without restarting Minecraft."
+ 
+ repositories {
+@@ -43,7 +43,7 @@
+     compileOnlyApi(libs.error.prone.annotations)
+ 
+     // Minecraft (Provided)
+-    minecraft(libs.minecraft.mc1204)
++    minecraft(libs.minecraft.mc1202)
+     mappings(loom.officialMojangMappings())
+ 
+     // Mixin
+@@ -78,7 +78,7 @@
+             "Specification-Title" to "In-Game Account Switcher",
+             "Specification-Version" to version,
+             "Specification-Vendor" to "VidTu",
+-            "Implementation-Title" to "IAS-1.20.4",
++            "Implementation-Title" to "IAS-1.20.2",
+             "Implementation-Version" to version,
+             "Implementation-Vendor" to "VidTu"
+         )
+diff --recursive --unified --new-file 1.20.4/root/src/main/java/ru/vidtu/ias/IASMinecraft.java 1.20.2/root/src/main/java/ru/vidtu/ias/IASMinecraft.java
+--- 1.20.4/root/src/main/java/ru/vidtu/ias/IASMinecraft.java	2025-05-27 12:20:42.474479800 +0300
++++ 1.20.2/root/src/main/java/ru/vidtu/ias/IASMinecraft.java	2025-05-27 12:20:42.459073900 +0300
+@@ -70,7 +70,7 @@
+     /**
+      * Toast for nick warning.
+      */
+-    public static final SystemToast.SystemToastId NICK_WARN = new SystemToast.SystemToastId(10000L);
++    public static final SystemToast.SystemToastIds NICK_WARN = SystemToast.SystemToastIds.UNSECURE_SERVER_WARNING;
+ 
+     /**
+      * Logger for this class.
+@@ -325,14 +325,17 @@
+             CompletableFuture<ProfileResult> profile = CompletableFuture.completedFuture(online ? minecraft.getMinecraftSessionService().fetchProfile(data.uuid(), true) : null);
+             @SuppressWarnings("CastToIncompatibleInterface") // <- Mixin Accessor.
+             MinecraftAccessor accessor = (MinecraftAccessor) minecraft;
+-            UserApiService apiService = online ? accessor.ias$authenticationService().createUserApiService(data.token()) : UserApiService.OFFLINE;
+-            UserApiService.UserProperties properties;
+-            try {
+-                properties = apiService.fetchProperties();
+-            } catch (Throwable ignored) {
+-                properties = UserApiService.OFFLINE_PROPERTIES;
++            UserApiService apiService;
++            if (online) {
++                try {
++                    apiService = accessor.ias$authenticationService().createUserApiService(data.token());
++                } catch (Throwable t) {
++                    // Rethrow.
++                    throw new RuntimeException("Unable to create user API service.", t);
++                }
++            } else {
++                apiService = UserApiService.OFFLINE;
+             }
+-            CompletableFuture<UserApiService.UserProperties> propertiesFuture = CompletableFuture.completedFuture(properties);
+             PlayerSocialManager social = new PlayerSocialManager(minecraft, apiService);
+             ClientTelemetryManager telemetry = new ClientTelemetryManager(minecraft, apiService, user);
+             ProfileKeyPairManager keyPair = ProfileKeyPairManager.create(apiService, user, minecraft.gameDirectory.toPath());
+@@ -345,7 +348,6 @@
+                 accessor.ias$user(user);
+                 accessor.ias$profileFuture(profile);
+                 accessor.ias$userApiService(apiService);
+-                accessor.ias$userPropertiesFuture(propertiesFuture);
+                 accessor.ias$playerSocialManager(social);
+                 accessor.ias$telemetryManager(telemetry);
+                 accessor.ias$profileKeyPairManager(keyPair);
+diff --recursive --unified --new-file 1.20.4/root/src/main/java/ru/vidtu/ias/legacy/LegacyCheckbox.java 1.20.2/root/src/main/java/ru/vidtu/ias/legacy/LegacyCheckbox.java
+--- 1.20.4/root/src/main/java/ru/vidtu/ias/legacy/LegacyCheckbox.java	1970-01-01 03:00:00.000000000 +0300
++++ 1.20.2/root/src/main/java/ru/vidtu/ias/legacy/LegacyCheckbox.java	2025-05-27 12:20:42.459073900 +0300
+@@ -0,0 +1,58 @@
++/*
++ * In-Game Account Switcher is a mod for Minecraft that allows you to change your logged in account in-game, without restarting Minecraft.
++ * Copyright (C) 2015-2022 The_Fireplace
++ * Copyright (C) 2021-2025 VidTu
++ *
++ * This program is free software: you can redistribute it and/or modify
++ * it under the terms of the GNU Lesser General Public License as published by
++ * the Free Software Foundation, either version 3 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU Lesser General Public License for more details.
++ *
++ * You should have received a copy of the GNU Lesser General Public License
++ * along with this program.  If not, see <https://www.gnu.org/licenses/>
++ */
++
++package ru.vidtu.ias.legacy;
++
++import it.unimi.dsi.fastutil.booleans.BooleanConsumer;
++import net.minecraft.client.gui.Font;
++import net.minecraft.client.gui.components.Checkbox;
++import net.minecraft.network.chat.Component;
++
++/**
++ * Checkbox with a callback.
++ *
++ * @author VidTu
++ */
++public final class LegacyCheckbox extends Checkbox {
++    /**
++     * Check callback.
++     */
++    private final BooleanConsumer callback;
++
++    /**
++     * Creates a new check callback.
++     *
++     * @param font     Target font
++     * @param x        Target X
++     * @param y        Target Y
++     * @param label    Checkbox label
++     * @param check    Checkbox check status
++     * @param callback Checkbox check callback
++     */
++    public LegacyCheckbox(Font font, int x, int y, Component label, boolean check, BooleanConsumer callback) {
++        super(x, y, font.width(label) + 24, 20, label, check);
++        this.callback = callback;
++    }
++
++    @Override
++    public void onPress() {
++        super.onPress();
++        this.callback.accept(this.selected());
++    }
++}
+diff --recursive --unified --new-file 1.20.4/root/src/main/java/ru/vidtu/ias/mixins/MinecraftAccessor.java 1.20.2/root/src/main/java/ru/vidtu/ias/mixins/MinecraftAccessor.java
+--- 1.20.4/root/src/main/java/ru/vidtu/ias/mixins/MinecraftAccessor.java	2025-05-27 12:20:42.474479800 +0300
++++ 1.20.2/root/src/main/java/ru/vidtu/ias/mixins/MinecraftAccessor.java	2025-05-27 12:20:42.460159500 +0300
+@@ -80,15 +80,6 @@
+     void ias$userApiService(UserApiService service);
+ 
+     /**
+-     * Sets the user properties future.
+-     *
+-     * @param future New user properties future
+-     */
+-    @Accessor("userPropertiesFuture")
+-    @Mutable
+-    void ias$userPropertiesFuture(CompletableFuture<UserApiService.UserProperties> future);
+-
+-    /**
+      * Sets the player social manager.
+      *
+      * @param manager New player social manager
+diff --recursive --unified --new-file 1.20.4/root/src/main/java/ru/vidtu/ias/screen/AccountList.java 1.20.2/root/src/main/java/ru/vidtu/ias/screen/AccountList.java
+--- 1.20.4/root/src/main/java/ru/vidtu/ias/screen/AccountList.java	2025-05-27 12:20:42.475478800 +0300
++++ 1.20.2/root/src/main/java/ru/vidtu/ias/screen/AccountList.java	2025-05-27 12:20:42.461174500 +0300
+@@ -67,11 +67,12 @@
+      * @param minecraft Minecraft instance
+      * @param width     List width
+      * @param height    List height
+-     * @param offset    List Y offset
++     * @param top       List Y start
++     * @param bottom    List Y end
+      * @param item      Entry height
+      */
+-    AccountList(AccountScreen screen, Minecraft minecraft, int width, int height, int offset, int item) {
+-        super(minecraft, width, height, offset, item);
++    AccountList(AccountScreen screen, Minecraft minecraft, int width, int height, int top, int bottom, int item) {
++        super(minecraft, width, height, top, bottom, item);
+         this.screen = screen;
+         this.update(this.screen.search().getValue());
+     }
+diff --recursive --unified --new-file 1.20.4/root/src/main/java/ru/vidtu/ias/screen/AccountScreen.java 1.20.2/root/src/main/java/ru/vidtu/ias/screen/AccountScreen.java
+--- 1.20.4/root/src/main/java/ru/vidtu/ias/screen/AccountScreen.java	2025-05-27 12:20:42.475478800 +0300
++++ 1.20.2/root/src/main/java/ru/vidtu/ias/screen/AccountScreen.java	2025-05-27 12:20:42.461174500 +0300
+@@ -181,9 +181,9 @@
+ 
+         // Add account list.
+         if (this.list != null) {
+-            this.list.setRectangle(this.width, this.height - 24 - 24 - 4 - 34, 0, 34);
++            this.list.updateSize(this.width, this.height - 24 - 24 - 4 - 34, 34, this.height - 24 - 24 - 4);
+         } else {
+-            this.list = new AccountList(this, this.minecraft, this.width, this.height - 24 - 24 - 4 - 34, 34, 12);
++            this.list = new AccountList(this, this.minecraft, this.width, this.height - 24 - 24 - 4 - 34, 34, this.height - 24 - 24 - 4, 12);
+         }
+         this.addRenderableWidget(this.list);
+ 
+diff --recursive --unified --new-file 1.20.4/root/src/main/java/ru/vidtu/ias/screen/ConfigScreen.java 1.20.2/root/src/main/java/ru/vidtu/ias/screen/ConfigScreen.java
+--- 1.20.4/root/src/main/java/ru/vidtu/ias/screen/ConfigScreen.java	2025-05-27 12:20:42.476596600 +0300
++++ 1.20.2/root/src/main/java/ru/vidtu/ias/screen/ConfigScreen.java	2025-05-27 12:20:42.461174500 +0300
+@@ -23,7 +23,6 @@
+ import net.minecraft.ChatFormatting;
+ import net.minecraft.client.gui.GuiGraphics;
+ import net.minecraft.client.gui.components.Button;
+-import net.minecraft.client.gui.components.Checkbox;
+ import net.minecraft.client.gui.components.EditBox;
+ import net.minecraft.client.gui.components.Tooltip;
+ import net.minecraft.client.gui.screens.AlertScreen;
+@@ -38,6 +37,7 @@
+ import ru.vidtu.ias.config.IASConfig;
+ import ru.vidtu.ias.config.ServerMode;
+ import ru.vidtu.ias.config.TextAlign;
++import ru.vidtu.ias.legacy.LegacyCheckbox;
+ import ru.vidtu.ias.utils.Expression;
+ 
+ import java.util.Objects;
+@@ -131,19 +131,15 @@
+         }
+ 
+         // Title Text.
+-        Checkbox box = Checkbox.builder(Component.translatable("ias.config.titleText"), this.font)
+-                .pos(5, 20)
+-                .selected(IASConfig.titleText)
+-                .onValueChange((cb, value) -> {
+-                    IASConfig.titleText = value;
+-                    this.titleTextX.active = value;
+-                    this.titleTextY.active = value;
+-                    this.titleTextX.setEditable(value);
+-                    this.titleTextY.setEditable(value);
+-                    this.titleTextAlign.active = value;
+-                })
+-                .tooltip(Tooltip.create(Component.translatable("ias.config.titleText.tip")))
+-                .build();
++        LegacyCheckbox box = new LegacyCheckbox(this.font, 5, 20, Component.translatable("ias.config.titleText"), IASConfig.titleText, value -> {
++            IASConfig.titleText = value;
++            this.titleTextX.active = value;
++            this.titleTextY.active = value;
++            this.titleTextX.setEditable(value);
++            this.titleTextY.setEditable(value);
++            this.titleTextAlign.active = value;
++        });
++        box.setTooltip(Tooltip.create(Component.translatable("ias.config.titleText.tip")));
+         box.setTooltipDelay(250);
+         this.addRenderableWidget(box);
+ 
+@@ -197,18 +193,14 @@
+         this.addRenderableWidget(this.titleTextAlign);
+ 
+         // Title Button.
+-        box = Checkbox.builder(Component.translatable("ias.config.titleButton"), this.font)
+-                .pos(5, 44)
+-                .selected(IASConfig.titleButton)
+-                .onValueChange((cb, value) -> {
+-                    IASConfig.titleButton = value;
+-                    this.titleButtonX.active = value;
+-                    this.titleButtonY.active = value;
+-                    this.titleButtonX.setEditable(value);
+-                    this.titleButtonY.setEditable(value);
+-                })
+-                .tooltip(Tooltip.create(Component.translatable("ias.config.titleButton.tip")))
+-                .build();
++        box = new LegacyCheckbox(this.font, 5, 44, Component.translatable("ias.config.titleButton"), IASConfig.titleButton, value -> {
++            IASConfig.titleButton = value;
++            this.titleButtonX.active = value;
++            this.titleButtonY.active = value;
++            this.titleButtonX.setEditable(value);
++            this.titleButtonY.setEditable(value);
++        });
++        box.setTooltip(Tooltip.create(Component.translatable("ias.config.titleButton.tip")));
+         box.setTooltipDelay(250);
+         this.addRenderableWidget(box);
+ 
+@@ -245,19 +237,15 @@
+         this.addRenderableWidget(this.titleButtonY);
+ 
+         // Servers Text.
+-        box = Checkbox.builder(Component.translatable("ias.config.serversText"), this.font)
+-                .pos(5, 68)
+-                .selected(IASConfig.serversText)
+-                .onValueChange((cb, value) -> {
+-                    IASConfig.serversText = value;
+-                    this.serversTextX.active = value;
+-                    this.serversTextY.active = value;
+-                    this.serversTextX.setEditable(value);
+-                    this.serversTextY.setEditable(value);
+-                    this.serversTextAlign.active = value;
+-                })
+-                .tooltip(Tooltip.create(Component.translatable("ias.config.serversText.tip")))
+-                .build();
++        box = new LegacyCheckbox(this.font, 5, 68, Component.translatable("ias.config.serversText"), IASConfig.serversText, value -> {
++            IASConfig.serversText = value;
++            this.serversTextX.active = value;
++            this.serversTextY.active = value;
++            this.serversTextX.setEditable(value);
++            this.serversTextY.setEditable(value);
++            this.serversTextAlign.active = value;
++        });
++        box.setTooltip(Tooltip.create(Component.translatable("ias.config.serversText.tip")));
+         box.setTooltipDelay(250);
+         this.addRenderableWidget(box);
+ 
+@@ -311,18 +299,14 @@
+         this.addRenderableWidget(this.serversTextAlign);
+ 
+         // Servers Button.
+-        box = Checkbox.builder(Component.translatable("ias.config.serversButton"), this.font)
+-                .pos(5, 92)
+-                .selected(IASConfig.serversButton)
+-                .onValueChange((cb, value) -> {
+-                    IASConfig.serversButton = value;
+-                    this.serversButtonX.active = value;
+-                    this.serversButtonY.active = value;
+-                    this.serversButtonX.setEditable(value);
+-                    this.serversButtonY.setEditable(value);
+-                })
+-                .tooltip(Tooltip.create(Component.translatable("ias.config.serversButton.tip")))
+-                .build();
++        box = new LegacyCheckbox(this.font, 5, 92, Component.translatable("ias.config.serversButton"), IASConfig.serversButton, value -> {
++            IASConfig.serversButton = value;
++            this.serversButtonX.active = value;
++            this.serversButtonY.active = value;
++            this.serversButtonX.setEditable(value);
++            this.serversButtonY.setEditable(value);
++        });
++        box.setTooltip(Tooltip.create(Component.translatable("ias.config.serversButton.tip")));
+         box.setTooltipDelay(250);
+         this.addRenderableWidget(box);
+ 
+@@ -359,12 +343,8 @@
+         this.addRenderableWidget(this.serversButtonY);
+ 
+         // No Crypt Button.
+-        box = Checkbox.builder(Component.translatable("ias.config.allowNoCrypt"), this.font)
+-                .pos(5, 116)
+-                .selected(IASConfig.allowNoCrypt)
+-                .onValueChange((cb, value) -> IASConfig.allowNoCrypt = value)
+-                .tooltip(Tooltip.create(Component.translatable("ias.config.allowNoCrypt.tip")))
+-                .build();
++        box = new LegacyCheckbox(this.font, 5, 116, Component.translatable("ias.config.allowNoCrypt"), IASConfig.allowNoCrypt, value -> IASConfig.allowNoCrypt = value);
++        box.setTooltip(Tooltip.create(Component.translatable("ias.config.allowNoCrypt.tip")));
+         box.setTooltipDelay(250);
+         this.addRenderableWidget(box);
+ 
+@@ -384,48 +364,32 @@
+         this.addRenderableWidget(button);
+ 
+         // Nick Warns.
+-        box = Checkbox.builder(Component.translatable("ias.config.nickWarns"), this.font)
+-                .pos(5, 140)
+-                .selected(IASConfig.nickWarns)
+-                .onValueChange((cb, value) -> IASConfig.nickWarns = value)
+-                .tooltip(Tooltip.create(Component.translatable("ias.config.nickWarns.tip")))
+-                .build();
++        box = new LegacyCheckbox(this.font, 5, 140, Component.translatable("ias.config.nickWarns"), IASConfig.nickWarns, value -> IASConfig.nickWarns = value);
++        box.setTooltip(Tooltip.create(Component.translatable("ias.config.nickWarns.tip")));
+         box.setTooltipDelay(250);
+         this.addRenderableWidget(box);
+ 
+         // Password Echoing.
+-        box = Checkbox.builder(Component.translatable("ias.config.passwordEchoing"), this.font)
+-                .pos(10 + box.getWidth(), 140)
+-                .selected(IASConfig.passwordEchoing)
+-                .onValueChange((cb, value) -> IASConfig.passwordEchoing = value)
+-                .tooltip(Tooltip.create(Component.translatable("ias.config.passwordEchoing.tip")))
+-                .build();
++        box = new LegacyCheckbox(this.font, 10 + box.getWidth(), 140, Component.translatable("ias.config.passwordEchoing"), IASConfig.passwordEchoing, value -> IASConfig.passwordEchoing = value);
++        box.setTooltip(Tooltip.create(Component.translatable("ias.config.passwordEchoing.tip")));
+         box.setTooltipDelay(250);
+         this.addRenderableWidget(box);
+ 
+         // Unexpected Pigs.
+-        box = Checkbox.builder(Component.translatable("ias.config.unexpectedPigs"), this.font)
+-                .pos(5, 164)
+-                .selected(IASConfig.unexpectedPigs)
+-                .onValueChange((cb, value) -> {
+-                    IASConfig.unexpectedPigs = value;
+-                    this.minecraft.getSoundManager().play(SimpleSoundInstance.forUI(value ? SoundEvents.PIG_AMBIENT : SoundEvents.PIG_DEATH, 1.0F));
+-                })
+-                .tooltip(Tooltip.create(Component.translatable("ias.config.unexpectedPigs.tip")))
+-                .build();
++        box = new LegacyCheckbox(this.font, 5, 164, Component.translatable("ias.config.unexpectedPigs"), IASConfig.unexpectedPigs, value -> {
++            IASConfig.unexpectedPigs = value;
++            this.minecraft.getSoundManager().play(SimpleSoundInstance.forUI(value ? SoundEvents.PIG_AMBIENT : SoundEvents.PIG_DEATH, 1.0F));
++        });
++        box.setTooltip(Tooltip.create(Component.translatable("ias.config.unexpectedPigs.tip")));
+         box.setTooltipDelay(250);
+         this.addRenderableWidget(box);
+ 
+         // Bar Name.
+-        box = Checkbox.builder(Component.translatable("ias.config.barNick"), this.font)
+-                .pos(5, 188)
+-                .selected(IASConfig.barNick)
+-                .onValueChange((cb, value) -> {
+-                    IASConfig.barNick = value;
+-                    this.minecraft.updateTitle();
+-                })
+-                .tooltip(Tooltip.create(Component.translatable("ias.config.barNick.tip")))
+-                .build();
++        box = new LegacyCheckbox(this.font, 5, 188, Component.translatable("ias.config.barNick"), IASConfig.barNick, value -> {
++            IASConfig.barNick = value;
++            this.minecraft.updateTitle();
++        });
++        box.setTooltip(Tooltip.create(Component.translatable("ias.config.barNick.tip")));
+         box.setTooltipDelay(250);
+         this.addRenderableWidget(box);
+ 
+@@ -455,6 +419,7 @@
+     @Override
+     public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
+         // Render background and widgets.
++        this.renderBackground(graphics, mouseX, mouseY, delta);
+         super.render(graphics, mouseX, mouseY, delta);
+ 
+         // Render title.

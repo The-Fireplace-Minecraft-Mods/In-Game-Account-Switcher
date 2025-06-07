@@ -1,0 +1,10 @@
+{
+  "pack": {
+    "description": "In-Game Account Switcher",
+    "pack_format": 8,
+    "supported_formats": {
+      "min_inclusive": 8,
+      "max_inclusive": 55
+    }
+  }
+}

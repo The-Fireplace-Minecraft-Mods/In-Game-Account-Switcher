@@ -1,0 +1,29 @@
+-Xmx2G
+
+-XX:+IgnoreUnrecognizedVMOptions
+
+-Dfile.encoding=UTF-8
+-Dline.separator="\n"
+-Djava.awt.headless=true
+
+-Djdk.nio.maxCachedBufferSize=262144
+-Dio.netty.tryReflectionSetAccessible=true
+-Dio.netty.leakDetection.level=PARANOID
+
+-Dterminal.ansi=true
+
+-ea
+-esa
+-Dmixin.debug=true
+-Dmixin.debug.strict.unique=true
+-Dmixin.checks=true
+-Dslf4j.internal.verbosity=DEBUG
+-Dmax.bg.threads=1
+
+-XX:+AllowEnhancedClassRedefinition
+-XX:+AllowRedefinitionToAddDeleteMethods
+-XX:HotswapAgent=fatjar
+-Dfabric.debug.disableClassPathIsolation=true
+
+--add-opens java.base/java.nio=ALL-UNNAMED
+--add-opens java.base/jdk.internal.misc=ALL-UNNAMED

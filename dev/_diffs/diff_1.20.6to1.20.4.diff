@@ -1,0 +1,869 @@
+diff --recursive --unified --new-file 1.20.6/fabric/build.gradle.kts 1.20.4/fabric/build.gradle.kts
+--- 1.20.6/fabric/build.gradle.kts	2025-05-27 12:20:42.480953600 +0300
++++ 1.20.4/fabric/build.gradle.kts	2025-05-27 12:20:42.464315000 +0300
+@@ -21,19 +21,20 @@
+     alias(libs.plugins.architectury.loom)
+ }
+ 
+-java.sourceCompatibility = JavaVersion.VERSION_21
+-java.targetCompatibility = JavaVersion.VERSION_21
+-java.toolchain.languageVersion = JavaLanguageVersion.of(21)
++java.sourceCompatibility = JavaVersion.VERSION_17
++java.targetCompatibility = JavaVersion.VERSION_17
++java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+ group = "ru.vidtu.ias"
+-base.archivesName = "IAS-Fabric-1.20.6"
++base.archivesName = "IAS-Fabric-1.20.4"
+ description = "This mod allows you to change your logged in account in-game, without restarting Minecraft."
+-evaluationDependsOn(":1.20.6-root")
+-val shared = project(":1.20.6-root")
++evaluationDependsOn(":1.20.4-root")
++val shared = project(":1.20.4-root")
+ 
+ repositories {
+     mavenCentral()
+     maven("https://maven.fabricmc.net/")
+     maven("https://maven.terraformersmc.com/releases/")
++    maven("https://maven.nucleoid.xyz/") // TODO: Remove when ModMenu fixes dependency issues.
+ }
+ 
+ loom {
+@@ -59,13 +60,13 @@
+     compileOnlyApi(libs.error.prone.annotations)
+ 
+     // Minecraft (Provided)
+-    minecraft(libs.minecraft.mc1206)
++    minecraft(libs.minecraft.mc1204)
+     mappings(loom.officialMojangMappings())
+ 
+     // Fabric
+     modImplementation(libs.fabric.loader)
+-    modImplementation(libs.fabric.mc1206)
+-    modImplementation(libs.modmenu.mc1206)
++    modImplementation(libs.fabric.mc1204)
++    modImplementation(libs.modmenu.mc1204)
+ 
+     // Root
+     compileOnly(shared)
+@@ -76,7 +77,7 @@
+     source(shared.sourceSets.main.get().java)
+     options.encoding = "UTF-8"
+     options.compilerArgs.addAll(listOf("-g", "-parameters"))
+-    options.release = 21
++    options.release = 17
+ }
+ 
+ tasks.withType<ProcessResources> {
+@@ -102,7 +103,7 @@
+             "Specification-Title" to "In-Game Account Switcher",
+             "Specification-Version" to version,
+             "Specification-Vendor" to "VidTu",
+-            "Implementation-Title" to "IAS-Fabric-1.20.6",
++            "Implementation-Title" to "IAS-Fabric-1.20.4",
+             "Implementation-Version" to version,
+             "Implementation-Vendor" to "VidTu"
+         )
+diff --recursive --unified --new-file 1.20.6/fabric/gradle.properties 1.20.4/fabric/gradle.properties
+--- 1.20.6/fabric/gradle.properties	2025-05-27 12:20:42.480953600 +0300
++++ 1.20.4/fabric/gradle.properties	2025-05-27 12:20:42.465314700 +0300
+@@ -16,6 +16,6 @@
+ # along with this program.  If not, see <https://www.gnu.org/licenses/>
+ 
+ # Mod
+-display.type=Fabric/Quilt 1.20.6
+-modrinth.versions=1.20.6
++display.type=Fabric/Quilt 1.20.4
++modrinth.versions=1.20.4
+ modrinth.loaders=fabric,quilt
+diff --recursive --unified --new-file 1.20.6/fabric/src/main/resources/fabric.mod.json 1.20.4/fabric/src/main/resources/fabric.mod.json
+--- 1.20.6/fabric/src/main/resources/fabric.mod.json	2025-05-27 12:20:42.481958200 +0300
++++ 1.20.4/fabric/src/main/resources/fabric.mod.json	2025-05-27 12:20:42.467367700 +0300
+@@ -34,7 +34,7 @@
+     "ias.mixins.json"
+   ],
+   "depends": {
+-    "minecraft": "1.20.6",
++    "minecraft": "1.20.4",
+     "fabric-api": "*"
+   },
+   "recommends": {
+diff --recursive --unified --new-file 1.20.6/fabric/src/main/resources/quilt.mod.json 1.20.4/fabric/src/main/resources/quilt.mod.json
+--- 1.20.6/fabric/src/main/resources/quilt.mod.json	2025-05-27 12:20:42.483461300 +0300
++++ 1.20.4/fabric/src/main/resources/quilt.mod.json	2025-05-27 12:20:42.467367700 +0300
+@@ -27,8 +27,8 @@
+     "depends": [
+       {
+         "id": "minecraft",
+-        "versions": "1.20.6",
+-        "reason": "In-Game Account Switcher works only with Minecraft 1.20.6."
++        "versions": "1.20.4",
++        "reason": "In-Game Account Switcher works only with Minecraft 1.20.4."
+       },
+       {
+         "id": "fabric-api",
+diff --recursive --unified --new-file 1.20.6/forge/build.gradle.kts 1.20.4/forge/build.gradle.kts
+--- 1.20.6/forge/build.gradle.kts	2025-05-27 12:20:42.483461300 +0300
++++ 1.20.4/forge/build.gradle.kts	2025-05-27 12:20:42.467367700 +0300
+@@ -21,14 +21,14 @@
+     alias(libs.plugins.architectury.loom)
+ }
+ 
+-java.sourceCompatibility = JavaVersion.VERSION_21
+-java.targetCompatibility = JavaVersion.VERSION_21
+-java.toolchain.languageVersion = JavaLanguageVersion.of(21)
++java.sourceCompatibility = JavaVersion.VERSION_17
++java.targetCompatibility = JavaVersion.VERSION_17
++java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+ group = "ru.vidtu.ias"
+-base.archivesName = "IAS-Forge-1.20.6"
++base.archivesName = "IAS-Forge-1.20.4"
+ description = "This mod allows you to change your logged in account in-game, without restarting Minecraft."
+-evaluationDependsOn(":1.20.6-root")
+-val shared = project(":1.20.6-root")
++evaluationDependsOn(":1.20.4-root")
++val shared = project(":1.20.4-root")
+ 
+ loom {
+     silentMojangMappingsLicense()
+@@ -63,11 +63,11 @@
+     compileOnlyApi(libs.error.prone.annotations)
+ 
+     // Minecraft (Provided)
+-    minecraft(libs.minecraft.mc1206)
++    minecraft(libs.minecraft.mc1204)
+     mappings(loom.officialMojangMappings())
+ 
+     // Forge
+-    forge(libs.forge.mc1206)
++    forge(libs.forge.mc1204)
+ 
+     // Root
+     compileOnly(shared)
+@@ -78,7 +78,7 @@
+     source(shared.sourceSets.main.get().java)
+     options.encoding = "UTF-8"
+     options.compilerArgs.addAll(listOf("-g", "-parameters"))
+-    options.release = 21
++    options.release = 17
+ }
+ 
+ tasks.withType<ProcessResources> {
+@@ -104,7 +104,7 @@
+             "Specification-Title" to "In-Game Account Switcher",
+             "Specification-Version" to version,
+             "Specification-Vendor" to "VidTu",
+-            "Implementation-Title" to "IAS-Forge-1.20.6",
++            "Implementation-Title" to "IAS-Forge-1.20.4",
+             "Implementation-Version" to version,
+             "Implementation-Vendor" to "VidTu",
+             "MixinConfigs" to "ias.mixins.json"
+diff --recursive --unified --new-file 1.20.6/forge/gradle.properties 1.20.4/forge/gradle.properties
+--- 1.20.6/forge/gradle.properties	2025-05-27 12:20:42.483461300 +0300
++++ 1.20.4/forge/gradle.properties	2025-05-27 12:20:42.467367700 +0300
+@@ -19,6 +19,6 @@
+ loom.platform=forge
+ 
+ # Mod
+-display.type=Forge 1.20.6
+-modrinth.versions=1.20.6
++display.type=Forge 1.20.4
++modrinth.versions=1.20.4
+ modrinth.loaders=forge
+diff --recursive --unified --new-file 1.20.6/forge/src/main/resources/META-INF/mods.toml 1.20.4/forge/src/main/resources/META-INF/mods.toml
+--- 1.20.6/forge/src/main/resources/META-INF/mods.toml	2025-05-27 12:20:42.485478800 +0300
++++ 1.20.4/forge/src/main/resources/META-INF/mods.toml	2025-05-27 12:20:42.469421300 +0300
+@@ -26,7 +26,7 @@
+ modId = "forge"
+ type = "required"
+ mandatory = true
+-versionRange = "[50,51)"
++versionRange = "[49,50)"
+ ordering = "NONE"
+ side = "CLIENT"
+ 
+@@ -34,7 +34,7 @@
+ modId = "minecraft"
+ type = "required"
+ mandatory = true
+-versionRange = "[1.20.5,1.20.6]"
++versionRange = "[1.20.3,1.20.4]"
+ ordering = "NONE"
+ side = "CLIENT"
+ 
+diff --recursive --unified --new-file 1.20.6/forge/src/main/resources/pack.mcmeta 1.20.4/forge/src/main/resources/pack.mcmeta
+--- 1.20.6/forge/src/main/resources/pack.mcmeta	2025-05-27 12:20:42.485478800 +0300
++++ 1.20.4/forge/src/main/resources/pack.mcmeta	2025-05-27 12:20:42.469421300 +0300
+@@ -1,6 +1,6 @@
+ {
+   "pack": {
+-    "pack_format": 32,
++    "pack_format": 22,
+     "description": "In-Game Account Switcher"
+   }
+ }
+diff --recursive --unified --new-file 1.20.6/neoforge/build.gradle.kts 1.20.4/neoforge/build.gradle.kts
+--- 1.20.6/neoforge/build.gradle.kts	2025-05-27 12:20:42.486510200 +0300
++++ 1.20.4/neoforge/build.gradle.kts	2025-05-27 12:20:42.470424800 +0300
+@@ -21,14 +21,14 @@
+     alias(libs.plugins.architectury.loom)
+ }
+ 
+-java.sourceCompatibility = JavaVersion.VERSION_21
+-java.targetCompatibility = JavaVersion.VERSION_21
+-java.toolchain.languageVersion = JavaLanguageVersion.of(21)
++java.sourceCompatibility = JavaVersion.VERSION_17
++java.targetCompatibility = JavaVersion.VERSION_17
++java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+ group = "ru.vidtu.ias"
+-base.archivesName = "IAS-NeoForge-1.20.6"
++base.archivesName = "IAS-NeoForge-1.20.4"
+ description = "This mod allows you to change your logged in account in-game, without restarting Minecraft."
+-evaluationDependsOn(":1.20.6-root")
+-val shared = project(":1.20.6-root")
++evaluationDependsOn(":1.20.4-root")
++val shared = project(":1.20.4-root")
+ 
+ loom {
+     silentMojangMappingsLicense()
+@@ -65,11 +65,11 @@
+     compileOnlyApi(libs.error.prone.annotations)
+ 
+     // Minecraft (Provided)
+-    minecraft(libs.minecraft.mc1206)
++    minecraft(libs.minecraft.mc1204)
+     mappings(loom.officialMojangMappings())
+ 
+     // NeoForge
+-    neoForge(libs.neoforge.mc1206)
++    neoForge(libs.neoforge.mc1204)
+ 
+     // Root
+     compileOnly(shared)
+@@ -80,14 +80,14 @@
+     source(shared.sourceSets.main.get().java)
+     options.encoding = "UTF-8"
+     options.compilerArgs.addAll(listOf("-g", "-parameters"))
+-    options.release = 21
++    options.release = 17
+ }
+ 
+ tasks.withType<ProcessResources> {
+     from(rootProject.sourceSets.main.get().resources)
+     from(shared.sourceSets.main.get().resources)
+     inputs.property("version", version)
+-    filesMatching("META-INF/neoforge.mods.toml") {
++    filesMatching("META-INF/mods.toml") {
+         expand(inputs.properties)
+     }
+ }
+@@ -106,7 +106,7 @@
+             "Specification-Title" to "In-Game Account Switcher",
+             "Specification-Version" to version,
+             "Specification-Vendor" to "VidTu",
+-            "Implementation-Title" to "IAS-NeoForge-1.20.6",
++            "Implementation-Title" to "IAS-NeoForge-1.20.4",
+             "Implementation-Version" to version,
+             "Implementation-Vendor" to "VidTu",
+             "MixinConfigs" to "ias.mixins.json"
+diff --recursive --unified --new-file 1.20.6/neoforge/gradle.properties 1.20.4/neoforge/gradle.properties
+--- 1.20.6/neoforge/gradle.properties	2025-05-27 12:20:42.486510200 +0300
++++ 1.20.4/neoforge/gradle.properties	2025-05-27 12:20:42.470424800 +0300
+@@ -19,6 +19,6 @@
+ loom.platform=neoforge
+ 
+ # Mod
+-display.type=NeoForge 1.20.6
+-modrinth.versions=1.20.6
++display.type=NeoForge 1.20.4
++modrinth.versions=1.20.4
+ modrinth.loaders=neoforge
+diff --recursive --unified --new-file 1.20.6/neoforge/src/main/java/ru/vidtu/ias/IASNeoForge.java 1.20.4/neoforge/src/main/java/ru/vidtu/ias/IASNeoForge.java
+--- 1.20.6/neoforge/src/main/java/ru/vidtu/ias/IASNeoForge.java	2025-05-27 12:20:42.487836700 +0300
++++ 1.20.4/neoforge/src/main/java/ru/vidtu/ias/IASNeoForge.java	2025-05-27 12:20:42.471428000 +0300
+@@ -22,14 +22,15 @@
+ import net.minecraft.client.gui.screens.Screen;
+ import net.neoforged.api.distmarker.Dist;
+ import net.neoforged.bus.api.SubscribeEvent;
++import net.neoforged.fml.IExtensionPoint;
+ import net.neoforged.fml.ModContainer;
+ import net.neoforged.fml.ModList;
+ import net.neoforged.fml.ModLoadingContext;
+ import net.neoforged.fml.common.Mod;
+ import net.neoforged.fml.loading.FMLEnvironment;
+ import net.neoforged.fml.loading.FMLPaths;
++import net.neoforged.neoforge.client.ConfigScreenHandler;
+ import net.neoforged.neoforge.client.event.ScreenEvent;
+-import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
+ import net.neoforged.neoforge.common.NeoForge;
+ import net.neoforged.neoforge.event.GameShuttingDownEvent;
+ import net.neoforged.neoforgespi.language.IModInfo;
+@@ -62,7 +63,8 @@
+         NeoForge.EVENT_BUS.register(this);
+ 
+         // Register various display tests and config hooks.
+-        ModLoadingContext.get().registerExtensionPoint(IConfigScreenFactory.class, () -> (minecraft, screen) -> new ConfigScreen(screen));
++        ModLoadingContext.get().registerExtensionPoint(IExtensionPoint.DisplayTest.class, () -> new IExtensionPoint.DisplayTest(() -> IExtensionPoint.DisplayTest.IGNORESERVERONLY, (version, server) -> true));
++        ModLoadingContext.get().registerExtensionPoint(ConfigScreenHandler.ConfigScreenFactory.class, () -> new ConfigScreenHandler.ConfigScreenFactory((minecraft, screen) -> new ConfigScreen(screen)));
+ 
+         // Create the UA and initialize.
+         String modVersion = ModList.get().getModContainerById("ias")
+diff --recursive --unified --new-file 1.20.6/neoforge/src/main/resources/META-INF/mods.toml 1.20.4/neoforge/src/main/resources/META-INF/mods.toml
+--- 1.20.6/neoforge/src/main/resources/META-INF/mods.toml	1970-01-01 03:00:00.000000000 +0300
++++ 1.20.4/neoforge/src/main/resources/META-INF/mods.toml	2025-05-27 12:20:42.472433500 +0300
+@@ -0,0 +1,47 @@
++modLoader = "javafml"
++loaderVersion = "[0,)"
++license = "LGPL-3.0-or-later"
++issueTrackerURL = "https://github.com/The-Fireplace-Minecraft-Mods/In-Game-Account-Switcher/issues"
++clientSideOnly = true
++
++[[mods]]
++modId = "ias"
++version = "${version}"
++displayName = "In-Game Account Switcher"
++updateJSONURL = "https://raw.githubusercontent.com/The-Fireplace-Minecraft-Mods/In-Game-Account-Switcher/main/updater-neoforge.json"
++displayURL = "https://modrinth.com/mod/in-game-account-switcher"
++issueTrackerURL = "https://github.com/The-Fireplace-Minecraft-Mods/In-Game-Account-Switcher/issues"
++catalogueImageIcon = "ias_64.png"
++catalogueItemIcon = "minecraft:player_head"
++itemIcon = "minecraft:player_head"
++logoFile = "ias_240.png"
++credits = "The_Fireplace, The_BrainStone, 2xsaiko, Elvm"
++authors = "VidTu"
++displayTest = "IGNORE_ALL_VERSION"
++description = '''
++Allows you to change which account you are signed in to in-game without restarting Minecraft.
++'''
++
++[[mixins]]
++config="ias.mixins.json"
++
++[[dependencies.ias]]
++modId = "neoforge"
++type = "required"
++mandatory = true
++versionRange = "[20.3,20.5)"
++ordering = "NONE"
++side = "CLIENT"
++
++[[dependencies.ias]]
++modId = "minecraft"
++type = "required"
++mandatory = true
++versionRange = "[1.20.3,1.20.4]"
++ordering = "NONE"
++side = "CLIENT"
++
++[modproperties.ias]
++catalogueImageIcon = "ias_64.png"
++catalogueItemIcon = "minecraft:player_head"
++itemIcon = "minecraft:player_head"
+diff --recursive --unified --new-file 1.20.6/neoforge/src/main/resources/META-INF/neoforge.mods.toml 1.20.4/neoforge/src/main/resources/META-INF/neoforge.mods.toml
+--- 1.20.6/neoforge/src/main/resources/META-INF/neoforge.mods.toml	2025-05-27 12:20:42.488840000 +0300
++++ 1.20.4/neoforge/src/main/resources/META-INF/neoforge.mods.toml	1970-01-01 03:00:00.000000000 +0300
+@@ -1,47 +0,0 @@
+-modLoader = "javafml"
+-loaderVersion = "[0,)"
+-license = "LGPL-3.0-or-later"
+-issueTrackerURL = "https://github.com/The-Fireplace-Minecraft-Mods/In-Game-Account-Switcher/issues"
+-clientSideOnly = true
+-
+-[[mods]]
+-modId = "ias"
+-version = "${version}"
+-displayName = "In-Game Account Switcher"
+-updateJSONURL = "https://raw.githubusercontent.com/The-Fireplace-Minecraft-Mods/In-Game-Account-Switcher/main/updater-neoforge.json"
+-displayURL = "https://modrinth.com/mod/in-game-account-switcher"
+-issueTrackerURL = "https://github.com/The-Fireplace-Minecraft-Mods/In-Game-Account-Switcher/issues"
+-catalogueImageIcon = "ias_64.png"
+-catalogueItemIcon = "minecraft:player_head"
+-itemIcon = "minecraft:player_head"
+-logoFile = "ias_240.png"
+-credits = "The_Fireplace, The_BrainStone, 2xsaiko, Elvm"
+-authors = "VidTu"
+-displayTest = "IGNORE_ALL_VERSION"
+-description = '''
+-Allows you to change which account you are signed in to in-game without restarting Minecraft.
+-'''
+-
+-[[mixins]]
+-config="ias.mixins.json"
+-
+-[[dependencies.ias]]
+-modId = "neoforge"
+-type = "required"
+-mandatory = true
+-versionRange = "[20.5,20.7)"
+-ordering = "NONE"
+-side = "CLIENT"
+-
+-[[dependencies.ias]]
+-modId = "minecraft"
+-type = "required"
+-mandatory = true
+-versionRange = "[1.20.5,1.20.6]"
+-ordering = "NONE"
+-side = "CLIENT"
+-
+-[modproperties.ias]
+-catalogueImageIcon = "ias_64.png"
+-catalogueItemIcon = "minecraft:player_head"
+-itemIcon = "minecraft:player_head"
+diff --recursive --unified --new-file 1.20.6/neoforge/src/main/resources/pack.mcmeta 1.20.4/neoforge/src/main/resources/pack.mcmeta
+--- 1.20.6/neoforge/src/main/resources/pack.mcmeta	2025-05-27 12:20:42.488840000 +0300
++++ 1.20.4/neoforge/src/main/resources/pack.mcmeta	2025-05-27 12:20:42.472433500 +0300
+@@ -1,6 +1,6 @@
+ {
+   "pack": {
+-    "pack_format": 32,
++    "pack_format": 22,
+     "description": "In-Game Account Switcher"
+   }
+ }
+diff --recursive --unified --new-file 1.20.6/root/build.gradle.kts 1.20.4/root/build.gradle.kts
+--- 1.20.6/root/build.gradle.kts	2025-05-27 12:20:42.488840000 +0300
++++ 1.20.4/root/build.gradle.kts	2025-05-27 12:20:42.473431900 +0300
+@@ -21,11 +21,11 @@
+     alias(libs.plugins.architectury.loom)
+ }
+ 
+-java.sourceCompatibility = JavaVersion.VERSION_21
+-java.targetCompatibility = JavaVersion.VERSION_21
+-java.toolchain.languageVersion = JavaLanguageVersion.of(21)
++java.sourceCompatibility = JavaVersion.VERSION_17
++java.targetCompatibility = JavaVersion.VERSION_17
++java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+ group = "ru.vidtu.ias"
+-base.archivesName = "IAS-1.20.6"
++base.archivesName = "IAS-1.20.4"
+ description = "This mod allows you to change your logged in account in-game, without restarting Minecraft."
+ 
+ repositories {
+@@ -43,7 +43,7 @@
+     compileOnlyApi(libs.error.prone.annotations)
+ 
+     // Minecraft (Provided)
+-    minecraft(libs.minecraft.mc1206)
++    minecraft(libs.minecraft.mc1204)
+     mappings(loom.officialMojangMappings())
+ 
+     // Mixin
+@@ -57,7 +57,7 @@
+     source(rootProject.sourceSets.main.get().java)
+     options.encoding = "UTF-8"
+     options.compilerArgs.addAll(listOf("-g", "-parameters"))
+-    options.release = 21
++    options.release = 17
+ }
+ 
+ tasks.withType<ProcessResources> {
+@@ -78,7 +78,7 @@
+             "Specification-Title" to "In-Game Account Switcher",
+             "Specification-Version" to version,
+             "Specification-Vendor" to "VidTu",
+-            "Implementation-Title" to "IAS-1.20.6",
++            "Implementation-Title" to "IAS-1.20.4",
+             "Implementation-Version" to version,
+             "Implementation-Vendor" to "VidTu"
+         )
+diff --recursive --unified --new-file 1.20.6/root/src/main/java/ru/vidtu/ias/IASMinecraft.java 1.20.4/root/src/main/java/ru/vidtu/ias/IASMinecraft.java
+--- 1.20.6/root/src/main/java/ru/vidtu/ias/IASMinecraft.java	2025-05-27 12:20:42.490030300 +0300
++++ 1.20.4/root/src/main/java/ru/vidtu/ias/IASMinecraft.java	2025-05-27 12:20:42.474479800 +0300
+@@ -57,7 +57,6 @@
+ import ru.vidtu.ias.utils.exceptions.FriendlyException;
+ 
+ import java.nio.file.Path;
+-import java.time.Duration;
+ import java.util.Optional;
+ import java.util.concurrent.CompletableFuture;
+ import java.util.function.Consumer;
+@@ -178,7 +177,7 @@
+             // Add the button.
+             ImageButton button = new ImageButton(x, y, 20, 20, BUTTON, btn -> minecraft.setScreen(new AccountScreen(screen)), Component.literal("In-Game Account Switcher"));
+             button.setTooltip(Tooltip.create(button.getMessage()));
+-            button.setTooltipDelay(Duration.ofMillis(250L));
++            button.setTooltipDelay(250);
+             buttonAdder.accept(button);
+         }
+ 
+@@ -222,7 +221,7 @@
+             // Add the button.
+             ImageButton button = new ImageButton(x, y, 20, 20, BUTTON, btn -> minecraft.setScreen(new AccountScreen(screen)), Component.literal("In-Game Account Switcher"));
+             button.setTooltip(Tooltip.create(button.getMessage()));
+-            button.setTooltipDelay(Duration.ofMillis(250L));
++            button.setTooltipDelay(250);
+             buttonAdder.accept(button);
+         }
+ 
+diff --recursive --unified --new-file 1.20.6/root/src/main/java/ru/vidtu/ias/screen/AccountEntry.java 1.20.4/root/src/main/java/ru/vidtu/ias/screen/AccountEntry.java
+--- 1.20.6/root/src/main/java/ru/vidtu/ias/screen/AccountEntry.java	2025-05-27 12:20:42.491069900 +0300
++++ 1.20.4/root/src/main/java/ru/vidtu/ias/screen/AccountEntry.java	2025-05-27 12:20:42.475478800 +0300
+@@ -168,7 +168,7 @@
+             // Render up widget.
+             ResourceLocation upTexture;
+             int upX = x + width - 28;
+-            if (this == this.list.children().getFirst()) {
++            if (this == this.list.children().get(0)) {
+                 upTexture = UP.disabled();
+             } else if (mouseX >= upX && mouseY >= y && mouseX <= upX + 11 && mouseY <= y + height) {
+                 upTexture = UP.enabledFocused();
+@@ -180,7 +180,7 @@
+             // Render down widget.
+             ResourceLocation downTexture;
+             int downX = x + width - 15;
+-            if (this == this.list.children().getLast()) {
++            if (this == this.list.children().get(this.list.children().size() - 1)) {
+                 downTexture = DOWN.disabled();
+             } else if (mouseX >= downX && mouseY >= y && mouseX <= downX + 11 && mouseY <= y + height) {
+                 downTexture = DOWN.enabledFocused();
+diff --recursive --unified --new-file 1.20.6/root/src/main/java/ru/vidtu/ias/screen/AccountScreen.java 1.20.4/root/src/main/java/ru/vidtu/ias/screen/AccountScreen.java
+--- 1.20.6/root/src/main/java/ru/vidtu/ias/screen/AccountScreen.java	2025-05-27 12:20:42.492073600 +0300
++++ 1.20.4/root/src/main/java/ru/vidtu/ias/screen/AccountScreen.java	2025-05-27 12:20:42.475478800 +0300
+@@ -39,8 +39,6 @@
+ import ru.vidtu.ias.account.Account;
+ import ru.vidtu.ias.config.IASStorage;
+ 
+-import java.time.Duration;
+-
+ public final class AccountScreen extends Screen {
+     /**
+      * Logger for this class.
+@@ -254,7 +252,7 @@
+         } else {
+             this.login.active = false;
+             this.login.setTooltip(Tooltip.create(Component.translatable("ias.accounts.login.offline")));
+-            this.login.setTooltipDelay(Duration.ZERO);
++            this.login.setTooltipDelay(-1);
+         }
+ 
+         // Show skin.
+diff --recursive --unified --new-file 1.20.6/root/src/main/java/ru/vidtu/ias/screen/AddPopupScreen.java 1.20.4/root/src/main/java/ru/vidtu/ias/screen/AddPopupScreen.java
+--- 1.20.6/root/src/main/java/ru/vidtu/ias/screen/AddPopupScreen.java	2025-05-27 12:20:42.492073600 +0300
++++ 1.20.4/root/src/main/java/ru/vidtu/ias/screen/AddPopupScreen.java	2025-05-27 12:20:42.476596600 +0300
+@@ -27,7 +27,6 @@
+ import net.minecraft.network.chat.Component;
+ import ru.vidtu.ias.account.Account;
+ 
+-import java.time.Duration;
+ import java.util.function.Consumer;
+ import java.util.function.Supplier;
+ 
+@@ -74,7 +73,7 @@
+         PopupButton button = new PopupButton(this.width / 2 - 75, this.height / 2 - 24, 150, 20,
+                 Component.translatable("ias.add.microsoft"), btn -> this.minecraft.setScreen(new MicrosoftCryptPopupScreen(this.parent, this.handler)), Supplier::get);
+         button.setTooltip(Tooltip.create(Component.translatable("ias.add.microsoft.tip")));
+-        button.setTooltipDelay(Duration.ofMillis(250L));
++        button.setTooltipDelay(250);
+         button.color(0.5F, 1.0F, 0.5F, true);
+         this.addRenderableWidget(button);
+ 
+@@ -82,7 +81,7 @@
+         button = new PopupButton(this.width / 2 - 75, this.height / 2, 150, 20,
+                 Component.translatable("ias.add.offline"), btn -> this.minecraft.setScreen(new OfflinePopupScreen(this.parent, this.handler)), Supplier::get);
+         button.setTooltip(Tooltip.create(Component.translatable("ias.add.offline.tip")));
+-        button.setTooltipDelay(Duration.ofMillis(250L));
++        button.setTooltipDelay(250);
+         button.color(1.0F, 0.5F, 0.5F, true);
+         this.addRenderableWidget(button);
+ 
+diff --recursive --unified --new-file 1.20.6/root/src/main/java/ru/vidtu/ias/screen/ConfigScreen.java 1.20.4/root/src/main/java/ru/vidtu/ias/screen/ConfigScreen.java
+--- 1.20.6/root/src/main/java/ru/vidtu/ias/screen/ConfigScreen.java	2025-05-27 12:20:42.492073600 +0300
++++ 1.20.4/root/src/main/java/ru/vidtu/ias/screen/ConfigScreen.java	2025-05-27 12:20:42.476596600 +0300
+@@ -40,7 +40,6 @@
+ import ru.vidtu.ias.config.TextAlign;
+ import ru.vidtu.ias.utils.Expression;
+ 
+-import java.time.Duration;
+ import java.util.Objects;
+ 
+ /**
+@@ -145,14 +144,14 @@
+                 })
+                 .tooltip(Tooltip.create(Component.translatable("ias.config.titleText.tip")))
+                 .build();
+-        box.setTooltipDelay(Duration.ofMillis(250L));
++        box.setTooltipDelay(250);
+         this.addRenderableWidget(box);
+ 
+         // Title Text X.
+         this.titleTextX = new EditBox(this.font, 9 + box.getWidth(), 20, 75, 20, this.titleTextX, Component.translatable("ias.config.titleText.x"));
+         this.titleTextX.setHint(this.titleTextX.getMessage().copy().withStyle(ChatFormatting.DARK_GRAY));
+         this.titleTextX.setTooltip(Tooltip.create(Component.translatable("ias.config.titleText.x.tip", Component.translatable("key.keyboard.left.alt"))));
+-        this.titleTextX.setTooltipDelay(Duration.ofMillis(250L));
++        this.titleTextX.setTooltipDelay(250);
+         this.titleTextX.active = box.selected();
+         this.titleTextX.setEditable(box.selected());
+         this.titleTextX.setMaxLength(128);
+@@ -168,7 +167,7 @@
+         this.titleTextY = new EditBox(this.font, 88 + box.getWidth(), 20, 75, 20, this.titleTextY, Component.translatable("ias.config.titleText.y"));
+         this.titleTextY.setHint(this.titleTextY.getMessage().copy().withStyle(ChatFormatting.DARK_GRAY));
+         this.titleTextY.setTooltip(Tooltip.create(Component.translatable("ias.config.titleText.y.tip", Component.translatable("key.keyboard.left.alt"))));
+-        this.titleTextY.setTooltipDelay(Duration.ofMillis(250L));
++        this.titleTextY.setTooltipDelay(250);
+         this.titleTextY.active = box.selected();
+         this.titleTextY.setEditable(box.selected());
+         this.titleTextY.setMaxLength(128);
+@@ -194,7 +193,7 @@
+                 .build();
+         this.titleTextAlign.active = box.selected();
+         this.titleTextAlign.setTooltip(Tooltip.create(Component.translatable("ias.config.titleTextAlign.tip")));
+-        this.titleTextAlign.setTooltipDelay(Duration.ofMillis(250L));
++        this.titleTextAlign.setTooltipDelay(250);
+         this.addRenderableWidget(this.titleTextAlign);
+ 
+         // Title Button.
+@@ -210,14 +209,14 @@
+                 })
+                 .tooltip(Tooltip.create(Component.translatable("ias.config.titleButton.tip")))
+                 .build();
+-        box.setTooltipDelay(Duration.ofMillis(250L));
++        box.setTooltipDelay(250);
+         this.addRenderableWidget(box);
+ 
+         // Title Button X.
+         this.titleButtonX = new EditBox(this.font, 9 + box.getWidth(), 44, 75, 20, this.titleButtonX, Component.translatable("ias.config.titleButton.x"));
+         this.titleButtonX.setHint(this.titleButtonX.getMessage().copy().withStyle(ChatFormatting.DARK_GRAY));
+         this.titleButtonX.setTooltip(Tooltip.create(Component.translatable("ias.config.titleButton.x.tip", Component.translatable("key.keyboard.left.alt"))));
+-        this.titleButtonX.setTooltipDelay(Duration.ofMillis(250L));
++        this.titleButtonX.setTooltipDelay(250);
+         this.titleButtonX.active = box.selected();
+         this.titleButtonX.setEditable(box.selected());
+         this.titleButtonX.setMaxLength(128);
+@@ -233,7 +232,7 @@
+         this.titleButtonY = new EditBox(this.font, 88 + box.getWidth(), 44, 75, 20, this.titleButtonY, Component.translatable("ias.config.titleButton.y"));
+         this.titleButtonY.setHint(this.titleButtonY.getMessage().copy().withStyle(ChatFormatting.DARK_GRAY));
+         this.titleButtonY.setTooltip(Tooltip.create(Component.translatable("ias.config.titleButton.y.tip", Component.translatable("key.keyboard.left.alt"))));
+-        this.titleButtonY.setTooltipDelay(Duration.ofMillis(250L));
++        this.titleButtonY.setTooltipDelay(250);
+         this.titleButtonY.active = box.selected();
+         this.titleButtonY.setEditable(box.selected());
+         this.titleButtonY.setMaxLength(128);
+@@ -259,14 +258,14 @@
+                 })
+                 .tooltip(Tooltip.create(Component.translatable("ias.config.serversText.tip")))
+                 .build();
+-        box.setTooltipDelay(Duration.ofMillis(250L));
++        box.setTooltipDelay(250);
+         this.addRenderableWidget(box);
+ 
+         // Servers Text X.
+         this.serversTextX = new EditBox(this.font, 9 + box.getWidth(), 68, 75, 20, this.serversTextX, Component.translatable("ias.config.serversText.x"));
+         this.serversTextX.setHint(this.serversTextX.getMessage().copy().withStyle(ChatFormatting.DARK_GRAY));
+         this.serversTextX.setTooltip(Tooltip.create(Component.translatable("ias.config.serversText.x.tip", Component.translatable("key.keyboard.left.alt"))));
+-        this.serversTextX.setTooltipDelay(Duration.ofMillis(250L));
++        this.serversTextX.setTooltipDelay(250);
+         this.serversTextX.active = box.selected();
+         this.serversTextX.setEditable(box.selected());
+         this.serversTextX.setMaxLength(128);
+@@ -282,7 +281,7 @@
+         this.serversTextY = new EditBox(this.font, 88 + box.getWidth(), 68, 75, 20, this.serversTextY, Component.translatable("ias.config.serversText.y"));
+         this.serversTextY.setHint(this.serversTextY.getMessage().copy().withStyle(ChatFormatting.DARK_GRAY));
+         this.serversTextY.setTooltip(Tooltip.create(Component.translatable("ias.config.serversText.y.tip", Component.translatable("key.keyboard.left.alt"))));
+-        this.serversTextY.setTooltipDelay(Duration.ofMillis(250L));
++        this.serversTextY.setTooltipDelay(250);
+         this.serversTextY.active = box.selected();
+         this.serversTextY.setEditable(box.selected());
+         this.serversTextY.setMaxLength(128);
+@@ -308,7 +307,7 @@
+                 .build();
+         this.serversTextAlign.active = box.selected();
+         this.serversTextAlign.setTooltip(Tooltip.create(Component.translatable("ias.config.serversTextAlign.tip")));
+-        this.serversTextAlign.setTooltipDelay(Duration.ofMillis(250L));
++        this.serversTextAlign.setTooltipDelay(250);
+         this.addRenderableWidget(this.serversTextAlign);
+ 
+         // Servers Button.
+@@ -324,14 +323,14 @@
+                 })
+                 .tooltip(Tooltip.create(Component.translatable("ias.config.serversButton.tip")))
+                 .build();
+-        box.setTooltipDelay(Duration.ofMillis(250L));
++        box.setTooltipDelay(250);
+         this.addRenderableWidget(box);
+ 
+         // Servers Button X.
+         this.serversButtonX = new EditBox(this.font, 9 + box.getWidth(), 92, 75, 20, this.serversButtonX, Component.translatable("ias.config.serversButton.x"));
+         this.serversButtonX.setHint(this.serversButtonX.getMessage().copy().withStyle(ChatFormatting.DARK_GRAY));
+         this.serversButtonX.setTooltip(Tooltip.create(Component.translatable("ias.config.serversButton.x.tip", Component.translatable("key.keyboard.left.alt"))));
+-        this.serversButtonX.setTooltipDelay(Duration.ofMillis(250L));
++        this.serversButtonX.setTooltipDelay(250);
+         this.serversButtonX.active = box.selected();
+         this.serversButtonX.setEditable(box.selected());
+         this.serversButtonX.setMaxLength(128);
+@@ -347,7 +346,7 @@
+         this.serversButtonY = new EditBox(this.font, 88 + box.getWidth(), 92, 75, 20, this.serversButtonY, Component.translatable("ias.config.serversButton.y"));
+         this.serversButtonY.setHint(this.serversButtonY.getMessage().copy().withStyle(ChatFormatting.DARK_GRAY));
+         this.serversButtonY.setTooltip(Tooltip.create(Component.translatable("ias.config.serversButton.y.tip", Component.translatable("key.keyboard.left.alt"))));
+-        this.serversButtonY.setTooltipDelay(Duration.ofMillis(250L));
++        this.serversButtonY.setTooltipDelay(250);
+         this.serversButtonY.active = box.selected();
+         this.serversButtonY.setEditable(box.selected());
+         this.serversButtonY.setMaxLength(128);
+@@ -366,7 +365,7 @@
+                 .onValueChange((cb, value) -> IASConfig.allowNoCrypt = value)
+                 .tooltip(Tooltip.create(Component.translatable("ias.config.allowNoCrypt.tip")))
+                 .build();
+-        box.setTooltipDelay(Duration.ofMillis(250L));
++        box.setTooltipDelay(250);
+         this.addRenderableWidget(box);
+ 
+         // Sun Server.
+@@ -381,7 +380,7 @@
+             // Set the message.
+             btn.setMessage(CommonComponents.optionNameValue(Component.translatable("ias.config.server"), Component.translatable(IASConfig.server.toString())));
+         }).bounds(9 + box.getWidth(), 116, 200, 20).tooltip(Tooltip.create(Component.translatable("ias.config.server.tip"))).build();
+-        button.setTooltipDelay(Duration.ofMillis(250L));
++        button.setTooltipDelay(250);
+         this.addRenderableWidget(button);
+ 
+         // Nick Warns.
+@@ -391,7 +390,7 @@
+                 .onValueChange((cb, value) -> IASConfig.nickWarns = value)
+                 .tooltip(Tooltip.create(Component.translatable("ias.config.nickWarns.tip")))
+                 .build();
+-        box.setTooltipDelay(Duration.ofMillis(250L));
++        box.setTooltipDelay(250);
+         this.addRenderableWidget(box);
+ 
+         // Password Echoing.
+@@ -401,7 +400,7 @@
+                 .onValueChange((cb, value) -> IASConfig.passwordEchoing = value)
+                 .tooltip(Tooltip.create(Component.translatable("ias.config.passwordEchoing.tip")))
+                 .build();
+-        box.setTooltipDelay(Duration.ofMillis(250L));
++        box.setTooltipDelay(250);
+         this.addRenderableWidget(box);
+ 
+         // Unexpected Pigs.
+@@ -414,7 +413,7 @@
+                 })
+                 .tooltip(Tooltip.create(Component.translatable("ias.config.unexpectedPigs.tip")))
+                 .build();
+-        box.setTooltipDelay(Duration.ofMillis(250L));
++        box.setTooltipDelay(250);
+         this.addRenderableWidget(box);
+ 
+         // Bar Name.
+@@ -427,7 +426,7 @@
+                 })
+                 .tooltip(Tooltip.create(Component.translatable("ias.config.barNick.tip")))
+                 .build();
+-        box.setTooltipDelay(Duration.ofMillis(250L));
++        box.setTooltipDelay(250);
+         this.addRenderableWidget(box);
+ 
+         // Add done button.
+diff --recursive --unified --new-file 1.20.6/root/src/main/java/ru/vidtu/ias/screen/DeletePopupScreen.java 1.20.4/root/src/main/java/ru/vidtu/ias/screen/DeletePopupScreen.java
+--- 1.20.6/root/src/main/java/ru/vidtu/ias/screen/DeletePopupScreen.java	2025-05-27 12:20:42.492073600 +0300
++++ 1.20.4/root/src/main/java/ru/vidtu/ias/screen/DeletePopupScreen.java	2025-05-27 12:20:42.476596600 +0300
+@@ -29,7 +29,6 @@
+ import net.minecraft.network.chat.Component;
+ import ru.vidtu.ias.account.Account;
+ 
+-import java.time.Duration;
+ import java.util.function.Supplier;
+ 
+ /**
+@@ -91,7 +90,7 @@
+             this.onClose();
+         }, Supplier::get);
+         button.setTooltip(Tooltip.create(Component.translatable("ias.delete.hint", Component.translatable("key.keyboard.left.shift"))));
+-        button.setTooltipDelay(Duration.ofMillis(250L));
++        button.setTooltipDelay(250);
+         button.color(1.0F, 0.5F, 0.5F, true);
+         this.addRenderableWidget(button);
+ 
+diff --recursive --unified --new-file 1.20.6/root/src/main/java/ru/vidtu/ias/screen/MicrosoftCryptPopupScreen.java 1.20.4/root/src/main/java/ru/vidtu/ias/screen/MicrosoftCryptPopupScreen.java
+--- 1.20.6/root/src/main/java/ru/vidtu/ias/screen/MicrosoftCryptPopupScreen.java	2025-05-27 12:20:42.493577600 +0300
++++ 1.20.4/root/src/main/java/ru/vidtu/ias/screen/MicrosoftCryptPopupScreen.java	2025-05-27 12:20:42.477601100 +0300
+@@ -31,7 +31,6 @@
+ import ru.vidtu.ias.crypt.DummyCrypt;
+ import ru.vidtu.ias.crypt.HardwareCrypt;
+ 
+-import java.time.Duration;
+ import java.util.function.Consumer;
+ import java.util.function.Supplier;
+ 
+@@ -82,7 +81,7 @@
+         PopupButton button = new PopupButton(this.width / 2 - 75, this.height / 2 - 24 - 12, 150, 20,
+                 Component.translatable("ias.microsoft.password"), btn -> this.minecraft.setScreen(new MicrosoftPopupScreen(this.parent, this.handler, null)), Supplier::get);
+         button.setTooltip(Tooltip.create(Component.translatable("ias.microsoft.password.tip")));
+-        button.setTooltipDelay(Duration.ofMillis(250L));
++        button.setTooltipDelay(250);
+         button.color(0.5F, 1.0F, 0.5F, true);
+         this.addRenderableWidget(button);
+ 
+@@ -90,7 +89,7 @@
+         button = new PopupButton(this.width / 2 - 75, this.height / 2 - 12, 150, 20,
+                 Component.translatable("ias.microsoft.hardware"), btn -> this.minecraft.setScreen(new MicrosoftPopupScreen(this.parent, this.handler, HardwareCrypt.INSTANCE_V2)), Supplier::get);
+         button.setTooltip(Tooltip.create(Component.translatable("ias.microsoft.hardware.tip")));
+-        button.setTooltipDelay(Duration.ofMillis(250L));
++        button.setTooltipDelay(250);
+         button.color(1.0F, 1.0F, 0.5F, true);
+         this.addRenderableWidget(button);
+ 
+@@ -102,7 +101,7 @@
+         } else {
+             this.plain.setTooltip(Tooltip.create(Component.translatable("ias.microsoft.plain.tip.no")));
+         }
+-        this.plain.setTooltipDelay(Duration.ofMillis(250L));
++        this.plain.setTooltipDelay(250);
+         this.plain.color(1.0F, 0.5F, 0.5F, true);
+         this.plain.active = false;
+         this.addRenderableWidget(this.plain);
+@@ -175,7 +174,7 @@
+ 
+             // Recolor button and update tooltip.
+             this.plain.setTooltip(Tooltip.create(Component.translatable("ias.microsoft.plain.tip.on")));
+-            this.plain.setTooltipDelay(Duration.ofMillis(250L));
++            this.plain.setTooltipDelay(250);
+             this.plain.color(1.0F, 0.25F, 0.25F, false);
+         }
+ 
+diff --recursive --unified --new-file 1.20.6/root/src/main/java/ru/vidtu/ias/screen/OfflinePopupScreen.java 1.20.4/root/src/main/java/ru/vidtu/ias/screen/OfflinePopupScreen.java
+--- 1.20.6/root/src/main/java/ru/vidtu/ias/screen/OfflinePopupScreen.java	2025-05-27 12:20:42.494678200 +0300
++++ 1.20.4/root/src/main/java/ru/vidtu/ias/screen/OfflinePopupScreen.java	2025-05-27 12:20:42.478606000 +0300
+@@ -32,7 +32,6 @@
+ import ru.vidtu.ias.auth.microsoft.MSAuth;
+ import ru.vidtu.ias.config.IASConfig;
+ 
+-import java.time.Duration;
+ import java.util.UUID;
+ import java.util.function.Consumer;
+ import java.util.function.Supplier;
+@@ -203,7 +202,7 @@
+ 
+             // Tooltip.
+             this.done.setTooltip(Tooltip.create(Component.translatable("ias.offline.nick.blank")));
+-            this.done.setTooltipDelay(Duration.ZERO);
++            this.done.setTooltipDelay(-1);
+ 
+             // Update color.
+             this.done.color(1.0F, 0.5F, 0.5F, instant);
+@@ -229,7 +228,7 @@
+ 
+             // Tooltip.
+             this.done.setTooltip(Tooltip.create(Component.translatable("ias.offline.nick.short", Component.translatable("key.keyboard.left.alt"))));
+-            this.done.setTooltipDelay(Duration.ZERO);
++            this.done.setTooltipDelay(-1);
+ 
+             // Don't process.
+             return;
+@@ -248,7 +247,7 @@
+ 
+             // Tooltip.
+             this.done.setTooltip(Tooltip.create(Component.translatable("ias.offline.nick.long", Component.translatable("key.keyboard.left.alt"))));
+-            this.done.setTooltipDelay(Duration.ZERO);
++            this.done.setTooltipDelay(-1);
+ 
+             // Don't process.
+             return;
+@@ -272,7 +271,7 @@
+ 
+             // Tooltip.
+             this.done.setTooltip(Tooltip.create(Component.translatable("ias.offline.nick.chars", Character.toString(c), Component.translatable("key.keyboard.left.alt"))));
+-            this.done.setTooltipDelay(Duration.ZERO);
++            this.done.setTooltipDelay(-1);
+ 
+             // Don't process.
+             return;
