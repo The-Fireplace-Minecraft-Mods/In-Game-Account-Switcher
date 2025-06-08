@@ -39,6 +39,7 @@ import ru.vidtu.ias.config.IASConfig;
 import ru.vidtu.ias.config.IASStorage;
 import ru.vidtu.ias.config.ServerMode;
 import ru.vidtu.ias.config.TextAlign;
+import ru.vidtu.ias.platform.IStonecutter;
 import ru.vidtu.ias.utils.Expression;
 
 import java.time.Duration;
@@ -146,14 +147,14 @@ public final class ConfigScreen extends Screen {
                 })
                 .tooltip(Tooltip.create(Component.translatable("ias.config.titleText.tip")))
                 .build();
-        box.setTooltipDelay(Duration.ofMillis(250L));
+        IStonecutter.setWidgetTooltipDelay(box, Duration.ofMillis(250L));
         this.addRenderableWidget(box);
 
         // Title Text X.
         this.titleTextX = new EditBox(this.font, 9 + box.getWidth(), 20, 75, 20, this.titleTextX, Component.translatable("ias.config.titleText.x"));
         this.titleTextX.setHint(this.titleTextX.getMessage().copy().withStyle(ChatFormatting.DARK_GRAY));
         this.titleTextX.setTooltip(Tooltip.create(Component.translatable("ias.config.titleText.x.tip", Component.translatable("key.keyboard.left.alt"))));
-        this.titleTextX.setTooltipDelay(Duration.ofMillis(250L));
+        IStonecutter.setWidgetTooltipDelay(this.titleTextX, Duration.ofMillis(250L));
         this.titleTextX.active = box.selected();
         this.titleTextX.setEditable(box.selected());
         this.titleTextX.setMaxLength(128);
@@ -169,7 +170,7 @@ public final class ConfigScreen extends Screen {
         this.titleTextY = new EditBox(this.font, 88 + box.getWidth(), 20, 75, 20, this.titleTextY, Component.translatable("ias.config.titleText.y"));
         this.titleTextY.setHint(this.titleTextY.getMessage().copy().withStyle(ChatFormatting.DARK_GRAY));
         this.titleTextY.setTooltip(Tooltip.create(Component.translatable("ias.config.titleText.y.tip", Component.translatable("key.keyboard.left.alt"))));
-        this.titleTextY.setTooltipDelay(Duration.ofMillis(250L));
+        IStonecutter.setWidgetTooltipDelay(this.titleTextY, Duration.ofMillis(250L));
         this.titleTextY.active = box.selected();
         this.titleTextY.setEditable(box.selected());
         this.titleTextY.setMaxLength(128);
@@ -195,7 +196,7 @@ public final class ConfigScreen extends Screen {
                 .build();
         this.titleTextAlign.active = box.selected();
         this.titleTextAlign.setTooltip(Tooltip.create(Component.translatable("ias.config.titleTextAlign.tip")));
-        this.titleTextAlign.setTooltipDelay(Duration.ofMillis(250L));
+        IStonecutter.setWidgetTooltipDelay(this.titleTextAlign, Duration.ofMillis(250L));
         this.addRenderableWidget(this.titleTextAlign);
 
         // Title Button.
@@ -211,14 +212,14 @@ public final class ConfigScreen extends Screen {
                 })
                 .tooltip(Tooltip.create(Component.translatable("ias.config.titleButton.tip")))
                 .build();
-        box.setTooltipDelay(Duration.ofMillis(250L));
+        IStonecutter.setWidgetTooltipDelay(box, Duration.ofMillis(250L));
         this.addRenderableWidget(box);
 
         // Title Button X.
         this.titleButtonX = new EditBox(this.font, 9 + box.getWidth(), 44, 75, 20, this.titleButtonX, Component.translatable("ias.config.titleButton.x"));
         this.titleButtonX.setHint(this.titleButtonX.getMessage().copy().withStyle(ChatFormatting.DARK_GRAY));
         this.titleButtonX.setTooltip(Tooltip.create(Component.translatable("ias.config.titleButton.x.tip", Component.translatable("key.keyboard.left.alt"))));
-        this.titleButtonX.setTooltipDelay(Duration.ofMillis(250L));
+        IStonecutter.setWidgetTooltipDelay(this.titleButtonX, Duration.ofMillis(250L));
         this.titleButtonX.active = box.selected();
         this.titleButtonX.setEditable(box.selected());
         this.titleButtonX.setMaxLength(128);
@@ -234,7 +235,7 @@ public final class ConfigScreen extends Screen {
         this.titleButtonY = new EditBox(this.font, 88 + box.getWidth(), 44, 75, 20, this.titleButtonY, Component.translatable("ias.config.titleButton.y"));
         this.titleButtonY.setHint(this.titleButtonY.getMessage().copy().withStyle(ChatFormatting.DARK_GRAY));
         this.titleButtonY.setTooltip(Tooltip.create(Component.translatable("ias.config.titleButton.y.tip", Component.translatable("key.keyboard.left.alt"))));
-        this.titleButtonY.setTooltipDelay(Duration.ofMillis(250L));
+        IStonecutter.setWidgetTooltipDelay(this.titleButtonY, Duration.ofMillis(250L));
         this.titleButtonY.active = box.selected();
         this.titleButtonY.setEditable(box.selected());
         this.titleButtonY.setMaxLength(128);
@@ -260,14 +261,14 @@ public final class ConfigScreen extends Screen {
                 })
                 .tooltip(Tooltip.create(Component.translatable("ias.config.serversText.tip")))
                 .build();
-        box.setTooltipDelay(Duration.ofMillis(250L));
+        IStonecutter.setWidgetTooltipDelay(box, Duration.ofMillis(250L));
         this.addRenderableWidget(box);
 
         // Servers Text X.
         this.serversTextX = new EditBox(this.font, 9 + box.getWidth(), 68, 75, 20, this.serversTextX, Component.translatable("ias.config.serversText.x"));
         this.serversTextX.setHint(this.serversTextX.getMessage().copy().withStyle(ChatFormatting.DARK_GRAY));
         this.serversTextX.setTooltip(Tooltip.create(Component.translatable("ias.config.serversText.x.tip", Component.translatable("key.keyboard.left.alt"))));
-        this.serversTextX.setTooltipDelay(Duration.ofMillis(250L));
+        IStonecutter.setWidgetTooltipDelay(this.serversTextX, Duration.ofMillis(250L));
         this.serversTextX.active = box.selected();
         this.serversTextX.setEditable(box.selected());
         this.serversTextX.setMaxLength(128);
@@ -283,7 +284,7 @@ public final class ConfigScreen extends Screen {
         this.serversTextY = new EditBox(this.font, 88 + box.getWidth(), 68, 75, 20, this.serversTextY, Component.translatable("ias.config.serversText.y"));
         this.serversTextY.setHint(this.serversTextY.getMessage().copy().withStyle(ChatFormatting.DARK_GRAY));
         this.serversTextY.setTooltip(Tooltip.create(Component.translatable("ias.config.serversText.y.tip", Component.translatable("key.keyboard.left.alt"))));
-        this.serversTextY.setTooltipDelay(Duration.ofMillis(250L));
+        IStonecutter.setWidgetTooltipDelay(this.serversTextY, Duration.ofMillis(250L));
         this.serversTextY.active = box.selected();
         this.serversTextY.setEditable(box.selected());
         this.serversTextY.setMaxLength(128);
@@ -309,7 +310,7 @@ public final class ConfigScreen extends Screen {
                 .build();
         this.serversTextAlign.active = box.selected();
         this.serversTextAlign.setTooltip(Tooltip.create(Component.translatable("ias.config.serversTextAlign.tip")));
-        this.serversTextAlign.setTooltipDelay(Duration.ofMillis(250L));
+        IStonecutter.setWidgetTooltipDelay(this.serversTextAlign, Duration.ofMillis(250L));
         this.addRenderableWidget(this.serversTextAlign);
 
         // Servers Button.
@@ -325,14 +326,14 @@ public final class ConfigScreen extends Screen {
                 })
                 .tooltip(Tooltip.create(Component.translatable("ias.config.serversButton.tip")))
                 .build();
-        box.setTooltipDelay(Duration.ofMillis(250L));
+        IStonecutter.setWidgetTooltipDelay(box, Duration.ofMillis(250L));
         this.addRenderableWidget(box);
 
         // Servers Button X.
         this.serversButtonX = new EditBox(this.font, 9 + box.getWidth(), 92, 75, 20, this.serversButtonX, Component.translatable("ias.config.serversButton.x"));
         this.serversButtonX.setHint(this.serversButtonX.getMessage().copy().withStyle(ChatFormatting.DARK_GRAY));
         this.serversButtonX.setTooltip(Tooltip.create(Component.translatable("ias.config.serversButton.x.tip", Component.translatable("key.keyboard.left.alt"))));
-        this.serversButtonX.setTooltipDelay(Duration.ofMillis(250L));
+        IStonecutter.setWidgetTooltipDelay(this.serversButtonX, Duration.ofMillis(250L));
         this.serversButtonX.active = box.selected();
         this.serversButtonX.setEditable(box.selected());
         this.serversButtonX.setMaxLength(128);
@@ -348,7 +349,7 @@ public final class ConfigScreen extends Screen {
         this.serversButtonY = new EditBox(this.font, 88 + box.getWidth(), 92, 75, 20, this.serversButtonY, Component.translatable("ias.config.serversButton.y"));
         this.serversButtonY.setHint(this.serversButtonY.getMessage().copy().withStyle(ChatFormatting.DARK_GRAY));
         this.serversButtonY.setTooltip(Tooltip.create(Component.translatable("ias.config.serversButton.y.tip", Component.translatable("key.keyboard.left.alt"))));
-        this.serversButtonY.setTooltipDelay(Duration.ofMillis(250L));
+        IStonecutter.setWidgetTooltipDelay(this.serversButtonY, Duration.ofMillis(250L));
         this.serversButtonY.active = box.selected();
         this.serversButtonY.setEditable(box.selected());
         this.serversButtonY.setMaxLength(128);
@@ -367,7 +368,7 @@ public final class ConfigScreen extends Screen {
                 .onValueChange((cb, value) -> IASConfig.allowNoCrypt = value)
                 .tooltip(Tooltip.create(Component.translatable("ias.config.allowNoCrypt.tip")))
                 .build();
-        box.setTooltipDelay(Duration.ofMillis(250L));
+        IStonecutter.setWidgetTooltipDelay(box, Duration.ofMillis(250L));
         this.addRenderableWidget(box);
 
         // Sun Server.
@@ -382,7 +383,7 @@ public final class ConfigScreen extends Screen {
             // Set the message.
             btn.setMessage(CommonComponents.optionNameValue(Component.translatable("ias.config.server"), Component.translatable(IASConfig.server.toString())));
         }).bounds(9 + box.getWidth(), 116, 200, 20).tooltip(Tooltip.create(Component.translatable("ias.config.server.tip"))).build();
-        button.setTooltipDelay(Duration.ofMillis(250L));
+        IStonecutter.setWidgetTooltipDelay(button, Duration.ofMillis(250L));
         this.addRenderableWidget(button);
 
         // Nick Warns.
@@ -392,7 +393,7 @@ public final class ConfigScreen extends Screen {
                 .onValueChange((cb, value) -> IASConfig.nickWarns = value)
                 .tooltip(Tooltip.create(Component.translatable("ias.config.nickWarns.tip")))
                 .build();
-        box.setTooltipDelay(Duration.ofMillis(250L));
+        IStonecutter.setWidgetTooltipDelay(box, Duration.ofMillis(250L));
         this.addRenderableWidget(box);
 
         // Password Echoing.
@@ -402,7 +403,7 @@ public final class ConfigScreen extends Screen {
                 .onValueChange((cb, value) -> IASConfig.passwordEchoing = value)
                 .tooltip(Tooltip.create(Component.translatable("ias.config.passwordEchoing.tip")))
                 .build();
-        box.setTooltipDelay(Duration.ofMillis(250L));
+        IStonecutter.setWidgetTooltipDelay(box, Duration.ofMillis(250L));
         this.addRenderableWidget(box);
 
         // Unexpected Pigs.
@@ -415,7 +416,7 @@ public final class ConfigScreen extends Screen {
                 })
                 .tooltip(Tooltip.create(Component.translatable("ias.config.unexpectedPigs.tip")))
                 .build();
-        box.setTooltipDelay(Duration.ofMillis(250L));
+        IStonecutter.setWidgetTooltipDelay(box, Duration.ofMillis(250L));
         this.addRenderableWidget(box);
 
         // Bar Name.
@@ -428,7 +429,7 @@ public final class ConfigScreen extends Screen {
                 })
                 .tooltip(Tooltip.create(Component.translatable("ias.config.barNick.tip")))
                 .build();
-        box.setTooltipDelay(Duration.ofMillis(250L));
+        IStonecutter.setWidgetTooltipDelay(box, Duration.ofMillis(250L));
         this.addRenderableWidget(box);
 
         // Add done button.

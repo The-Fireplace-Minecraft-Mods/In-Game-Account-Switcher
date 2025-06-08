@@ -28,6 +28,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import ru.vidtu.ias.account.Account;
+import ru.vidtu.ias.platform.IStonecutter;
 
 import java.time.Duration;
 import java.util.function.Supplier;
@@ -91,7 +92,7 @@ final class DeletePopupScreen extends Screen {
             this.onClose();
         }, Supplier::get);
         button.setTooltip(Tooltip.create(Component.translatable("ias.delete.hint", Component.translatable("key.keyboard.left.shift"))));
-        button.setTooltipDelay(Duration.ofMillis(250L));
+        IStonecutter.setWidgetTooltipDelay(button, Duration.ofMillis(250L));
         button.color(1.0F, 0.5F, 0.5F, true);
         this.addRenderableWidget(button);
 

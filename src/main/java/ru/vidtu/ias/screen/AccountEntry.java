@@ -19,6 +19,7 @@
 
 package ru.vidtu.ias.screen;
 
+import com.google.common.collect.Iterables;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.User;
@@ -173,7 +174,7 @@ final class AccountEntry extends ObjectSelectionList.Entry<AccountEntry> {
             // Render up widget.
             ResourceLocation upTexture;
             int upX = x + width - 28;
-            if (this == this.list.children().getFirst()) {
+            if (this == this.list.children().get(0)) {
                 upTexture = UP.disabled();
             } else if (mouseX >= upX && mouseY >= y && mouseX <= upX + 11 && mouseY <= y + height) {
                 upTexture = UP.enabledFocused();
@@ -188,7 +189,7 @@ final class AccountEntry extends ObjectSelectionList.Entry<AccountEntry> {
             // Render down widget.
             ResourceLocation downTexture;
             int downX = x + width - 15;
-            if (this == this.list.children().getLast()) {
+            if (this == Iterables.getLast(this.list.children())) {
                 downTexture = DOWN.disabled();
             } else if (mouseX >= downX && mouseY >= y && mouseX <= downX + 11 && mouseY <= y + height) {
                 downTexture = DOWN.enabledFocused();

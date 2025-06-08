@@ -38,6 +38,7 @@ import org.slf4j.LoggerFactory;
 import ru.vidtu.ias.IAS;
 import ru.vidtu.ias.account.Account;
 import ru.vidtu.ias.config.IASStorage;
+import ru.vidtu.ias.platform.IStonecutter;
 
 import java.time.Duration;
 
@@ -254,7 +255,7 @@ public final class AccountScreen extends Screen {
         } else {
             this.login.active = false;
             this.login.setTooltip(Tooltip.create(Component.translatable("ias.accounts.login.offline")));
-            this.login.setTooltipDelay(Duration.ZERO);
+            IStonecutter.setWidgetTooltipDelay(this.login, Duration.ZERO);
         }
 
         // Show skin.

@@ -30,6 +30,7 @@ import ru.vidtu.ias.account.Account;
 import ru.vidtu.ias.config.IASConfig;
 import ru.vidtu.ias.crypt.DummyCrypt;
 import ru.vidtu.ias.crypt.HardwareCrypt;
+import ru.vidtu.ias.platform.IStonecutter;
 
 import java.time.Duration;
 import java.util.function.Consumer;
@@ -82,7 +83,7 @@ final class MicrosoftCryptPopupScreen extends Screen {
         PopupButton button = new PopupButton(this.width / 2 - 75, this.height / 2 - 24 - 12, 150, 20,
                 Component.translatable("ias.microsoft.password"), btn -> this.minecraft.setScreen(new MicrosoftPopupScreen(this.parent, this.handler, null)), Supplier::get);
         button.setTooltip(Tooltip.create(Component.translatable("ias.microsoft.password.tip")));
-        button.setTooltipDelay(Duration.ofMillis(250L));
+        IStonecutter.setWidgetTooltipDelay(button, Duration.ofMillis(250L));
         button.color(0.5F, 1.0F, 0.5F, true);
         this.addRenderableWidget(button);
 
@@ -90,7 +91,7 @@ final class MicrosoftCryptPopupScreen extends Screen {
         button = new PopupButton(this.width / 2 - 75, this.height / 2 - 12, 150, 20,
                 Component.translatable("ias.microsoft.hardware"), btn -> this.minecraft.setScreen(new MicrosoftPopupScreen(this.parent, this.handler, HardwareCrypt.INSTANCE_V2)), Supplier::get);
         button.setTooltip(Tooltip.create(Component.translatable("ias.microsoft.hardware.tip")));
-        button.setTooltipDelay(Duration.ofMillis(250L));
+        IStonecutter.setWidgetTooltipDelay(button, Duration.ofMillis(250L));
         button.color(1.0F, 1.0F, 0.5F, true);
         this.addRenderableWidget(button);
 
@@ -102,7 +103,7 @@ final class MicrosoftCryptPopupScreen extends Screen {
         } else {
             this.plain.setTooltip(Tooltip.create(Component.translatable("ias.microsoft.plain.tip.no")));
         }
-        this.plain.setTooltipDelay(Duration.ofMillis(250L));
+        IStonecutter.setWidgetTooltipDelay(this.plain, Duration.ofMillis(250L));
         this.plain.color(1.0F, 0.5F, 0.5F, true);
         this.plain.active = false;
         this.addRenderableWidget(this.plain);
@@ -175,7 +176,7 @@ final class MicrosoftCryptPopupScreen extends Screen {
 
             // Recolor button and update tooltip.
             this.plain.setTooltip(Tooltip.create(Component.translatable("ias.microsoft.plain.tip.on")));
-            this.plain.setTooltipDelay(Duration.ofMillis(250L));
+            IStonecutter.setWidgetTooltipDelay(this.plain, Duration.ofMillis(250L));
             this.plain.color(1.0F, 0.25F, 0.25F, false);
         }
 

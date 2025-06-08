@@ -26,6 +26,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import ru.vidtu.ias.account.Account;
+import ru.vidtu.ias.platform.IStonecutter;
 
 import java.time.Duration;
 import java.util.function.Consumer;
@@ -74,7 +75,7 @@ final class AddPopupScreen extends Screen {
         PopupButton button = new PopupButton(this.width / 2 - 75, this.height / 2 - 24, 150, 20,
                 Component.translatable("ias.add.microsoft"), btn -> this.minecraft.setScreen(new MicrosoftCryptPopupScreen(this.parent, this.handler)), Supplier::get);
         button.setTooltip(Tooltip.create(Component.translatable("ias.add.microsoft.tip")));
-        button.setTooltipDelay(Duration.ofMillis(250L));
+        IStonecutter.setWidgetTooltipDelay(button, Duration.ofMillis(250L));
         button.color(0.5F, 1.0F, 0.5F, true);
         this.addRenderableWidget(button);
 
@@ -82,7 +83,7 @@ final class AddPopupScreen extends Screen {
         button = new PopupButton(this.width / 2 - 75, this.height / 2, 150, 20,
                 Component.translatable("ias.add.offline"), btn -> this.minecraft.setScreen(new OfflinePopupScreen(this.parent, this.handler)), Supplier::get);
         button.setTooltip(Tooltip.create(Component.translatable("ias.add.offline.tip")));
-        button.setTooltipDelay(Duration.ofMillis(250L));
+        IStonecutter.setWidgetTooltipDelay(button, Duration.ofMillis(250L));
         button.color(1.0F, 0.5F, 0.5F, true);
         this.addRenderableWidget(button);
 

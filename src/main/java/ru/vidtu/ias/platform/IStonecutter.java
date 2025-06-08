@@ -19,12 +19,14 @@
 
 package ru.vidtu.ias.platform;
 
+import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jspecify.annotations.NullMarked;
 
 import java.nio.file.Path;
+import java.time.Duration;
 
 /**
  * A helper class that contains methods that depend on Stonecutter, a Java source code preprocessor.
@@ -68,10 +70,25 @@ public final class IStonecutter {
         throw new AssertionError("IAS: No instances.");
     }
 
+    /**
+     * Creates a new identifier (a key, a resource location) with the
+     * {@code "ias"} namespace and the specified path (value).
+     *
+     * @param path Identifier path to use
+     * @return A newly created identifier
+     */
+    @Contract(value = "_ -> new", pure = true)
     public static ResourceLocation newIdentifier(String path) {
         //? if >=1.21.1 || (forge && (!hackyNeoForge) && >=1.18.2 && (!1.20.2)) {
-        return ResourceLocation.fromNamespaceAndPath("ias", path);
+        return ResourceLocation.fromNamespaceAndPath("ias", path); // Implicit NPE for 'path'
         //?} else
-        /*return new ResourceLocation("ias", path);*/
+        /*return new ResourceLocation("ias", path);*/ // Implicit NPE for 'path'
+    }
+    
+    public static void setWidgetTooltipDelay(AbstractWidget widget, Duration delay) {
+        //? if >=1.20.6 {
+        widget.setTooltipDelay(delay);
+        //?} else
+        /*widget.setTooltipDelay(delay.isZero() ? -1 : Math.toIntExact(delay.toMillis()));*/
     }
 }

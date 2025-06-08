@@ -157,7 +157,7 @@ public final class IASMinecraft {
             // Add the button.
             ImageButton button = new ImageButton(x, y, 20, 20, BUTTON, btn -> minecraft.setScreen(new AccountScreen(screen)), Component.literal("In-Game Account Switcher"));
             button.setTooltip(Tooltip.create(button.getMessage()));
-            button.setTooltipDelay(Duration.ofMillis(250L));
+            IStonecutter.setWidgetTooltipDelay(button, Duration.ofMillis(250L));
             buttonAdder.accept(button);
         }
 
@@ -201,7 +201,7 @@ public final class IASMinecraft {
             // Add the button.
             ImageButton button = new ImageButton(x, y, 20, 20, BUTTON, btn -> minecraft.setScreen(new AccountScreen(screen)), Component.literal("In-Game Account Switcher"));
             button.setTooltip(Tooltip.create(button.getMessage()));
-            button.setTooltipDelay(Duration.ofMillis(250L));
+            IStonecutter.setWidgetTooltipDelay(button, Duration.ofMillis(250L));
             buttonAdder.accept(button);
         }
 
