@@ -22,7 +22,6 @@
 
 import net.minecraft.client.gui.screens.Screen;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.client.event.ScreenEvent;
@@ -61,13 +60,11 @@ public final class INeoForge {
      *
      * @param dist      Current physical side
      * @param container Mod container
-     * @param bus       Mod-specific event bus
      ^/
-    public INeoForge(Dist dist, ModContainer container, IEventBus bus) {
+    public INeoForge(Dist dist, ModContainer container) {
         // Validate.
-        assert dist != null : "IAS: Parameter 'dist' is null. (container: " + container + ", bus: " + bus + ", mod: " + this + ')';
-        assert container != null : "IAS: Parameter 'container' is null. (dist: " + dist + ", bus: " + bus + ", mod: " + this + ')';
-        assert bus != null : "IAS: Parameter 'bus' is null. (dist: " + dist + ", container: " + container + ", mod: " + this + ')';
+        assert dist != null : "IAS: Parameter 'dist' is null. (container: " + container + ", mod: " + this + ')';
+        assert container != null : "IAS: Parameter 'container' is null. (dist: " + dist + ", mod: " + this + ')';
 
         // Log.
         long start = System.nanoTime();
