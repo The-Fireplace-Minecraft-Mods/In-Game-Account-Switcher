@@ -40,6 +40,7 @@ import ru.vidtu.ias.config.IASStorage;
 import ru.vidtu.ias.config.ServerMode;
 import ru.vidtu.ias.config.TextAlign;
 import ru.vidtu.ias.platform.IStonecutter;
+import ru.vidtu.ias.platform.ui.IScreen;
 import ru.vidtu.ias.utils.Expression;
 
 import java.time.Duration;
@@ -50,7 +51,7 @@ import java.util.Objects;
  *
  * @author VidTu
  */
-public final class ConfigScreen extends Screen {
+public final class ConfigScreen extends IScreen {
     /**
      * Logger for this class.
      */
@@ -134,20 +135,14 @@ public final class ConfigScreen extends Screen {
         }
 
         // Title Text.
-        Checkbox box = Checkbox.builder(Component.translatable("ias.config.titleText"), this.font)
-                .pos(5, 20)
-                .selected(IASConfig.titleText)
-                .onValueChange((cb, value) -> {
-                    IASConfig.titleText = value;
-                    this.titleTextX.active = value;
-                    this.titleTextY.active = value;
-                    this.titleTextX.setEditable(value);
-                    this.titleTextY.setEditable(value);
-                    this.titleTextAlign.active = value;
-                })
-                .tooltip(Tooltip.create(Component.translatable("ias.config.titleText.tip")))
-                .build();
-        IStonecutter.setWidgetTooltipDelay(box, Duration.ofMillis(250L));
+        Checkbox box = this.createCheckbox(5, 20, Component.translatable("ias.config.titleText"), Component.translatable("ias.config.titleText.tip"), IASConfig.titleText, value -> {
+            IASConfig.titleText = value;
+            this.titleTextX.active = value;
+            this.titleTextY.active = value;
+            this.titleTextX.setEditable(value);
+            this.titleTextY.setEditable(value);
+            this.titleTextAlign.active = value;
+        });
         this.addRenderableWidget(box);
 
         // Title Text X.
@@ -200,19 +195,13 @@ public final class ConfigScreen extends Screen {
         this.addRenderableWidget(this.titleTextAlign);
 
         // Title Button.
-        box = Checkbox.builder(Component.translatable("ias.config.titleButton"), this.font)
-                .pos(5, 44)
-                .selected(IASConfig.titleButton)
-                .onValueChange((cb, value) -> {
-                    IASConfig.titleButton = value;
-                    this.titleButtonX.active = value;
-                    this.titleButtonY.active = value;
-                    this.titleButtonX.setEditable(value);
-                    this.titleButtonY.setEditable(value);
-                })
-                .tooltip(Tooltip.create(Component.translatable("ias.config.titleButton.tip")))
-                .build();
-        IStonecutter.setWidgetTooltipDelay(box, Duration.ofMillis(250L));
+        box = this.createCheckbox(5, 44, Component.translatable("ias.config.titleButton"), Component.translatable("ias.config.titleButton.tip"), IASConfig.titleButton, value -> {
+            IASConfig.titleButton = value;
+            this.titleButtonX.active = value;
+            this.titleButtonY.active = value;
+            this.titleButtonX.setEditable(value);
+            this.titleButtonY.setEditable(value);
+        });
         this.addRenderableWidget(box);
 
         // Title Button X.
@@ -248,20 +237,14 @@ public final class ConfigScreen extends Screen {
         this.addRenderableWidget(this.titleButtonY);
 
         // Servers Text.
-        box = Checkbox.builder(Component.translatable("ias.config.serversText"), this.font)
-                .pos(5, 68)
-                .selected(IASConfig.serversText)
-                .onValueChange((cb, value) -> {
-                    IASConfig.serversText = value;
-                    this.serversTextX.active = value;
-                    this.serversTextY.active = value;
-                    this.serversTextX.setEditable(value);
-                    this.serversTextY.setEditable(value);
-                    this.serversTextAlign.active = value;
-                })
-                .tooltip(Tooltip.create(Component.translatable("ias.config.serversText.tip")))
-                .build();
-        IStonecutter.setWidgetTooltipDelay(box, Duration.ofMillis(250L));
+        box = this.createCheckbox(5, 68, Component.translatable("ias.config.serversText"), Component.translatable("ias.config.serversText.tip"), IASConfig.serversText, value -> {
+            IASConfig.serversText = value;
+            this.serversTextX.active = value;
+            this.serversTextY.active = value;
+            this.serversTextX.setEditable(value);
+            this.serversTextY.setEditable(value);
+            this.serversTextAlign.active = value;
+        });
         this.addRenderableWidget(box);
 
         // Servers Text X.
@@ -314,19 +297,13 @@ public final class ConfigScreen extends Screen {
         this.addRenderableWidget(this.serversTextAlign);
 
         // Servers Button.
-        box = Checkbox.builder(Component.translatable("ias.config.serversButton"), this.font)
-                .pos(5, 92)
-                .selected(IASConfig.serversButton)
-                .onValueChange((cb, value) -> {
-                    IASConfig.serversButton = value;
-                    this.serversButtonX.active = value;
-                    this.serversButtonY.active = value;
-                    this.serversButtonX.setEditable(value);
-                    this.serversButtonY.setEditable(value);
-                })
-                .tooltip(Tooltip.create(Component.translatable("ias.config.serversButton.tip")))
-                .build();
-        IStonecutter.setWidgetTooltipDelay(box, Duration.ofMillis(250L));
+        box = this.createCheckbox(5, 92, Component.translatable("ias.config.serversButton"), Component.translatable("ias.config.serversButton.tip"), IASConfig.serversButton, value -> {
+            IASConfig.serversButton = value;
+            this.serversButtonX.active = value;
+            this.serversButtonY.active = value;
+            this.serversButtonX.setEditable(value);
+            this.serversButtonY.setEditable(value);
+        });
         this.addRenderableWidget(box);
 
         // Servers Button X.
@@ -362,13 +339,9 @@ public final class ConfigScreen extends Screen {
         this.addRenderableWidget(this.serversButtonY);
 
         // No Crypt Button.
-        box = Checkbox.builder(Component.translatable("ias.config.allowNoCrypt"), this.font)
-                .pos(5, 116)
-                .selected(IASConfig.allowNoCrypt)
-                .onValueChange((cb, value) -> IASConfig.allowNoCrypt = value)
-                .tooltip(Tooltip.create(Component.translatable("ias.config.allowNoCrypt.tip")))
-                .build();
-        IStonecutter.setWidgetTooltipDelay(box, Duration.ofMillis(250L));
+        box = this.createCheckbox(5, 116, Component.translatable("ias.config.allowNoCrypt"),
+                Component.translatable("ias.config.allowNoCrypt.tip"), IASConfig.allowNoCrypt,
+                value -> IASConfig.allowNoCrypt = value);
         this.addRenderableWidget(box);
 
         // Sun Server.
@@ -387,49 +360,29 @@ public final class ConfigScreen extends Screen {
         this.addRenderableWidget(button);
 
         // Nick Warns.
-        box = Checkbox.builder(Component.translatable("ias.config.nickWarns"), this.font)
-                .pos(5, 140)
-                .selected(IASConfig.nickWarns)
-                .onValueChange((cb, value) -> IASConfig.nickWarns = value)
-                .tooltip(Tooltip.create(Component.translatable("ias.config.nickWarns.tip")))
-                .build();
-        IStonecutter.setWidgetTooltipDelay(box, Duration.ofMillis(250L));
+        box = this.createCheckbox(5, 140, Component.translatable("ias.config.nickWarns"),
+                Component.translatable("ias.config.nickWarns.tip"), IASConfig.nickWarns,
+                value -> IASConfig.nickWarns = value);
         this.addRenderableWidget(box);
 
         // Password Echoing.
-        box = Checkbox.builder(Component.translatable("ias.config.passwordEchoing"), this.font)
-                .pos(10 + box.getWidth(), 140)
-                .selected(IASConfig.passwordEchoing)
-                .onValueChange((cb, value) -> IASConfig.passwordEchoing = value)
-                .tooltip(Tooltip.create(Component.translatable("ias.config.passwordEchoing.tip")))
-                .build();
-        IStonecutter.setWidgetTooltipDelay(box, Duration.ofMillis(250L));
+        box = this.createCheckbox(10 + box.getWidth(), 140, Component.translatable("ias.config.passwordEchoing"),
+                Component.translatable("ias.config.passwordEchoing.tip"), IASConfig.passwordEchoing,
+                value -> IASConfig.passwordEchoing = value);
         this.addRenderableWidget(box);
 
         // Unexpected Pigs.
-        box = Checkbox.builder(Component.translatable("ias.config.unexpectedPigs"), this.font)
-                .pos(5, 164)
-                .selected(IASConfig.unexpectedPigs)
-                .onValueChange((cb, value) -> {
-                    IASConfig.unexpectedPigs = value;
-                    this.minecraft.getSoundManager().play(SimpleSoundInstance.forUI(value ? SoundEvents.PIG_AMBIENT : SoundEvents.PIG_DEATH, 1.0F));
-                })
-                .tooltip(Tooltip.create(Component.translatable("ias.config.unexpectedPigs.tip")))
-                .build();
-        IStonecutter.setWidgetTooltipDelay(box, Duration.ofMillis(250L));
+        box = this.createCheckbox(5, 164, Component.translatable("ias.config.unexpectedPigs"), Component.translatable("ias.config.unexpectedPigs.tip"), IASConfig.unexpectedPigs, value -> {
+            IASConfig.unexpectedPigs = value;
+            this.minecraft.getSoundManager().play(SimpleSoundInstance.forUI(value ? SoundEvents.PIG_AMBIENT : SoundEvents.PIG_DEATH, 1.0F));
+        });
         this.addRenderableWidget(box);
 
         // Bar Name.
-        box = Checkbox.builder(Component.translatable("ias.config.barNick"), this.font)
-                .pos(5, 188)
-                .selected(IASConfig.barNick)
-                .onValueChange((cb, value) -> {
-                    IASConfig.barNick = value;
-                    this.minecraft.updateTitle();
-                })
-                .tooltip(Tooltip.create(Component.translatable("ias.config.barNick.tip")))
-                .build();
-        IStonecutter.setWidgetTooltipDelay(box, Duration.ofMillis(250L));
+        box = this.createCheckbox(5, 188, Component.translatable("ias.config.barNick"), Component.translatable("ias.config.barNick.tip"), IASConfig.barNick, value -> {
+            IASConfig.barNick = value;
+            this.minecraft.updateTitle();
+        });
         this.addRenderableWidget(box);
 
         // Add done button.
@@ -456,10 +409,7 @@ public final class ConfigScreen extends Screen {
     }
 
     @Override
-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
-        // Render background and widgets.
-        super.render(graphics, mouseX, mouseY, delta);
-
+    public void renderContents(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
         // Render title.
         graphics.drawCenteredString(this.font, this.title, this.width / 2, 5, 0xFF_FF_FF_FF);
 

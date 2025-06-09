@@ -79,6 +79,7 @@ public interface MinecraftAccessor {
     @Mutable
     void ias$userApiService(UserApiService service);
 
+    //? if >=1.20.4 {
     /**
      * Sets the user properties future.
      *
@@ -87,6 +88,7 @@ public interface MinecraftAccessor {
     @Accessor("userPropertiesFuture")
     @Mutable
     void ias$userPropertiesFuture(CompletableFuture<UserApiService.UserProperties> future);
+    //?}
 
     /**
      * Sets the player social manager.

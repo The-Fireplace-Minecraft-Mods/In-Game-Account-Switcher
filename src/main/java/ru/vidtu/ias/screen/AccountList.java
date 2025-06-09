@@ -67,13 +67,21 @@ final class AccountList extends ObjectSelectionList<AccountEntry> {
      * @param minecraft Minecraft instance
      * @param width     List width
      * @param height    List height
-     * @param offset    List Y offset
-     * @param item      Entry height
      */
-    AccountList(AccountScreen screen, Minecraft minecraft, int width, int height, int offset, int item) {
-        super(minecraft, width, height, offset, item);
+    AccountList(AccountScreen screen, Minecraft minecraft, int width, int height) {
+        //? if >=1.20.4 {
+        super(minecraft, width, height - 24 - 24 - 4 - 34, 34, 12);
+        //?} else
+        /*super(minecraft, width, height - 24 - 24 - 4 - 34, 34, height - 24 - 24 - 4, 12);*/
         this.screen = screen;
         this.update(this.screen.search().getValue());
+    }
+
+    public void rescale(int width, int height) {
+        //? if >=1.20.4 {
+        this.setRectangle(width, height - 24 - 24 - 4 - 34, 0, 34);
+        //?} else
+        /*this.updateSize(width, height - 24 - 24 - 4 - 34, 34, height - 24 - 24 - 4);*/
     }
 
     @Override

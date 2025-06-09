@@ -68,7 +68,10 @@ public final class IASMinecraft {
     /**
      * Toast for nick warning.
      */
+    //? if >=1.20.4 {
     public static final SystemToast.SystemToastId NICK_WARN = new SystemToast.SystemToastId(10000L);
+    //?} else
+    /*public static final SystemToast.SystemToastIds NICK_WARN = SystemToast.SystemToastIds.UNSECURE_SERVER_WARNING;*/
 
     /**
      * Logger for this class.
@@ -313,14 +316,22 @@ public final class IASMinecraft {
             CompletableFuture<ProfileResult> profile = CompletableFuture.completedFuture(online ? minecraft.getMinecraftSessionService().fetchProfile(data.uuid(), true) : null);
             @SuppressWarnings("CastToIncompatibleInterface") // <- Mixin Accessor.
             MinecraftAccessor accessor = (MinecraftAccessor) minecraft;
-            UserApiService apiService = online ? accessor.ias$authenticationService().createUserApiService(data.token()) : UserApiService.OFFLINE;
+            UserApiService apiService;
+            try {
+                apiService = online ? accessor.ias$authenticationService().createUserApiService(data.token()) : UserApiService.OFFLINE;
+            } catch (Throwable ignored) {
+                apiService = UserApiService.OFFLINE; // TODO(VidTu): Catch error, shouldn't happen?
+            }
+            UserApiService hackyFinalApiService = apiService;
+            //? if >=1.20.4 {
             UserApiService.UserProperties properties;
             try {
                 properties = apiService.fetchProperties();
             } catch (Throwable ignored) {
-                properties = UserApiService.OFFLINE_PROPERTIES;
+                properties = UserApiService.OFFLINE_PROPERTIES; // TODO(VidTu): Catch error, shouldn't happen?
             }
             CompletableFuture<UserApiService.UserProperties> propertiesFuture = CompletableFuture.completedFuture(properties);
+            //?}
             PlayerSocialManager social = new PlayerSocialManager(minecraft, apiService);
             ClientTelemetryManager telemetry = new ClientTelemetryManager(minecraft, apiService, user);
             ProfileKeyPairManager keyPair = ProfileKeyPairManager.create(apiService, user, minecraft.gameDirectory.toPath());
@@ -332,7 +343,8 @@ public final class IASMinecraft {
                 LOGGER.info("IAS: Flushing user...");
                 accessor.ias$user(user);
                 accessor.ias$profileFuture(profile);
-                accessor.ias$userApiService(apiService);
+                accessor.ias$userApiService(hackyFinalApiService);
+                //? if >=1.20.4
                 accessor.ias$userPropertiesFuture(propertiesFuture);
                 accessor.ias$playerSocialManager(social);
                 accessor.ias$telemetryManager(telemetry);

@@ -184,9 +184,9 @@ public final class AccountScreen extends Screen {
 
         // Add account list.
         if (this.list != null) {
-            this.list.setRectangle(this.width, this.height - 24 - 24 - 4 - 34, 0, 34);
+            this.list.rescale(this.width, this.height);
         } else {
-            this.list = new AccountList(this, this.minecraft, this.width, this.height - 24 - 24 - 4 - 34, 34, 12);
+            this.list = new AccountList(this, this.minecraft, this.width, this.height);
         }
         this.addRenderableWidget(this.list);
 

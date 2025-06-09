@@ -20,6 +20,7 @@
 package ru.vidtu.ias.platform;
 
 import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
@@ -27,6 +28,7 @@ import org.jspecify.annotations.NullMarked;
 
 import java.nio.file.Path;
 import java.time.Duration;
+import java.util.Arrays;
 
 /**
  * A helper class that contains methods that depend on Stonecutter, a Java source code preprocessor.
@@ -84,8 +86,46 @@ public final class IStonecutter {
         //?} else
         /*return new ResourceLocation("ias", path);*/ // Implicit NPE for 'path'
     }
+
+    /**
+     * Creates a new translatable component.
+     *
+     * @param key Translation key
+     * @return A new translatable component
+     */
+    @Contract(value = "_ -> new", pure = true)
+    public static MutableComponent translate(String key) {
+        // Validate.
+        assert key != null : "IAS: Parameter 'key' is null.";
+
+        // Delegate.
+        //? if >=1.19.2 {
+        return net.minecraft.network.chat.Component.translatable(key);
+        //?} else
+        /*return new net.minecraft.network.chat.TranslatableComponent(key);*/
+    }
+
+    /**
+     * Creates a new translatable component.
+     *
+     * @param key  Translation key
+     * @param args Translation args
+     * @return A new translatable component
+     */
+    @Contract(value = "_, _ -> new", pure = true)
+    public static MutableComponent translate(String key, Object... args) {
+        // Validate.
+        assert key != null : "IAS: Parameter 'key' is null. (args: " + Arrays.toString(args) + ')';
+        assert args != null : "IAS: Parameter 'args' is null. (key: " + key + ')';
+
+        // Delegate.
+        //? if >=1.19.2 {
+        return net.minecraft.network.chat.Component.translatable(key, args);
+        //?} else
+        /*return new net.minecraft.network.chat.TranslatableComponent(key, args);*/
+    }
     
-    public static void setWidgetTooltipDelay(AbstractWidget widget, Duration delay) {
+    public static void setWidgetTooltipDelay(AbstractWidget widget, Duration delay) { // hopefully this is a temporary hack
         //? if >=1.20.6 {
         widget.setTooltipDelay(delay);
         //?} else
