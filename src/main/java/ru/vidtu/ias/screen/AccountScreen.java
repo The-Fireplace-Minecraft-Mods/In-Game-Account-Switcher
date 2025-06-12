@@ -39,6 +39,7 @@ import ru.vidtu.ias.IAS;
 import ru.vidtu.ias.account.Account;
 import ru.vidtu.ias.config.IASStorage;
 import ru.vidtu.ias.platform.IStonecutter;
+import ru.vidtu.ias.platform.ui.IButton;
 
 import java.time.Duration;
 
@@ -150,37 +151,32 @@ public final class AccountScreen extends Screen {
         this.addRenderableWidget(this.skin);
 
         // Add login button.
-        this.login = Button.builder(Component.translatable("ias.accounts.login"), btn -> this.list.login(true))
-                .bounds(this.width / 2 - 50 - 100 - 4, this.height - 24 - 24, 100, 20).build();
+        this.login = new IButton(this.width / 2 - 50 - 100 - 4, this.height - 24 - 24, 100, 20,
+                Component.translatable("ias.accounts.login"), null, () -> this.list.login(true));
         this.addRenderableWidget(this.login);
 
         // Add offline login button.
-        this.offlineLogin = Button.builder(Component.translatable("ias.accounts.offlineLogin"), btn -> this.list.login(false))
-                .bounds(this.width / 2 - 50 - 100 - 4, this.height - 24, 100, 20)
-                .build();
+        this.offlineLogin = new IButton(this.width / 2 - 50 - 100 - 4, this.height - 24, 100, 20,
+                Component.translatable("ias.accounts.offlineLogin"), null, () -> this.list.login(false));
         this.addRenderableWidget(this.offlineLogin);
 
         // Add edit button.
-        this.edit = Button.builder(Component.translatable("ias.accounts.edit"), btn -> this.list.edit())
-                .bounds(this.width / 2 - 50, this.height - 24 - 24, 100, 20)
-                .build();
+        this.edit = new IButton(this.width / 2 - 50, this.height - 24 - 24, 100, 20,
+                Component.translatable("ias.accounts.edit"), null, () -> this.list.edit()); // TODO: Using method ref will NPE
         this.addRenderableWidget(this.edit);
 
         // Add delete button.
-        this.delete = Button.builder(Component.translatable("ias.accounts.delete"), btn -> this.list.delete(!Screen.hasShiftDown()))
-                .bounds(this.width / 2 - 50, this.height - 24, 100, 20)
-                .build();
+        this.delete = new IButton(this.width / 2 - 50, this.height - 24, 100, 20,
+                Component.translatable("ias.accounts.delete"), null, () -> this.list.delete(!hasShiftDown()));
         this.addRenderableWidget(this.delete);
 
         // Add edit button.
-        this.addRenderableWidget(Button.builder(Component.translatable("ias.accounts.add"), btn -> this.list.add())
-                .bounds(this.width / 2 + 50 + 4, this.height - 24 - 24, 100, 20)
-                .build());
+        this.addRenderableWidget(new IButton(this.width / 2 + 50 + 4, this.height - 24 - 24, 100, 20,
+                Component.translatable("ias.accounts.add"), null, () -> this.list.add())); // TODO: Using method ref will NPE
 
         // Add delete button.
-        this.addRenderableWidget(Button.builder(CommonComponents.GUI_BACK, btn -> this.minecraft.setScreen(this.parent))
-                .bounds(this.width / 2 + 50 + 4, this.height - 24, 100, 20)
-                .build());
+        this.addRenderableWidget(new IButton(this.width / 2 + 50 + 4, this.height - 24, 100, 20,
+                CommonComponents.GUI_BACK, null, this::onClose));
 
         // Add account list.
         if (this.list != null) {

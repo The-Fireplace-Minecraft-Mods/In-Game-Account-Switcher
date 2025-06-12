@@ -40,6 +40,7 @@ import ru.vidtu.ias.config.IASStorage;
 import ru.vidtu.ias.config.ServerMode;
 import ru.vidtu.ias.config.TextAlign;
 import ru.vidtu.ias.platform.IStonecutter;
+import ru.vidtu.ias.platform.ui.IButton;
 import ru.vidtu.ias.platform.ui.IScreen;
 import ru.vidtu.ias.utils.Expression;
 
@@ -178,20 +179,16 @@ public final class ConfigScreen extends IScreen {
         this.addRenderableWidget(this.titleTextY);
 
         // Title Text Align.
-        this.titleTextAlign = Button.builder(CommonComponents.optionNameValue(Component.translatable("ias.config.titleTextAlign"), Component.translatable(IASConfig.titleTextAlign.toString())), btn -> {
-                    // This could be implemented with indexing, but there aren't too many options.
-                    IASConfig.titleTextAlign = switch (IASConfig.titleTextAlign) {
-                        case LEFT -> TextAlign.CENTER;
-                        case CENTER -> TextAlign.RIGHT;
-                        case RIGHT -> TextAlign.LEFT;
-                    };
-                    btn.setMessage(CommonComponents.optionNameValue(Component.translatable("ias.config.titleTextAlign"), Component.translatable(IASConfig.titleTextAlign.toString())));
-                })
-                .bounds(167 + box.getWidth(), 20, Math.min(150, Math.max(20, this.width - 171 - box.getWidth())), 20)
-                .build();
+        this.titleTextAlign = new IButton(167 + box.getWidth(), 20, Math.min(150, Math.max(20, this.width - 171 - box.getWidth())), 20, CommonComponents.optionNameValue(Component.translatable("ias.config.titleTextAlign"), Component.translatable(IASConfig.titleTextAlign.toString())), Component.translatable("ias.config.titleTextAlign.tip"), btn -> {
+            // This could be implemented with indexing, but there aren't too many options.
+            IASConfig.titleTextAlign = switch (IASConfig.titleTextAlign) {
+                case LEFT -> TextAlign.CENTER;
+                case CENTER -> TextAlign.RIGHT;
+                case RIGHT -> TextAlign.LEFT;
+            };
+            btn.setMessage(CommonComponents.optionNameValue(Component.translatable("ias.config.titleTextAlign"), Component.translatable(IASConfig.titleTextAlign.toString())));
+        });
         this.titleTextAlign.active = box.selected();
-        this.titleTextAlign.setTooltip(Tooltip.create(Component.translatable("ias.config.titleTextAlign.tip")));
-        IStonecutter.setWidgetTooltipDelay(this.titleTextAlign, Duration.ofMillis(250L));
         this.addRenderableWidget(this.titleTextAlign);
 
         // Title Button.
@@ -280,20 +277,16 @@ public final class ConfigScreen extends IScreen {
         this.addRenderableWidget(this.serversTextY);
 
         // Servers Text Align.
-        this.serversTextAlign = Button.builder(CommonComponents.optionNameValue(Component.translatable("ias.config.serversTextAlign"), Component.translatable(IASConfig.serversTextAlign.toString())), btn -> {
-                    // This could be implemented with indexing, but there aren't too many options.
-                    IASConfig.serversTextAlign = switch (IASConfig.serversTextAlign) {
-                        case LEFT -> TextAlign.CENTER;
-                        case CENTER -> TextAlign.RIGHT;
-                        case RIGHT -> TextAlign.LEFT;
-                    };
-                    btn.setMessage(CommonComponents.optionNameValue(Component.translatable("ias.config.serversTextAlign"), Component.translatable(IASConfig.serversTextAlign.toString())));
-                })
-                .bounds(167 + box.getWidth(), 68, Math.min(150, Math.max(20, this.width - 171 - box.getWidth())), 20)
-                .build();
+        this.serversTextAlign = new IButton(167 + box.getWidth(), 68, Math.min(150, Math.max(20, this.width - 171 - box.getWidth())), 20, CommonComponents.optionNameValue(Component.translatable("ias.config.serversTextAlign"), Component.translatable(IASConfig.serversTextAlign.toString())), Component.translatable("ias.config.serversTextAlign.tip"), btn -> {
+            // This could be implemented with indexing, but there aren't too many options.
+            IASConfig.serversTextAlign = switch (IASConfig.serversTextAlign) {
+                case LEFT -> TextAlign.CENTER;
+                case CENTER -> TextAlign.RIGHT;
+                case RIGHT -> TextAlign.LEFT;
+            };
+            btn.setMessage(CommonComponents.optionNameValue(Component.translatable("ias.config.serversTextAlign"), Component.translatable(IASConfig.serversTextAlign.toString())));
+        });
         this.serversTextAlign.active = box.selected();
-        this.serversTextAlign.setTooltip(Tooltip.create(Component.translatable("ias.config.serversTextAlign.tip")));
-        IStonecutter.setWidgetTooltipDelay(this.serversTextAlign, Duration.ofMillis(250L));
         this.addRenderableWidget(this.serversTextAlign);
 
         // Servers Button.
@@ -345,7 +338,7 @@ public final class ConfigScreen extends IScreen {
         this.addRenderableWidget(box);
 
         // Sun Server.
-        Button button = Button.builder(CommonComponents.optionNameValue(Component.translatable("ias.config.server"), Component.translatable(IASConfig.server.toString())), btn -> {
+        Button button = new IButton(9 + box.getWidth(), 116, 200, 20, CommonComponents.optionNameValue(Component.translatable("ias.config.server"), Component.translatable(IASConfig.server.toString())), Component.translatable("ias.config.server.tip"), btn -> {
             // Update the value.
             IASConfig.server = switch (IASConfig.server) {
                 case ALWAYS -> ServerMode.AVAILABLE;
@@ -355,8 +348,7 @@ public final class ConfigScreen extends IScreen {
 
             // Set the message.
             btn.setMessage(CommonComponents.optionNameValue(Component.translatable("ias.config.server"), Component.translatable(IASConfig.server.toString())));
-        }).bounds(9 + box.getWidth(), 116, 200, 20).tooltip(Tooltip.create(Component.translatable("ias.config.server.tip"))).build();
-        IStonecutter.setWidgetTooltipDelay(button, Duration.ofMillis(250L));
+        });
         this.addRenderableWidget(button);
 
         // Nick Warns.
@@ -386,9 +378,8 @@ public final class ConfigScreen extends IScreen {
         this.addRenderableWidget(box);
 
         // Add done button.
-        this.addRenderableWidget(Button.builder(CommonComponents.GUI_DONE, btn -> this.onClose())
-                .bounds(this.width / 2 - 100, this.height - 24, 200, 20)
-                .build());
+        this.addRenderableWidget(new IButton(this.width / 2 - 100, this.height - 24, 200, 20,
+                CommonComponents.GUI_DONE, Component.translatable("ias.save"), this::onClose));
     }
 
     @Override

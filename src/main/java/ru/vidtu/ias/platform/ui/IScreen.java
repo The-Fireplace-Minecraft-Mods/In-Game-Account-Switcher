@@ -37,11 +37,11 @@ public abstract class IScreen extends Screen {
      * A duration for tooltips in version-dependant units. Currently {@code 250} milliseconds.
      */
     //? if >=1.20.6 {
-    private static final java.time.Duration TOOLTIP_DURATION = java.time.Duration.ofMillis(250L);
+    static final java.time.Duration TOOLTIP_DURATION = java.time.Duration.ofMillis(250L);
     //?} else if >=1.19.4 {
-    /*private static final int TOOLTIP_DURATION = 250; // Millis.
+    /*static final int TOOLTIP_DURATION = 250; // Millis.
      *///?} else
-    /*private static final long TOOLTIP_DURATION = 250_000_000L;*/ // Nanos.
+    /*static final long TOOLTIP_DURATION = 250_000_000L;*/ // Nanos.
 
     /**
      * Creates a new screen.
