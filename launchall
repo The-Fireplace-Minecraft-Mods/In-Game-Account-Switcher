@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 # In-Game Account Switcher is a mod for Minecraft that allows you to change your logged in account in-game, without restarting Minecraft.
 # Copyright (C) 2015-2022 The_Fireplace
 # Copyright (C) 2021-2025 VidTu
@@ -15,18 +16,12 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>
 
-[versions]
-architectury-loom = "1.10.431"
-error_prone_annotations = "2.37.0"
-fabric-loader = "0.16.14"
-jetbrains-annotations = "26.0.2"
-jspecify = "1.0.0"
+for ver in $(ls versions); do
+    echo "> Switching to $ver..."
+    ./gradlew "Set active project to $ver" --no-configuration-cache
+    echo "> Launching $ver..."
+    ./gradlew "${ver}:runClient" --no-configuration-cache
+done
 
-[plugins]
-architectury-loom = { id = "dev.architectury.loom", version.ref = "architectury-loom" }
-
-[libraries]
-error_prone_annotations = { module = "com.google.errorprone:error_prone_annotations", version.ref = "error_prone_annotations" }
-fabric-loader = { module = "net.fabricmc:fabric-loader", version.ref = "fabric-loader" }
-jetbrains-annotations = { module = "org.jetbrains:annotations", version.ref = "jetbrains-annotations" }
-jspecify = { module = "org.jspecify:jspecify", version.ref = "jspecify" }
+echo "> Resetting..."
+./gradlew "Reset active project" --no-configuration-cache

@@ -28,6 +28,7 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.vidtu.ias.config.migrator.Migrator;
+import ru.vidtu.ias.platform.IStonecutter;
 import ru.vidtu.ias.utils.GSONUtils;
 import ru.vidtu.ias.utils.IUtils;
 
@@ -179,21 +180,20 @@ public final class IASConfig {
     /**
      * Loads the config.
      *
-     * @param path Config directory (not file)
      * @throws RuntimeException If unable to load the config
      */
-    public static void load(@NotNull Path path) {
+    public static void load() {
         try {
             // Log.
-            LOGGER.debug("IAS: Loading config for {}...", path);
+            LOGGER.debug("IAS: Loading config...");
 
             // Get the file.
-            Path file = path.resolve("ias.json");
+            Path file = IStonecutter.CONFIG_DIRECTORY.resolve("ias.json");
 
             // Skip if it doesn't exist.
             if (!Files.isRegularFile(file)) {
                 LOGGER.debug("IAS: Config not found. Saving...");
-                save(path);
+                save();
                 return;
             }
 
@@ -211,7 +211,7 @@ public final class IASConfig {
                 LOGGER.info("IAS: Migrating old config version {} via {}.", version, migrator);
                 migrator.load(json);
                 LOGGER.info("IAS: Migrated old config.");
-                save(path);
+                save();
                 return;
             }
 
@@ -234,13 +234,12 @@ public final class IASConfig {
     /**
      * Saves the config.
      *
-     * @param path Config directory (not file)
      * @throws RuntimeException If unable to save the config
      */
-    public static void save(@NotNull Path path) {
+    public static void save() {
         try {
             // Log.
-            LOGGER.debug("IAS: Saving config into {}...", path);
+            LOGGER.debug("IAS: Saving config...");
 
             // NPE protection.
             titleTextAlign = Objects.requireNonNullElse(titleTextAlign, TextAlign.LEFT);
@@ -248,7 +247,7 @@ public final class IASConfig {
             server = Objects.requireNonNullElse(server, ServerMode.AVAILABLE);
 
             // Get the file.
-            Path file = path.resolve("ias.json");
+            Path file = IStonecutter.CONFIG_DIRECTORY.resolve("ias.json");
 
             // Hacky JSON writing.
             @SuppressWarnings("InstantiationOfUtilityClass") // <- Hack.
