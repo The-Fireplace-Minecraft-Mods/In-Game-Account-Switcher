@@ -25,15 +25,15 @@ java.sourceCompatibility = JavaVersion.VERSION_21
 java.targetCompatibility = JavaVersion.VERSION_21
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 group = "ru.vidtu.ias"
-base.archivesName = "IAS-NeoForge-1.21.5"
+base.archivesName = "IAS-Forge-1.21.6"
 description = "This mod allows you to change your logged in account in-game, without restarting Minecraft."
-evaluationDependsOn(":1.21.5-root")
-val shared = project(":1.21.5-root")
+evaluationDependsOn(":1.21.6-root")
+val shared = project(":1.21.6-root")
 
 loom {
     silentMojangMappingsLicense()
-    neoForge {
-        // Empty
+    forge {
+        mixinConfigs = setOf("ias.mixins.json")
     }
     runs.named("client") {
         vmArgs(
@@ -43,7 +43,6 @@ loom {
             "-XX:HotswapAgent=fatjar",
             "-Dfabric.debug.disableClassPathIsolation=true"
         )
-        programArgs("--mixin", "ias.mixins.json")
     }
     @Suppress("UnstableApiUsage")
     mixin {
@@ -55,7 +54,6 @@ loom {
 repositories {
     mavenCentral()
     maven("https://maven.architectury.dev/")
-    maven("https://maven.neoforged.net/releases/")
     maven("https://maven.minecraftforge.net/")
 }
 
@@ -65,11 +63,11 @@ dependencies {
     compileOnlyApi(libs.error.prone.annotations)
 
     // Minecraft (Provided)
-    minecraft(libs.minecraft.mc1215)
+    minecraft(libs.minecraft.mc1216)
     mappings(loom.officialMojangMappings())
 
-    // NeoForge
-    neoForge(libs.neoforge.mc1215)
+    // Forge
+    forge(libs.forge.mc1216)
 
     // Root
     compileOnly(shared)
@@ -87,7 +85,7 @@ tasks.withType<ProcessResources> {
     from(rootProject.sourceSets.main.get().resources)
     from(shared.sourceSets.main.get().resources)
     inputs.property("version", version)
-    filesMatching("META-INF/neoforge.mods.toml") {
+    filesMatching("META-INF/mods.toml") {
         expand(inputs.properties)
     }
 }
@@ -106,7 +104,7 @@ tasks.withType<Jar> {
             "Specification-Title" to "In-Game Account Switcher",
             "Specification-Version" to version,
             "Specification-Vendor" to "VidTu",
-            "Implementation-Title" to "IAS-NeoForge-1.21.5",
+            "Implementation-Title" to "IAS-Forge-1.21.6",
             "Implementation-Version" to version,
             "Implementation-Vendor" to "VidTu",
             "MixinConfigs" to "ias.mixins.json"
