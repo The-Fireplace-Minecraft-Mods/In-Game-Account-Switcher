@@ -150,7 +150,7 @@ public final class IASStorage {
                             StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE,
                             StandardOpenOption.SYNC, StandardOpenOption.DSYNC, LinkOption.NOFOLLOW_LINKS);
                 } catch (Throwable t) {
-                    if (name.equals("READ_ME_IMPORTANT.txt")) continue;
+                    if (!name.equals("READ_ME_IMPORTANT.txt")) continue;
                     throw t;
                 }
             }
