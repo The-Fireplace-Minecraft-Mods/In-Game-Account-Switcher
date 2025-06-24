@@ -19,7 +19,6 @@
 
 package ru.vidtu.ias.screen;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
@@ -57,11 +56,6 @@ public final class ConfigScreen extends IScreen {
      * Logger for this class.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger("IAS/ConfigScreen");
-
-    /**
-     * Parent screen, {@code null} if none.
-     */
-    private final Screen parent;
 
     /**
      * Title text X.
@@ -119,8 +113,7 @@ public final class ConfigScreen extends IScreen {
      * @param parent Parent screen, {@code null} if none
      */
     public ConfigScreen(Screen parent) {
-        super(Component.translatable("ias.config"));
-        this.parent = parent;
+        super(Component.translatable("ias.config"), parent);
     }
 
     @Override
@@ -400,17 +393,19 @@ public final class ConfigScreen extends IScreen {
     }
 
     @Override
-    public void renderContents(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
+    public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
+        // Render super.
+        super.render(graphics, mouseX, mouseY, delta);
+
         // Render title.
         graphics.drawCenteredString(this.font, this.title, this.width / 2, 5, 0xFF_FF_FF_FF);
 
         // Render current mouse pos if alt is held.
         if (Screen.hasAltDown()) {
-            PoseStack pose = graphics.pose();
-            pose.pushPose();
-            pose.translate(0.0F, 0.0F, 2.0F);
-            graphics.renderTooltip(this.font, Component.translatable("ias.config.mousePos", mouseX, mouseY), mouseX, mouseY);
-            pose.popPose();
+            //? if >=1.21.6 {
+            graphics.setTooltipForNextFrame(Component.translatable("ias.config.mousePos", mouseX, mouseY), mouseX, mouseY);
+            //? } else
+            this.setTooltipForNextRenderPass(Component.translatable("ias.config.mousePos", mouseX, mouseY));
         }
     }
 

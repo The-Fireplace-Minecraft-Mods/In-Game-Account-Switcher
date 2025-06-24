@@ -19,7 +19,6 @@
 
 package ru.vidtu.ias.screen;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Tooltip;
@@ -32,6 +31,7 @@ import ru.vidtu.ias.account.OfflineAccount;
 import ru.vidtu.ias.auth.microsoft.MSAuth;
 import ru.vidtu.ias.config.IASConfig;
 import ru.vidtu.ias.platform.IStonecutter;
+import ru.vidtu.ias.platform.ui.IPopupScreen;
 
 import java.time.Duration;
 import java.util.UUID;
@@ -43,12 +43,7 @@ import java.util.function.Supplier;
  *
  * @author VidTu
  */
-public final class OfflinePopupScreen extends Screen {
-    /**
-     * Parent screen.
-     */
-    private final Screen parent;
-
+public final class OfflinePopupScreen extends IPopupScreen {
     /**
      * Account handler.
      */
@@ -76,8 +71,7 @@ public final class OfflinePopupScreen extends Screen {
      * @param handler Account handler
      */
     OfflinePopupScreen(Screen parent, Consumer<Account> handler) {
-        super(Component.translatable("ias.offline"));
-        this.parent = parent;
+        super(Component.translatable("ias.offline"), parent);
         this.handler = handler;
     }
 
@@ -308,24 +302,15 @@ public final class OfflinePopupScreen extends Screen {
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
         // Bruh.
         assert this.minecraft != null;
-        PoseStack pose = graphics.pose();
-
-        // Render parent behind.
-        if (this.parent != null) {
-            pose.pushPose();
-            pose.translate(0.0F, 0.0F, -1000.0F);
-            this.parent.render(graphics, 0, 0, delta);
-            pose.popPose();
-        }
 
         // Render background and widgets.
         super.render(graphics, mouseX, mouseY, delta);
 
         // Render the title.
-        pose.pushPose();
-        pose.scale(2.0F, 2.0F, 2.0F);
+        this.push(graphics);
+        this.scale(graphics, 2.0F);
         graphics.drawCenteredString(this.font, this.title, this.width / 4, this.height / 4 - 49 / 2, 0xFF_FF_FF_FF);
-        pose.popPose();
+        this.pop(graphics);
 
         // Render the nick title.
         if (this.name != null) {
@@ -339,12 +324,7 @@ public final class OfflinePopupScreen extends Screen {
         assert this.minecraft != null;
 
         // Render transparent background if parent exists.
-        if (this.parent != null) {
-            // Render gradient.
-            graphics.fill(0, 0, this.width, this.height, 0x80_00_00_00);
-        } else {
-            super.renderBackground(graphics, mouseX, mouseY, delta);
-        }
+        super.renderBackground(graphics, mouseX, mouseY, delta);
 
         // Render "form".
         int centerX = this.width / 2;

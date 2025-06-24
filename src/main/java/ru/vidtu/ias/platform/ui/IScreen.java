@@ -43,28 +43,47 @@ public abstract class IScreen extends Screen {
      *///?} else
     /*static final long TOOLTIP_DURATION = 250_000_000L;*/ // Nanos.
 
+    protected final Screen parent;
+
     /**
      * Creates a new screen.
      *
      * @param title Screen title to narrate and display
      */
     @Contract(pure = true)
-    protected IScreen(Component title) {
+    protected IScreen(Component title, Screen parent) {
         super(title);
+        this.parent = parent;
     }
 
     @Override
-    public final void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
+    public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
         // Render background and widgets.
         //? if <1.20.2
         /*this.renderBackground(graphics, mouseX, mouseY, delta);*/
         super.render(graphics, mouseX, mouseY, delta);
-
-        // Render the contents.
-        this.renderContents(graphics, mouseX, mouseY, delta);
     }
 
-    protected abstract void renderContents(GuiGraphics graphics, int mouseX, int mouseY, float delta);
+    protected final void push(GuiGraphics graphics) {
+        //? if >=1.21.6 {
+        graphics.pose().pushMatrix();
+        //?} else
+        /*graphics.pose().pushPose();*/
+    }
+
+    protected final void pop(GuiGraphics graphics) {
+        //? if >=1.21.6 {
+        graphics.pose().popMatrix();
+        //?} else
+        /*graphics.pose().popPose();*/
+    }
+
+    protected final void scale(GuiGraphics graphics, float scale) {
+        //? if >=1.21.6 {
+        graphics.pose().scale(scale, scale);
+        //?} else
+        /*graphics.pose().scale(scale, scale, 1.0F);*/
+    }
 
     /**
      * Creates a new GUI checkbox instance.

@@ -19,7 +19,6 @@
 
 package ru.vidtu.ias.screen;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.MultiLineLabel;
@@ -36,6 +35,7 @@ import ru.vidtu.ias.auth.LoginData;
 import ru.vidtu.ias.auth.handlers.LoginHandler;
 import ru.vidtu.ias.config.IASConfig;
 import ru.vidtu.ias.config.IASStorage;
+import ru.vidtu.ias.platform.ui.IPopupScreen;
 import ru.vidtu.ias.utils.exceptions.FriendlyException;
 
 import java.util.Objects;
@@ -47,16 +47,11 @@ import java.util.function.Supplier;
  *
  * @author VidTu
  */
-final class LoginPopupScreen extends Screen implements LoginHandler {
+final class LoginPopupScreen extends IPopupScreen implements LoginHandler {
     /**
      * Logger for this class.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger("IAS/LoginPopupScreen");
-
-    /**
-     * Parent screen.
-     */
-    private final Screen parent;
 
     /**
      * Synchronization lock.
@@ -106,8 +101,7 @@ final class LoginPopupScreen extends Screen implements LoginHandler {
      * @param parent Parent screen
      */
     LoginPopupScreen(Screen parent) {
-        super(Component.translatable("ias.login"));
-        this.parent = parent;
+        super(Component.translatable("ias.login"), parent);
     }
 
     @Override
@@ -194,32 +188,23 @@ final class LoginPopupScreen extends Screen implements LoginHandler {
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
         // Bruh.
         assert this.minecraft != null;
-        PoseStack pose = graphics.pose();
-
-        // Render parent behind.
-        if (this.parent != null) {
-            pose.pushPose();
-            pose.translate(0.0F, 0.0F, -1000.0F);
-            this.parent.render(graphics, 0, 0, delta);
-            pose.popPose();
-        }
 
         // Render background and widgets.
         super.render(graphics, mouseX, mouseY, delta);
 
         // Render the title.
-        pose.pushPose();
-        pose.scale(2.0F, 2.0F, 2.0F);
+        this.push(graphics);
+        this.scale(graphics, 2.0F);
         graphics.drawCenteredString(this.font, this.title, this.width / 4, this.height / 4 - 74 / 2, 0xFF_FF_FF_FF);
-        pose.popPose();
+        this.pop(graphics);
 
         // Render password OR label.
         if (this.passFuture != null && this.password != null && this.cryptPasswordTip != null) {
             graphics.drawCenteredString(this.font, this.password.getMessage(), this.width / 2, this.height / 2 - 10 - 5, 0xFF_FF_FF_FF);
-            pose.pushPose();
-            pose.scale(0.5F, 0.5F, 0.5F);
+            this.push(graphics);
+            this.scale(graphics, 0.5F);
             this.cryptPasswordTip.renderCentered(graphics, this.width, this.height + 40, 10, 0xFF_FF_FF_00);
-            pose.popPose();
+            this.pop(graphics);
         } else {
             // Synchronize to prevent funny things.
             synchronized (this.lock) {
@@ -232,7 +217,10 @@ final class LoginPopupScreen extends Screen implements LoginHandler {
                     this.label = MultiLineLabel.create(this.font, component, 240);
 
                     // Narrate.
-                    this.minecraft.getNarrator().say(component);
+                    //? if >=1.21.6 {
+                    this.minecraft.getNarrator().saySystemQueued(component);
+                    //?} else
+                    /*this.minecraft.getNarrator().say(component);*/
                 }
 
                 // Render the label.
@@ -278,10 +266,10 @@ final class LoginPopupScreen extends Screen implements LoginHandler {
                 graphics.fill(cx - w + 1, sy + h, cx + w - 1, sy + h + 1, 0x101010 | opacityMask);
 
                 // Render scaled.
-                pose.pushPose();
-                pose.scale(0.5F, 0.5F, 0.5F);
+                this.push(graphics);
+                this.scale(graphics, 0.5F);
                 this.errorNote.renderCentered(graphics, this.width, this.height + 174, 9, 0xFF_FF_FF | opacityMask);
-                pose.popPose();
+                this.pop(graphics);
             }
         }
     }
@@ -292,12 +280,7 @@ final class LoginPopupScreen extends Screen implements LoginHandler {
         assert this.minecraft != null;
 
         // Render transparent background if parent exists.
-        if (this.parent != null) {
-            // Render gradient.
-            graphics.fill(0, 0, this.width, this.height, 0x80_00_00_00);
-        } else {
-            super.renderBackground(graphics, mouseX, mouseY, delta);
-        }
+        super.renderBackground(graphics, mouseX, mouseY, delta);
 
         // Render "form".
         int centerX = this.width / 2;

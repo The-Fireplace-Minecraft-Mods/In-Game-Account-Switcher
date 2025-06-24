@@ -19,7 +19,6 @@
 
 package ru.vidtu.ias.screen;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.MultiLineLabel;
 import net.minecraft.client.gui.components.Tooltip;
@@ -29,6 +28,7 @@ import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import ru.vidtu.ias.account.Account;
 import ru.vidtu.ias.platform.IStonecutter;
+import ru.vidtu.ias.platform.ui.IPopupScreen;
 
 import java.time.Duration;
 import java.util.function.Supplier;
@@ -38,12 +38,7 @@ import java.util.function.Supplier;
  *
  * @author VidTu
  */
-final class DeletePopupScreen extends Screen {
-    /**
-     * Parent screen.
-     */
-    private final Screen parent;
-
+final class DeletePopupScreen extends IPopupScreen {
     /**
      * Confirmation prompt.
      */
@@ -67,8 +62,7 @@ final class DeletePopupScreen extends Screen {
      * @param handler Callback handler
      */
     DeletePopupScreen(Screen parent, Account account, Runnable handler) {
-        super(Component.translatable("ias.delete"));
-        this.parent = parent;
+        super(Component.translatable("ias.delete"), parent);
         this.prompt = Component.translatable("ias.delete.confirm", account.name());
         this.handler = handler;
     }
@@ -108,24 +102,15 @@ final class DeletePopupScreen extends Screen {
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
         // Bruh.
         assert this.minecraft != null;
-        PoseStack pose = graphics.pose();
-
-        // Render parent behind.
-        if (this.parent != null) {
-            pose.pushPose();
-            pose.translate(0.0F, 0.0F, -1000.0F);
-            this.parent.render(graphics, 0, 0, delta);
-            pose.popPose();
-        }
 
         // Render background and widgets.
         super.render(graphics, mouseX, mouseY, delta);
 
         // Render the title.
-        pose.pushPose();
-        pose.scale(2.0F, 2.0F, 2.0F);
+        this.push(graphics);
+        this.scale(graphics, 2.0F);
         graphics.drawCenteredString(this.font, this.title, this.width / 4, this.height / 4 - 49 / 2, 0xFF_FF_FF_FF);
-        pose.popPose();
+        this.pop(graphics);
 
         // Render the prompt.
         this.label.renderCentered(graphics, this.width / 2, (this.height - this.label.getLineCount() * 9) / 2 - 4);
@@ -137,12 +122,7 @@ final class DeletePopupScreen extends Screen {
         assert this.minecraft != null;
 
         // Render transparent background if parent exists.
-        if (this.parent != null) {
-            // Render gradient.
-            graphics.fill(0, 0, this.width, this.height, 0x80_00_00_00);
-        } else {
-            super.renderBackground(graphics, mouseX, mouseY, delta);
-        }
+        super.renderBackground(graphics, mouseX, mouseY, delta);
 
         // Render "form".
         int centerX = this.width / 2;

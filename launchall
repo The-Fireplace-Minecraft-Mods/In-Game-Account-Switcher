@@ -16,11 +16,12 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>
 
-for ver in $(ls versions); do
-    echo "> Switching to $ver..."
-    ./gradlew "Set active project to $ver" --no-configuration-cache
-    echo "> Launching $ver..."
-    ./gradlew "${ver}:runClient" --no-configuration-cache
+for folder in versions/*; do
+    version=$(basename "$folder")
+    echo "> Switching to $version..."
+    ./gradlew "Set active project to $version" --no-configuration-cache
+    echo "> Launching $version..."
+    ./gradlew "${version}:runClient" --no-configuration-cache
 done
 
 echo "> Resetting..."

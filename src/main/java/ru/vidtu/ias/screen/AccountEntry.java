@@ -26,11 +26,8 @@ import net.minecraft.client.User;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.ObjectSelectionList;
 import net.minecraft.client.gui.components.PlayerFaceRenderer;
-import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.resources.PlayerSkin;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
@@ -129,7 +126,10 @@ final class AccountEntry extends ObjectSelectionList.Entry<AccountEntry> {
         // Render tooltip.
         if (hovered) {
             if ((System.nanoTime() - this.lastFree) >= 500_000_000L) {
-                this.list.screen().setTooltipForNextRenderPass(this.tooltip);
+                //? if >=1.21.6 {
+                graphics.setTooltipForNextFrame(this.tooltip, mouseX, mouseY);
+                //?} else
+                /*this.list.screen().setTooltipForNextRenderPass(this.tooltip);*/
             }
         } else {
             this.lastFree = System.nanoTime();
@@ -160,12 +160,17 @@ final class AccountEntry extends ObjectSelectionList.Entry<AccountEntry> {
         // Render warning if insecure.
         if (this.account.insecure()) {
             boolean warning = (System.nanoTime() / 1_000_000_000L) % 2L == 0;
-            //? if >=1.21.3 {
-            graphics.blitSprite(RenderType::guiTextured, warning ? WARNING.enabled() : WARNING.enabledFocused(), x - 6, y - 1, 2, 10);
-            //?} else
+            //? if >=1.21.6 {
+            graphics.blitSprite(net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED, warning ? WARNING.enabled() : WARNING.enabledFocused(), x - 6, y - 1, 2, 10);
+            //?} else if >=1.21.3 {
+            /*graphics.blitSprite(net.minecraft.client.renderer.RenderType::guiTextured, warning ? WARNING.enabled() : WARNING.enabledFocused(), x - 6, y - 1, 2, 10);
+            *///?} else
             /*graphics.blitSprite(warning ? WARNING.enabled() : WARNING.enabledFocused(), x - 6, y - 1, 2, 10);*/
             if (mouseX >= x - 10 && mouseX <= x && mouseY >= y && mouseY <= y + height) {
-                this.list.screen().setTooltipForNextRenderPass(Tooltip.create(Component.translatable("ias.accounts.tip.insecure")), DefaultTooltipPositioner.INSTANCE, true);
+                //? if >=1.21.6 {
+                graphics.setTooltipForNextFrame(Component.translatable("ias.accounts.tip.insecure"), mouseX, mouseY);
+                //?} else
+                /*this.list.screen().setTooltipForNextRenderPass(List.of(Component.translatable("ias.accounts.tip.insecure").getVisualOrderText()));*/
             }
         }
 
@@ -181,9 +186,11 @@ final class AccountEntry extends ObjectSelectionList.Entry<AccountEntry> {
             } else {
                 upTexture = UP.enabled();
             }
-            //? if >=1.21.3 {
-            graphics.blitSprite(RenderType::guiTextured, upTexture, upX, y, 11, 7);
-            //?} else
+            //? if >=1.21.6 {
+            graphics.blitSprite(net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED, upTexture, upX, y, 11, 7);
+            //?} else if >=1.21.3 {
+            /*graphics.blitSprite(net.minecraft.client.renderer.RenderType::guiTextured, upTexture, upX, y, 11, 7);
+            *///?} else
             /*graphics.blitSprite(upTexture, upX, y, 11, 7);*/
 
             // Render down widget.
@@ -196,9 +203,11 @@ final class AccountEntry extends ObjectSelectionList.Entry<AccountEntry> {
             } else {
                 downTexture = DOWN.enabled();
             }
-            //? if >=1.21.3 {
-            graphics.blitSprite(RenderType::guiTextured, downTexture, downX, y, 11, 7);
-            //?} else
+            //? if >=1.21.6 {
+            graphics.blitSprite(net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED, downTexture, downX, y, 11, 7);
+            //?} else if >=1.21.3 {
+            /*graphics.blitSprite(net.minecraft.client.renderer.RenderType::guiTextured, downTexture, downX, y, 11, 7);
+            *///?} else
             /*graphics.blitSprite(downTexture, downX, y, 11, 7);*/
         }
     }

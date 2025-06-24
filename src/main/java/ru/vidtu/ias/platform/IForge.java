@@ -23,7 +23,6 @@
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ScreenEvent;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.GameShuttingDownEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.loading.FMLEnvironment;
@@ -88,18 +87,28 @@ public final class IForge {
             throw new UnsupportedOperationException("IAS: You've tried to load the In-Game Account Switcher mod on a server. This won't work.");
         }
 
-        // Register the screen handlers.
-        MinecraftForge.EVENT_BUS.addListener((ScreenEvent.Init.Post event) -> {
+        // Register the handlers.
+        //? if >=1.21.6 {
+        ScreenEvent.Init.Post.BUS.addListener(event -> {
             Screen screen = event.getScreen();
             IASMinecraft.onInit(screen.getMinecraft(), screen, event::addListener);
         });
-        MinecraftForge.EVENT_BUS.addListener((ScreenEvent.Render.Post event) -> {
+        ScreenEvent.Render.Post.BUS.addListener(event -> {
             Screen screen = event.getScreen();
             IASMinecraft.onDraw(screen, screen.getMinecraft().font, event.getGuiGraphics());
         });
-
-        // Register the shutdown hook.
-        MinecraftForge.EVENT_BUS.addListener((GameShuttingDownEvent event) -> IAS.close());
+        GameShuttingDownEvent.BUS.addListener(event -> IAS.close());
+        //?} else {
+        /^net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener((ScreenEvent.Init.Post event) -> {
+            Screen screen = event.getScreen();
+            IASMinecraft.onInit(screen.getMinecraft(), screen, event::addListener);
+        });
+        net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener((ScreenEvent.Render.Post event) -> {
+            Screen screen = event.getScreen();
+            IASMinecraft.onDraw(screen, screen.getMinecraft().font, event.getGuiGraphics());
+        });
+        net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener((GameShuttingDownEvent event) -> IAS.close());
+        ^///?}
 
         // Register the config screen.
         //? if hackyNeoForge {
