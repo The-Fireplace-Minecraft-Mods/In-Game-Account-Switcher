@@ -16,7 +16,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>
 
 [versions]
-architectury-loom = "1.10.431"
+architectury-loom = "1.10.432"
 error_prone_annotations = "2.37.0"
 fabric-loader = "0.16.14"
 jetbrains-annotations = "26.0.2"
