@@ -44,6 +44,7 @@ import ru.vidtu.ias.platform.ui.IScreen;
 import ru.vidtu.ias.utils.Expression;
 
 import java.time.Duration;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -404,8 +405,8 @@ public final class ConfigScreen extends IScreen {
         if (Screen.hasAltDown()) {
             //? if >=1.21.6 {
             graphics.setTooltipForNextFrame(Component.translatable("ias.config.mousePos", mouseX, mouseY), mouseX, mouseY);
-            //? } else
-            this.setTooltipForNextRenderPass(Component.translatable("ias.config.mousePos", mouseX, mouseY));
+            //?} else
+            /*this.setTooltipForNextRenderPass(List.of(Component.translatable("ias.config.mousePos", mouseX, mouseY).getVisualOrderText()));*/
         }
     }
 
