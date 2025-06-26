@@ -141,11 +141,12 @@ public final class IASStorage {
 
             // Write every name.
             for (String name : DISCLAIMER_FILE_NAMES) {
-                // Resolve the file.
-                Path file = path.resolve(name);
-
-                // Write the disclaimer.
+                // Wrap.
                 try {
+                    // Resolve the file.
+                    Path file = path.resolve(name);
+
+                    // Write the disclaimer.
                     Files.writeString(file, DISCLAIMER, StandardOpenOption.CREATE,
                             StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE,
                             StandardOpenOption.SYNC, StandardOpenOption.DSYNC, LinkOption.NOFOLLOW_LINKS);
@@ -158,8 +159,8 @@ public final class IASStorage {
             // Log.
             LOGGER.debug("IAS: Disclaimers ({}) written to {}.", DISCLAIMER_FILE_NAMES, path);
         } catch (Throwable t) {
-            // Rethrow.
-            throw new RuntimeException("Unable to write IAS disclaimers.", t);
+            // Log. (**ERROR**)
+            LOGGER.error("Unable to write IAS disclaimers.", t);
         }
     }
 
