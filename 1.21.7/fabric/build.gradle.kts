@@ -25,36 +25,55 @@ java.sourceCompatibility = JavaVersion.VERSION_21
 java.targetCompatibility = JavaVersion.VERSION_21
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 group = "ru.vidtu.ias"
-base.archivesName = "IAS-1.21.6"
+base.archivesName = "IAS-Fabric-1.21.7"
 description = "This mod allows you to change your logged in account in-game, without restarting Minecraft."
+evaluationDependsOn(":1.21.7-root")
+val shared = project(":1.21.7-root")
 
 repositories {
     mavenCentral()
-    maven("https://repo.spongepowered.org/repository/maven-public/")
+    maven("https://maven.fabricmc.net/")
+    maven("https://maven.terraformersmc.com/releases/")
 }
 
 loom {
     silentMojangMappingsLicense()
+    runs.named("client") {
+        vmArgs(
+            "-XX:+IgnoreUnrecognizedVMOptions",
+            "-Xmx2G",
+            "-XX:+AllowEnhancedClassRedefinition",
+            "-XX:HotswapAgent=fatjar",
+            "-Dfabric.debug.disableClassPathIsolation=true"
+        )
+    }
+    @Suppress("UnstableApiUsage")
+    mixin {
+        defaultRefmapName = "ias.mixins.refmap.json"
+    }
 }
 
 dependencies {
-    // Annotations
+    // Annotations (Compile)
     compileOnlyApi(libs.jetbrains.annotations)
     compileOnlyApi(libs.error.prone.annotations)
 
     // Minecraft (Provided)
-    minecraft(libs.minecraft.mc1216)
+    minecraft(libs.minecraft.mc1217)
     mappings(loom.officialMojangMappings())
 
-    // Mixin
-    compileOnly(libs.mixin)
+    // Fabric
+    modImplementation(libs.fabric.loader)
+    modImplementation(libs.fabric.mc1217)
+    modImplementation(libs.modmenu.mc1217)
 
     // Root
-    compileOnlyApi(rootProject)
+    compileOnly(shared)
 }
 
 tasks.withType<JavaCompile> {
     source(rootProject.sourceSets.main.get().java)
+    source(shared.sourceSets.main.get().java)
     options.encoding = "UTF-8"
     options.compilerArgs.addAll(listOf("-g", "-parameters"))
     options.release = 21
@@ -62,6 +81,11 @@ tasks.withType<JavaCompile> {
 
 tasks.withType<ProcessResources> {
     from(rootProject.sourceSets.main.get().resources)
+    from(shared.sourceSets.main.get().resources)
+    inputs.property("version", version)
+    filesMatching(listOf("fabric.mod.json", "quilt.mod.json")) {
+        expand(inputs.properties)
+    }
 }
 
 tasks.withType<AbstractArchiveTask> {
@@ -78,7 +102,7 @@ tasks.withType<Jar> {
             "Specification-Title" to "In-Game Account Switcher",
             "Specification-Version" to version,
             "Specification-Vendor" to "VidTu",
-            "Implementation-Title" to "IAS-1.21.6",
+            "Implementation-Title" to "IAS-Fabric-1.21.7",
             "Implementation-Version" to version,
             "Implementation-Vendor" to "VidTu"
         )
