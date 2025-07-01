@@ -95,7 +95,7 @@ buildscript {
 
     dependencies {
         classpath(libs.gson)
-        classpath("com.github.mizosoft.methanol:methanol:1.8.2")
+        classpath("com.github.mizosoft.methanol:methanol:1.8.3")
     }
 }
 
