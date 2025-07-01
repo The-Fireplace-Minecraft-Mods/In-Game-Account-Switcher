@@ -1,6 +1,8 @@
 {
   "homepage": "https://modrinth.com/mod/in-game-account-switcher",
   "promos": {
+    "1.21.7-latest": "9.0.4-SNAPSHOT",
+    "1.21.7-recommended": "9.0.4-SNAPSHOT",
     "1.21.6-latest": "9.0.3",
     "1.21.6-recommended": "9.0.3",
     "1.21.5-latest": "9.0.3",
