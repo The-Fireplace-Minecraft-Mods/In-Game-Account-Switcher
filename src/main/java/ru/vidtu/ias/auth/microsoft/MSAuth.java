@@ -99,7 +99,7 @@ public final class MSAuth {
         // Send the request.
         return CLIENT.sendAsync(HttpRequest.newBuilder()
                 .uri(URI.create("https://login.microsoftonline.com/consumers/oauth2/v2.0/devicecode"))
-                .header("User-Agent", IAS.userAgent())
+                .header("User-Agent", IAS.HTTP_USER_AGENT)
                 .header("Accept", "application/json")
                 .header("Content-Type", "application/x-www-form-urlencoded")
                 .timeout(IAS.TIMEOUT)
@@ -148,7 +148,7 @@ public final class MSAuth {
         try {
             response = CLIENT_SYNC.send(HttpRequest.newBuilder()
                     .uri(URI.create("https://login.microsoftonline.com/consumers/oauth2/v2.0/token"))
-                    .header("User-Agent", IAS.userAgent())
+                    .header("User-Agent", IAS.HTTP_USER_AGENT)
                     .header("Accept", "application/json")
                     .header("Content-Type", "application/x-www-form-urlencoded")
                     .timeout(IAS.TIMEOUT)
@@ -221,7 +221,7 @@ public final class MSAuth {
         // Send the request.
         return CLIENT.sendAsync(HttpRequest.newBuilder()
                 .uri(URI.create("https://login.live.com/oauth20_token.srf"))
-                .header("User-Agent", IAS.userAgent())
+                .header("User-Agent", IAS.HTTP_USER_AGENT)
                 .header("Accept", "application/json")
                 .header("Content-Type", "application/x-www-form-urlencoded")
                 .timeout(IAS.TIMEOUT)
@@ -267,7 +267,7 @@ public final class MSAuth {
         // Send the request.
         return CLIENT.sendAsync(HttpRequest.newBuilder()
                 .uri(URI.create("https://login.live.com/oauth20_token.srf"))
-                .header("User-Agent", IAS.userAgent())
+                .header("User-Agent", IAS.HTTP_USER_AGENT)
                 .header("Accept", "application/json")
                 .header("Content-Type", "application/x-www-form-urlencoded")
                 .timeout(IAS.TIMEOUT)
@@ -326,7 +326,7 @@ public final class MSAuth {
         // Send the request.
         return CLIENT.sendAsync(HttpRequest.newBuilder()
                 .uri(URI.create("https://user.auth.xboxlive.com/user/authenticate"))
-                .header("User-Agent", IAS.userAgent())
+                .header("User-Agent", IAS.HTTP_USER_AGENT)
                 .header("Content-Type", "application/json")
                 .header("Accept", "application/json")
                 .timeout(IAS.TIMEOUT)
@@ -383,7 +383,7 @@ public final class MSAuth {
         // Send the request.
         return CLIENT.sendAsync(HttpRequest.newBuilder()
                 .uri(URI.create("https://xsts.auth.xboxlive.com/xsts/authorize"))
-                .header("User-Agent", IAS.userAgent())
+                .header("User-Agent", IAS.HTTP_USER_AGENT)
                 .header("Content-Type", "application/json")
                 .header("Accept", "application/json")
                 .timeout(IAS.TIMEOUT)
@@ -464,7 +464,7 @@ public final class MSAuth {
         // Send the request.
         return CLIENT.sendAsync(HttpRequest.newBuilder()
                 .uri(URI.create("https://api.minecraftservices.com/authentication/login_with_xbox"))
-                .header("User-Agent", IAS.userAgent())
+                .header("User-Agent", IAS.HTTP_USER_AGENT)
                 .header("Content-Type", "application/json")
                 .header("Accept", "application/json")
                 .timeout(IAS.TIMEOUT)
@@ -505,7 +505,7 @@ public final class MSAuth {
         // Send the request.
         return CLIENT.sendAsync(HttpRequest.newBuilder()
                 .uri(URI.create("https://api.minecraftservices.com/minecraft/profile"))
-                .header("User-Agent", IAS.userAgent())
+                .header("User-Agent", IAS.HTTP_USER_AGENT)
                 .header("Authorization", "Bearer " + access)
                 .timeout(IAS.TIMEOUT)
                 .GET()
@@ -550,7 +550,7 @@ public final class MSAuth {
         // Send the request.
         return CLIENT.sendAsync(HttpRequest.newBuilder()
                 .uri(URI.create("https://api.mojang.com/users/profiles/minecraft/" + URLEncoder.encode(name, StandardCharsets.UTF_8)))
-                .header("User-Agent", IAS.userAgent())
+                .header("User-Agent", IAS.HTTP_USER_AGENT)
                 .timeout(IAS.TIMEOUT)
                 .GET()
                 .build(), HttpResponse.BodyHandlers.ofString()).thenApplyAsync(response -> {
