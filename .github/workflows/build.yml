@@ -78,3 +78,9 @@ jobs:
             1.21.5/fabric/build/libs/
             1.21.5/forge/build/libs/
             1.21.5/neoforge/build/libs/
+            1.21.6/fabric/build/libs/
+            1.21.6/forge/build/libs/
+            1.21.6/neoforge/build/libs/
+            1.21.7/fabric/build/libs/
+            1.21.7/forge/build/libs/
+            1.21.7/neoforge/build/libs/
