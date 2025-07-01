@@ -34,7 +34,7 @@
     "ias.mixins.json"
   ],
   "depends": {
-    "minecraft": "1.21.7-rc.2",
+    "minecraft": "1.21.7",
     "fabric-api": "*"
   },
   "recommends": {

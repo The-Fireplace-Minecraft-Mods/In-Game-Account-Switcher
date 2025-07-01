@@ -27,7 +27,7 @@
     "depends": [
       {
         "id": "minecraft",
-        "versions": "1.21.7-rc.2",
+        "versions": "1.21.7",
         "reason": "In-Game Account Switcher works only with Minecraft 1.21.7."
       },
       {
