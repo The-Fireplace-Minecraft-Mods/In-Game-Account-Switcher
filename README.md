@@ -34,7 +34,7 @@ to download them you'll need a GitHub account.
 **A**: Forge, Fabric, NeoForge. Quilt should work too.
 
 **Q**: Which versions are supported?  
-**A**: Minecraft 1.18.2, 1.19.2, 1.19.4, 1.20.1, 1.20.2, 1.20.4, 1.20.6, 1.21.1, 1.21.3, 1.21.4, 1.21.5, 1.21.6, 1.21.7.
+**A**: Minecraft 1.18.2, 1.19.2, 1.19.4, 1.20.1, 1.20.2, 1.20.4, 1.20.6, 1.21.1, 1.21.3, 1.21.4, 1.21.5, 1.21.6, 1.21.7, 1.21.8.
 Old mod versions (for MC 1.8.9, 1.12.2, etc.) are not supported.
 
 **Q**: Do I need Fabric API or Quilt Standard Libraries?  
