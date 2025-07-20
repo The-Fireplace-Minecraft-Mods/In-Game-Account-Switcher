@@ -3,10 +3,6 @@
   "promos": {
     "1.21.8-latest": "9.0.4",
     "1.21.8-recommended": "9.0.4",
-    "1.21.7-latest": "9.0.4",
-    "1.21.7-recommended": "9.0.4",
-    "1.21.6-latest": "9.0.4",
-    "1.21.6-recommended": "9.0.4",
     "1.21.5-latest": "9.0.4",
     "1.21.5-recommended": "9.0.4",
     "1.21.4-latest": "9.0.4",
@@ -56,6 +52,11 @@
     "1.8.9-latest": "8.0.1",
     "1.8.9-recommended": "8.0.1",
     "1.7.10-latest": "8.0.1",
-    "1.7.10-recommended": "8.0.1"
+    "1.7.10-recommended": "8.0.1",
+
+    "1.21.7-latest": "9.0.4",
+    "1.21.7-recommended": "9.0.4",
+    "1.21.6-latest": "9.0.4",
+    "1.21.6-recommended": "9.0.4"
   }
 }
