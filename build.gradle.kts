@@ -63,12 +63,6 @@ tasks.withType<JavaCompile> {
     options.release = 17
 }
 
-// Reproducible builds.
-tasks.withType<AbstractArchiveTask> {
-    isPreserveFileTimestamps = false
-    isReproducibleFileOrder = true
-}
-
 // Add LICENSE and manifest into the JAR file.
 // Manifest also controls Mixin/mod loading on some loaders/versions.
 tasks.withType<Jar> {

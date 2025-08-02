@@ -64,11 +64,6 @@ tasks.withType<ProcessResources> {
     from(rootProject.sourceSets.main.get().resources)
 }
 
-tasks.withType<AbstractArchiveTask> {
-    isPreserveFileTimestamps = false
-    isReproducibleFileOrder = true
-}
-
 tasks.withType<Jar> {
     from(rootDir.resolve("LICENSE"))
     from(rootDir.resolve("GPL"))

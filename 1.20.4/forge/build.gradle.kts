@@ -90,11 +90,6 @@ tasks.withType<ProcessResources> {
     }
 }
 
-tasks.withType<AbstractArchiveTask> {
-    isPreserveFileTimestamps = false
-    isReproducibleFileOrder = true
-}
-
 tasks.withType<Jar> {
     from(rootDir.resolve("LICENSE"))
     from(rootDir.resolve("GPL"))
