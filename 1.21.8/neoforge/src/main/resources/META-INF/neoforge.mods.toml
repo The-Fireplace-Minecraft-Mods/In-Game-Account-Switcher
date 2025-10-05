@@ -29,7 +29,7 @@ config="ias.mixins.json"
 modId = "neoforge"
 type = "required"
 mandatory = true
-versionRange = "[21.7,21.8)"
+versionRange = "[21.8,21.9)"
 ordering = "NONE"
 side = "CLIENT"
 
