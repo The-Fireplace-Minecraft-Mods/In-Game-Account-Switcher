@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "compatibilityLevel": "JAVA_21",
+  "package": "ru.vidtu.ias.mixins",
+  "refmap": "ias.mixins.refmap.json",
+  "client": [
+    "MinecraftAccessor",
+    "MinecraftMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
