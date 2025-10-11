@@ -25,57 +25,36 @@ java.sourceCompatibility = JavaVersion.VERSION_21
 java.targetCompatibility = JavaVersion.VERSION_21
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 group = "ru.vidtu.ias"
-base.archivesName = "IAS-Forge-1.21.9"
+base.archivesName = "IAS-1.21.10"
 description = "This mod allows you to change your logged in account in-game, without restarting Minecraft."
-evaluationDependsOn(":1.21.9-root")
-val shared = project(":1.21.9-root")
-
-loom {
-    silentMojangMappingsLicense()
-    forge {
-        mixinConfigs = setOf("ias.mixins.json")
-    }
-    runs.named("client") {
-        vmArgs(
-            "-XX:+IgnoreUnrecognizedVMOptions",
-            "-Xmx2G",
-            "-XX:+AllowEnhancedClassRedefinition",
-            "-XX:HotswapAgent=fatjar",
-            "-Dfabric.debug.disableClassPathIsolation=true"
-        )
-    }
-    @Suppress("UnstableApiUsage")
-    mixin {
-        useLegacyMixinAp = true
-        defaultRefmapName = "ias.mixins.refmap.json"
-    }
-}
 
 repositories {
     mavenCentral()
-    maven("https://maven.architectury.dev/")
-    maven("https://maven.minecraftforge.net/")
+    maven("https://repo.spongepowered.org/repository/maven-public/")
+}
+
+loom {
+    silentMojangMappingsLicense()
 }
 
 dependencies {
-    // Annotations (Compile)
+    // Annotations
     compileOnlyApi(libs.jetbrains.annotations)
     compileOnlyApi(libs.error.prone.annotations)
 
     // Minecraft (Provided)
-    minecraft(libs.minecraft.mc1219)
+    minecraft(libs.minecraft.mc12110)
     mappings(loom.officialMojangMappings())
 
-    // Forge
-    forge(libs.forge.mc1219)
+    // Mixin
+    compileOnly(libs.mixin)
 
     // Root
-    compileOnly(shared)
+    compileOnlyApi(rootProject)
 }
 
 tasks.withType<JavaCompile> {
     source(rootProject.sourceSets.main.get().java)
-    source(shared.sourceSets.main.get().java)
     options.encoding = "UTF-8"
     options.compilerArgs.addAll(listOf("-g", "-parameters"))
     options.release = 21
@@ -83,11 +62,6 @@ tasks.withType<JavaCompile> {
 
 tasks.withType<ProcessResources> {
     from(rootProject.sourceSets.main.get().resources)
-    from(shared.sourceSets.main.get().resources)
-    inputs.property("version", version)
-    filesMatching("META-INF/mods.toml") {
-        expand(inputs.properties)
-    }
 }
 
 tasks.withType<Jar> {
@@ -99,10 +73,9 @@ tasks.withType<Jar> {
             "Specification-Title" to "In-Game Account Switcher",
             "Specification-Version" to version,
             "Specification-Vendor" to "VidTu",
-            "Implementation-Title" to "IAS-Forge-1.21.9",
+            "Implementation-Title" to "IAS-1.21.10",
             "Implementation-Version" to version,
-            "Implementation-Vendor" to "VidTu",
-            "MixinConfigs" to "ias.mixins.json"
+            "Implementation-Vendor" to "VidTu"
         )
     }
 }

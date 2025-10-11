@@ -25,10 +25,10 @@ java.sourceCompatibility = JavaVersion.VERSION_21
 java.targetCompatibility = JavaVersion.VERSION_21
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 group = "ru.vidtu.ias"
-base.archivesName = "IAS-Fabric-1.21.9"
+base.archivesName = "IAS-Fabric-1.21.10"
 description = "This mod allows you to change your logged in account in-game, without restarting Minecraft."
-evaluationDependsOn(":1.21.9-root")
-val shared = project(":1.21.9-root")
+evaluationDependsOn(":1.21.10-root")
+val shared = project(":1.21.10-root")
 
 repositories {
     mavenCentral()
@@ -59,13 +59,13 @@ dependencies {
     compileOnlyApi(libs.error.prone.annotations)
 
     // Minecraft (Provided)
-    minecraft(libs.minecraft.mc1219)
+    minecraft(libs.minecraft.mc12110)
     mappings(loom.officialMojangMappings())
 
     // Fabric
     modImplementation(libs.fabric.loader)
-    modImplementation(libs.fabric.mc1219)
-    modImplementation(libs.modmenu.mc1219)
+    modImplementation(libs.fabric.mc12110)
+    modImplementation(libs.modmenu.mc12110)
 
     // Root
     compileOnly(shared)
@@ -97,7 +97,7 @@ tasks.withType<Jar> {
             "Specification-Title" to "In-Game Account Switcher",
             "Specification-Version" to version,
             "Specification-Vendor" to "VidTu",
-            "Implementation-Title" to "IAS-Fabric-1.21.9",
+            "Implementation-Title" to "IAS-Fabric-1.21.10",
             "Implementation-Version" to version,
             "Implementation-Vendor" to "VidTu"
         )
