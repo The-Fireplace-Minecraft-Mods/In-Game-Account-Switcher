@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 # In-Game Account Switcher is a third-party mod for Minecraft Java Edition that
 # allows you to change your logged in account in-game, without restarting it.
 #
@@ -17,19 +18,5 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>
 
-# Gradle
-org.gradle.jvmargs=-Xmx4G
-org.gradle.parallel=true
-org.gradle.caching=true
-org.gradle.configuration-cache=true
-org.gradle.configuration-cache.parallel=true
-org.gradle.configureondemand=true
-
-# Stonecutter
-stonecutter.fabric-api=[STONECUTTER]
-stonecutter.modmenu=[STONECUTTER]
-stonecutter.forge=[STONECUTTER]
-stonecutter.neoforge=[STONECUTTER]
-
-# Mod
-version=9.0.6-SNAPSHOT
+echo "> Launching $1..."
+./gradlew "$1:runClient"

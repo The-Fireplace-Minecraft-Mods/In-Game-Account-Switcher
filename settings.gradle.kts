@@ -1,5 +1,7 @@
 /*
- * In-Game Account Switcher is a mod for Minecraft that allows you to change your logged in account in-game, without restarting Minecraft.
+ * In-Game Account Switcher is a third-party mod for Minecraft Java Edition that
+ * allows you to change your logged in account in-game, without restarting it.
+ *
  * Copyright (C) 2015-2022 The_Fireplace
  * Copyright (C) 2021-2025 VidTu
  *
@@ -29,17 +31,42 @@ pluginManagement {
 
 plugins {
     id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
+    id("dev.kikugie.stonecutter") version "0.7.10"
 }
 
 rootProject.name = "In-Game Account Switcher"
 
-val types = listOf("fabric", "forge", "neoforge", "root")
+// Stonecutter.
+val types = listOf("fabric", "forge", "neoforge")
 val versions = listOf("1.21.10", "1.21.8", "1.21.5", "1.21.4", "1.21.3", "1.21.1", "1.20.6", "1.20.4", "1.20.2", "1.20.1", "1.19.4", "1.19.2", "1.18.2")
+stonecutter {
+    kotlinController = true
+    centralScript = "build.gradle.kts"
+    create(rootProject) {
+        for (version in versions) {
+            for (type in types) {
+                val subPath = file("versions/$version-$type")
+                if (subPath.resolve(".ignored").isFile) continue
+                if (!subPath.isDirectory) { // TODO(VidTu): Once the migration finishes, delete this.
+                    logger.warn("IAS-Stonecutter: Ignoring ${subPath.name}, folder doesn't exist.")
+                    continue
+                }
+                version("$version-$type", version)
+            }
+        }
+        vcsVersion = "${versions[0]}-${types[0]}"
+    }
+}
+
+// Legacy.
+include("legacy_shared")
+project(":legacy_shared").projectDir = file("legacy/shared")
+val oldTypes = listOf("fabric", "forge", "neoforge", "root")
 for (version in versions) {
-    for (type in types) {
-        val subPath = file("$version/$type")
+    for (type in oldTypes) {
+        val subPath = file("legacy/$version/$type")
         if (!subPath.isDirectory) continue
-        include("$version-$type")
-        project(":$version-$type").projectDir = subPath
+        include("legacy_$version-$type")
+        project(":legacy_$version-$type").projectDir = subPath
     }
 }
