@@ -1,0 +1,37 @@
+-Xmx2G
+
+-XX:+IgnoreUnrecognizedVMOptions
+
+-XX:+ExitOnOutOfMemoryError
+-XX:+CrashOnOutOfMemoryError
+
+-Dfile.encoding=UTF-8
+-Dline.separator="\n"
+-Djava.awt.headless=true
+-Djava.net.preferIPv4Stack=true
+-Duser.language=en
+-Duser.country=US
+
+-Djdk.nio.maxCachedBufferSize=262144
+-Dio.netty.tryReflectionSetAccessible=true
+-Dio.netty.leakDetection.level=PARANOID
+
+-Dterminal.ansi=true
+-Dterminal.jline=false
+-Dslf4j.internal.verbosity=DEBUG
+
+-Dmax.bg.threads=1
+
+-enableassertions
+-enablesystemassertions
+-Dmixin.debug=true
+-Dmixin.debug.strict.unique=true
+-Dmixin.checks=true
+
+-XX:+AllowEnhancedClassRedefinition
+-XX:+AllowRedefinitionToAddDeleteMethods
+-XX:HotswapAgent=fatjar
+-Dfabric.debug.disableClassPathIsolation=true
+
+--add-opens java.base/java.nio=ALL-UNNAMED
+--add-opens java.base/jdk.internal.misc=ALL-UNNAMED

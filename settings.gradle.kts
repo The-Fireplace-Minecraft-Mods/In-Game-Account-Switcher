@@ -58,6 +58,7 @@ stonecutter {
     }
 }
 
+// Migration helper START.
 // Legacy.
 include("legacy_shared")
 project(":legacy_shared").projectDir = file("legacy/shared")
@@ -70,3 +71,4 @@ for (version in versions) {
         project(":legacy_$version-$type").projectDir = subPath
     }
 }
+// Migration helper END.

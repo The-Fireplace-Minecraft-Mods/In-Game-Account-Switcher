@@ -1,4 +1,6 @@
-# In-Game Account Switcher is a mod for Minecraft that allows you to change your logged in account in-game, without restarting Minecraft.
+# In-Game Account Switcher is a third-party mod for Minecraft Java Edition that
+# allows you to change your logged in account in-game, without restarting it.
+#
 # Copyright (C) 2015-2022 The_Fireplace
 # Copyright (C) 2021-2025 VidTu
 #
@@ -30,8 +32,8 @@ fabric-mc1211 = "0.116.7+1.21.1"
 fabric-mc1213 = "0.114.1+1.21.3"
 fabric-mc1214 = "0.119.4+1.21.4"
 fabric-mc1215 = "0.128.2+1.21.5"
-fabric-mc1218 = "0.134.0+1.21.8"
-fabric-mc12110 = "0.135.0+1.21.10"
+fabric-mc1218 = "0.136.0+1.21.8"
+fabric-mc12110 = "0.136.0+1.21.10"
 forge-mc1182 = "1.18.2-40.3.11"
 forge-mc1192 = "1.19.2-43.5.1"
 forge-mc1194 = "1.19.4-45.4.2"
@@ -39,14 +41,16 @@ forge-mc1201 = "1.20.1-47.4.10"
 forge-mc1202 = "1.20.2-48.1.0"
 forge-mc1204 = "1.20.4-49.2.2"
 forge-mc1206 = "1.20.6-50.2.2"
-forge-mc1211 = "1.21.1-52.1.5"
+forge-mc1211 = "1.21.1-52.1.6"
 forge-mc1213 = "1.21.3-53.1.4"
 forge-mc1214 = "1.21.4-54.1.8"
 forge-mc1215 = "1.21.5-55.1.2"
 forge-mc1218 = "1.21.8-58.1.7"
-forge-mc12110 = "1.21.10-60.0.3"
+forge-mc12110 = "1.21.10-60.0.11"
 gson = "2.13.2"
 jetbrains_annotations = "26.0.2"
+jspecify = "1.0.0"
+log4j = "2.25.2"
 minecraft-mc1182 = "1.18.2"
 minecraft-mc1192 = "1.19.2"
 minecraft-mc1194 = "1.19.4"
@@ -76,14 +80,14 @@ modmenu-mc1218 = "15.0.0"
 modmenu-mc12110 = "16.0.0-rc.1"
 neoforge-mc1201 = "1.20.1-47.1.106"
 neoforge-mc1202 = "20.2.93"
-neoforge-mc1204 = "20.4.250"
-neoforge-mc1206 = "20.6.138"
-neoforge-mc1211 = "21.1.210"
-neoforge-mc1213 = "21.3.93"
+neoforge-mc1204 = "20.4.251"
+neoforge-mc1206 = "20.6.139"
+neoforge-mc1211 = "21.1.213"
+neoforge-mc1213 = "21.3.94"
 neoforge-mc1214 = "21.4.155"
 neoforge-mc1215 = "21.5.95"
-neoforge-mc1218 = "21.8.47"
-neoforge-mc12110 = "21.10.10-beta"
+neoforge-mc1218 = "21.8.49"
+neoforge-mc12110 = "21.10.34-beta"
 slf4j = "2.0.17"
 
 [plugins]
@@ -120,6 +124,8 @@ forge-mc1218 = { module = "net.minecraftforge:forge", version.ref = "forge-mc121
 forge-mc12110 = { module = "net.minecraftforge:forge", version.ref = "forge-mc12110" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 jetbrains_annotations = { module = "org.jetbrains:annotations", version.ref = "jetbrains_annotations" }
+jspecify = { module = "org.jspecify:jspecify", version.ref = "jspecify" }
+log4j = { module = "org.apache.logging.log4j:log4j-core", version.ref = "log4j" }
 minecraft-mc1182 = { module = "com.mojang:minecraft", version.ref = "minecraft-mc1182" }
 minecraft-mc1192 = { module = "com.mojang:minecraft", version.ref = "minecraft-mc1192" }
 minecraft-mc1194 = { module = "com.mojang:minecraft", version.ref = "minecraft-mc1194" }
