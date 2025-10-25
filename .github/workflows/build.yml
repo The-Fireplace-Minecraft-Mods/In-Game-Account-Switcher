@@ -50,6 +50,7 @@ jobs:
         with:
           name: 'Artifacts'
           path: |
+            build/libs/
             legacy/1.18.2/fabric/build/libs/
             legacy/1.18.2/forge/build/libs/
             legacy/1.19.2/fabric/build/libs/
@@ -83,6 +84,3 @@ jobs:
             legacy/1.21.8/fabric/build/libs/
             legacy/1.21.8/forge/build/libs/
             legacy/1.21.8/neoforge/build/libs/
-            legacy/1.21.10/fabric/build/libs/
-            legacy/1.21.10/forge/build/libs/
-            legacy/1.21.10/neoforge/build/libs/
