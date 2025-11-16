@@ -115,7 +115,10 @@ final class AddPopupScreen extends Screen {
         // Render transparent background if parent exists.
         if (this.parent != null) {
             // Render gradient.
+            //? if >= 1.21.10 {
             this.parent.renderWithTooltipAndSubtitles(graphics, 0, 0, delta);
+            //?} else
+            /*this.parent.renderWithTooltip(graphics, 0, 0, delta);*/
             graphics.nextStratum();
             graphics.fill(0, 0, this.width, this.height, 0x80_00_00_00);
         } else {

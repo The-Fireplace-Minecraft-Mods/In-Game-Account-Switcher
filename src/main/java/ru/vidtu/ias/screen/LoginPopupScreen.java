@@ -152,7 +152,10 @@ final class LoginPopupScreen extends Screen implements LoginHandler {
                 this.passFuture.complete(value);
             }, true);
             this.password.setHint(Component.translatable("ias.password.hint").withStyle(ChatFormatting.DARK_GRAY));
+            //? if >=1.21.10 {
             this.password.addFormatter((s, i) -> IASConfig.passwordEchoing ? FormattedCharSequence.forward("*".repeat(s.length()), Style.EMPTY) : FormattedCharSequence.EMPTY);
+            //?} else
+            /*this.password.setFormatter((s, i) -> IASConfig.passwordEchoing ? FormattedCharSequence.forward("*".repeat(s.length()), Style.EMPTY) : FormattedCharSequence.EMPTY);*/
             this.password.setMaxLength(32);
             this.addRenderableWidget(this.password);
 
@@ -210,7 +213,10 @@ final class LoginPopupScreen extends Screen implements LoginHandler {
             graphics.drawCenteredString(this.font, this.password.getMessage(), this.width / 2, this.height / 2 - 10 - 5, 0xFF_FF_FF_FF);
             pose.pushMatrix();
             pose.scale(0.5F, 0.5F);
-            this.cryptPasswordTip.render(graphics, MultiLineLabel.Align.CENTER, this.width, this.height + 40, 10, /*unused=*/false, 0xFF_FF_FF_00);
+            //? if >=1.21.10 {
+            this.cryptPasswordTip.render(graphics, MultiLineLabel.Align.CENTER, this.width, this.height + 40, 10, false, 0xFF_FF_FF_00);
+            //?} else
+            /*this.cryptPasswordTip.renderCentered(graphics, this.width, this.height + 40, 10, 0xFF_FF_FF_00);*/
             pose.popMatrix();
         } else {
             // Synchronize to prevent funny things.
@@ -228,7 +234,10 @@ final class LoginPopupScreen extends Screen implements LoginHandler {
                 }
 
                 // Render the label.
-                this.label.render(graphics, MultiLineLabel.Align.CENTER, this.width / 2, (this.height - this.label.getLineCount() * 9) / 2 - 4, 9, /*unused=*/false, 0xFF_FF_FF_FF);
+                //? if >= 1.21.10 {
+                this.label.render(graphics, MultiLineLabel.Align.CENTER, this.width / 2, (this.height - this.label.getLineCount() * 9) / 2 - 4, 9, false, 0xFF_FF_FF_FF);
+                //?} else
+                /*this.label.renderCentered(graphics, this.width / 2, (this.height - this.label.getLineCount() * 9) / 2 - 4, 9, 0xFF_FF_FF_FF);*/
             }
 
             // Render the error note, if errored.
@@ -239,18 +248,6 @@ final class LoginPopupScreen extends Screen implements LoginHandler {
                 }
 
                 // Wow, opacity. So fluent.
-                // For what purpose?
-                // Actually this code and comment will probably never be read
-                // by anyone, so here's one little fact that makes me explode right now:
-                // >>>
-                // I have already written this code, however, I do have one little fun thing,
-                // I have my SSDs on my table, and so I accidentally "unplugged" them with my elbow.
-                // Not only it didn't save "unsaved" RAM, not only it did corrupt the file,
-                // it corrupted the BTRFS. I'm now writing this code once again from Win11 at 4 AM in the morn,
-                // it's actually pretty light-ish outside (imgur.com/a/waAxTK1), but this won't be pushed
-                // for a while, particularly for a reason I'm reinstalling my distro tomorrow and hell I'll use EXT4.
-                // Good night, thank you for using this mod and reading the source. <3
-                // <<<
                 int opacityMask;
                 if (this.error < 1.0F) {
                     this.error = Math.min(this.error + delta * 0.1F, 1.0F);
@@ -272,7 +269,10 @@ final class LoginPopupScreen extends Screen implements LoginHandler {
                 // Render scaled.
                 pose.pushMatrix();
                 pose.scale(0.5F, 0.5F);
-                this.errorNote.render(graphics, MultiLineLabel.Align.CENTER, this.width, this.height + 174, 9, /*unused=*/false, 0xFF_FF_FF | opacityMask);
+                //? if >= 1.21.10 {
+                this.errorNote.render(graphics, MultiLineLabel.Align.CENTER, this.width, this.height + 174, 9, false, 0xFF_FF_FF | opacityMask);
+                //?} else
+                /*this.errorNote.renderCentered(graphics, this.width, this.height + 174, 9, 0xFF_FF_FF | opacityMask);*/
                 pose.popMatrix();
             }
         }
@@ -286,7 +286,10 @@ final class LoginPopupScreen extends Screen implements LoginHandler {
         // Render transparent background if parent exists.
         if (this.parent != null) {
             // Render gradient.
+            //? if >= 1.21.10 {
             this.parent.renderWithTooltipAndSubtitles(graphics, 0, 0, delta);
+            //?} else
+            /*this.parent.renderWithTooltip(graphics, 0, 0, delta);*/
             graphics.nextStratum();
             graphics.fill(0, 0, this.width, this.height, 0x80_00_00_00);
         } else {

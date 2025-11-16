@@ -28,7 +28,6 @@ import net.minecraft.client.gui.components.PlayerSkinWidget;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.AlertScreen;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.resources.DefaultPlayerSkin;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
@@ -166,7 +165,10 @@ public final class AccountScreen extends Screen {
         this.addRenderableWidget(this.edit);
 
         // Add delete button.
+        //? if >=1.21.10 {
         this.delete = Button.builder(Component.translatable("ias.accounts.delete"), btn -> this.list.delete(!this.minecraft.hasShiftDown()))
+        //?} else
+        /*this.delete = Button.builder(Component.translatable("ias.accounts.delete"), btn -> this.list.delete(!Screen.hasShiftDown()))*/
                 .bounds(this.width / 2 - 50, this.height - 24, 100, 20)
                 .build();
         this.addRenderableWidget(this.delete);
@@ -262,58 +264,71 @@ public final class AccountScreen extends Screen {
     }
 
     @Override
-    public boolean keyPressed(KeyEvent event) {
+    //? if >=1.21.10 {
+    public boolean keyPressed(net.minecraft.client.input.KeyEvent event) {
+        int key = event.key();
+        boolean shift = event.hasShiftDown();
+        boolean control = event.hasControlDown();
+        boolean select = event.isSelection();
+    //?} else {
+    /*public boolean keyPressed(int key, int scan, int mods) {
+        boolean shift = Screen.hasShiftDown();
+        boolean control = Screen.hasControlDown();
+        boolean select = net.minecraft.client.gui.navigation.CommonInputs.selected(key);
+    *///?}
         // Bruh.
         assert this.minecraft != null;
 
         // Shift+Down or Page Down to swap down.
-        int key = event.key();
-        if ((key == GLFW.GLFW_KEY_DOWN && event.hasShiftDown()) || key == GLFW.GLFW_KEY_PAGE_DOWN) {
+        if ((key == GLFW.GLFW_KEY_DOWN && shift) || key == GLFW.GLFW_KEY_PAGE_DOWN) {
             this.list.swapDown(this.list.getSelected());
             return true;
         }
 
         // Shift+Up or Page Up to swap up.
-        if ((key == GLFW.GLFW_KEY_UP && event.hasShiftDown()) || key == GLFW.GLFW_KEY_PAGE_UP) {
+        if ((key == GLFW.GLFW_KEY_UP && shift) || key == GLFW.GLFW_KEY_PAGE_UP) {
             this.list.swapUp(this.list.getSelected());
             return true;
         }
 
         // Ctrl+C to copy name. (Ctrl+Shift+C to copy UUID) {
-        if (key == GLFW.GLFW_KEY_C && event.hasControlDown()) {
+        if (key == GLFW.GLFW_KEY_C && control) {
             AccountEntry selected = this.list.getSelected();
             if (selected != null) {
                 Account account = selected.account();
-                this.minecraft.keyboardHandler.setClipboard(event.hasShiftDown() ? account.uuid().toString() : account.name());
+                this.minecraft.keyboardHandler.setClipboard(shift ? account.uuid().toString() : account.name());
                 return true;
             }
         }
 
         // Skip if handled by super.
+        //? if >=1.21.10 {
         if (super.keyPressed(event)) {
+        //?} else
+        /*if (super.keyPressed(key, scan, mods)) {*/
             return true;
         }
 
         // Enter or Numpad Enter to log in.
-        if (event.isSelection()) {
-            this.list.login(!event.hasShiftDown());
+        if (select) {
+            this.list.login(!shift);
             return true;
         }
 
         // Delete or Numpad Minus to delete.
         if (key == GLFW.GLFW_KEY_DELETE || key == GLFW.GLFW_KEY_KP_SUBTRACT) {
-            this.list.delete(!event.hasShiftDown());
+            this.list.delete(!shift);
             return true;
         }
 
         // CTRL+N or Numpad Plus to add.
-        if ((key == GLFW.GLFW_KEY_N && event.hasControlDown()) || key == GLFW.GLFW_KEY_KP_ADD) {
+        if ((key == GLFW.GLFW_KEY_N && control) || key == GLFW.GLFW_KEY_KP_ADD) {
             this.list.add();
             return true;
         }
 
         // CTRL+R or Numpad Asterisk to edit.
-        if ((key == GLFW.GLFW_KEY_R && event.hasControlDown()) || key == GLFW.GLFW_KEY_KP_MULTIPLY) {
+        if ((key == GLFW.GLFW_KEY_R && control) || key == GLFW.GLFW_KEY_KP_MULTIPLY) {
             this.list.edit();
             return true;
         }

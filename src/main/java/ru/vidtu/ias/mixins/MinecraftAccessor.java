@@ -43,6 +43,7 @@ import java.util.concurrent.CompletableFuture;
 @SuppressWarnings("DollarSignInName") // <- Mixin.
 @Mixin(Minecraft.class)
 public interface MinecraftAccessor {
+    //? if >=1.21.10 {
     /**
      * Sets the game services.
      *
@@ -52,6 +53,7 @@ public interface MinecraftAccessor {
     @Accessor("services")
     @Mutable
     void ias$services(Services services);
+    //?}
 
     /**
      * Sets the game user.
@@ -72,6 +74,16 @@ public interface MinecraftAccessor {
     @Accessor("profileFuture")
     @Mutable
     void ias$profileFuture(CompletableFuture<ProfileResult> future);
+
+    //? if <1.21.10 {
+    /*/^*
+     * Gets the authentication service.
+     *
+     * @return Current authentication service
+     ^/
+    @Accessor("authenticationService")
+    YggdrasilAuthenticationService ias$authenticationService();
+    *///?}
 
     /**
      * Sets the user API service.

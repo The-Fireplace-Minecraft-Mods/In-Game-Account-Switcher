@@ -55,7 +55,10 @@ public final class IASNeoForge {
 
         // Not sure how long the Forge does have the "clientSideOnly" field in the TOML,
         // so I'll do an additional exception check here.
+        //? if >=1.21.10 {
         if (FMLEnvironment.getDist() != Dist.CLIENT) {
+        //? } else
+        if (FMLEnvironment.dist != Dist.CLIENT) {
             throw new UnsupportedOperationException("IAS: You've tried to load the In-Game Account Switcher mod on a server. This won't work.");
         }
 

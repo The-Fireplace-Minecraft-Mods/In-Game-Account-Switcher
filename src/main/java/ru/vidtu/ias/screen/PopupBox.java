@@ -22,7 +22,6 @@ package ru.vidtu.ias.screen;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
-import net.minecraft.client.input.KeyEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import org.jetbrains.annotations.NotNull;
@@ -81,9 +80,12 @@ final class PopupBox extends EditBox {
     }
 
     @Override
-    public boolean keyPressed(KeyEvent event) {
-        // Enter.
+    //? if >= 1.21.10 {
+    public boolean keyPressed(net.minecraft.client.input.KeyEvent event) {
         int key = event.key();
+    //?} else
+    /*public boolean keyPressed(int key, int scan, int mods) {*/
+        // Enter.
         if (this.enterAction != null && this.isActive() && this.isFocused() && (key == GLFW.GLFW_KEY_ENTER || key == GLFW.GLFW_KEY_KP_ENTER)) {
             // Run enter action.
             this.enterAction.run();
@@ -93,13 +95,19 @@ final class PopupBox extends EditBox {
         }
 
         // Prevent copy and cut if required.
+        //? if >=1.21.10 {
         if (this.secure && (event.isCopy() || event.isCut())) {
+        //?} else
+        /*if (this.secure && (net.minecraft.client.gui.screens.Screen.isCopy(key) || net.minecraft.client.gui.screens.Screen.isCut(key))) {*/
             // Prevent it.
             return true;
         }
 
         // Pass to super.
+        //? if >=1.21.10 {
         return super.keyPressed(event);
+        //?} else
+        /*return super.keyPressed(key, scan, mods);*/
     }
 
     @Override

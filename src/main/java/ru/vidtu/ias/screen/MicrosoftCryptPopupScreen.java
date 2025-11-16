@@ -22,7 +22,6 @@ package ru.vidtu.ias.screen;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.input.KeyEvent;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import org.joml.Matrix3x2fStack;
@@ -137,7 +136,10 @@ final class MicrosoftCryptPopupScreen extends Screen {
         // Render transparent background if parent exists.
         if (this.parent != null) {
             // Render gradient.
+            //? if >= 1.21.10 {
             this.parent.renderWithTooltipAndSubtitles(graphics, 0, 0, delta);
+            //?} else
+            /*this.parent.renderWithTooltip(graphics, 0, 0, delta);*/
             graphics.nextStratum();
             graphics.fill(0, 0, this.width, this.height, 0x80_00_00_00);
         } else {
@@ -162,10 +164,16 @@ final class MicrosoftCryptPopupScreen extends Screen {
     }
 
     @Override
-    public boolean keyPressed(KeyEvent event) {
-        // Enable plain.
+    //? if >= 1.21.10 {
+    public boolean keyPressed(net.minecraft.client.input.KeyEvent event) {
         int key = event.key();
-        if (key == GLFW.GLFW_KEY_Y && IASConfig.allowNoCrypt && this.plain != null && !this.plain.isActive() && event.hasAltDown()) {
+        boolean alt = event.hasAltDown();
+    //?} else {
+    /*public boolean keyPressed(int key, int scan, int mods) {
+        boolean alt = Screen.hasAltDown();
+    *///?}
+        // Enable plain.
+        if (key == GLFW.GLFW_KEY_Y && IASConfig.allowNoCrypt && this.plain != null && !this.plain.isActive() && alt) {
             // Activate button.
             this.plain.active = true;
 
@@ -176,7 +184,10 @@ final class MicrosoftCryptPopupScreen extends Screen {
         }
 
         // Pass-through.
+        //? if >=1.21.10 {
         return super.keyPressed(event);
+        //?} else
+        /*return super.keyPressed(key, scan, mods);*/
     }
 
     @Override

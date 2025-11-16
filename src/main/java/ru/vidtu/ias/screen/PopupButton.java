@@ -19,7 +19,6 @@
 
 package ru.vidtu.ias.screen;
 
-import com.mojang.blaze3d.platform.cursor.CursorTypes;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -134,10 +133,12 @@ final class PopupButton extends Button {
         // Render string.
         graphics.drawString(font, message, x + (width - font.width(message)) / 2, y + height / 2 - 4, 0xFF_00_00_00, false);
 
+        //? if >=1.21.10 {
         // Change cursor.
         if (this.isHovered()) {
-            graphics.requestCursor(this.isActive() ? CursorTypes.POINTING_HAND : CursorTypes.NOT_ALLOWED);
+            graphics.requestCursor(this.isActive() ? com.mojang.blaze3d.platform.cursor.CursorTypes.POINTING_HAND : com.mojang.blaze3d.platform.cursor.CursorTypes.NOT_ALLOWED);
         }
+        //?}
     }
 
     @Override

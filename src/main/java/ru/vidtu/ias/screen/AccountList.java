@@ -23,7 +23,6 @@ import com.mojang.authlib.yggdrasil.ProfileResult;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.ObjectSelectionList;
 import net.minecraft.client.resources.DefaultPlayerSkin;
-import net.minecraft.world.entity.player.PlayerSkin;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +38,11 @@ import java.util.UUID;
 import java.util.WeakHashMap;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Predicate;
+
+//? if >= 1.21.10 {
+import net.minecraft.world.entity.player.PlayerSkin;
+//?} else
+/*import net.minecraft.client.resources.PlayerSkin;*/
 
 /**
  * Account GUI list.
@@ -294,7 +298,10 @@ final class AccountList extends ObjectSelectionList<AccountEntry> {
         // Load the skin.
         CompletableFuture.supplyAsync(() -> {
             // Fetch the profile
+            //? if >=1.21.10 {
             ProfileResult result = this.minecraft.services().sessionService().fetchProfile(uuid, false);
+            //?} else
+            /*ProfileResult result = this.minecraft.getMinecraftSessionService().fetchProfile(uuid, false);*/
 
             // Skip if profile is null.
             if (result == null) return null;
@@ -306,7 +313,10 @@ final class AccountList extends ObjectSelectionList<AccountEntry> {
             if (profile == null) return CompletableFuture.completedFuture(null);
 
             // Load the skin.
+            //? if >= 1.21.10 {
             return this.minecraft.getSkinManager().get(profile);
+            //?} else
+            /*return this.minecraft.getSkinManager().getOrLoad(profile);*/
         }, IAS.executor()).thenAcceptAsync(loaded -> {
             // Put into map.
             loaded.ifPresent(newSkin -> SKINS.put(uuid, newSkin));
@@ -347,6 +357,11 @@ final class AccountList extends ObjectSelectionList<AccountEntry> {
         }
 
         // Move elements.
+        //? if <1.21.10 {
+        /*this.children().set(idx, this.children().get(upIdx));
+        this.children().set(upIdx, entry);
+        this.setSelected(entry);
+        *///?} else
         this.swap(idx, upIdx);
     }
 
@@ -375,6 +390,11 @@ final class AccountList extends ObjectSelectionList<AccountEntry> {
         }
 
         // Move elements.
+        //? if <1.21.10 {
+        /*this.children().set(idx, this.children().get(downIdx));
+        this.children().set(downIdx, entry);
+        this.setSelected(entry);
+        *///?} else
         this.swap(idx, downIdx);
     }
 

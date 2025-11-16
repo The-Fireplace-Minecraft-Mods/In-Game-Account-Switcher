@@ -23,7 +23,6 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.MultiLineLabel;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.input.KeyEvent;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import org.joml.Matrix3x2fStack;
@@ -119,7 +118,10 @@ final class DeletePopupScreen extends Screen {
         pose.popMatrix();
 
         // Render the prompt.
+        //? if >=1.21.10 {
         this.label.render(graphics, MultiLineLabel.Align.CENTER, this.width / 2, (this.height - this.label.getLineCount() * 9) / 2 - 4, 9, /*unused=*/false, -1);
+        //?} else
+        /*this.label.renderCentered(graphics, this.width / 2, (this.height - this.label.getLineCount() * 9) / 2 - 4);*/
     }
 
     @Override
@@ -130,7 +132,10 @@ final class DeletePopupScreen extends Screen {
         // Render transparent background if parent exists.
         if (this.parent != null) {
             // Render gradient.
+            //? if >= 1.21.10 {
             this.parent.renderWithTooltipAndSubtitles(graphics, 0, 0, delta);
+            //?} else
+            /*this.parent.renderWithTooltip(graphics, 0, 0, delta);*/
             graphics.nextStratum();
             graphics.fill(0, 0, this.width, this.height, 0x80_00_00_00);
         } else {
@@ -146,9 +151,15 @@ final class DeletePopupScreen extends Screen {
     }
 
     @Override
-    public boolean keyPressed(KeyEvent event) {
+    //? if >=1.21.10 {
+    public boolean keyPressed(net.minecraft.client.input.KeyEvent event) {
+        boolean select = event.isSelection();
+    //?} else {
+    /*public boolean keyPressed(int key, int scan, int mods) {
+        boolean select = net.minecraft.client.gui.navigation.CommonInputs.selected(key);
+    *///?}
         // Enter to confirm.
-        if (event.isSelection()) {
+        if (select) {
             // Delete.
             this.handler.run();
 
@@ -157,7 +168,10 @@ final class DeletePopupScreen extends Screen {
             return true;
         }
 
+        //? if >=1.21.10 {
         return super.keyPressed(event);
+        //?} else
+        /*return super.keyPressed(key, scan, mods);*/
     }
 
     @Override

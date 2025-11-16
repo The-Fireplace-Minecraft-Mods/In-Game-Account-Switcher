@@ -27,19 +27,22 @@ import net.minecraft.client.gui.components.ObjectSelectionList;
 import net.minecraft.client.gui.components.PlayerFaceRenderer;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
-import net.minecraft.world.entity.player.PlayerSkin;
 import org.jetbrains.annotations.NotNull;
 import ru.vidtu.ias.account.Account;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
+
+//? if >= 1.21.10 {
+import net.minecraft.world.entity.player.PlayerSkin;
+//?} else
+/*import net.minecraft.client.resources.PlayerSkin;*/
 
 /**
  * Account GUI entry.
@@ -122,7 +125,11 @@ final class AccountEntry extends ObjectSelectionList.Entry<AccountEntry> {
     }
 
     @Override
+    //? if >=1.21.10 {
     public void renderContent(GuiGraphics graphics, int mouseX, int mouseY, boolean hovered, float delta) {
+    //?} else {
+    /*public void render(GuiGraphics graphics, int index, int y, int x, int width, int height, int mouseX, int mouseY, boolean hovered, float delta) {*/
+    //? }
         // Render tooltip.
         if (hovered) {
             if ((System.nanoTime() - this.lastFree) >= 500_000_000L) {
@@ -134,10 +141,12 @@ final class AccountEntry extends ObjectSelectionList.Entry<AccountEntry> {
 
         // Render the skin.
         PlayerSkin skin = this.list.skin(this);
+        //? if >=1.21.10 {
         int x = this.getContentX();
         int y = this.getContentY();
         int width = this.getContentWidth();
         int height = this.getContentHeight();
+        //?}
         PlayerFaceRenderer.draw(graphics, skin, x, y, 8);
 
         // Get the name color.
@@ -196,9 +205,12 @@ final class AccountEntry extends ObjectSelectionList.Entry<AccountEntry> {
     }
 
     @Override
-    public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
-        // Swap if selected.
+    //? if >=1.21.10 {
+    public boolean mouseClicked(net.minecraft.client.input.MouseButtonEvent event, boolean doubleClick) {
         double mouseX = event.x();
+    //?} else
+    /*public boolean mouseClicked(double mouseX, double mouseY, int button) {*/
+        // Swap if selected.
         if (this.equals(this.list.getFocused()) || this.equals(this.list.getSelected())) {
             int right = this.list.getRowRight();
 
@@ -219,7 +231,10 @@ final class AccountEntry extends ObjectSelectionList.Entry<AccountEntry> {
 
         // Login on double click.
         if (Util.getMillis() - this.clicked < 250L) {
+            //? if >=1.21.10 {
             this.list.login(!event.hasShiftDown());
+            //?} else
+            /*this.list.login(!net.minecraft.client.gui.screens.Screen.hasShiftDown());*/
         }
 
         // Set time for double click.

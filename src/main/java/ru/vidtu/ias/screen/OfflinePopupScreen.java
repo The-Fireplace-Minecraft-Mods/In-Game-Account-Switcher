@@ -23,7 +23,6 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.input.KeyEvent;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import org.joml.Matrix3x2fStack;
@@ -220,7 +219,10 @@ public final class OfflinePopupScreen extends Screen {
         int length = value.length();
         if (length < 3) {
             // Enable if ALT is hold.
+            //? if >=1.21.10 {
             if (this.minecraft.hasAltDown()) {
+            //?} else
+            /*if (Screen.hasAltDown()) {*/
                 this.done.active = true;
                 this.done.color(0.75F, 0.75F, 0.25F, instant);
             } else {
@@ -239,7 +241,10 @@ public final class OfflinePopupScreen extends Screen {
         // Check for long.
         if (length > 16) {
             // Enable if ALT is hold.
+            //? if >=1.21.10 {
             if (this.minecraft.hasAltDown()) {
+            //?} else
+            /*if (Screen.hasAltDown()) {*/
                 this.done.active = true;
                 this.done.color(0.75F, 0.75F, 0.25F, instant);
             } else {
@@ -260,10 +265,14 @@ public final class OfflinePopupScreen extends Screen {
             // Skip allowed chars.
             int c = value.codePointAt(i);
             if (c == '_' || c >= '0' && c <= '9' || c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z') continue;
-            this.done.active = this.minecraft.hasAltDown();
+            //? if >=1.21.10 {
+            boolean alt = this.minecraft.hasAltDown();
+            //?} else
+            /*boolean alt = Screen.hasAltDown();*/
+            this.done.active = alt;
 
             // Enable if ALT is hold.
-            if (this.minecraft.hasAltDown()) {
+            if (alt) {
                 this.done.active = true;
                 this.done.color(0.75F, 0.75F, 0.25F, instant);
             } else {
@@ -287,9 +296,14 @@ public final class OfflinePopupScreen extends Screen {
     }
 
     @Override
-    public boolean keyPressed(KeyEvent event) {
+    //? if >=1.21.10 {
+    public boolean keyPressed(net.minecraft.client.input.KeyEvent event) {
         int key = event.key();
         boolean res = super.keyPressed(event);
+    //?} else {
+    /*public boolean keyPressed(int key, int scan, int mods) {
+        boolean res = super.keyPressed(key, scan, mods);
+    *///?}
         if (key == GLFW.GLFW_KEY_LEFT_ALT || key == GLFW.GLFW_KEY_RIGHT_ALT) {
             this.type(false);
         }
@@ -297,9 +311,14 @@ public final class OfflinePopupScreen extends Screen {
     }
 
     @Override
-    public boolean keyReleased(KeyEvent event) {
+    //? if >=1.21.10 {
+    public boolean keyReleased(net.minecraft.client.input.KeyEvent event) {
         int key = event.key();
         boolean res = super.keyReleased(event);
+    //?} else {
+    /*public boolean keyReleased(int key, int scan, int mods) {
+        boolean res = super.keyReleased(key, scan, mods);
+    *///?}
         if (key == GLFW.GLFW_KEY_LEFT_ALT || key == GLFW.GLFW_KEY_RIGHT_ALT) {
             this.type(false);
         }
@@ -335,7 +354,10 @@ public final class OfflinePopupScreen extends Screen {
         // Render transparent background if parent exists.
         if (this.parent != null) {
             // Render gradient.
+            //? if >=1.21.10 {
             this.parent.renderWithTooltipAndSubtitles(graphics, 0, 0, delta);
+            //?} else
+            /*this.parent.renderWithTooltip(graphics, 0, 0, delta);*/
             graphics.nextStratum();
             graphics.fill(0, 0, this.width, this.height, 0x80_00_00_00);
         } else {

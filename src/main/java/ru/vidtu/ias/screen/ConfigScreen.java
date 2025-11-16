@@ -461,7 +461,10 @@ public final class ConfigScreen extends Screen {
         graphics.drawCenteredString(this.font, this.title, this.width / 2, 5, 0xFF_FF_FF_FF);
 
         // Render current mouse pos if alt is held.
+        //? if >= 1.21.10 {
         if (this.minecraft.hasAltDown()) {
+        //?} else
+        /*if (Screen.hasAltDown()) {*/
             graphics.setTooltipForNextFrame(this.font, Component.translatable("ias.config.mousePos", mouseX, mouseY), mouseX, mouseY);
         }
     }

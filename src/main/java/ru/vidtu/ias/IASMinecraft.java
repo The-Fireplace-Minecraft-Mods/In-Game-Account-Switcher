@@ -321,15 +321,24 @@ public final class IASMinecraft {
             // feel free to submit an issue, if someone knows what this is, feel free to PR a fix,
             // I'm too lazy to fix anything related to telemetry or chat signatures/reports.
             boolean online = data.online();
+            //? if >=1.21.10 {
             User user = new User(data.name(), data.uuid(), data.token(), Optional.empty(), Optional.empty());
+            //?} else
+            /*User user = new User(data.name(), data.uuid(), data.token(), Optional.empty(), Optional.empty(), online ? User.Type.MSA : User.Type.LEGACY);*/
 
             // Create various services.
+            //? if >=1.21.10 {
             YggdrasilAuthenticationService service = online ? new YggdrasilAuthenticationService(minecraft.getProxy()) : YggdrasilAuthenticationService.createOffline(minecraft.getProxy());
             Services services = Services.create(service, minecraft.gameDirectory);
             CompletableFuture<ProfileResult> profile = CompletableFuture.completedFuture(online ? services.sessionService().fetchProfile(data.uuid(), true) : null);
+            //?} else
+            /*CompletableFuture<ProfileResult> profile = CompletableFuture.completedFuture(online ? minecraft.getMinecraftSessionService().fetchProfile(data.uuid(), true) : null);*/
             @SuppressWarnings("CastToIncompatibleInterface") // <- Mixin Accessor.
             MinecraftAccessor accessor = (MinecraftAccessor) minecraft;
+            //? if >=1.21.10 {
             UserApiService apiService = online ? service.createUserApiService(data.token()) : UserApiService.OFFLINE;
+            //?} else
+            /*UserApiService apiService = online ? accessor.ias$authenticationService().createUserApiService(data.token()) : UserApiService.OFFLINE;*/
             UserApiService.UserProperties properties;
             try {
                 properties = apiService.fetchProperties();
@@ -346,6 +355,7 @@ public final class IASMinecraft {
             minecraft.execute(() -> {
                 // Flush everything.
                 LOGGER.info("IAS: Flushing user...");
+                //? if >=1.21.10
                 accessor.ias$services(services);
                 accessor.ias$user(user);
                 accessor.ias$profileFuture(profile);

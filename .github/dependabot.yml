@@ -33,4 +33,3 @@ updates:
       - dependency-name: "*forge*"
       - dependency-name: "*neoforge*"
       - dependency-name: "*modmenu*"
-      - dependency-name: "*architectury.loom*"
