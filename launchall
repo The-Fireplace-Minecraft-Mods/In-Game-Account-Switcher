@@ -1,4 +1,5 @@
-#!/usr/bin/env bash
+#!/bin/sh
+#
 # In-Game Account Switcher is a third-party mod for Minecraft Java Edition that
 # allows you to change your logged in account in-game, without restarting it.
 #
@@ -18,8 +19,11 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>
 
+# Fail on error, fail on unbound variable, verbose mode, xtrace mode.
+set -euvx
+
+# Iterate.
 for folder in versions/*; do
     version=$(basename "$folder")
-    echo "> Launching $version..."
-    ./gradlew "${version}:runClient"
+    [ -f "$folder/.ignored" ] || ./gradlew "${version}:runClient"
 done
