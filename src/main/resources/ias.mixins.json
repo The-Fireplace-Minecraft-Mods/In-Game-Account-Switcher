@@ -5,6 +5,8 @@
   "package": "ru.vidtu.ias.mixins",
   "refmap": "ias.mixins.refmap.json",
   "client": [
+    //? if >=1.21.10
+    "JoinMultiplayerScreenMixin",
     "MinecraftAccessor",
     "MinecraftMixin"
   ],

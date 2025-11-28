@@ -19,21 +19,19 @@
 
 package ru.vidtu.ias.screen;
 
-import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.User;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.ObjectSelectionList;
 import net.minecraft.client.gui.components.PlayerFaceRenderer;
 import net.minecraft.client.gui.components.WidgetSprites;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
 import org.jetbrains.annotations.NotNull;
 import ru.vidtu.ias.account.Account;
+import ru.vidtu.ias.platform.IStonecutter;
 
 import java.util.List;
 import java.util.Objects;
@@ -54,26 +52,26 @@ final class AccountEntry extends ObjectSelectionList.Entry<AccountEntry> {
      * Up button sprites.
      */
     private static final WidgetSprites UP = new WidgetSprites(
-            ResourceLocation.fromNamespaceAndPath("ias", "up_plain"),
-            ResourceLocation.fromNamespaceAndPath("ias", "up_disabled"),
-            ResourceLocation.fromNamespaceAndPath("ias", "up_focus")
+            IStonecutter.identifier("up_plain"),
+            IStonecutter.identifier("up_disabled"),
+            IStonecutter.identifier("up_focus")
     );
 
     /**
      * Down button sprites.
      */
     private static final WidgetSprites DOWN = new WidgetSprites(
-            ResourceLocation.fromNamespaceAndPath("ias", "down_plain"),
-            ResourceLocation.fromNamespaceAndPath("ias", "down_disabled"),
-            ResourceLocation.fromNamespaceAndPath("ias", "down_focus")
+            IStonecutter.identifier("down_plain"),
+            IStonecutter.identifier("down_disabled"),
+            IStonecutter.identifier("down_focus")
     );
 
     /**
      * Warning sprites.
      */
     private static final WidgetSprites WARNING = new WidgetSprites(
-            ResourceLocation.fromNamespaceAndPath("ias", "warning_off"),
-            ResourceLocation.fromNamespaceAndPath("ias", "warning_on")
+            IStonecutter.identifier("warning_off"),
+            IStonecutter.identifier("warning_on")
     );
 
     /**
@@ -99,7 +97,7 @@ final class AccountEntry extends ObjectSelectionList.Entry<AccountEntry> {
     /**
      * Last click time.
      */
-    private long clicked = Util.getMillis();
+    private long clicked = IStonecutter.internalMillisClock();
 
     /**
      * Last non-hovered time.
@@ -129,7 +127,7 @@ final class AccountEntry extends ObjectSelectionList.Entry<AccountEntry> {
     public void renderContent(GuiGraphics graphics, int mouseX, int mouseY, boolean hovered, float delta) {
     //?} else {
     /*public void render(GuiGraphics graphics, int index, int y, int x, int width, int height, int mouseX, int mouseY, boolean hovered, float delta) {*/
-    //? }
+    //?}
         // Render tooltip.
         if (hovered) {
             if ((System.nanoTime() - this.lastFree) >= 500_000_000L) {
@@ -179,7 +177,10 @@ final class AccountEntry extends ObjectSelectionList.Entry<AccountEntry> {
         // Render only for focused, selected or hovered.
         if (this.equals(this.list.getFocused()) || this.equals(this.list.getSelected())) {
             // Render up widget.
-            ResourceLocation upTexture;
+            //? if >=1.21.11 {
+            net.minecraft.resources.Identifier upTexture;
+            //?} else
+            /*net.minecraft.resources.ResourceLocation upTexture;*/
             int upX = x + width - 28;
             if (this == this.list.children().getFirst()) {
                 upTexture = UP.disabled();
@@ -191,7 +192,10 @@ final class AccountEntry extends ObjectSelectionList.Entry<AccountEntry> {
             graphics.blitSprite(RenderPipelines.GUI_TEXTURED, upTexture, upX, y, 11, 7);
 
             // Render down widget.
-            ResourceLocation downTexture;
+            //? if >=1.21.11 {
+            net.minecraft.resources.Identifier downTexture;
+            //?} else
+            /*net.minecraft.resources.ResourceLocation downTexture;*/
             int downX = x + width - 15;
             if (this == this.list.children().getLast()) {
                 downTexture = DOWN.disabled();
@@ -230,7 +234,7 @@ final class AccountEntry extends ObjectSelectionList.Entry<AccountEntry> {
         }
 
         // Login on double click.
-        if (Util.getMillis() - this.clicked < 250L) {
+        if (IStonecutter.internalMillisClock() - this.clicked < 250L) {
             //? if >=1.21.10 {
             this.list.login(!event.hasShiftDown());
             //?} else
@@ -238,7 +242,7 @@ final class AccountEntry extends ObjectSelectionList.Entry<AccountEntry> {
         }
 
         // Set time for double click.
-        this.clicked = Util.getMillis();
+        this.clicked = IStonecutter.internalMillisClock();
         return true;
     }
 

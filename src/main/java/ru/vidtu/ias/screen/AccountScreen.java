@@ -20,7 +20,6 @@
 package ru.vidtu.ias.screen;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.Util;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
@@ -37,6 +36,7 @@ import org.slf4j.LoggerFactory;
 import ru.vidtu.ias.IAS;
 import ru.vidtu.ias.account.Account;
 import ru.vidtu.ias.config.IASStorage;
+import ru.vidtu.ias.platform.IStonecutter;
 
 import java.time.Duration;
 
@@ -134,11 +134,11 @@ public final class AccountScreen extends Screen {
         if (this.skin == null) {
             this.skin = new PlayerSkinWidget(85, 120, this.minecraft.getEntityModels(), () -> {
                 // Return default if list is removed. (for whatever reason)
-                if (this.list == null) return DefaultPlayerSkin.get(Util.NIL_UUID);
+                if (this.list == null) return DefaultPlayerSkin.get(IStonecutter.NIL_UUID);
 
                 // Return default if nothing is selected. (for whatever reason)
                 AccountEntry selected = this.list.getSelected();
-                if (selected == null) return DefaultPlayerSkin.get(Util.NIL_UUID);
+                if (selected == null) return DefaultPlayerSkin.get(IStonecutter.NIL_UUID);
 
                 // Return skin of selected.
                 return this.list.skin(selected);

@@ -87,7 +87,10 @@ public final class OfflinePopupScreen extends Screen {
 
         // Init parent.
         if (this.parent != null) {
-            this.parent.init(this.minecraft, this.width, this.height);
+            //? if >=1.21.11 {
+            this.parent.init(this.width, this.height);
+            //?} else
+            /*this.parent.init(this.minecraft, this.width, this.height);*/
         }
 
         // Add name box.

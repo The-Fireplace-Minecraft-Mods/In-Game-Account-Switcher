@@ -101,7 +101,10 @@ final class PopupButton extends Button {
     }
 
     @Override
-    protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
+    //? if >=1.21.11 {
+    protected void renderContents(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
+    //?} else
+    /*protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float delta) {*/
         // Get values.
         Minecraft minecraft = Minecraft.getInstance();
         Font font = minecraft.font;
@@ -133,12 +136,12 @@ final class PopupButton extends Button {
         // Render string.
         graphics.drawString(font, message, x + (width - font.width(message)) / 2, y + height / 2 - 4, 0xFF_00_00_00, false);
 
-        //? if >=1.21.10 {
-        // Change cursor.
+        //? if 1.21.10 {
+        /*// Change cursor.
         if (this.isHovered()) {
             graphics.requestCursor(this.isActive() ? com.mojang.blaze3d.platform.cursor.CursorTypes.POINTING_HAND : com.mojang.blaze3d.platform.cursor.CursorTypes.NOT_ALLOWED);
         }
-        //?}
+        *///?}
     }
 
     @Override

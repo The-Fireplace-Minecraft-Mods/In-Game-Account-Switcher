@@ -17,6 +17,7 @@
     "homepage": "https://modrinth.com/mod/in-game-account-switcher",
     "sources": "https://github.com/The-Fireplace-Minecraft-Mods/In-Game-Account-Switcher",
     "issues": "https://github.com/The-Fireplace-Minecraft-Mods/In-Game-Account-Switcher/issues",
+    "email": "pig@vidtu.ru",
     "discord": "https://discord.gg/TpU2nEkSPk"
   },
   "license": "LGPL-3.0-or-later",
@@ -24,10 +25,10 @@
   "environment": "client",
   "entrypoints": {
     "client": [
-      "ru.vidtu.ias.IASFabric"
+      "ru.vidtu.ias.platform.IFabric"
     ],
     "modmenu": [
-      "ru.vidtu.ias.IASModMenu"
+      "ru.vidtu.ias.platform.IModMenu"
     ]
   },
   "mixins": [

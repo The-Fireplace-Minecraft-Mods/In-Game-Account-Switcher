@@ -37,22 +37,25 @@ val platform = loom.platform.get().id()!!
 val hackyNeoForge = (name == "1.20.1-neoforge")
 val minecraft = stonecutter.current.version
 
-// Determine and set Java toolchain version.
+// Language.
 // TODO(VidTu): Revisit after making the decision about 1.16.5/1.17.1 support.
 val javaTarget = if (stonecutter.eval(minecraft, ">=1.20.6")) 21
 else if (stonecutter.eval(minecraft, ">=1.18.2")) 17
 else if (stonecutter.eval(minecraft, ">=1.17.1")) 16
 else 8
 val javaVersion = JavaVersion.toVersion(javaTarget)
-java.sourceCompatibility = javaVersion
-java.targetCompatibility = javaVersion
-java.toolchain.languageVersion = JavaLanguageVersion.of(javaTarget)
+java {
+    sourceCompatibility = javaVersion
+    targetCompatibility = javaVersion
+    toolchain.languageVersion = JavaLanguageVersion.of(javaTarget)
+}
 
 // TODO(VidTu): When all legacy versions are done, the code from the legacy_shared module
 // (and assets too) should be just fine to copy into the root code.
 evaluationDependsOn(":legacy_shared") // Migration helper.
 val legacyShared = project(":legacy_shared") // Migration helper.
 
+// Metadata.
 group = "ru.vidtu.ias"
 base.archivesName = "IAS"
 version = "$version+$name"
@@ -77,32 +80,38 @@ loom {
     log4jConfigs.setFrom(rootDir.resolve("dev/log4j2.xml"))
     silentMojangMappingsLicense()
 
-    // Setup JVM args, see that file.
-    runs.named("client") {
-        // Set up debug VM args.
-        // TODO(VidTu): Revisit after making the decision about 1.16.5/1.17.1 support.
-        if (javaVersion.isJava9Compatible) {
-            vmArgs("@../dev/args.vm.txt")
-        } else {
-            vmArgs(rootDir.resolve("dev/args.vm.txt")
-                .readLines()
-                .filter { "line.separator" !in it }
-                .filter { it.isNotBlank() })
+    // Set up runs.
+    runs {
+        // Customize the client run.
+        named("client") {
+            // Set up debug VM args.
+            // TODO(VidTu): Revisit after making the decision about 1.16.5/1.17.1 support.
+            if (javaVersion.isJava9Compatible) {
+                vmArgs("@../dev/args.vm.txt")
+            } else {
+                vmArgs(rootDir.resolve("dev/args.vm.txt")
+                    .readLines()
+                    .filter { "line.separator" !in it }
+                    .filter { it.isNotBlank() })
+            }
+
+            // Set the run dir.
+            runDir = "../../run"
+
+            // AuthLib for 1.16.5 is bugged, disable Mojang API
+            // to fix issues with MP testing.
+            if (minecraft == "1.16.5") { // TODO(VidTu): Revisit after making the decision about 1.16.5 support.
+                vmArgs(
+                    "-Dminecraft.api.auth.host=http://0.0.0.0:0/",
+                    "-Dminecraft.api.account.host=http://0.0.0.0:0/",
+                    "-Dminecraft.api.session.host=http://0.0.0.0:0/",
+                    "-Dminecraft.api.services.host=http://0.0.0.0:0/",
+                )
+            }
         }
 
-        // Set the run dir.
-        runDir = "../../run"
-
-        // AuthLib for 1.16.5 is bugged, disable Mojang API
-        // to fix issues with MP testing.
-        if (minecraft == "1.16.5") { // TODO(VidTu): Revisit after making the decision about 1.16.5 support.
-            vmArgs(
-                "-Dminecraft.api.auth.host=http://0.0.0.0:0/",
-                "-Dminecraft.api.account.host=http://0.0.0.0:0/",
-                "-Dminecraft.api.session.host=http://0.0.0.0:0/",
-                "-Dminecraft.api.services.host=http://0.0.0.0:0/",
-            )
-        }
+        // Remove server run, the mod is client-only.
+        remove(findByName("server"))
     }
 
     // Configure Mixin.

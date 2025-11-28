@@ -36,6 +36,7 @@ import ru.vidtu.ias.account.MicrosoftAccount;
 import ru.vidtu.ias.auth.LoginData;
 import ru.vidtu.ias.auth.handlers.LoginHandler;
 import ru.vidtu.ias.config.IASConfig;
+import ru.vidtu.ias.platform.IStonecutter;
 import ru.vidtu.ias.utils.exceptions.FriendlyException;
 
 import java.util.Objects;
@@ -132,7 +133,10 @@ final class LoginPopupScreen extends Screen implements LoginHandler {
 
         // Init parent.
         if (this.parent != null) {
-            this.parent.init(this.minecraft, this.width, this.height);
+            //? if >=1.21.11 {
+            this.parent.init(this.width, this.height);
+            //?} else
+            /*this.parent.init(this.minecraft, this.width, this.height);*/
         }
 
         // Add cancel button.
@@ -174,7 +178,7 @@ final class LoginPopupScreen extends Screen implements LoginHandler {
             this.password.setResponder(value -> button.active = !value.isBlank());
 
             // Create tip.
-            this.cryptPasswordTip = MultiLineLabel.create(this.font, Component.translatable("ias.password.tip"), 320);
+            this.cryptPasswordTip = MultiLineLabel.create(this.font, Component.translatable("ias.password.tip").withColor(0xFF_FF_00), 320);
         }
     }
 
@@ -213,10 +217,7 @@ final class LoginPopupScreen extends Screen implements LoginHandler {
             graphics.drawCenteredString(this.font, this.password.getMessage(), this.width / 2, this.height / 2 - 10 - 5, 0xFF_FF_FF_FF);
             pose.pushMatrix();
             pose.scale(0.5F, 0.5F);
-            //? if >=1.21.10 {
-            this.cryptPasswordTip.render(graphics, MultiLineLabel.Align.CENTER, this.width, this.height + 40, 10, false, 0xFF_FF_FF_00);
-            //?} else
-            /*this.cryptPasswordTip.renderCentered(graphics, this.width, this.height + 40, 10, 0xFF_FF_FF_00);*/
+            IStonecutter.renderMultilineLabelCentered(this.cryptPasswordTip, graphics, this.width, this.height + 40);
             pose.popMatrix();
         } else {
             // Synchronize to prevent funny things.
@@ -234,10 +235,7 @@ final class LoginPopupScreen extends Screen implements LoginHandler {
                 }
 
                 // Render the label.
-                //? if >= 1.21.10 {
-                this.label.render(graphics, MultiLineLabel.Align.CENTER, this.width / 2, (this.height - this.label.getLineCount() * 9) / 2 - 4, 9, false, 0xFF_FF_FF_FF);
-                //?} else
-                /*this.label.renderCentered(graphics, this.width / 2, (this.height - this.label.getLineCount() * 9) / 2 - 4, 9, 0xFF_FF_FF_FF);*/
+                IStonecutter.renderMultilineLabelCentered(this.label, graphics, this.width / 2, (this.height - this.label.getLineCount() * 9) / 2 - 4);
             }
 
             // Render the error note, if errored.
@@ -248,12 +246,15 @@ final class LoginPopupScreen extends Screen implements LoginHandler {
                 }
 
                 // Wow, opacity. So fluent.
+                float opacityFloat;
                 int opacityMask;
                 if (this.error < 1.0F) {
                     this.error = Math.min(this.error + delta * 0.1F, 1.0F);
-                    int opacity = Math.max(9, (int) (this.error * this.error * this.error * this.error * 255.0F));
+                    opacityFloat = (this.error * this.error * this.error * this.error);
+                    int opacity = Math.max(9, (int) (opacityFloat * 255.0F));
                     opacityMask = opacity << 24;
                 } else {
+                    opacityFloat = 1.0F;
                     opacityMask = -16777216;
                 }
 
@@ -269,8 +270,12 @@ final class LoginPopupScreen extends Screen implements LoginHandler {
                 // Render scaled.
                 pose.pushMatrix();
                 pose.scale(0.5F, 0.5F);
-                //? if >= 1.21.10 {
-                this.errorNote.render(graphics, MultiLineLabel.Align.CENTER, this.width, this.height + 174, 9, false, 0xFF_FF_FF | opacityMask);
+                //? if >= 1.21.11 {
+                var renderer = graphics.textRenderer();
+                renderer.defaultParameters(renderer.defaultParameters().withOpacity(opacityFloat));
+                this.errorNote.visitLines(net.minecraft.client.gui.TextAlignment.CENTER, this.width, this.height + 174, 9, renderer);
+                //?} elif >= 1.21.10 {
+                /*this.errorNote.render(graphics, MultiLineLabel.Align.CENTER, this.width, this.height + 174, 9, false, 0xFF_FF_FF | opacityMask);*/
                 //?} else
                 /*this.errorNote.renderCentered(graphics, this.width, this.height + 174, 9, 0xFF_FF_FF | opacityMask);*/
                 pose.popMatrix();
@@ -339,11 +344,19 @@ final class LoginPopupScreen extends Screen implements LoginHandler {
             this.cryptPasswordTip = null;
 
             // Redraw.
-            this.init(this.minecraft, this.width, this.height);
+            //? if >=1.21.11 {
+            this.init(this.width, this.height);
+            //?} else
+            /*this.init(this.minecraft, this.width, this.height);*/
         }, this.minecraft);
 
         // Schedule rerender.
-        this.minecraft.execute(() -> this.init(this.minecraft, this.width, this.height));
+        this.minecraft.execute(() -> {
+            //? if >=1.21.11 {
+            this.init(this.width, this.height);
+            //?} else
+            /*this.init(this.minecraft, this.width, this.height);*/
+        });
 
         // Return created future.
         return this.passFuture;

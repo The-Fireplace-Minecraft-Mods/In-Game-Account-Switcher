@@ -46,13 +46,13 @@ import net.minecraft.client.multiplayer.chat.report.ReportEnvironment;
 import net.minecraft.client.multiplayer.chat.report.ReportingContext;
 import net.minecraft.client.telemetry.ClientTelemetryManager;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.Services;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.vidtu.ias.auth.LoginData;
 import ru.vidtu.ias.config.IASConfig;
 import ru.vidtu.ias.mixins.MinecraftAccessor;
+import ru.vidtu.ias.platform.IStonecutter;
 import ru.vidtu.ias.screen.AccountScreen;
 import ru.vidtu.ias.utils.Expression;
 import ru.vidtu.ias.utils.IUtils;
@@ -76,18 +76,18 @@ public final class IASMinecraft {
     public static final SystemToast.SystemToastId NICK_WARN = new SystemToast.SystemToastId(10000L);
 
     /**
+     * Button widget sprites.
+     */
+    public static final WidgetSprites BUTTON = new WidgetSprites(
+            IStonecutter.identifier("button_plain"),
+            IStonecutter.identifier("button_disabled"),
+            IStonecutter.identifier("button_focus")
+    );
+
+    /**
      * Logger for this class.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger("IAS/IASMinecraft");
-
-    /**
-     * Button widget sprites.
-     */
-    private static final WidgetSprites BUTTON = new WidgetSprites(
-            ResourceLocation.fromNamespaceAndPath("ias", "button_plain"),
-            ResourceLocation.fromNamespaceAndPath("ias", "button_disabled"),
-            ResourceLocation.fromNamespaceAndPath("ias", "button_focus")
-    );
 
     /**
      * Text X.
@@ -185,7 +185,8 @@ public final class IASMinecraft {
         }
 
         // Add servers button.
-        if (IASConfig.serversButton && screen instanceof JoinMultiplayerScreen) {
+        //? if <1.21.10 {
+        /*if (IASConfig.serversButton && screen instanceof JoinMultiplayerScreen) {
             // Calculate the position.
             int width = screen.width;
             int height = screen.height;
@@ -227,6 +228,7 @@ public final class IASMinecraft {
             button.setTooltipDelay(Duration.ofMillis(250L));
             buttonAdder.accept(button);
         }
+        *///?}
 
         // Add title text.
         if (IASConfig.titleText && screen instanceof TitleScreen) {

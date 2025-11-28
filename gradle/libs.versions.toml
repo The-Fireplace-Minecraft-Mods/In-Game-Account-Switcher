@@ -19,7 +19,7 @@
 
 [versions]
 architectury-loom = "1.13.457"
-error_prone-annotations = "2.42.0"
+error_prone-annotations = "2.45.0"
 fabric-loader = "0.18.1"
 fabric-mc1182 = "0.77.0+1.18.2"
 fabric-mc1192 = "0.77.0+1.19.2"
@@ -35,7 +35,7 @@ fabric-mc1215 = "0.128.2+1.21.5"
 forge-mc1182 = "1.18.2-40.3.11"
 forge-mc1192 = "1.19.2-43.5.1"
 forge-mc1194 = "1.19.4-45.4.2"
-forge-mc1201 = "1.20.1-47.4.10"
+forge-mc1201 = "1.20.1-47.4.11"
 forge-mc1202 = "1.20.2-48.1.0"
 forge-mc1204 = "1.20.4-49.2.2"
 forge-mc1206 = "1.20.6-50.2.2"

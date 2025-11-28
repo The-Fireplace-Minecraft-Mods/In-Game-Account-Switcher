@@ -27,6 +27,7 @@ import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import org.joml.Matrix3x2fStack;
 import ru.vidtu.ias.account.Account;
+import ru.vidtu.ias.platform.IStonecutter;
 
 import java.time.Duration;
 import java.util.function.Supplier;
@@ -78,7 +79,10 @@ final class DeletePopupScreen extends Screen {
 
         // Init parent.
         if (this.parent != null) {
-            this.parent.init(this.minecraft, this.width, this.height);
+            //? if >=1.21.11 {
+            this.parent.init(this.width, this.height);
+            //?} else
+            /*this.parent.init(this.minecraft, this.width, this.height);*/
         }
 
         // Add delete button.
@@ -118,10 +122,7 @@ final class DeletePopupScreen extends Screen {
         pose.popMatrix();
 
         // Render the prompt.
-        //? if >=1.21.10 {
-        this.label.render(graphics, MultiLineLabel.Align.CENTER, this.width / 2, (this.height - this.label.getLineCount() * 9) / 2 - 4, 9, /*unused=*/false, -1);
-        //?} else
-        /*this.label.renderCentered(graphics, this.width / 2, (this.height - this.label.getLineCount() * 9) / 2 - 4);*/
+        IStonecutter.renderMultilineLabelCentered(this.label, graphics, this.width / 2, (this.height - this.label.getLineCount() * 9) / 2 - 4);
     }
 
     @Override
