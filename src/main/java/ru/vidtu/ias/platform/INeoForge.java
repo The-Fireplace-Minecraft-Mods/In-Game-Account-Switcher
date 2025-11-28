@@ -26,16 +26,12 @@ import net.minecraft.client.gui.screens.Screen;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
-import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.Mod;
-import net.neoforged.fml.loading.FMLPaths;
 import net.neoforged.neoforge.client.event.ScreenEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.GameShuttingDownEvent;
-import net.neoforged.neoforgespi.language.IModInfo;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jspecify.annotations.NullMarked;
@@ -86,6 +82,9 @@ public final class INeoForge {
             throw new UnsupportedOperationException("IAS: You've tried to load the In-Game Account Switcher mod on a server. This won't work.");
         }
 
+        // Init the mod.
+        IASMinecraft.init();
+
         // Register the shutdown handler.
         NeoForge.EVENT_BUS.addListener(GameShuttingDownEvent.class, event -> IAS.close());
 
@@ -106,19 +105,6 @@ public final class INeoForge {
         /^container.registerExtensionPoint(net.neoforged.neoforge.client.ConfigScreenHandler.ConfigScreenFactory.class, () -> new net.neoforged.neoforge.client.ConfigScreenHandler.ConfigScreenFactory((game, screen) -> new ConfigScreen(screen))); // Implicit NPE for 'container'
         container.registerExtensionPoint(net.neoforged.fml.IExtensionPoint.DisplayTest.class, () -> new net.neoforged.fml.IExtensionPoint.DisplayTest(() -> net.neoforged.fml.IExtensionPoint.DisplayTest.IGNORESERVERONLY, (version, fromServer) -> true));
         ^///?}
-
-        // Create the UA and initialize.
-        String modVersion = ModList.get().getModContainerById("ias")
-                .map(ModContainer::getModInfo)
-                .map(IModInfo::getVersion)
-                .map(ArtifactVersion::toString)
-                .orElse("UNKNOWN");
-        String loaderVersion = ModList.get().getModContainerById("neoforge")
-                .map(ModContainer::getModInfo)
-                .map(IModInfo::getVersion)
-                .map(ArtifactVersion::toString)
-                .orElse("UNKNOWN");
-        IASMinecraft.init(FMLPaths.GAMEDIR.get(), FMLPaths.CONFIGDIR.get(), "NeoForge", modVersion, loaderVersion);
 
         // Done.
         LOGGER.info("IAS: Loaded. ({} ms)", (System.nanoTime() - start) / 1_000_000L);

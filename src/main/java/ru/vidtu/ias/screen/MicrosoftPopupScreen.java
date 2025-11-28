@@ -428,8 +428,8 @@ final class MicrosoftPopupScreen extends Screen implements CreateHandler {
                 renderer.defaultParameters(renderer.defaultParameters().withOpacity(opacityFloat));
                 this.errorNote.visitLines(net.minecraft.client.gui.TextAlignment.CENTER, this.width, this.height + 174, 9, renderer);
                 //?} elif >= 1.21.10 {
-                /*this.errorNote.render(graphics, MultiLineLabel.Align.CENTER, this.width, this.height + 174, 9, false, 0xFF_FF_FF | opacityMask);*/
-                //?} else
+                /*this.errorNote.render(graphics, MultiLineLabel.Align.CENTER, this.width, this.height + 174, 9, false, 0xFF_FF_FF | opacityMask);
+                *///?} else
                 /*this.errorNote.renderCentered(graphics, this.width, this.height + 174, 9, 0xFF_FF_FF | opacityMask);*/
                 pose.popMatrix();
             }

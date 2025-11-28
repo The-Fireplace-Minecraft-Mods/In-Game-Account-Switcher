@@ -119,8 +119,8 @@ public final class IStonecutter {
         //? if >=1.21.11 {
         label.visitLines(net.minecraft.client.gui.TextAlignment.CENTER, x, y, 9, graphics.textRenderer());
         //?} elif >=1.21.10 {
-        /*label.render(graphics, MultiLineLabel.Align.CENTER, x, y, 9, /^unused=^/false, -1);*/
-        //?} else
+        /*label.render(graphics, MultiLineLabel.Align.CENTER, x, y, 9, /^unused=^/false, -1);
+        *///?} else
         /*label.renderCentered(graphics, x, y);*/
     }
 

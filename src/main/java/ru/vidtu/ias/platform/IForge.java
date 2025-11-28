@@ -26,16 +26,11 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ScreenEvent;
 import net.minecraftforge.event.GameShuttingDownEvent;
-import net.minecraftforge.fml.ModContainer;
-import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
-import net.minecraftforge.fml.loading.FMLPaths;
-import net.minecraftforge.forgespi.language.IModInfo;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jspecify.annotations.NullMarked;
@@ -99,6 +94,9 @@ public final class IForge {
             throw new UnsupportedOperationException("IAS: You've tried to load the In-Game Account Switcher mod on a server. This won't work.");
         }
 
+        // Init the mod.
+        IASMinecraft.init();
+
         // Register the shutdown handler.
         GameShuttingDownEvent.BUS.addListener(event -> IAS.close());
 
@@ -132,19 +130,6 @@ public final class IForge {
         /^net.minecraftforge.fml.ModLoadingContext.get().registerExtensionPoint(net.minecraftforge.fml.ExtensionPoint.CONFIGGUIFACTORY, () -> (minecraft, screen) -> new ConfigScreen(screen));
         net.minecraftforge.fml.ModLoadingContext.get().registerExtensionPoint(net.minecraftforge.fml.ExtensionPoint.DISPLAYTEST, () -> org.apache.commons.lang3.tuple.Pair.of(() -> net.minecraftforge.fml.network.FMLNetworkConstants.IGNORESERVERONLY, (version, fromServer) -> true));
         ^///?}
-
-        // Create the UA and initialize.
-        String modVersion = ModList.get().getModContainerById("ias")
-                .map(ModContainer::getModInfo)
-                .map(IModInfo::getVersion)
-                .map(ArtifactVersion::toString)
-                .orElse("UNKNOWN");
-        String loaderVersion = ModList.get().getModContainerById("forge")
-                .map(ModContainer::getModInfo)
-                .map(IModInfo::getVersion)
-                .map(ArtifactVersion::toString)
-                .orElse("UNKNOWN");
-        IASMinecraft.init(FMLPaths.GAMEDIR.get(), FMLPaths.CONFIGDIR.get(), "Forge", modVersion, loaderVersion);
 
         // Done.
         LOGGER.info("IAS: Loaded. ({} ms)", (System.nanoTime() - start) / 1_000_000L);

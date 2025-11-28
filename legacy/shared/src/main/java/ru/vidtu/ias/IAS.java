@@ -36,7 +36,6 @@ import java.net.http.HttpResponse;
 import java.nio.file.Path;
 import java.time.Duration;
 import java.util.Objects;
-import java.util.UUID;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -62,28 +61,22 @@ public final class IAS {
     public static final Duration TIMEOUT = Duration.ofSeconds(Long.getLong("ias.timeout", 15L));
 
     /**
+     * User agent for HTTP requests.
+     */
+    @NotNull
+    public static final String USER_AGENT = "IAS/%s (https://github.com/The-Fireplace-Minecraft-Mods/In-Game-Account-Switcher; pig@vidtu.ru)".formatted(IAS.class.getPackage().getImplementationVersion());
+
+    /**
      * Logger for this class.
      */
     @NotNull
     private static final Logger LOGGER = LoggerFactory.getLogger("IAS");
 
     /**
-     * Template for {@link #userAgent}.
-     */
-    @NotNull
-    private static final String USER_AGENT_TEMPLATE = "IAS/%s (https://github.com/The-Fireplace-Minecraft-Mods/In-Game-Account-Switcher; %s; %s/%s; Minecraft/%s; Java/%s)";
-
-    /**
      * IAS executor.
      */
     @Nullable
     private static ScheduledExecutorService executor;
-
-    /**
-     * Current IAS user agent.
-     */
-    @Nullable
-    private static String userAgent;
 
     /**
      * Current IAS game directory.
@@ -114,15 +107,10 @@ public final class IAS {
     /**
      * Initializes the IAS.
      *
-     * @param gamePath      Game directory
-     * @param configPath    Config directory
-     * @param version       Mod version
-     * @param loader        Mod loader
-     * @param loaderVersion Mod loader version
-     * @param gameVersion   Game version
+     * @param gamePath   Game directory
+     * @param configPath Config directory
      */
-    public static void init(@NotNull Path gamePath, @NotNull Path configPath, @NotNull String version,
-                            @NotNull String loader, @NotNull String loaderVersion, @NotNull String gameVersion) {
+    public static void init(@NotNull Path gamePath, @NotNull Path configPath) {
         // Log.
         LOGGER.info("IAS: Initializing IAS...");
 
@@ -131,9 +119,7 @@ public final class IAS {
         configDirectory = configPath;
 
         // Set up IAS.
-        UUID randomSessionId = UUID.randomUUID();
-        userAgent = USER_AGENT_TEMPLATE.formatted(version, randomSessionId, loader, loaderVersion, gameVersion, Runtime.version().toString());
-        LOGGER.debug("IAS: Current user agent: {}", userAgent);
+        LOGGER.debug("IAS: Current user agent: {}", USER_AGENT);
 
         // Write the disclaimers.
         try {
@@ -164,6 +150,7 @@ public final class IAS {
             LOGGER.debug("IAS: Skipped IAS remote scanning because system property is set.");
             return;
         }
+        String version = String.valueOf(IAS.class.getPackage().getImplementationVersion());
         Holder<ScheduledFuture<?>> task = new Holder<>();
         task.set(executor.scheduleWithFixedDelay(() -> {
             // Perform scanning, if allowed.
@@ -185,7 +172,7 @@ public final class IAS {
                 // Send the request.
                 HttpResponse<Stream<String>> response = client.send(HttpRequest.newBuilder()
                         .uri(new URI("https://raw.githubusercontent.com/The-Fireplace-Minecraft-Mods/In-Game-Account-Switcher/main/.ias/disabled_v1"))
-                        .header("User-Agent", userAgent())
+                        .header("User-Agent", USER_AGENT)
                         .timeout(TIMEOUT)
                         .GET()
                         .build(), HttpResponse.BodyHandlers.ofLines());
@@ -268,9 +255,6 @@ public final class IAS {
         }
         executor = null;
 
-        // Destroy the UA.
-        userAgent = null;
-
         // Write the disclaimers, if we can.
         if (gameDirectory != null) {
             try {
@@ -296,20 +280,6 @@ public final class IAS {
         ScheduledExecutorService executor = IAS.executor;
         Objects.requireNonNull(executor, "IAS executor is not available.");
         return executor;
-    }
-
-    /**
-     * Gets the user agent for usage in {@link MSAuth}.
-     *
-     * @return Current {@code User-Agent} value for HTTP requests
-     * @throws NullPointerException If user agent wasn't set
-     */
-    @Contract(pure = true)
-    @NotNull
-    public static String userAgent() {
-        String userAgent = IAS.userAgent;
-        Objects.requireNonNull(userAgent, "IAS user agent is not set.");
-        return userAgent;
     }
 
     /**

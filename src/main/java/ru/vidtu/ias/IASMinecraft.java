@@ -22,7 +22,6 @@ package ru.vidtu.ias;
 import com.mojang.authlib.minecraft.UserApiService;
 import com.mojang.authlib.yggdrasil.ProfileResult;
 import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
-import net.minecraft.SharedConstants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.User;
 import net.minecraft.client.gui.Font;
@@ -58,7 +57,6 @@ import ru.vidtu.ias.utils.Expression;
 import ru.vidtu.ias.utils.IUtils;
 import ru.vidtu.ias.utils.exceptions.FriendlyException;
 
-import java.nio.file.Path;
 import java.time.Duration;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -115,20 +113,10 @@ public final class IASMinecraft {
 
     /**
      * Initializes the IAS.
-     *
-     * @param gameDir       Game directory
-     * @param configDir     Config directory
-     * @param loader        Loader name
-     * @param loaderVersion Loader version
-     * @param modVersion    Mod version
      */
-    public static void init(Path gameDir, Path configDir, String loader, String modVersion, String loaderVersion) {
-        // Log the info.
-        String gameVersion = SharedConstants.getCurrentVersion().name();
-        LOGGER.info("IAS: Booting up... (version: {}, loader: {}, loader version: {}, game version: {})", modVersion, loader, loaderVersion, gameVersion);
-
+    public static void init() {
         // Initialize the IAS.
-        IAS.init(gameDir, configDir, modVersion, loader, loaderVersion, gameVersion);
+        IAS.init(IStonecutter.GAME_DIRECTORY, IStonecutter.CONFIG_DIRECTORY);
     }
 
     /**

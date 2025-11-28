@@ -121,7 +121,7 @@ public final class IASMinecraft {
         LOGGER.info("IAS: Booting up... (version: {}, loader: {}, loader version: {}, game version: {})", modVersion, loader, loaderVersion, gameVersion);
 
         // Initialize the IAS.
-        IAS.init(gameDir, configDir, modVersion, loader, loaderVersion, gameVersion);
+        IAS.init(gameDir, configDir);
     }
 
     /**

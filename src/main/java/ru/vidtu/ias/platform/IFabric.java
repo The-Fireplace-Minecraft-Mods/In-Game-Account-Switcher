@@ -27,10 +27,6 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.fabricmc.fabric.api.client.screen.v1.Screens;
-import net.fabricmc.loader.api.FabricLoader;
-import net.fabricmc.loader.api.ModContainer;
-import net.fabricmc.loader.api.Version;
-import net.fabricmc.loader.api.metadata.ModMetadata;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.screens.TitleScreen;
 import net.minecraft.client.gui.screens.multiplayer.JoinMultiplayerScreen;
@@ -79,18 +75,8 @@ public final class IFabric implements ClientModInitializer {
         long start = System.nanoTime();
         LOGGER.info("IAS: Loading... (platform: fabric)");
 
-        // Create the UA and initialize.
-        String modVersion = FabricLoader.getInstance().getModContainer("ias")
-                .map(ModContainer::getMetadata)
-                .map(ModMetadata::getVersion)
-                .map(Version::getFriendlyString)
-                .orElse("UNKNOWN");
-        String loaderVersion = FabricLoader.getInstance().getModContainer("fabricloader")
-                .map(ModContainer::getMetadata)
-                .map(ModMetadata::getVersion)
-                .map(Version::getFriendlyString)
-                .orElse("UNKNOWN");
-        IASMinecraft.init(FabricLoader.getInstance().getGameDir(), FabricLoader.getInstance().getConfigDir(), "Fabric", modVersion, loaderVersion);
+        // Init the mod.
+        IASMinecraft.init();
 
         // Register the shutdown handler.
         ClientLifecycleEvents.CLIENT_STOPPING.register(client -> IAS.close());

@@ -21,7 +21,6 @@ package ru.vidtu.ias.mixins;
 
 import com.mojang.authlib.minecraft.UserApiService;
 import com.mojang.authlib.yggdrasil.ProfileResult;
-import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.User;
 import net.minecraft.client.gui.screens.social.PlayerSocialManager;
@@ -82,7 +81,7 @@ public interface MinecraftAccessor {
      * @return Current authentication service
      ^/
     @Accessor("authenticationService")
-    YggdrasilAuthenticationService ias$authenticationService();
+    com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService ias$authenticationService();
     *///?}
 
     /**
