@@ -126,9 +126,9 @@
   "ias.nick.long": "Twój nick '%s' jest za długi i może uniemożliwić dołączenie do niektórych serwerów.",
   "ias.nick.chars": "Twój nick '%s' zawiera niedozwolone znaki i może uniemożliwić dołączenie do niektórych serwerów.",
   "ias.bar": "%s (Konto: %s)",
-  "ias.help.crypt": "Czym jest Krypta, dlaczego istnieje i którą powinienem wybrać?",
-  "ias.help.errors": "Typowe błędy uwierzytelniania",
-  "ias.help.stolen": "Jak chronić konto przed kradzieżą?",
+  "ias.help.crypt": "Czym jest Krypta, dlaczego istnieje i którą powinienem wybrać? (Strona jest tylko w języku angielskim) ",
+  "ias.help.errors": "Typowe błędy uwierzytelniania (Strona jest tylko w języku angielskim)",
+  "ias.help.stolen": "Jak chronić konto przed kradzieżą? (Strona jest tylko w języku angielskim)",
   "modmenu.descriptionTranslation.ias": "Pozwala zmienić konto, na które jesteś zalogowany w grze, bez konieczności restartowania Minecrafta.",
   "modmenu.summaryTranslation.ias": "Pozwala zmienić konto w grze."
 }
