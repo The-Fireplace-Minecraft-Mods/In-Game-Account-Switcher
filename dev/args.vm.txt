@@ -21,6 +21,7 @@
 -Dslf4j.internal.verbosity=DEBUG
 
 -Dmax.bg.threads=1
+-DMC_DEBUG_ENABLED=true
 
 -enableassertions
 -enablesystemassertions
