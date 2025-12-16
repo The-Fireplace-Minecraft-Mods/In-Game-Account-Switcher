@@ -17,12 +17,11 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>
 
-name: 'Build'
+name: 'Build (Main)'
 permissions: { }
 on:
   push:
-    branches: [ '!main' ]
-  pull_request:
+    branches: [ 'main' ]
   workflow_dispatch:
 jobs:
   build:
@@ -30,7 +29,7 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 60
     permissions:
-      contents: 'read'
+      contents: 'write'
     steps:
       - name: 'Checkout'
         timeout-minutes: 1
@@ -47,7 +46,12 @@ jobs:
         timeout-minutes: 10
         uses: gradle/actions/setup-gradle@4d9f0ba0025fe599b4ebab900eb7f3a1d93ef4c2 # v5.0.0
         with:
-          dependency-graph: 'generate'
+          # Generate with either:
+          # 1. Linux/macOS/Unix (OpenSSL): openssl rand -base64 32
+          # 2. Linux/macOS/Unix: cat /dev/random | head -c32 | base64
+          # 3. Windows (PowerShell): $bytes=New-Object byte[] 32;[Security.Cryptography.RandomNumberGenerator]::Create().GetBytes($bytes);[Convert]::ToBase64String($bytes)
+          cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
+          dependency-graph: 'generate-and-submit'
       - name: 'Build'
         timeout-minutes: 60
         run: './gradlew assemble'
