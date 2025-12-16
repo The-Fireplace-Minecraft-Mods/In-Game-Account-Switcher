@@ -20,7 +20,7 @@
 [versions]
 architectury-loom = "1.13.467"
 error_prone-annotations = "2.45.0"
-fabric-loader = "0.18.2"
+fabric-loader = "0.18.3"
 fabric-mc1182 = "0.77.0+1.18.2"
 fabric-mc1192 = "0.77.0+1.19.2"
 fabric-mc1194 = "0.87.2+1.19.4"
