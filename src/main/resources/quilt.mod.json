@@ -39,7 +39,7 @@
       {
         "id": "modmenu",
         "versions": "*",
-        "reason": "In-Game Account Switcher recommends ModMenu for configuration access.",
+        "reason": "In-Game Account Switcher recommends installing ModMenu to use the configuration screen.",
         "optional": true
       }
     ],
@@ -51,7 +51,10 @@
   "minecraft": {
     "environment": "client"
   },
-  "mixin": "ias.mixins.json",
+  "mixin": {
+    "config": "ias.mixins.json",
+    "environment": "client"
+  },
   "modmenu": {
     "links": {
       "modmenu.modrinth": "https://modrinth.com/mod/in-game-account-switcher",

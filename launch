@@ -23,4 +23,4 @@
 set -euvx
 
 # Launch.
-./gradlew "$1:runClient"
+./gradlew "${1}:runClient"

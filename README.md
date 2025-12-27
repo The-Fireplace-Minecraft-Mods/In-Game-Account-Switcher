@@ -1,3 +1,5 @@
+<img src="ias.png" alt="In-Game Account Switcher Icon" width=128 height=128/>
+
 # In-Game Account Switcher
 
 In-Game Account Switcher allows you to change which account you are logged in to in-game,

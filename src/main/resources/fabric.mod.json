@@ -32,10 +32,14 @@
     ]
   },
   "mixins": [
-    "ias.mixins.json"
+    {
+      "config": "ias.mixins.json",
+      "environment": "client"
+    }
   ],
   "depends": {
     "minecraft": "${minecraft}",
+    "fabricloader": "*",
     "fabric-api": "*"
   },
   "recommends": {

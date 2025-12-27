@@ -24,3 +24,9 @@ plugins {
 }
 
 stonecutter active "1.21.11-fabric" /* [SC] DO NOT EDIT */
+
+stonecutter handlers {
+    // Process the JSON files via Stonecutter.
+    // This is needed for the Mixin configuration.
+    inherit("java", "json")
+}

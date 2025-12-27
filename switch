@@ -23,4 +23,4 @@
 set -euvx
 
 # Switch.
-./gradlew "Set active project to $1"
+./gradlew "Set active project to ${1}"

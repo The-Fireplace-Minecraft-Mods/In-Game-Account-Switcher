@@ -31,7 +31,7 @@ pluginManagement {
 
 plugins {
     id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
-    id("dev.kikugie.stonecutter") version "0.7.11"
+    id("dev.kikugie.stonecutter") version "0.8"
 }
 
 rootProject.name = "In-Game Account Switcher"
@@ -46,13 +46,13 @@ stonecutter {
     create(rootProject) {
         for (version in versions) {
             for (type in types) {
-                val id = "$version-$type"
-                val subPath = file("versions/$id")
+                val id = "${version}-${type}"
+                val subPath = file("versions/${id}")
                 if (subPath.resolve(".ignored").isFile || !subPath.isDirectory) { // TODO(VidTu): Once the migration finishes, delete the second check.
                     ignored.add(id)
                     continue
                 }
-                version("$version-$type", version)
+                version(id, version)
             }
         }
         vcsVersion = "${versions[0]}-${types[0]}"
@@ -67,10 +67,10 @@ project(":legacy_shared").projectDir = file("legacy/shared")
 val oldTypes = listOf("fabric", "forge", "neoforge", "root")
 for (version in versions) {
     for (type in oldTypes) {
-        val subPath = file("legacy/$version/$type")
+        val subPath = file("legacy/${version}/${type}")
         if (!subPath.isDirectory) continue
-        include("legacy_$version-$type")
-        project(":legacy_$version-$type").projectDir = subPath
+        include("legacy_${version}-${type}")
+        project(":legacy_${version}-${type}").projectDir = subPath
     }
 }
 // Migration helper END.

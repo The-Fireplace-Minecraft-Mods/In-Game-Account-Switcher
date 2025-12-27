@@ -27,7 +27,7 @@ clientSideOnly = true
 modId = "ias"
 version = "${version}"
 displayName = "In-Game Account Switcher"
-updateJSONURL = "https://raw.githubusercontent.com/The-Fireplace-Minecraft-Mods/In-Game-Account-Switcher/main/updater-neoforge.json"
+updateJSONURL = "${forgeUpdaterUrl}"
 displayURL = "https://modrinth.com/mod/in-game-account-switcher"
 issueTrackerURL = "https://github.com/The-Fireplace-Minecraft-Mods/In-Game-Account-Switcher/issues"
 catalogueImageIcon = "ias_64.png"
@@ -45,6 +45,7 @@ config = "ias.mixins.json"
 [[dependencies.ias]]
 modId = "minecraft"
 type = "required"
+reason = "In-Game Account Switcher works only with Minecraft ${minecraft}."
 mandatory = true
 versionRange = "[${minecraft}]"
 ordering = "NONE"
@@ -53,8 +54,9 @@ side = "CLIENT"
 [[dependencies.ias]]
 modId = "${platform}"
 type = "required"
+reason = "In-Game Account Switcher requires an up-to-date '${platform}' to properly implement its functionality."
 mandatory = true
-versionRange = "*"
+versionRange = "${platformRequirement}"
 ordering = "NONE"
 side = "CLIENT"
 

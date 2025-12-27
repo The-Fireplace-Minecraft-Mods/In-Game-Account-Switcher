@@ -1,9 +1,8 @@
 {
   "required": true,
   "minVersion": "0.8",
-  "compatibilityLevel": "JAVA_${java}",
+  "compatibilityLevel": "JAVA_${mixinJava}",
   "package": "ru.vidtu.ias.mixins",
-  "refmap": "ias.mixins.refmap.json",
   "client": [
     //? if >=1.21.10
     "JoinMultiplayerScreenMixin",
