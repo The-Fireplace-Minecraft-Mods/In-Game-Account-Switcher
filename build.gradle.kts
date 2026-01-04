@@ -19,6 +19,13 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
 
+// This is the main (multi-version loader) buildscript. It is processed by the
+// Stonecutter multiple times, for each version and each loader. (compiled once)
+// Based on Architectury Loom and processes the preparation/complation/building
+// of the most of the mod that is not covered by the Stonecutter or Blossom.
+// See "stonecutter.gradle.kts" for the Stonecutter configuration.
+// See "settings.gradle.kts" for the Gradle configuration.
+
 import com.google.gson.Gson
 import com.google.gson.JsonElement
 import net.fabricmc.loom.task.RemapJarTask
@@ -64,8 +71,8 @@ base.archivesName = "IAS"
 version = "${version}+${name}"
 description = "Allows you to change which account you are signed in to in-game without restarting Minecraft."
 
+// Define Stonecutter preprocessor variables/constants.
 sc {
-    // Define Stonecutter preprocessor variables.
     constants["hacky_neoforge"] = hackyNeoForge
     constants {
         match(platform, "fabric", "forge", "neoforge")
@@ -96,7 +103,7 @@ loom {
             runDir = "../../run"
 
             // AuthLib for 1.16.5 is bugged, disable Mojang API
-            // to fix issues with MP testing.
+            // to fix issues with multiplayer testing.
             if (mcp eq "1.16.5") { // TODO(VidTu): Revisit after making the decision about 1.16.5 support.
                 vmArgs(
                     "-Dminecraft.api.auth.host=http://0.0.0.0:0/",
@@ -128,7 +135,7 @@ loom {
     }
 }
 
-// Make the game run with the required Java path.
+// Make the game run with the compatible Java. (e.g,. Java 17 for 1.20.1)
 tasks.withType<RunGameTask> {
     javaLauncher = javaToolchains.launcherFor(java.toolchain)
 }
@@ -145,7 +152,7 @@ repositories {
     } else {
         maven("https://maven.fabricmc.net/") // Fabric.
         maven("https://maven.terraformersmc.com/releases/") // ModMenu.
-        if (mcp eq "1.20.4") { // Fix for ModMenu not shading Text Placeholder API.
+        if (mcp eq "1.20.4") { // Fix for ModMenu not providing Text Placeholder API.
             maven("https://maven.nucleoid.xyz/") // ModMenu. (Text Placeholder API)
         }
     }
@@ -318,9 +325,17 @@ tasks.withType<ProcessResources> {
 // Add LICENSE and manifest into the JAR file.
 // Manifest also controls Mixin/mod loading on some loaders/versions.
 tasks.withType<Jar> {
+    // Add LICENSE, GPL (reference for LICENSE), and NOTICE.
     from(rootDir.resolve("GPL"))
     from(rootDir.resolve("LICENSE"))
     from(rootDir.resolve("NOTICE"))
+
+    // Remove package-info.class, unless package debug is on. (to save space)
+    if (!"${findProperty("ru.vidtu.ias.debug.package")}".toBoolean()) {
+        exclude("**/package-info.class")
+    }
+
+    // Add manifest.
     manifest {
         attributes(
             "Specification-Title" to "In-Game Account Switcher",
@@ -334,7 +349,7 @@ tasks.withType<Jar> {
     }
 }
 
+// Output into "build/libs" instead of "versions/<ver>/build/libs".
 tasks.withType<RemapJarTask> {
-    // Output into "build/libs" instead of "versions/<ver>/build/libs".
     destinationDirectory = rootProject.layout.buildDirectory.file("libs").get().asFile
 }

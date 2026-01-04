@@ -19,6 +19,13 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
 
+// This is the root Gradle entrypoint. It installs the Stonecutter preprocessor,
+// and various root Gradle things, as well as includes and generates every
+// virtual subproject by the Stonecutter. Also includes compile-time project.
+// See "build.gradle.kts" for the per-version Gradle buildscript.
+// See "stonecutter.gradle.kts" for the Stonecutter configuration.
+
+// Plugins.
 pluginManagement {
     repositories {
         gradlePluginPortal()
@@ -34,12 +41,24 @@ plugins {
     id("dev.kikugie.stonecutter") version "0.8.2"
 }
 
+// Project.
 rootProject.name = "In-Game Account Switcher"
 
 // Stonecutter.
 val types = listOf("fabric", "forge", "neoforge")
 val versions = listOf("1.21.11", "1.21.10", "1.21.8", "1.21.5", "1.21.4", "1.21.3", "1.21.1", "1.20.6", "1.20.4", "1.20.2", "1.20.1", "1.19.4", "1.19.2", "1.18.2")
 val ignored = mutableListOf<String>()
+val onlyId = System.getProperty("ru.vidtu.ias.only")
+val latestId = "${versions[0]}-${types[0]}"
+if (onlyId != null) {
+    logger.warn("Processing only version '${onlyId}' via 'ru.vidtu.ias.only'.")
+    val idx = onlyId.indexOf('-')
+    require(idx != -1) { "Invalid only version '${onlyId}', no '-' delimiter extracted from 'ru.vidtu.ias.only'." }
+    val onlyVersion = onlyId.substring(0, idx)
+    val onlyType = onlyId.substring(idx + 1)
+    require(versions.contains(onlyVersion)) { "Invalid only version '${onlyId}', version number '${onlyVersion}' extracted from 'ru.vidtu.ias.only' not found in ${types.joinToString()}." }
+    require(types.contains(onlyType)) { "Invalid only version '${onlyId}', type '${onlyType}' extracted from 'ru.vidtu.ias.only' not found in ${versions.joinToString()}." }
+}
 stonecutter {
     kotlinController = true
     centralScript = "build.gradle.kts"
@@ -47,6 +66,7 @@ stonecutter {
         for (version in versions) {
             for (type in types) {
                 val id = "${version}-${type}"
+                if ((onlyId != null) && (id != onlyId) && (id != latestId)) continue
                 val subPath = file("versions/${id}")
                 if (subPath.resolve(".ignored").isFile || !subPath.isDirectory) { // TODO(VidTu): Once the migration finishes, delete the second check.
                     ignored.add(id)
@@ -55,10 +75,12 @@ stonecutter {
                 version(id, version)
             }
         }
-        vcsVersion = "${versions[0]}-${types[0]}"
+        vcsVersion = latestId
     }
 }
-logger.warn("Ignored versions: ${ignored.joinToString()}")
+if (ignored.isNotEmpty()) {
+    logger.warn("Ignored versions: ${ignored.joinToString()}")
+}
 
 // Migration helper START.
 // Legacy.
