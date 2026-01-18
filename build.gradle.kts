@@ -344,7 +344,7 @@ tasks.withType<Jar> {
             "Implementation-Title" to "IAS",
             "Implementation-Version" to version,
             "Implementation-Vendor" to "VidTu",
-            "MixinConfigs" to "ias.mixins.json"
+            "MixinConfigs" to "ias.mixins.json" // Forge and old NeoForge.
         )
     }
 }
