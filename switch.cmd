@@ -2,7 +2,7 @@
 :: allows you to change your logged in account in-game, without restarting it.
 ::
 :: Copyright (C) 2015-2022 The_Fireplace
-:: Copyright (C) 2021-2025 VidTu
+:: Copyright (C) 2021-2026 VidTu
 ::
 :: This program is free software: you can redistribute it and/or modify
 :: it under the terms of the GNU Lesser General Public License as published by
