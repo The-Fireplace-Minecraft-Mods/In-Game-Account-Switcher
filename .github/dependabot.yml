@@ -33,3 +33,4 @@ updates:
       - dependency-name: "com.terraformersmc:modmenu"
       - dependency-name: "net.minecraftforge:forge"
       - dependency-name: "net.neoforged:forge"
+      - dependency-name: "net.neoforged:neoforge"
