@@ -429,6 +429,16 @@ public final class ConfigScreen extends Screen {
         box.setTooltipDelay(Duration.ofMillis(250L));
         this.addRenderableWidget(box);
 
+        // Close on Login.
+        box = Checkbox.builder(Component.translatable("ias.config.closeOnLogin"), this.font)
+                .pos(5, 212)
+                .selected(IASConfig.closeOnLogin)
+                .onValueChange((cb, value) -> IASConfig.closeOnLogin = value)
+                .tooltip(Tooltip.create(Component.translatable("ias.config.closeOnLogin.tip")))
+                .build();
+        box.setTooltipDelay(Duration.ofMillis(250L));
+        this.addRenderableWidget(box);
+
         // Add done button.
         this.addRenderableWidget(Button.builder(CommonComponents.GUI_DONE, btn -> this.onClose())
                 .bounds(this.width / 2 - 100, this.height - 24, 200, 20)

@@ -22,6 +22,7 @@ package ru.vidtu.ias.account;
 import com.google.errorprone.annotations.CheckReturnValue;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+
 import ru.vidtu.ias.auth.handlers.LoginHandler;
 
 import java.io.DataInput;
@@ -101,7 +102,7 @@ public sealed interface Account permits OfflineAccount, MicrosoftAccount {
      *
      * @param handler Login handler
      */
-    void login(@NotNull LoginHandler handler);
+    void login(@NotNull LoginHandler handler, Runnable onComplete);
 
     /**
      * Writes the account to the output.
