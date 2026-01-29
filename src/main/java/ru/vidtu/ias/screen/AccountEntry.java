@@ -32,6 +32,7 @@ import net.minecraft.util.FormattedCharSequence;
 import org.jetbrains.annotations.NotNull;
 import ru.vidtu.ias.account.Account;
 import ru.vidtu.ias.platform.IStonecutter;
+import ru.vidtu.ias.config.IASConfig;
 
 import java.util.List;
 import java.util.Objects;
@@ -236,7 +237,7 @@ final class AccountEntry extends ObjectSelectionList.Entry<AccountEntry> {
         // Login on double click.
         if (IStonecutter.internalMillisClock() - this.clicked < 250L) {
             //? if >=1.21.10 {
-            this.list.login(!event.hasShiftDown());
+            this.list.login(!event.hasShiftDown(), IASConfig.closeOnLogin ? () -> this.minecraft.setScreen(this.list.screen().parent()) : null);
             //?} else
             /*this.list.login(!net.minecraft.client.gui.screens.Screen.hasShiftDown());*/
         }
