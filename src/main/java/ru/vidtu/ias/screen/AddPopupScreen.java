@@ -73,7 +73,7 @@ final class AddPopupScreen extends Screen {
             /*this.parent.init(this.minecraft, this.width, this.height);*/
         }
 
-        // Add offline button.
+        // Add microsoft button.
         PopupButton button = new PopupButton(this.width / 2 - 75, this.height / 2 - 24, 150, 20,
                 Component.translatable("ias.add.microsoft"), btn -> this.minecraft.setScreen(new MicrosoftCryptPopupScreen(this.parent, this.handler)), Supplier::get);
         button.setTooltip(Tooltip.create(Component.translatable("ias.add.microsoft.tip")));
