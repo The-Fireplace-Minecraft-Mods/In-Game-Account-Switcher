@@ -118,7 +118,7 @@ public final class OfflineAccount implements Account {
     }
 
     @Override
-    public void login(@NotNull LoginHandler handler) {
+    public void login(@NotNull LoginHandler handler, Runnable onComplete) {
         // Offline account can be logged in only via offline.
         handler.error(new UnsupportedOperationException("Offline account login: " + this));
     }
