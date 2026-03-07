@@ -158,6 +158,11 @@ public final class IASConfig {
     public static boolean barNick = false;
 
     /**
+     * Whether to close the account screen after logging in, {@code false} by default.
+     */
+    public static boolean closeOnLogin = false;
+
+    /**
      * Current HTTP server mode, {@link ServerMode#AVAILABLE} by default.
      */
     @Nullable
