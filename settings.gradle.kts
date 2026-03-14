@@ -45,7 +45,8 @@ plugins {
 rootProject.name = "In-Game Account Switcher"
 
 // Stonecutter.
-val types = listOf("fabric", "forge", "neoforge")
+//val types = listOf("fabric", "forge", "neoforge")
+val types = listOf("fabric")
 val versions = listOf("1.21.11", "1.21.10", "1.21.8", "1.21.5", "1.21.4", "1.21.3", "1.21.1", "1.20.6", "1.20.4", "1.20.2", "1.20.1", "1.19.4", "1.19.2", "1.18.2")
 val ignored = mutableListOf<String>()
 val onlyId = System.getProperty("ru.vidtu.ias.only")
@@ -64,7 +65,8 @@ stonecutter {
     centralScript = "build.gradle.kts"
     create(rootProject) {
         for (version in versions) {
-            for (type in types) {
+            val fabricOnly = listOf("fabric")
+            for (type in fabricOnly) {
                 val id = "${version}-${type}"
                 if ((onlyId != null) && (id != onlyId) && (id != latestId)) continue
                 val subPath = file("versions/${id}")
@@ -87,12 +89,19 @@ if (ignored.isNotEmpty()) {
 include("legacy_shared")
 project(":legacy_shared").projectDir = file("legacy/shared")
 val oldTypes = listOf("fabric", "forge", "neoforge", "root")
-for (version in versions) {
-    for (type in oldTypes) {
-        val subPath = file("legacy/${version}/${type}")
-        if (!subPath.isDirectory) continue
-        include("legacy_${version}-${type}")
-        project(":legacy_${version}-${type}").projectDir = subPath
-    }
+val targetVersion = "1.21.10"
+val targetType = "fabric"
+val subPath = file("legacy/${targetVersion}/${targetType}")
+if (subPath.isDirectory) {
+    include("legacy_${targetVersion}-${targetType}")
+    project(":legacy_${targetVersion}-${targetType}").projectDir = subPath
 }
+// for (version in versions) {
+//     for (type in oldTypes) {
+//         val subPath = file("legacy/${version}/${type}")
+//         if (!subPath.isDirectory) continue
+//         include("legacy_${version}-${type}")
+//         project(":legacy_${version}-${type}").projectDir = subPath
+//     }
+// }
 // Migration helper END.
