@@ -153,8 +153,18 @@ final class AccountList extends ObjectSelectionList<AccountEntry> {
             LoginPopupScreen login = new LoginPopupScreen(this.screen);
             this.minecraft.setScreen(login);
 
-            // Start login.
-            IAS.executor().execute(() -> account.login(login));
+            // Start login on a dedicated async worker instead of IAS executor.
+            // IAS executor is single-threaded and can be blocked by previous long-running tasks.
+            String accountName = account.name();
+            CompletableFuture.runAsync(() -> {
+                LOGGER.info("IAS: Started login task for account {} on thread {}.", accountName, Thread.currentThread().getName());
+                try {
+                    account.login(login);
+                } catch (Throwable t) {
+                    LOGGER.error("IAS: Login task for account {} crashed before completion.", accountName, t);
+                    login.error(t);
+                }
+            });
 
             // Don't process further.
             return;
