@@ -321,9 +321,7 @@ public final class MicrosoftAccount implements Account {
                 handler.stage(MCA_TO_MCP);
 
                 // Convert MCA to MCP.
-                return MSAuth.mcaToMcp(access.get())
-                    .orTimeout(5, java.util.concurrent.TimeUnit.SECONDS)
-                    .exceptionallyComposeAsync(original -> {
+                return MSAuth.mcaToMcp(access.get()).exceptionallyComposeAsync(original -> {
                     // Skip if cancelled.
                     if (handler.cancelled()) return CompletableFuture.completedFuture(null);
 
@@ -336,15 +334,7 @@ public final class MicrosoftAccount implements Account {
                     recrypt.set(true);
 
                     // Convert MSR to MSA/MSR.
-                    return MSAuth.msrToMsaMsr(refresh.get())
-                        .orTimeout(5, java.util.concurrent.TimeUnit.SECONDS)
-                        .exceptionallyComposeAsync(timeoutErr -> {
-                            LOGGER.warn("IAS: Network timeout or error! Retrying connection in 1s...");
-                            try { Thread.sleep(1000); } catch (InterruptedException ignored) {}
-                            return MSAuth.msrToMsaMsr(refresh.get())
-                                .orTimeout(10, java.util.concurrent.TimeUnit.SECONDS);
-                        })
-                        .thenComposeAsync(ms -> {
+                    return MSAuth.msrToMsaMsr(refresh.get()).thenComposeAsync(ms -> {
                         // Skip if cancelled.
                         if (ms == null || handler.cancelled()) return CompletableFuture.completedFuture(null);
 
@@ -356,7 +346,7 @@ public final class MicrosoftAccount implements Account {
                         handler.stage(MSA_TO_XBL);
 
                         // Convert MSA to XBL.
-                        return MSAuth.msaToXbl(ms.access()).orTimeout(10, java.util.concurrent.TimeUnit.SECONDS);
+                        return MSAuth.msaToXbl(ms.access());
                     }, IAS.executor()).thenComposeAsync(xbl -> {
                         // Skip if cancelled.
                         if (xbl == null || handler.cancelled()) return CompletableFuture.completedFuture(null);
@@ -366,7 +356,7 @@ public final class MicrosoftAccount implements Account {
                         handler.stage(XBL_TO_XSTS);
 
                         // Convert XBL to XSTS.
-                        return MSAuth.xblToXsts(xbl.token(), xbl.hash()).orTimeout(10, java.util.concurrent.TimeUnit.SECONDS);
+                        return MSAuth.xblToXsts(xbl.token(), xbl.hash());
                     }, IAS.executor()).thenComposeAsync(xsts -> {
                         // Skip if cancelled.
                         if (xsts == null || handler.cancelled()) return CompletableFuture.completedFuture(null);
@@ -376,7 +366,7 @@ public final class MicrosoftAccount implements Account {
                         handler.stage(XSTS_TO_MCA);
 
                         // Convert XSTS to MCA.
-                        return MSAuth.xstsToMca(xsts.token(), xsts.hash()).orTimeout(10, java.util.concurrent.TimeUnit.SECONDS);
+                        return MSAuth.xstsToMca(xsts.token(), xsts.hash());
                     }, IAS.executor()).thenComposeAsync(token -> {
                         // Skip if cancelled.
                         if (token == null || handler.cancelled()) return CompletableFuture.completedFuture(null);
@@ -389,12 +379,12 @@ public final class MicrosoftAccount implements Account {
                         handler.stage(MCA_TO_MCP);
 
                         // Convert MCA to MCP.
-                        return MSAuth.mcaToMcp(token).orTimeout(10, java.util.concurrent.TimeUnit.SECONDS);
+                        return MSAuth.mcaToMcp(token);
                     }, IAS.executor()).exceptionallyAsync(t -> {
                         t.addSuppressed(original);
 
                         // Probable case - no internet connection.
-                        if (IUtils.anyInCausalChain(t, err -> err instanceof UnresolvedAddressException || err instanceof NoRouteToHostException || err instanceof HttpTimeoutException || err instanceof ConnectException || err instanceof java.util.concurrent.TimeoutException)) {
+                        if (IUtils.anyInCausalChain(t, err -> err instanceof UnresolvedAddressException || err instanceof NoRouteToHostException || err instanceof HttpTimeoutException || err instanceof ConnectException)) {
                             throw new FriendlyException("Unable to connect to MSR servers.", t, "ias.error.connect");
                         }
 
