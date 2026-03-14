@@ -57,6 +57,10 @@ import ru.vidtu.ias.utils.Expression;
 import ru.vidtu.ias.utils.IUtils;
 import ru.vidtu.ias.utils.exceptions.FriendlyException;
 
+import java.net.SocketException;
+import java.net.http.HttpTimeoutException;
+import java.nio.channels.ClosedChannelException;
+import java.nio.channels.UnresolvedAddressException;
 import java.time.Duration;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -303,6 +307,9 @@ public final class IASMinecraft {
 
         // Create everything async, because it lags.
         return CompletableFuture.runAsync(() -> {
+            long start = System.nanoTime();
+            LOGGER.debug("IAS: Starting account switch worker for {} on thread {}.", data.name(), Thread.currentThread().getName());
+
             // Create the user.
             LOGGER.info("IAS: Creating user...");
             // I have no idea what are the OPTIONAL fields and the game
@@ -320,7 +327,22 @@ public final class IASMinecraft {
             //? if >=1.21.10 {
             YggdrasilAuthenticationService service = online ? new YggdrasilAuthenticationService(minecraft.getProxy()) : YggdrasilAuthenticationService.createOffline(minecraft.getProxy());
             Services services = Services.create(service, minecraft.gameDirectory);
-            CompletableFuture<ProfileResult> profile = CompletableFuture.completedFuture(online ? services.sessionService().fetchProfile(data.uuid(), true) : null);
+            ProfileResult profileResult = null;
+            if (online) {
+                long profileStart = System.nanoTime();
+                LOGGER.debug("IAS: Fetching profile for {}...", data.uuid());
+                try {
+                    profileResult = services.sessionService().fetchProfile(data.uuid(), true);
+                    long profileMillis = (System.nanoTime() - profileStart) / 1_000_000L;
+                    LOGGER.debug("IAS: Fetched profile for {} in {}ms.", data.uuid(), profileMillis);
+                } catch (Throwable t) {
+                    if (IUtils.anyInCausalChain(t, err -> err instanceof UnresolvedAddressException || err instanceof HttpTimeoutException || err instanceof java.net.ConnectException || err instanceof java.net.NoRouteToHostException || err instanceof SocketException || err instanceof ClosedChannelException)) {
+                        LOGGER.warn("IAS: Connectivity issue while fetching profile for {} (timeout/disconnect probable).", data.uuid(), t);
+                    }
+                    throw t;
+                }
+            }
+            CompletableFuture<ProfileResult> profile = CompletableFuture.completedFuture(profileResult);
             //?} else
             /*CompletableFuture<ProfileResult> profile = CompletableFuture.completedFuture(online ? minecraft.getMinecraftSessionService().fetchProfile(data.uuid(), true) : null);*/
             @SuppressWarnings("CastToIncompatibleInterface") // <- Mixin Accessor.
@@ -331,8 +353,17 @@ public final class IASMinecraft {
             /*UserApiService apiService = online ? accessor.ias$authenticationService().createUserApiService(data.token()) : UserApiService.OFFLINE;*/
             UserApiService.UserProperties properties;
             try {
+                long propertiesStart = System.nanoTime();
+                LOGGER.debug("IAS: Fetching user properties for {}...", data.uuid());
                 properties = apiService.fetchProperties();
+                long propertiesMillis = (System.nanoTime() - propertiesStart) / 1_000_000L;
+                LOGGER.debug("IAS: Fetched user properties for {} in {}ms.", data.uuid(), propertiesMillis);
             } catch (Throwable ignored) {
+                if (IUtils.anyInCausalChain(ignored, err -> err instanceof UnresolvedAddressException || err instanceof HttpTimeoutException || err instanceof java.net.ConnectException || err instanceof java.net.NoRouteToHostException || err instanceof SocketException || err instanceof ClosedChannelException)) {
+                    LOGGER.warn("IAS: Connectivity issue while fetching user properties for {} (timeout/disconnect probable). Falling back to offline properties.", data.uuid(), ignored);
+                } else {
+                    LOGGER.debug("IAS: Unable to fetch user properties for {}. Falling back to offline properties.", data.uuid(), ignored);
+                }
                 properties = UserApiService.OFFLINE_PROPERTIES;
             }
             CompletableFuture<UserApiService.UserProperties> propertiesFuture = CompletableFuture.completedFuture(properties);
@@ -357,8 +388,10 @@ public final class IASMinecraft {
                 accessor.ias$reportingContext(reporting);
                 minecraft.updateTitle();
                 LOGGER.info("IAS: Flushed user.");
+                long totalMillis = (System.nanoTime() - start) / 1_000_000L;
+                LOGGER.debug("IAS: Completed account switch worker for {} in {}ms.", data.name(), totalMillis);
             });
-        }, IAS.executor()).exceptionally(t -> {
+        }).exceptionally(t -> {
             // Log it.
             LOGGER.error("IAS: Unable to log in: {}.", data, t);
 

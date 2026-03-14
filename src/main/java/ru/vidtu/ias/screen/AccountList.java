@@ -154,7 +154,20 @@ final class AccountList extends ObjectSelectionList<AccountEntry> {
             this.minecraft.setScreen(login);
 
             // Start login.
-            IAS.executor().execute(() -> account.login(login));
+            java.util.concurrent.atomic.AtomicBoolean started = new java.util.concurrent.atomic.AtomicBoolean(false);
+            String accountName = account.name();
+            LOGGER.info("IAS: Queuing login task for account {} on IAS executor.", accountName);
+            IAS.executor().execute(() -> {
+                started.set(true);
+                LOGGER.info("IAS: Started login task for account {} on thread {}.", accountName, Thread.currentThread().getName());
+                account.login(login);
+            });
+
+            // Warn if login task does not start in time, probable IAS executor stall.
+            java.util.concurrent.CompletableFuture.runAsync(() -> {
+                if (started.get()) return;
+                LOGGER.warn("IAS: Login task for account {} did not start within 20s. IAS executor may be blocked (possible stuck request after sleep/network disconnect).", accountName);
+            }, java.util.concurrent.CompletableFuture.delayedExecutor(20L, java.util.concurrent.TimeUnit.SECONDS));
 
             // Don't process further.
             return;
