@@ -43,7 +43,9 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.ConnectException;
 import java.net.NoRouteToHostException;
+import java.net.SocketException;
 import java.net.http.HttpTimeoutException;
+import java.nio.channels.ClosedChannelException;
 import java.nio.channels.UnresolvedAddressException;
 import java.util.Objects;
 import java.util.UUID;
@@ -383,8 +385,9 @@ public final class MicrosoftAccount implements Account {
                     }, IAS.executor()).exceptionallyAsync(t -> {
                         t.addSuppressed(original);
 
-                        // Probable case - no internet connection.
-                        if (IUtils.anyInCausalChain(t, err -> err instanceof UnresolvedAddressException || err instanceof NoRouteToHostException || err instanceof HttpTimeoutException || err instanceof ConnectException)) {
+                        // Probable case - no internet connection, timeout or abrupt disconnect.
+                        if (IUtils.anyInCausalChain(t, err -> err instanceof UnresolvedAddressException || err instanceof NoRouteToHostException || err instanceof HttpTimeoutException || err instanceof ConnectException || err instanceof SocketException || err instanceof ClosedChannelException)) {
+                            LOGGER.warn("IAS: Detected connectivity failure while refreshing MS tokens (timeout/disconnect probable).", t);
                             throw new FriendlyException("Unable to connect to MSR servers.", t, "ias.error.connect");
                         }
 

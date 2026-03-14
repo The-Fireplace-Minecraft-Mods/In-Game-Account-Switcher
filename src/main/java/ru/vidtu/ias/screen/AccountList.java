@@ -37,6 +37,8 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.WeakHashMap;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Predicate;
 
 //? if >= 1.21.10 {
@@ -154,7 +156,25 @@ final class AccountList extends ObjectSelectionList<AccountEntry> {
             this.minecraft.setScreen(login);
 
             // Start login.
-            IAS.executor().execute(() -> account.login(login));
+            AtomicBoolean started = new AtomicBoolean(false);
+            String accountName = account.name();
+            LOGGER.info("IAS: Queuing login task for account {} on IAS executor.", accountName);
+            IAS.executor().execute(() -> {
+                started.set(true);
+                LOGGER.info("IAS: Started login task for account {} on thread {}.", accountName, Thread.currentThread().getName());
+                try {
+                    account.login(login);
+                } catch (Throwable t) {
+                    LOGGER.error("IAS: Login task for account {} crashed before completion.", accountName, t);
+                    login.error(t);
+                }
+            });
+
+            // Warn if login task does not start in time, probable IAS executor stall.
+            CompletableFuture.runAsync(() -> {
+                if (started.get()) return;
+                LOGGER.warn("IAS: Login task for account {} did not start within 20s. IAS executor may be blocked (possible stuck request after sleep/network disconnect).", accountName);
+            }, CompletableFuture.delayedExecutor(20L, TimeUnit.SECONDS));
 
             // Don't process further.
             return;

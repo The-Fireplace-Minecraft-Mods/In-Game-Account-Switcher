@@ -57,6 +57,10 @@ import ru.vidtu.ias.utils.Expression;
 import ru.vidtu.ias.utils.IUtils;
 import ru.vidtu.ias.utils.exceptions.FriendlyException;
 
+import java.net.SocketException;
+import java.net.http.HttpTimeoutException;
+import java.nio.channels.ClosedChannelException;
+import java.nio.channels.UnresolvedAddressException;
 import java.time.Duration;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -327,9 +331,16 @@ public final class IASMinecraft {
             if (online) {
                 long profileStart = System.nanoTime();
                 LOGGER.debug("IAS: Fetching profile for {}...", data.uuid());
-                profileResult = services.sessionService().fetchProfile(data.uuid(), true);
-                long profileMillis = (System.nanoTime() - profileStart) / 1_000_000L;
-                LOGGER.debug("IAS: Fetched profile for {} in {}ms.", data.uuid(), profileMillis);
+                try {
+                    profileResult = services.sessionService().fetchProfile(data.uuid(), true);
+                    long profileMillis = (System.nanoTime() - profileStart) / 1_000_000L;
+                    LOGGER.debug("IAS: Fetched profile for {} in {}ms.", data.uuid(), profileMillis);
+                } catch (Throwable t) {
+                    if (IUtils.anyInCausalChain(t, err -> err instanceof UnresolvedAddressException || err instanceof HttpTimeoutException || err instanceof java.net.ConnectException || err instanceof java.net.NoRouteToHostException || err instanceof SocketException || err instanceof ClosedChannelException)) {
+                        LOGGER.warn("IAS: Connectivity issue while fetching profile for {} (timeout/disconnect probable).", data.uuid(), t);
+                    }
+                    throw t;
+                }
             }
             CompletableFuture<ProfileResult> profile = CompletableFuture.completedFuture(profileResult);
             //?} else
@@ -348,7 +359,11 @@ public final class IASMinecraft {
                 long propertiesMillis = (System.nanoTime() - propertiesStart) / 1_000_000L;
                 LOGGER.debug("IAS: Fetched user properties for {} in {}ms.", data.uuid(), propertiesMillis);
             } catch (Throwable ignored) {
-                LOGGER.debug("IAS: Unable to fetch user properties for {}. Falling back to offline properties.", data.uuid(), ignored);
+                if (IUtils.anyInCausalChain(ignored, err -> err instanceof UnresolvedAddressException || err instanceof HttpTimeoutException || err instanceof java.net.ConnectException || err instanceof java.net.NoRouteToHostException || err instanceof SocketException || err instanceof ClosedChannelException)) {
+                    LOGGER.warn("IAS: Connectivity issue while fetching user properties for {} (timeout/disconnect probable). Falling back to offline properties.", data.uuid(), ignored);
+                } else {
+                    LOGGER.debug("IAS: Unable to fetch user properties for {}. Falling back to offline properties.", data.uuid(), ignored);
+                }
                 properties = UserApiService.OFFLINE_PROPERTIES;
             }
             CompletableFuture<UserApiService.UserProperties> propertiesFuture = CompletableFuture.completedFuture(properties);
