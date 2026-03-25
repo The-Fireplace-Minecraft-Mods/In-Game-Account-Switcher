@@ -25,7 +25,10 @@ import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.User;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+//? if >=26.1 {
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+//?} else
+/*import net.minecraft.client.gui.GuiGraphics;*/
 import net.minecraft.client.gui.components.AbstractSelectionList;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.ImageButton;
@@ -276,12 +279,21 @@ public final class IASMinecraft {
      * @param graphics Drawing graphics
      */
     @SuppressWarnings("ChainOfInstanceofChecks") // <- Abstraction for Minecraft is not possible.
-    public static void onDraw(Screen screen, Font font, GuiGraphics graphics) {
+    //? if >=26.1 {
+    public static void onDraw(Screen screen, Font font, GuiGraphicsExtractor graphics) {
+    //?} else
+    /*public static void onDraw(Screen screen, Font font, GuiGraphics graphics) {*/
         if (IASConfig.titleText && screen instanceof TitleScreen) {
-            graphics.drawString(font, text, textX, textY, 0xFF_CC_88_88);
+            //? if >=26.1 {
+            graphics.text(font, text, textX, textY, 0xFF_CC_88_88);
+            //?} else
+            /*graphics.drawString(font, text, textX, textY, 0xFF_CC_88_88);*/
         }
         if (IASConfig.serversText && screen instanceof JoinMultiplayerScreen) {
-            graphics.drawString(font, text, textX, textY, 0xFF_CC_88_88);
+            //? if >=26.1 {
+            graphics.text(font, text, textX, textY, 0xFF_CC_88_88);
+            //?} else
+            /*graphics.drawString(font, text, textX, textY, 0xFF_CC_88_88);*/
         }
     }
 
