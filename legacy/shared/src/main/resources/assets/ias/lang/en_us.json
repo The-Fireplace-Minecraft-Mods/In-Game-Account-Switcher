@@ -109,6 +109,7 @@
   "ias.config.unexpectedPigs": "Unexpected Pigs",
   "ias.config.unexpectedPigs.tip": "Allow unexpected pigs (easter eggs) to show up.",
   "ias.config.barNick": "Bar Nick",
+  "ias.config.barNick.tip": "Show current nick in the window title bar.",
   "ias.config.closeOnLogin": "Close On Login",
   "ias.config.closeOnLogin.tip": "Close the account screen after logging in.",
   "ias.config.server": "Use HTTP server",
