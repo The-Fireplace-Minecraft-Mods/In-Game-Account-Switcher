@@ -30,6 +30,8 @@ import com.google.gson.Gson
 import com.google.gson.JsonElement
 import net.fabricmc.loom.task.RemapJarTask
 import net.fabricmc.loom.task.RunGameTask
+import java.util.zip.ZipEntry
+import java.util.zip.ZipOutputStream
 
 plugins {
     alias(libs.plugins.architectury.loom)
@@ -76,6 +78,44 @@ sc {
     constants["hacky_neoforge"] = hackyNeoForge
     constants {
         match(platform, "fabric", "forge", "neoforge")
+    }
+}
+
+// MC 26.1+ is unobfuscated. Fabric's intermediary POM has version 0.0.0 causing
+// Gradle metadata mismatch, and only v1 jar exists (no -v2). Generate a local
+// identity intermediary with correct POM version and v2 format.
+if (mcp >= "26.1") {
+    val localMaven = rootDir.resolve(".gradle/local-maven")
+    val intermediaryDir = localMaven.resolve("net/fabricmc/intermediary/${mcv}")
+    val pomFile = intermediaryDir.resolve("intermediary-${mcv}.pom")
+    val jarFile = intermediaryDir.resolve("intermediary-${mcv}-v2.jar")
+    if (!jarFile.exists()) {
+        intermediaryDir.mkdirs()
+        // POM with correct version (Fabric's POM declares 0.0.0).
+        pomFile.writeText("""
+            <?xml version="1.0" encoding="UTF-8"?>
+            <project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+              <modelVersion>4.0.0</modelVersion>
+              <groupId>net.fabricmc</groupId>
+              <artifactId>intermediary</artifactId>
+              <version>${mcv}</version>
+            </project>
+        """.trimIndent())
+        // Identity v2 tiny mappings JAR (official == intermediary, no entries).
+        val tinyContent = "tiny\t2\t0\tofficial\tintermediary\n".toByteArray()
+        ZipOutputStream(jarFile.outputStream()).use { zip ->
+            zip.putNextEntry(ZipEntry("mappings/mappings.tiny"))
+            zip.write(tinyContent)
+            zip.closeEntry()
+        }
+    }
+    repositories {
+        maven(localMaven) {
+            name = "LocalIntermediary"
+            content {
+                includeModule("net.fabricmc", "intermediary")
+            }
+        }
     }
 }
 
@@ -152,7 +192,7 @@ repositories {
     } else {
         maven("https://maven.fabricmc.net/") // Fabric.
         maven("https://maven.terraformersmc.com/releases/") // ModMenu.
-        if (mcp eq "1.20.4") { // Fix for ModMenu not providing Text Placeholder API.
+        if (mcp eq "1.20.4" || mcp >= "26.1") { // Fix for ModMenu not providing Text Placeholder API.
             maven("https://maven.nucleoid.xyz/") // ModMenu. (Text Placeholder API)
         }
     }
@@ -176,6 +216,8 @@ dependencies {
     // Mappings.
     if (mcp < "26.1") {
         mappings(loom.officialMojangMappings())
+    } else {
+        mappings(loom.layered {})
     }
 
     // Force non-vulnerable Log4J, so that vulnerability scanners don't scream loud.
@@ -210,7 +252,8 @@ dependencies {
         // NeoForge.
         val neoforge = "${property("sc.neoforge")}"
         require(neoforge.isNotBlank() && neoforge != "[SC]") { "NeoForge version is not provided via 'sc.neoforge' in ${project}." }
-        val extractedMinecraft = "1.${neoforge.substringBeforeLast('.')}"
+        val neoParts = neoforge.substringBefore('-').split('.')
+        val extractedMinecraft = if ((neoParts[0].toIntOrNull() ?: 0) >= 22) "${neoParts[0]}.${neoParts[1]}" else "1.${neoParts[0]}.${neoParts[1]}"
         require(mcp eq extractedMinecraft) { "NeoForge version '${neoforge}' provides Minecraft ${extractedMinecraft} in ${project}, but we want ${mcv}." }
         "neoForge"("net.neoforged:neoforge:${neoforge}")
     } else {
@@ -220,7 +263,14 @@ dependencies {
         // Fabric API. // TODO(VidTu): Modularize.
         val fapi = "${property("sc.fabric-api")}"
         require(fapi.isNotBlank() && fapi != "[SC]") { "Fabric API version is not provided via 'sc.fabric-api' in ${project}." }
-        modImplementation("net.fabricmc.fabric-api:fabric-api:${fapi}")
+        // MC 26.1+ is unobfuscated. Architectury Loom can't remap mods with "official"
+        // namespace access wideners (expects "intermediary"). Use implementation() to
+        // skip Loom's mod remapping (not needed for unobfuscated MC anyway).
+        if (mcp >= "26.1") {
+            implementation("net.fabricmc.fabric-api:fabric-api:${fapi}")
+        } else {
+            modImplementation("net.fabricmc.fabric-api:fabric-api:${fapi}")
+        }
 
         // ModMenu.
         val modmenu = "${property("sc.modmenu")}"
@@ -229,9 +279,17 @@ dependencies {
         // So we should depend on it compile-time (it is really an optional dependency for us) to allow both
         // compilation of an optional ModMenu compatibility class (HModMenu.java) and launching the game.
         if ("${findProperty("sc.modmenu.compile-only")}".toBoolean()) {
-            modCompileOnly("com.terraformersmc:modmenu:${modmenu}")
+            if (mcp >= "26.1") {
+                compileOnly("com.terraformersmc:modmenu:${modmenu}")
+            } else {
+                modCompileOnly("com.terraformersmc:modmenu:${modmenu}")
+            }
         } else {
-            modImplementation("com.terraformersmc:modmenu:${modmenu}")
+            if (mcp >= "26.1") {
+                implementation("com.terraformersmc:modmenu:${modmenu}")
+            } else {
+                modImplementation("com.terraformersmc:modmenu:${modmenu}")
+            }
         }
     }
 }
