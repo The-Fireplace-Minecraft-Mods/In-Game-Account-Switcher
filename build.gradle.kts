@@ -411,3 +411,8 @@ tasks.withType<Jar> {
 tasks.withType<RemapJarTask> {
     destinationDirectory = rootProject.layout.buildDirectory.file("libs").get().asFile
 }
+
+// Fix the annotation libs causing "No tests found" Gradle test discovery failure
+tasks.withType<Test> {
+    failOnNoDiscoveredTests = false
+}
