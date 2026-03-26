@@ -28,9 +28,13 @@
 
 import com.google.gson.Gson
 import com.google.gson.JsonElement
+import com.google.gson.JsonParser
 import net.fabricmc.loom.task.RemapJarTask
 import net.fabricmc.loom.task.RunGameTask
+import java.io.ByteArrayInputStream
+import java.net.URI
 import java.util.zip.ZipEntry
+import java.util.zip.ZipInputStream
 import java.util.zip.ZipOutputStream
 
 plugins {
@@ -114,6 +118,159 @@ if (mcp >= "26.1") {
             name = "LocalIntermediary"
             content {
                 includeModule("net.fabricmc", "intermediary")
+            }
+        }
+    }
+}
+
+// Architectury Loom doesn't support NeoForm spec 6 (26.1+) which changed the
+// config.json format (classpath arrays instead of version strings, no mappings).
+// Provide a patched NeoForm ZIP that converts spec 6 back to spec 4 format.
+if (mcp >= "26.1" && loom.isNeoForge) {
+    val localMaven = rootDir.resolve(".gradle/local-maven")
+    val neoformVersion = "${mcv}-1"
+    val neoformDir = localMaven.resolve("net/neoforged/neoform/$neoformVersion")
+    val patchedZip = neoformDir.resolve("neoform-$neoformVersion.zip")
+
+    if (!patchedZip.exists()) {
+        neoformDir.mkdirs()
+        val neoformUrl = URI("https://maven.neoforged.net/releases/net/neoforged/neoform/$neoformVersion/neoform-$neoformVersion.zip").toURL()
+        val originalBytes = neoformUrl.readBytes()
+
+        val entries = linkedMapOf<String, ByteArray>()
+        ZipInputStream(ByteArrayInputStream(originalBytes)).use { zis ->
+            var entry = zis.nextEntry
+            while (entry != null) {
+                entries[entry.name] = if (entry.isDirectory) ByteArray(0) else zis.readBytes()
+                entry = zis.nextEntry
+            }
+        }
+
+        val json = JsonParser.parseString(String(entries["config.json"]!!)).asJsonObject
+        // Add missing data.mappings (identity mapping) and mark as official (unobfuscated).
+        json.getAsJsonObject("data").addProperty("mappings", "config/joined.tsrg")
+        json.addProperty("official", true)
+        // Convert functions from spec 6 (classpath array) to spec 4 (version string).
+        val functions = json.getAsJsonObject("functions")
+        for (key in functions.keySet()) {
+            val func = functions.getAsJsonObject(key)
+            if (func.has("classpath") && !func.has("version")) {
+                val classpath = func.getAsJsonArray("classpath")
+                if (classpath.size() > 0) {
+                    func.addProperty("version", classpath[0].asString)
+                }
+                func.remove("classpath")
+            }
+            func.remove("java_version")
+            // Ensure 'repo' exists (spec 4 reads it without null check).
+            if (!func.has("repo")) {
+                func.addProperty("repo", "https://maven.neoforged.net/releases/")
+            }
+        }
+        // Rename preProcessJar step to "rename" (Loom enqueues "rename" step by name).
+        val joinedSteps = json.getAsJsonObject("steps").getAsJsonArray("joined")
+        for (i in 0 until joinedSteps.size()) {
+            val step = joinedSteps[i].asJsonObject
+            if (step.get("type").asString == "preProcessJar") {
+                step.addProperty("name", "rename")
+            }
+        }
+        entries["config.json"] = com.google.gson.GsonBuilder().setPrettyPrinting().create().toJson(json).toByteArray()
+        entries["config/joined.tsrg"] = "tsrg2 left right\n".toByteArray()
+
+        ZipOutputStream(patchedZip.outputStream()).use { zos ->
+            for ((name, bytes) in entries) {
+                zos.putNextEntry(ZipEntry(name))
+                if (bytes.isNotEmpty()) zos.write(bytes)
+                zos.closeEntry()
+            }
+        }
+        neoformDir.resolve("neoform-$neoformVersion.pom").writeText("""
+            <?xml version="1.0" encoding="UTF-8"?>
+            <project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+              <modelVersion>4.0.0</modelVersion>
+              <groupId>net.neoforged</groupId>
+              <artifactId>neoform</artifactId>
+              <version>$neoformVersion</version>
+            </project>
+        """.trimIndent())
+    }
+
+    repositories {
+        exclusiveContent {
+            forRepository {
+                maven(localMaven) { name = "LocalNeoForm" }
+            }
+            filter {
+                includeModule("net.neoforged", "neoform")
+            }
+        }
+    }
+
+    // Loom's AT tool bundles ASM 9.7 which doesn't support Java 25 (class version 69).
+    // Use component metadata rules to upgrade ASM dependencies in the AT tool.
+    dependencies {
+        components {
+            withModule("net.neoforged.accesstransformers:at-cli") {
+                allVariants {
+                    withDependencies {
+                        removeAll { it.group == "org.ow2.asm" }
+                        add("org.ow2.asm:asm:9.9.1")
+                        add("org.ow2.asm:asm-tree:9.9.1")
+                        add("org.ow2.asm:asm-commons:9.9.1")
+                    }
+                }
+            }
+            withModule("net.neoforged:accesstransformers") {
+                allVariants {
+                    withDependencies {
+                        removeAll { it.group == "org.ow2.asm" }
+                        add("org.ow2.asm:asm:9.9.1")
+                        add("org.ow2.asm:asm-tree:9.9.1")
+                        add("org.ow2.asm:asm-commons:9.9.1")
+                    }
+                }
+            }
+        }
+    }
+    // Force ASM version via resolution strategy for all configurations.
+    configurations.all {
+        resolutionStrategy.eachDependency {
+            if (requested.group == "org.ow2.asm") {
+                useVersion("9.9.1")
+            }
+        }
+    }
+
+    // MC 26.1 has no Mojang mappings (unobfuscated). Loom's NeoForge pipeline
+    // unconditionally calls mergeMojang() which throws "Failed to find official
+    // mojang mappings". Fix by pre-creating a valid mappings-mojang.tiny and
+    // cleaning stale lock files so refreshDeps stays false.
+    // NOTE: After a clean Loom cache the first build will fail because the mapping
+    // directory has not been created yet. Run the build a second time.
+    run {
+        val loomCacheDir = file("${gradle.gradleUserHomeDir}/caches/fabric-loom")
+        // Delete stale lock files that force refreshDeps=true (disowned or dead PID).
+        loomCacheDir.listFiles()?.filter {
+            it.name.endsWith(".lock") && it.isFile
+        }?.forEach {
+            val content = it.readText().trim()
+            val isStale = content == "disowned" || content.toLongOrNull()?.let { pid ->
+                ProcessHandle.of(pid).isEmpty
+            } ?: false
+            if (isStale) it.delete()
+        }
+        // Pre-create mappings-mojang.tiny in the mapping directory for this version.
+        val versionCacheDir = loomCacheDir.resolve(mcv)
+        if (versionCacheDir.isDirectory) {
+            versionCacheDir.listFiles()?.filter {
+                it.isDirectory && it.name.startsWith("loom.mappings.") && it.name.contains("neoforge")
+            }?.forEach { mappingDir ->
+                val mojangTiny = mappingDir.resolve("mappings-mojang.tiny")
+                val baseTiny = mappingDir.resolve("mappings-base.tiny")
+                if (baseTiny.exists() && (!mojangTiny.exists() || mojangTiny.length() == 0L)) {
+                    mojangTiny.writeText("tiny\t2\t0\tofficial\tintermediary\tnamed\tmojang\n")
+                }
             }
         }
     }
