@@ -37,6 +37,7 @@ import ru.vidtu.ias.IAS;
 import ru.vidtu.ias.account.Account;
 import ru.vidtu.ias.config.IASStorage;
 import ru.vidtu.ias.platform.IStonecutter;
+import ru.vidtu.ias.config.IASConfig;
 
 import java.time.Duration;
 
@@ -148,14 +149,18 @@ public final class AccountScreen extends Screen {
         this.addRenderableWidget(this.skin);
 
         // Add login button.
-        this.login = Button.builder(Component.translatable("ias.accounts.login"), btn -> this.list.login(true))
-                .bounds(this.width / 2 - 50 - 100 - 4, this.height - 24 - 24, 100, 20).build();
+        this.login = Button.builder(Component.translatable("ias.accounts.login"), btn -> {
+            this.list.login(true, IASConfig.closeOnLogin ? () -> this.minecraft.setScreen(this.parent) : null);
+        })
+            .bounds(this.width / 2 - 50 - 100 - 4, this.height - 24 - 24, 100, 20).build();
         this.addRenderableWidget(this.login);
 
         // Add offline login button.
-        this.offlineLogin = Button.builder(Component.translatable("ias.accounts.offlineLogin"), btn -> this.list.login(false))
-                .bounds(this.width / 2 - 50 - 100 - 4, this.height - 24, 100, 20)
-                .build();
+        this.offlineLogin = Button.builder(Component.translatable("ias.accounts.offlineLogin"), btn -> {
+            this.list.login(false, IASConfig.closeOnLogin ? () -> this.minecraft.setScreen(this.parent) : null);
+        })
+            .bounds(this.width / 2 - 50 - 100 - 4, this.height - 24, 100, 20)
+            .build();
         this.addRenderableWidget(this.offlineLogin);
 
         // Add edit button.
@@ -311,7 +316,7 @@ public final class AccountScreen extends Screen {
 
         // Enter or Numpad Enter to log in.
         if (select) {
-            this.list.login(!shift);
+            this.list.login(!shift, IASConfig.closeOnLogin ? () -> this.minecraft.setScreen(this.parent) : null);
             return true;
         }
 
@@ -336,6 +341,17 @@ public final class AccountScreen extends Screen {
         // Not handled.
         return false;
     }
+
+
+    /**
+     * Gets the parent screen.
+     *
+     * @return Parent screen
+     */
+    Screen parent() {
+        return this.parent;
+    }
+    
 
     @Override
     public String toString() {

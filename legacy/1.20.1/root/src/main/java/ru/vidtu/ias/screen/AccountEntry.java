@@ -34,6 +34,7 @@ import net.minecraft.util.FormattedCharSequence;
 import org.jetbrains.annotations.NotNull;
 import ru.vidtu.ias.IASMinecraft;
 import ru.vidtu.ias.account.Account;
+import ru.vidtu.ias.config.IASConfig;
 import ru.vidtu.ias.legacy.Skin;
 
 import java.util.List;
@@ -187,7 +188,7 @@ final class AccountEntry extends ObjectSelectionList.Entry<AccountEntry> {
 
         // Login on double click.
         if (Util.getMillis() - this.clicked < 250L) {
-            this.list.login(!Screen.hasShiftDown());
+            this.list.login(!Screen.hasShiftDown(), IASConfig.closeOnLogin ? () -> this.minecraft.setScreen(this.list.screen().parent()) : null);
         }
 
         // Set time for double click.

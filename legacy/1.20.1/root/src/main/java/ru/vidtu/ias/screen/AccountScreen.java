@@ -35,6 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.vidtu.ias.IAS;
 import ru.vidtu.ias.account.Account;
+import ru.vidtu.ias.config.IASConfig;
 import ru.vidtu.ias.config.IASStorage;
 import ru.vidtu.ias.legacy.Skin;
 import ru.vidtu.ias.legacy.SkinWidget;
@@ -146,12 +147,12 @@ public final class AccountScreen extends Screen {
         this.addRenderableWidget(this.skin);
 
         // Add login button.
-        this.login = Button.builder(Component.translatable("ias.accounts.login"), btn -> this.list.login(true))
+        this.login = Button.builder(Component.translatable("ias.accounts.login"), btn -> this.list.login(true, IASConfig.closeOnLogin ? () -> this.minecraft.setScreen(this.parent) : null))
                 .bounds(this.width / 2 - 50 - 100 - 4, this.height - 24 - 24, 100, 20).build();
         this.addRenderableWidget(this.login);
 
         // Add offline login button.
-        this.offlineLogin = Button.builder(Component.translatable("ias.accounts.offlineLogin"), btn -> this.list.login(false))
+        this.offlineLogin = Button.builder(Component.translatable("ias.accounts.offlineLogin"), btn -> this.list.login(false, IASConfig.closeOnLogin ? () -> this.minecraft.setScreen(this.parent) : null))
                 .bounds(this.width / 2 - 50 - 100 - 4, this.height - 24, 100, 20)
                 .build();
         this.addRenderableWidget(this.offlineLogin);
@@ -299,7 +300,7 @@ public final class AccountScreen extends Screen {
 
         // Enter or Numpad Enter to log in.
         if (CommonInputs.selected(key)) {
-            this.list.login(!Screen.hasShiftDown());
+            this.list.login(!Screen.hasShiftDown(), IASConfig.closeOnLogin ? () -> this.minecraft.setScreen(this.parent) : null);
             return true;
         }
 
@@ -323,6 +324,10 @@ public final class AccountScreen extends Screen {
 
         // Not handled.
         return false;
+    }
+
+    Screen parent() {
+        return this.parent;
     }
 
     @Override

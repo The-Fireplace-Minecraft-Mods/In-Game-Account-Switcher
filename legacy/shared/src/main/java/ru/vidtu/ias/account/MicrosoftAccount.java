@@ -238,7 +238,7 @@ public final class MicrosoftAccount implements Account {
     }
 
     @Override
-    public void login(@NotNull LoginHandler handler) {
+    public void login(@NotNull LoginHandler handler, Runnable onComplete) {
         try {
             // Skip if cancelled.
             if (handler.cancelled()) return;
@@ -460,6 +460,9 @@ public final class MicrosoftAccount implements Account {
                 // Create and return the data.
                 LoginData login = new LoginData(this.name, this.uuid, access.get(), true);
                 handler.success(login, saveStorage);
+
+                // Run onComplete.
+                if (onComplete != null) onComplete.run();
             }, IAS.executor()).exceptionallyAsync(t -> {
                 // Handle error.
                 handler.error(new RuntimeException("Unable to login as MS account", t));
