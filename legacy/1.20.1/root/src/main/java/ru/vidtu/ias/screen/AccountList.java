@@ -140,7 +140,7 @@ final class AccountList extends ObjectSelectionList<AccountEntry> {
      * @param online Whether to try using online authentication
      * @apiNote The {@code online} parameter may be ignored if the current account doesn't support online authentication
      */
-    void login(boolean online) {
+    void login(boolean online, Runnable onComplete) {
         // Skip if nothing is selected.
         AccountEntry selected = this.getSelected();
         if (selected == null) return;
@@ -153,7 +153,7 @@ final class AccountList extends ObjectSelectionList<AccountEntry> {
             this.minecraft.setScreen(login);
 
             // Start login.
-            IAS.executor().execute(() -> account.login(login));
+            IAS.executor().execute(() -> account.login(login, onComplete));
 
             // Don't process further.
             return;
@@ -167,6 +167,7 @@ final class AccountList extends ObjectSelectionList<AccountEntry> {
         String name = account.name();
         LoginData data = new LoginData(name, OfflineAccount.uuid(name), "ias:offline", false);
         login.success(data, false);
+        if (onComplete != null) onComplete.run();
     }
 
     void edit() {

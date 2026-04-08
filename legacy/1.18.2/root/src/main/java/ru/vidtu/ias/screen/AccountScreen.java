@@ -34,6 +34,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.vidtu.ias.IAS;
 import ru.vidtu.ias.account.Account;
+import ru.vidtu.ias.config.IASConfig;
 import ru.vidtu.ias.config.IASStorage;
 import ru.vidtu.ias.legacy.LastPassRenderCallback;
 import ru.vidtu.ias.legacy.LegacyEditBox;
@@ -161,11 +162,11 @@ public final class AccountScreen extends Screen implements LastPassRenderCallbac
 
         // Add login button.
         this.loginTooltip = new LegacyTooltip(this, this.font, null, -1);
-        this.login = new Button(this.width / 2 - 50 - 100 - 4, this.height - 24 - 24, 100, 20, new TranslatableComponent("ias.accounts.login"), btn -> this.list.login(true), this.loginTooltip);
+        this.login = new Button(this.width / 2 - 50 - 100 - 4, this.height - 24 - 24, 100, 20, new TranslatableComponent("ias.accounts.login"), btn -> this.list.login(true, IASConfig.closeOnLogin ? () -> this.minecraft.setScreen(this.parent) : null), this.loginTooltip);
         this.addRenderableWidget(this.login);
 
         // Add offline login button.
-        this.offlineLogin = new Button(this.width / 2 - 50 - 100 - 4, this.height - 24, 100, 20, new TranslatableComponent("ias.accounts.offlineLogin"), btn -> this.list.login(false));
+        this.offlineLogin = new Button(this.width / 2 - 50 - 100 - 4, this.height - 24, 100, 20, new TranslatableComponent("ias.accounts.offlineLogin"), btn -> this.list.login(false, IASConfig.closeOnLogin ? () -> this.minecraft.setScreen(this.parent) : null));
         this.addRenderableWidget(this.offlineLogin);
 
         // Add edit button.
@@ -308,7 +309,7 @@ public final class AccountScreen extends Screen implements LastPassRenderCallbac
 
         // Enter or Numpad Enter to log in.
         if (key == GLFW.GLFW_KEY_ENTER || key == GLFW.GLFW_KEY_KP_ENTER) {
-            this.list.login(!Screen.hasShiftDown());
+            this.list.login(!Screen.hasShiftDown(), IASConfig.closeOnLogin ? () -> this.minecraft.setScreen(this.parent) : null);
             return true;
         }
 
@@ -337,6 +338,10 @@ public final class AccountScreen extends Screen implements LastPassRenderCallbac
     @Override
     public void lastPass(@NotNull Runnable callback) {
         this.lastPass.add(callback);
+    }
+
+    Screen parent() {
+        return this.parent;
     }
 
     @Override
