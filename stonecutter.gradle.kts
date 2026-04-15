@@ -36,7 +36,7 @@ plugins {
 // Active Stonecutter version. See:
 // https://stonecutter.kikugie.dev/wiki/glossary#active-version
 // https://stonecutter.kikugie.dev/wiki/glossary#vcs-version
-stonecutter active "1.21.11-fabric" /* [SC] DO NOT EDIT */
+stonecutter active "26.1.2-fabric" /* [SC] DO NOT EDIT */
 
 // Process the JSON files via Stonecutter.
 // This is needed for the Mixin configuration.
