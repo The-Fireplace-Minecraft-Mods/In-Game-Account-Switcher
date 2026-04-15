@@ -50,14 +50,14 @@ rootProject.name = "In-Game Account Switcher"
 
 // Prepare the list of versions and types.
 val types = listOf("fabric", "forge", "neoforge")
-val versions = listOf(/*FIXME "26.2", "26.1.2", */"1.21.11", "1.21.10", "1.21.8", "1.21.5", "1.21.4", "1.21.3", "1.21.1", "1.20.6", "1.20.4", "1.20.2", "1.20.1", "1.19.4", "1.19.2", "1.18.2")
+val versions = listOf(/*FIXME "26.2", */"26.1.2", "1.21.11", "1.21.10", "1.21.8", "1.21.5", "1.21.4", "1.21.3", "1.21.1", "1.20.6", "1.20.4", "1.20.2", "1.20.1", "1.19.4", "1.19.2", "1.18.2")
 
 // Actively supported version system. See README.md for the support policy.
 // Depends on the "ru.vidtu.ias.legacy" boolean system property:
 // - "false" (default): Compile only versions listed in "supportedVersions".
 // - "true": Compile all versions listed in "versions".
 // If "only" version feature is used, this is ignored.
-val supportedVersions = setOf(/*FIXME "26.2", "26.1.2", */"1.21.11", "1.21.1", "1.20.1")
+val supportedVersions = setOf(/*FIXME "26.2", */"26.1.2", "1.21.11", "1.21.1", "1.20.1")
 require(versions.containsAll(supportedVersions)) { "Not all actively supported versions '${supportedVersions}' are listed in all supported versions '${versions}'." }
 val includeLegacyVersions = System.getProperty("ru.vidtu.ias.legacy").toBoolean()
 

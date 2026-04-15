@@ -20,7 +20,10 @@
 package ru.vidtu.ias.screen;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.GuiGraphics;
+//? if >=26.1 {
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+//?} else
+/*import net.minecraft.client.gui.GuiGraphics;*/
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Checkbox;
 import net.minecraft.client.gui.components.EditBox;
@@ -409,7 +412,10 @@ public final class ConfigScreen extends Screen {
                 .selected(IASConfig.unexpectedPigs)
                 .onValueChange((cb, value) -> {
                     IASConfig.unexpectedPigs = value;
-                    this.minecraft.getSoundManager().play(SimpleSoundInstance.forUI(value ? SoundEvents.PIG_AMBIENT : SoundEvents.PIG_DEATH, 1.0F));
+                    //? if >=26.1 {
+                    this.minecraft.getSoundManager().play(SimpleSoundInstance.forUI(value ? SoundEvents.PIG_AMBIENT_BABY : SoundEvents.PIG_DEATH_BABY, 1.0F));
+                    //?} else
+                    /*this.minecraft.getSoundManager().play(SimpleSoundInstance.forUI(value ? SoundEvents.PIG_AMBIENT : SoundEvents.PIG_DEATH, 1.0F));*/
                 })
                 .tooltip(Tooltip.create(Component.translatable("ias.config.unexpectedPigs.tip")))
                 .build();
@@ -463,12 +469,21 @@ public final class ConfigScreen extends Screen {
     }
 
     @Override
-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
+    //? if >=26.1 {
+    public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) {
+    //?} else
+    /*public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {*/
         // Render background and widgets.
-        super.render(graphics, mouseX, mouseY, delta);
+        //? if >=26.1 {
+        super.extractRenderState(graphics, mouseX, mouseY, delta);
+        //?} else
+        /*super.render(graphics, mouseX, mouseY, delta);*/
 
         // Render title.
-        graphics.drawCenteredString(this.font, this.title, this.width / 2, 5, 0xFF_FF_FF_FF);
+        //? if >=26.1 {
+        graphics.centeredText(this.font, this.title, this.width / 2, 5, 0xFF_FF_FF_FF);
+        //?} else
+        /*graphics.drawCenteredString(this.font, this.title, this.width / 2, 5, 0xFF_FF_FF_FF);*/
 
         // Render current mouse pos if alt is held.
         //? if >= 1.21.10 {

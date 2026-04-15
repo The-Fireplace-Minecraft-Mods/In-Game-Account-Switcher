@@ -21,9 +21,15 @@ package ru.vidtu.ias.screen;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.User;
-import net.minecraft.client.gui.GuiGraphics;
+//? if >=26.1 {
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+//?} else
+/*import net.minecraft.client.gui.GuiGraphics;*/
 import net.minecraft.client.gui.components.ObjectSelectionList;
-import net.minecraft.client.gui.components.PlayerFaceRenderer;
+//? if >=26.1 {
+import net.minecraft.client.gui.components.PlayerFaceExtractor;
+//?} else
+/*import net.minecraft.client.gui.components.PlayerFaceRenderer;*/
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.CommonComponents;
@@ -124,9 +130,11 @@ final class AccountEntry extends ObjectSelectionList.Entry<AccountEntry> {
     }
 
     @Override
-    //? if >=1.21.10 {
-    public void renderContent(GuiGraphics graphics, int mouseX, int mouseY, boolean hovered, float delta) {
-    //?} else {
+    //? if >=26.1 {
+    public void extractContent(GuiGraphicsExtractor graphics, int mouseX, int mouseY, boolean hovered, float delta) {
+    //?} elif >=1.21.10 {
+    /*public void renderContent(GuiGraphics graphics, int mouseX, int mouseY, boolean hovered, float delta) {
+    *///?} else {
     /*public void render(GuiGraphics graphics, int index, int y, int x, int width, int height, int mouseX, int mouseY, boolean hovered, float delta) {*/
     //?}
         // Render tooltip.
@@ -146,7 +154,10 @@ final class AccountEntry extends ObjectSelectionList.Entry<AccountEntry> {
         int width = this.getContentWidth();
         int height = this.getContentHeight();
         //?}
-        PlayerFaceRenderer.draw(graphics, skin, x, y, 8);
+        //? if >=26.1 {
+        PlayerFaceExtractor.extractRenderState(graphics, skin, x, y, 8);
+        //?} else
+        /*PlayerFaceRenderer.draw(graphics, skin, x, y, 8);*/
 
         // Get the name color.
         User user = this.minecraft.getUser();
@@ -164,7 +175,10 @@ final class AccountEntry extends ObjectSelectionList.Entry<AccountEntry> {
         }
 
         // Render name.
-        graphics.drawString(this.minecraft.font, this.account.name(), x + 10, y, color);
+        //? if >=26.1 {
+        graphics.text(this.minecraft.font, this.account.name(), x + 10, y, color);
+        //?} else
+        /*graphics.drawString(this.minecraft.font, this.account.name(), x + 10, y, color);*/
 
         // Render warning if insecure.
         if (this.account.insecure()) {
