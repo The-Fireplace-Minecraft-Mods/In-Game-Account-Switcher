@@ -3,6 +3,9 @@
   "minVersion": "0.8",
   "compatibilityLevel": "JAVA_${mixinJava}",
   "package": "ru.vidtu.ias.mixins",
+  //? if forge && <1.20.6 {
+  /*"refmap": "ias.mixins.refmap.json",
+  *///?}
   "client": [
     //? if >=1.21.10
     "JoinMultiplayerScreenMixin",

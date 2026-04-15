@@ -50,8 +50,14 @@
         <MarkerFilter marker="AXFORM" onMatch="DENY" onMismatch="NEUTRAL"/>
         <MarkerFilter marker="LOADING" onMatch="DENY" onMismatch="NEUTRAL"/>
         <MarkerFilter marker="EVENTBUS" onMatch="DENY" onMismatch="NEUTRAL"/>
-        <RegexFilter regex="^Adding .* to classpath.$" useRawMsg="true" onMatch="DENY" onMismatch="NEUTRAL"/>
+        <RegexFilter regex="^Adding .* to classpath\.$" useRawMsg="true" onMatch="DENY" onMismatch="NEUTRAL"/>
         <RegexFilter regex="^Added class metadata for .* to metadata cache$" useRawMsg="true" onMatch="DENY" onMismatch="NEUTRAL"/>
+        <RegexFilter regex="^Failed to verify authentication$" useRawMsg="true" onMatch="DENY" onMismatch="NEUTRAL"/>
+        <RegexFilter regex="^Failed to retrieve profile key pair$" useRawMsg="true" onMatch="DENY" onMismatch="NEUTRAL"/>
+        <RegexFilter regex="^Failed to fetch user properties$" useRawMsg="true" onMatch="DENY" onMismatch="NEUTRAL"/>
+        <RegexFilter regex="^Failed to fetch Realms feature flags$" useRawMsg="true" onMatch="DENY" onMismatch="NEUTRAL"/>
+        <RegexFilter regex="^Couldn't connect to realms$" useRawMsg="true" onMatch="DENY" onMismatch="NEUTRAL"/>
+        <RegexFilter regex="^Could not authorize you against Realms server: .*$" useRawMsg="true" onMatch="DENY" onMismatch="NEUTRAL"/>
       </Filters>
       <AppenderRef ref="Async"/>
     </Root>

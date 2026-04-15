@@ -38,11 +38,10 @@
     }
   ],
   "depends": {
-    "minecraft": "${minecraft}",
-    "fabricloader": "*",
-    "fabric-api": "*"
+    "minecraft": "${minecraft}"
   },
   "recommends": {
+    "${fabricApiName}": "*",
     "modmenu": "*"
   },
   "custom": {
@@ -59,10 +58,10 @@
     },
     "catalogue": {
       "icon": {
-        "image": "ias_64.png",
-        "item": "minecraft:player_head"
+        "image": "ias.png",
+        "item": "player_head"
       },
-      "banner": "ias_240.png"
+      "banner": "ias.png"
     }
   }
 }

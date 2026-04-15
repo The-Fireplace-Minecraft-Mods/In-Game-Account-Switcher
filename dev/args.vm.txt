@@ -1,6 +1,12 @@
 -Xmx2G
 
+-XX:+UnlockExperimentalVMOptions
+-XX:+UnlockDiagnosticVMOptions
 -XX:+IgnoreUnrecognizedVMOptions
+
+-XX:+PerfDisableSharedMem
+-XX:-EnableDynamicAgentLoading
+-XX:+DisableAttachMechanism
 
 -XX:+ExitOnOutOfMemoryError
 -XX:+CrashOnOutOfMemoryError
@@ -11,6 +17,7 @@
 -Djava.net.preferIPv4Stack=true
 -Duser.language=en
 -Duser.country=US
+-Duser.timezone=UTC
 
 -Djdk.nio.maxCachedBufferSize=262144
 -Dio.netty.tryReflectionSetAccessible=true
@@ -19,15 +26,24 @@
 -Dterminal.ansi=true
 -Dterminal.jline=false
 -Dslf4j.internal.verbosity=DEBUG
+-Dlog4j2.configurationFile=../dev/log4j2.xml
+-Dlog4j2.formatMsgNoLookups=true
+-Dlog4j2.enableJndiLookup=false
+-Dlog4j2.enableJndiContextSelector=false
+-Dlog4j2.enableJndiJdbc=false
+-Dlog4j2.enableJndiJms=false
+-Dnet.kyori.ansi.colorLevel=truecolor
+-Dcom.sun.jndi.rmi.object.trustURLCodebase=false
+-Dcom.sun.jndi.cosnaming.object.trustURLCodebase=false
 
 -Dmax.bg.threads=1
--DMC_DEBUG_ENABLED=true
 
 -enableassertions
 -enablesystemassertions
 -Dmixin.debug=true
 -Dmixin.debug.strict.unique=true
 -Dmixin.checks=true
+-DMC_DEBUG_ENABLED=true
 
 -XX:+AllowEnhancedClassRedefinition
 -XX:+AllowRedefinitionToAddDeleteMethods

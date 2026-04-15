@@ -24,11 +24,16 @@ on:
     branches: [ '!main' ]
   pull_request:
   workflow_dispatch:
+    inputs:
+      legacy:
+        description: 'Include Legacy versions'
+        required: false
+        type: boolean
 jobs:
   build:
     name: 'Build'
     runs-on: 'ubuntu-24.04'
-    timeout-minutes: 60
+    timeout-minutes: 90
     permissions:
       contents: 'read'
     steps:
@@ -49,42 +54,13 @@ jobs:
         with:
           dependency-graph: 'generate'
       - name: 'Build'
-        timeout-minutes: 60
+        timeout-minutes: 90
         run: './gradlew assemble'
+        env:
+          IAS_LEGACY: ${{ inputs.legacy }}
       - name: 'Upload'
         timeout-minutes: 10
         uses: 'actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a' # v7.0.1
         with:
           name: 'Artifacts'
-          path: |
-            build/libs/
-            legacy/1.18.2/fabric/build/libs/
-            legacy/1.18.2/forge/build/libs/
-            legacy/1.19.2/fabric/build/libs/
-            legacy/1.19.2/forge/build/libs/
-            legacy/1.19.4/fabric/build/libs/
-            legacy/1.19.4/forge/build/libs/
-            legacy/1.20.1/fabric/build/libs/
-            legacy/1.20.1/forge/build/libs/
-            legacy/1.20.1/neoforge/build/libs/
-            legacy/1.20.2/fabric/build/libs/
-            legacy/1.20.2/forge/build/libs/
-            legacy/1.20.2/neoforge/build/libs/
-            legacy/1.20.4/fabric/build/libs/
-            legacy/1.20.4/forge/build/libs/
-            legacy/1.20.4/neoforge/build/libs/
-            legacy/1.20.6/fabric/build/libs/
-            legacy/1.20.6/forge/build/libs/
-            legacy/1.20.6/neoforge/build/libs/
-            legacy/1.21.1/fabric/build/libs/
-            legacy/1.21.1/forge/build/libs/
-            legacy/1.21.1/neoforge/build/libs/
-            legacy/1.21.3/fabric/build/libs/
-            legacy/1.21.3/forge/build/libs/
-            legacy/1.21.3/neoforge/build/libs/
-            legacy/1.21.4/fabric/build/libs/
-            legacy/1.21.4/forge/build/libs/
-            legacy/1.21.4/neoforge/build/libs/
-            legacy/1.21.5/fabric/build/libs/
-            legacy/1.21.5/forge/build/libs/
-            legacy/1.21.5/neoforge/build/libs/
+          path: 'build/libs/'
