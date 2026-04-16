@@ -136,7 +136,8 @@ dependencies {
     val fapi = "${property("sc.fabric-api")}"
     require(fapi.isNotBlank() && fapi != "[SC]") { "Fabric API version is not provided via 'sc.fabric-api' in ${project}." }
     implementation(fabricApi.module("fabric-lifecycle-events-v1", fapi)) // Handles game ticks.
-    implementation(fabricApi.module("fabric-resource-loader-v1", fapi)) // Loads languages.
+    implementation(fabricApi.module("fabric-resource-loader-v1", fapi)) // Loads textures and languages.
+    implementation(fabricApi.module("fabric-screen-api-v1", fapi)) // Handles title and multiplayer screen management.
 
     // ModMenu.
     val modmenu = "${property("sc.modmenu")}"
@@ -148,8 +149,7 @@ dependencies {
         compileOnly("com.terraformersmc:modmenu:${modmenu}")
     } else {
         implementation("com.terraformersmc:modmenu:${modmenu}")
-        implementation(fabricApi.module("fabric-key-mapping-api-v1", fapi)) // ModMenu dependency.
-        implementation(fabricApi.module("fabric-screen-api-v1", fapi)) // ModMenu dependency.
+        implementation(fabricApi.module("fabric-key-mapping-api-v1", fapi)) // ModMenu dependency. (NOTE: <=1.21.11 script uses "binding", not "mapping")
     }
 }
 

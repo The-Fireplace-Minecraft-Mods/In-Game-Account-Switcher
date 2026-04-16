@@ -38,7 +38,10 @@
     }
   ],
   "depends": {
-    "minecraft": "${minecraft}"
+    "minecraft": "${minecraft}",
+    "fabric-lifecycle-events-v1": "*",
+    "fabric-resource-loader-${fabricResourceLoaderRevision}": "*",
+    "fabric-screen-api-v1": "*"
   },
   "recommends": {
     "${fabricApiName}": "*",
