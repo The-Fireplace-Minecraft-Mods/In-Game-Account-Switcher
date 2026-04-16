@@ -19,8 +19,8 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>
 
-# Fail on error, fail on unbound variable, verbose mode, xtrace mode.
-set -euvx
+# Fail on error, fail on unbound variable, verbose mode, xtrace mode, pipefail mode.
+set -euvxo pipefail
 
 # Check legacy state.
 for arg in "$@"; do [ "${arg}" = '--legacy' ] && IAS_LEGACY=true; done

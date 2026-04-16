@@ -17,8 +17,11 @@
 :: You should have received a copy of the GNU Lesser General Public License
 :: along with this program.  If not, see <https://www.gnu.org/licenses/>
 
+:: Iterate.
 for /D %%f in (versions\*) do (
+    :: Skip, if ".ignored" exists.
     if not exist %%f\.ignored (
-        gradlew.bat "%%~nxf:runClient"
+        :: Launch.
+        gradlew.bat "-Dru.vidtu.hcscr.only=%%~nxf" "%%~nxf:runClient"
     )
 )

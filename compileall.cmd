@@ -17,6 +17,9 @@
 :: You should have received a copy of the GNU Lesser General Public License
 :: along with this program.  If not, see <https://www.gnu.org/licenses/>
 
+:: Set local variable scope.
+setlocal
+
 :: Check legacy state.
 for %%a in (%*) do (
     if "%%~a"=="--legacy" set IAS_LEGACY=true
@@ -28,3 +31,6 @@ if "%IAS_LEGACY%"=="true" (
     :: Build without legacy.
     gradlew.bat assemble
 )
+
+:: End local variable scope.
+endlocal
