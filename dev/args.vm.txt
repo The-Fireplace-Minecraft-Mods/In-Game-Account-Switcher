@@ -43,7 +43,11 @@
 -Dmixin.debug=true
 -Dmixin.debug.strict.unique=true
 -Dmixin.checks=true
--DMC_DEBUG_ENABLED=true
+-DMC_DEBUG_ENABLED
+-DMC_DEBUG_ALLOW_LOW_SIM_DISTANCE
+-DMC_DEBUG_NAMED_RUNNABLES
+-DMC_DEBUG_VALIDATE_RESOURCE_PATH_CASE
+-DMC_DEBUG_CURSOR_POS
 
 -XX:+AllowEnhancedClassRedefinition
 -XX:+AllowRedefinitionToAddDeleteMethods

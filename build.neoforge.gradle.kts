@@ -19,7 +19,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
 
-// This is the main (multi-version loader) buildscript. It is processed by the
+// This is the NeoForge loader buildscript. It is processed by the
 // Stonecutter multiple times, for each version and each loader. (compiled once)
 // Based on NeoGradle and processes the preparation/complation/building
 // of the most of the mod that is not covered by the Stonecutter or Blossom.
@@ -33,8 +33,10 @@
 import com.google.gson.Gson
 import com.google.gson.JsonElement
 
-// Configure plugins.
+// Plugins.
 plugins {
+    id("java")
+    alias(libs.plugins.blossom)
     alias(libs.plugins.neogradle)
 }
 
@@ -47,7 +49,7 @@ val mcp = mc.parsed // Comparable version. (operator overloading)
 val javaTarget = if (mcp >= "26.1.2") 25
 else if (mcp >= "1.20.6") 21
 else 17
-val javaVersion = JavaVersion.toVersion(javaTarget)!!
+val javaVersion = JavaVersion.toVersion(javaTarget)
 java {
     sourceCompatibility = javaVersion
     targetCompatibility = javaVersion
@@ -66,7 +68,7 @@ sc {
     constants["forge"] = false
     constants["hacky_neoforge"] = false
     constants["neoforge"] = true
-    swaps["minecraft_version"] = "\"${mcv}\""
+    properties.tags(mcv, "neoforge")
 }
 
 // Migration helper.
@@ -109,8 +111,8 @@ dependencies {
     }
 
     // Minecraft and NeoForge.
-    val neoforge = "${property("sc.neoforge")}"
-    require(neoforge.isNotBlank() && neoforge != "[SC]") { "NeoForge version is not provided via 'sc.neoforge' in ${project}." }
+    val neoforge = "${property("loader")}"
+    require(neoforge.isNotBlank() && neoforge != "null") { "NeoForge version is not provided via 'loader' in ${project}." }
     val extractedMinecraft = if (mcp >= "26.1.2") neoforge.substringBeforeLast('.') else "1.${neoforge.substringBeforeLast('.')}"
     require(mcp eq extractedMinecraft) { "NeoForge version '${neoforge}' provides Minecraft ${extractedMinecraft} in ${project}, but we want ${mcv}." }
     implementation("net.neoforged:neoforge:${neoforge}")
@@ -124,35 +126,42 @@ tasks.withType<JavaCompile> {
     options.release = javaTarget
 }
 
+sourceSets.main {
+    blossom.javaSources {
+        // Point to root directory.
+        templates(rootDir.resolve("src/main/java-templates"))
+
+        // Expand compile-time variables.
+        val fallbackProvider = providers.gradleProperty("ru.vidtu.ias.debug")
+            .orElse(provider { "${gradle.taskGraph.allTasks.any { it.name == "runClient" }}" })
+        property("debugAsserts", providers.gradleProperty("ru.vidtu.ias.debug.asserts").orElse(fallbackProvider))
+        property("debugLogs", providers.gradleProperty("ru.vidtu.ias.debug.logs").orElse(fallbackProvider))
+        property("version", "${version}")
+    }
+}
+
 tasks.withType<ProcessResources> {
     // Filter with UTF-8.
     filteringCharset = "UTF-8"
 
     // Exclude not needed loader entrypoint files.
     if (mcp >= "1.20.6") {
-        exclude("fabric.mod.json", "quilt.mod.json", "META-INF/mods.toml")
+        exclude("fabric.mod.json", "META-INF/mods.toml")
     } else {
-        exclude("fabric.mod.json", "quilt.mod.json", "META-INF/neoforge.mods.toml")
+        exclude("fabric.mod.json", "META-INF/neoforge.mods.toml")
     }
 
-    // Determine and replace the platform version range requirement.
-    val platformRequirement = "${project.property("sc.platform-requirement")}"
-    require(platformRequirement.isNotBlank() && platformRequirement != "[SC]") { "Platform requirement is not provided via 'sc.platform-requirement' in ${project}." }
-    inputs.property("platformRequirement", platformRequirement)
+    // Determine and replace the version range constraints.
+    val constraints = "${project.property("constraints")}"
+    require(constraints.isNotBlank() && constraints != "null") { "Constraints are not provided via 'constraints' in ${project}." }
+    inputs.property("constraints", constraints)
 
     // Expand the updater URL.
     inputs.property("forgeUpdaterUrl", "https://raw.githubusercontent.com/The-Fireplace-Minecraft-Mods/In-Game-Account-Switcher/main/updater-neoforge.json")
 
-    // Expand Minecraft requirement that can be manually overridden for reasons. (e.g., snapshots)
-    val minecraftRequirementProperty = findProperty("sc.minecraft-requirement")
-    require(minecraftRequirementProperty != mcv) { "Unneeded 'sc.minecraft-requirement' property set to ${minecraftRequirementProperty} in ${project}, it already uses this version." }
-    val minecraftRequirement = minecraftRequirementProperty ?: mcv
-    inputs.property("minecraft", minecraftRequirement)
-
-    // Expand Mixin Java version.
-    inputs.property("mixinJava", javaTarget)
-
     // Expand version and dependencies.
+    inputs.property("mixinJava", javaTarget)
+    inputs.property("minecraft", mcv)
     inputs.property("version", version)
     inputs.property("platform", "neoforge")
     filesMatching(listOf("ias.mixins.json", "META-INF/mods.toml", "META-INF/neoforge.mods.toml")) {
@@ -168,8 +177,8 @@ tasks.withType<ProcessResources> {
                 it.writeText(Gson().fromJson(it.readText(), JsonElement::class.java).toString())
             } else if (it.name.endsWith(".toml", ignoreCase = true)) {
                 it.writeText(it.readLines()
-                    .filter { s -> !s.startsWith('#') }
-                    .filter { s -> s.isNotBlank() }
+                    .filter { !it.startsWith('#') }
+                    .filter { it.isNotBlank() }
                     .joinToString("\n")
                     .replace(" = ", "="))
             }
@@ -181,6 +190,9 @@ tasks.withType<Jar> {
     // Add LICENSE and NOTICE.
     from(rootDir.resolve("LICENSE"))
     from(rootDir.resolve("NOTICE"))
+
+    // Exclude compile-only code.
+    exclude("ru/vidtu/ias/platform/ICompile.class")
 
     // Remove package-info.class, unless package debug is on. (to save space)
     if (!"${findProperty("ru.vidtu.ias.debug.package")}".toBoolean()) {

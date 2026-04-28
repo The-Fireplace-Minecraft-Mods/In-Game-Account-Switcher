@@ -23,16 +23,11 @@ on:
   push:
     branches: [ 'main' ]
   workflow_dispatch:
-    inputs:
-      legacy:
-        description: 'Include Legacy versions'
-        required: false
-        type: boolean
 jobs:
   main:
     name: 'Build (Main)'
     runs-on: 'ubuntu-24.04'
-    timeout-minutes: 90
+    timeout-minutes: 60
     permissions:
       contents: 'write'
     steps:
@@ -58,10 +53,8 @@ jobs:
           cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
           dependency-graph: 'generate-and-submit'
       - name: 'Build (Main)'
-        timeout-minutes: 90
+        timeout-minutes: 60
         run: './gradlew assemble'
-        env:
-          IAS_LEGACY: ${{ inputs.legacy }}
       - name: 'Upload'
         timeout-minutes: 10
         uses: 'actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a' # v7.0.1

@@ -17,5 +17,17 @@
 :: You should have received a copy of the GNU Lesser General Public License
 :: along with this program.  If not, see <https://www.gnu.org/licenses/>
 
+:: Disable echo.
+@echo off
+
+:: Check args.
+if "%~1"=="" (
+    echo SCRIPT: You must specify the version to build.
+    echo Example: compileone.cmd 1.20.1-fabric
+    exit /B 2
+)
+
 :: Build.
-gradlew.bat "-Dru.vidtu.ias.only=%1" "%1:assemble"
+echo SCRIPT: Building '%1'...
+cmd.exe /C gradlew.bat "-Dru.vidtu.ias.only=%1" "%1:assemble"
+echo SCRIPT: Build for '%1' exited with code %ERRORLEVEL%.

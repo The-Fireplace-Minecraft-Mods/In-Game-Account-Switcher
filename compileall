@@ -19,15 +19,24 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>
 
-# Fail on error, fail on unbound variable, verbose mode, xtrace mode, pipefail mode.
-set -euvxo pipefail
+# Fail on error, fail on unbound variable, pipefail mode.
+set -euo pipefail
 
-# Check legacy state.
-for arg in "$@"; do [ "${arg}" = '--legacy' ] && IAS_LEGACY=true; done
-if [ "${IAS_LEGACY:-}" = "true" ]; then
-    # Build with legacy.
-    ./gradlew -Dru.vidtu.ias.legacy=true assemble
+# Check args.
+if [ "${1:-}" = 'legacy' ]; then
+    # Build in legacy mode.
+    echo 'SCRIPT: Building in legacy mode...'
+    ./gradlew -Dru.vidtu.ias.legacy=true assemble && true
+    echo "SCRIPT: Build in legacy mode exited with code ${?}."
+elif [ "${1:-}" = 'normal' ]; then
+    # Build in normal mode.
+    echo 'SCRIPT: Building in normal mode...'
+    ./gradlew assemble && true
+    echo "SCRIPT: Build in normal mode exited with code ${?}."
 else
-    # Build without legacy.
-    ./gradlew assemble
+    # Fail.
+    echo 'SCRIPT: You must specify the mode of execution.'
+    echo 'Normal (Beta/Active): ./compileall normal'
+    echo 'Legacy (Beta/Active/Legacy): ./compileall legacy'
+    exit 2
 fi

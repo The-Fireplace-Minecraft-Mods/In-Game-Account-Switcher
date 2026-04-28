@@ -19,8 +19,17 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>
 
-# Fail on error, fail on unbound variable, verbose mode, xtrace mode, pipefail mode.
-set -euvxo pipefail
+# Fail on error, fail on unbound variable, pipefail mode.
+set -euo pipefail
+
+# Check args.
+if [ "${#}" -eq 0 ]; then
+    echo 'SCRIPT: You must specify the version to switch.'
+    echo 'Example: ./switch 1.20.1-fabric'
+    exit 2
+fi
 
 # Switch.
-./gradlew "Set active project to ${1}"
+echo "SCRIPT: Switching to '${1}'..."
+./gradlew "Set active project to ${1}" && true
+echo "SCRIPT: Switching to '${1}' exited with code ${?}."

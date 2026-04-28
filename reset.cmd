@@ -17,5 +17,10 @@
 :: You should have received a copy of the GNU Lesser General Public License
 :: along with this program.  If not, see <https://www.gnu.org/licenses/>
 
+:: Disable echo.
+@echo off
+
 :: Reset.
-gradlew.bat "Reset active project"
+echo SCRIPT: Resetting active project...
+cmd.exe /C gradlew.bat "Reset active project"
+echo SCRIPT: Resetting active project exited with code %ERRORLEVEL%.

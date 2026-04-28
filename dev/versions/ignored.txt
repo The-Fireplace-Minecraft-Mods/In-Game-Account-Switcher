@@ -16,7 +16,20 @@
 #
 # You should have received a copy of the GNU Lesser General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>
+#
+# List of ignored version/loaders (aka IDs aka folders)
+# combinations with explanations in the comments.
+# Empty lines and lines starting with "#" are ignored.
 
-# Stonecutter
-sc.fabric-api=0.87.2+1.19.4
-sc.modmenu=6.3.1
+# NeoForge started development since the 1.20.1 version.
+# See: https://neoforged.net/news/theproject/
+1.18.2-neoforge
+1.19.2-neoforge
+1.19.4-neoforge
+
+# TODO(VidTu): Fix issues related to NeoForge 20.1 port.
+1.20.1-neoforge
+
+# Forge and NeoForge don't get ported for snapshots.
+26.2-forge
+26.2-neoforge

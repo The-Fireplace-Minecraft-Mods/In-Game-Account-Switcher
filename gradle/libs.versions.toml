@@ -18,24 +18,28 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>
 
 [versions]
+blossom = "2.2.0"
 error_prone_annotations = "2.49.0"
 fabric-loader = "0.19.2"
 fabric-loom = "1.16.1"
-forgegradle = "7.0.20"
-forgerenamer = "1.0.16"
-gson = "2.13.2"
+forgegradle = "7.0.25"
+forgerenamer = "1.0.19"
+gson = "2.14.0"
+idea-ext = "1.4.1"
 jetbrains-annotations = "26.1.0"
 jspecify = "1.0.0"
 log4j = "2.25.4"
 mixin = "0.8.7"
 moddevgradle = "2.0.141"
-neogradle = "7.1.22"
+neogradle = "7.1.25"
 
 [plugins]
+blossom = { id = "net.kyori.blossom", version.ref = "blossom" }
 fabric-loom = { id = "net.fabricmc.fabric-loom", version.ref = "fabric-loom" }
 fabric-loom-remap = { id = "net.fabricmc.fabric-loom-remap", version.ref = "fabric-loom" }
 forgegradle = { id = "net.minecraftforge.gradle", version.ref = "forgegradle" }
 forgerenamer = { id = "net.minecraftforge.renamer", version.ref = "forgerenamer" }
+idea-ext = { id = "org.jetbrains.gradle.plugin.idea-ext", version.ref = "idea-ext" }
 moddevgradle-legacy = { id = "net.neoforged.moddev.legacyforge", version.ref = "moddevgradle" }
 neogradle = { id = "net.neoforged.gradle.userdev", version.ref = "neogradle" }
 

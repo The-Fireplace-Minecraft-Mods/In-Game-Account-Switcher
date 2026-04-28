@@ -17,18 +17,15 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>
 
-name: 'Build'
+name: 'Build (Legacy)'
 permissions: { }
 on:
-  push:
-    branches: [ '!main' ]
-  pull_request:
   workflow_dispatch:
 jobs:
-  build:
-    name: 'Build'
+  legacy:
+    name: 'Build (Legacy)'
     runs-on: 'ubuntu-24.04'
-    timeout-minutes: 60
+    timeout-minutes: 90
     permissions:
       contents: 'read'
     steps:
@@ -49,9 +46,9 @@ jobs:
         with:
           cache-read-only: true
           dependency-graph: 'generate'
-      - name: 'Build'
-        timeout-minutes: 60
-        run: './gradlew assemble'
+      - name: 'Build (Legacy)'
+        timeout-minutes: 90
+        run: './gradlew -Dru.vidtu.ias.legacy=true assemble'
       - name: 'Upload'
         timeout-minutes: 10
         uses: 'actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a' # v7.0.1

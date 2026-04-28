@@ -34,8 +34,10 @@ import com.google.gson.Gson
 import com.google.gson.JsonElement
 import net.fabricmc.loom.task.RunGameTask
 
-// Configure plugins.
+// Plugins.
 plugins {
+    id("java")
+    alias(libs.plugins.blossom)
     alias(libs.plugins.fabric.loom)
 }
 
@@ -46,7 +48,7 @@ val mcp = mc.parsed // Comparable version. (operator overloading)
 
 // Language.
 val javaTarget = 25
-val javaVersion = JavaVersion.toVersion(javaTarget)!!
+val javaVersion = JavaVersion.toVersion(javaTarget)
 java {
     sourceCompatibility = javaVersion
     targetCompatibility = javaVersion
@@ -65,7 +67,7 @@ sc {
     constants["forge"] = false
     constants["hacky_neoforge"] = false
     constants["neoforge"] = false
-    swaps["minecraft_version"] = "\"${mcv}\""
+    properties.tags(mcv, "fabric")
 }
 
 // Migration helper.
@@ -89,16 +91,9 @@ loom {
         // Remove server run, the mod is client-only.
         remove(findByName("server"))
     }
-
-    // Configure Mixin.
-    @Suppress("UnstableApiUsage") // <- Required to configure Mixin.
-    mixin {
-        // Use direct remapping instead of annotation processor and refmaps.
-        useLegacyMixinAp = false
-    }
 }
 
-// Make the game run with the compatible Java. (e.g,. Java 17 for 1.20.1)
+// Make the game run with the compatible Java. (e.g., Java 17 for 1.20.1)
 tasks.withType<RunGameTask> {
     javaLauncher = javaToolchains.launcherFor(java.toolchain)
 }
@@ -116,10 +111,10 @@ dependencies {
     compileOnly(libs.error.prone.annotations)
 
     // Minecraft. The dependency may be manually specified for example for snapshots.
-    val minecraftDependencyProperty = findProperty("sc.minecraft-dependency")
-    require(minecraftDependencyProperty != mcv) { "Unneeded 'sc.minecraft-dependency' property set to ${minecraftDependencyProperty} in ${project}, it already uses this version." }
-    val minecraftDependency = minecraftDependencyProperty ?: mcv
-    minecraft("com.mojang:minecraft:${minecraftDependency}")
+    val minecraftProperty = findProperty("minecraft")
+    require(minecraftProperty != mcv) { "Unneeded 'minecraft' property set to ${minecraftProperty} in ${project}, it already uses this version." }
+    val minecraft = minecraftProperty ?: mcv
+    minecraft("com.mojang:minecraft:${minecraft}")
 
     // Force non-vulnerable Log4J, so that vulnerability scanners don't scream loud.
     // It's also cool for our logging config. (see the "dev/log4j2.xml" file)
@@ -133,20 +128,21 @@ dependencies {
     implementation(libs.fabric.loader)
 
     // Modular Fabric API.
-    val fapi = "${property("sc.fabric-api")}"
-    require(fapi.isNotBlank() && fapi != "[SC]") { "Fabric API version is not provided via 'sc.fabric-api' in ${project}." }
+    val fapi = "${property("api")}"
+    require(fapi.isNotBlank() && fapi != "null") { "Fabric API version is not provided via 'api' in ${project}." }
     implementation(fabricApi.module("fabric-lifecycle-events-v1", fapi)) // Handles game ticks.
     implementation(fabricApi.module("fabric-resource-loader-v1", fapi)) // Loads textures and languages.
     implementation(fabricApi.module("fabric-screen-api-v1", fapi)) // Handles title and multiplayer screen management.
 
     // ModMenu.
-    val modmenu = "${property("sc.modmenu")}"
-    require(modmenu.isNotBlank() && modmenu != "[SC]") { "ModMenu version is not provided via 'sc.modmenu' in ${project}." }
+    val modmenu = "${property("modmenu")}"
+    require(modmenu.isNotBlank() && modmenu != "null") { "ModMenu version is not provided via 'modmenu' in ${project}." }
     // Sometimes, ModMenu is not yet updated for the version. (it almost never updates to snapshots nowadays)
     // So we should depend on it compile-time (it is really an optional dependency for us) to allow both
     // compilation of an optional ModMenu compatibility class (HModMenu.java) and launching the game.
-    if ("${findProperty("sc.modmenu.compile-only")}".toBoolean()) {
-        compileOnly("com.terraformersmc:modmenu:${modmenu}")
+    // Just prefix the ModMenu version with '$' to make it compile-only.
+    if (modmenu.startsWith('$')) {
+        compileOnly("com.terraformersmc:modmenu:${modmenu.substring(1)}")
     } else {
         implementation("com.terraformersmc:modmenu:${modmenu}")
         implementation(fabricApi.module("fabric-key-mapping-api-v1", fapi)) // ModMenu dependency. (NOTE: <=1.21.11 script uses "binding", not "mapping")
@@ -159,6 +155,20 @@ tasks.withType<JavaCompile> {
     options.encoding = "UTF-8"
     options.compilerArgs.addAll(listOf("-g", "-parameters"))
     options.release = javaTarget
+}
+
+sourceSets.main {
+    blossom.javaSources {
+        // Point to root directory.
+        templates(rootDir.resolve("src/main/java-templates"))
+
+        // Expand compile-time variables.
+        val fallbackProvider = providers.gradleProperty("ru.vidtu.ias.debug")
+            .orElse(provider { "${gradle.taskGraph.allTasks.any { it.name == "runClient" }}" })
+        property("debugAsserts", providers.gradleProperty("ru.vidtu.ias.debug.asserts").orElse(fallbackProvider))
+        property("debugLogs", providers.gradleProperty("ru.vidtu.ias.debug.logs").orElse(fallbackProvider))
+        property("version", "${version}")
+    }
 }
 
 tasks.withType<ProcessResources> {
@@ -176,22 +186,16 @@ tasks.withType<ProcessResources> {
     // >=26.1.2 has consistent fabric-api, this is used by Intermediary.
     inputs.property("fabricApiName", "fabric-api")
 
-    // Determine and replace the platform version range requirement.
-    val platformRequirement = "${project.property("sc.platform-requirement")}"
-    require(platformRequirement == "[SC]") { "Platform requirement is provided via 'sc.platform-requirement' in ${project}, but Fabric builds ignore it." }
-
-    // Expand Minecraft requirement that can be manually overridden for reasons. (e.g., snapshots)
-    val minecraftRequirementProperty = findProperty("sc.minecraft-requirement")
-    require(minecraftRequirementProperty != mcv) { "Unneeded 'sc.minecraft-requirement' property set to ${minecraftRequirementProperty} in ${project}, it already uses this version." }
-    val minecraftRequirement = minecraftRequirementProperty ?: mcv
-    inputs.property("minecraft", minecraftRequirement)
-
-    // Expand Mixin Java version.
-    inputs.property("mixinJava", javaTarget)
+    // Expand Minecraft constraints that can be manually overridden for reasons. (e.g., snapshots)
+    val constraintsProperty = findProperty("constraints")
+    require(constraintsProperty != mcv) { "Unneeded 'constraints' property set to ${constraintsProperty} in ${project}, it already uses this version." }
+    val constraints = constraintsProperty ?: mcv
+    inputs.property("minecraft", constraints)
 
     // Expand version and dependencies.
+    inputs.property("mixinJava", javaTarget)
     inputs.property("version", version)
-    filesMatching(listOf("fabric.mod.json", "quilt.mod.json", "ias.mixins.json")) {
+    filesMatching(listOf("fabric.mod.json", "ias.mixins.json")) {
         expand(inputs.properties)
     }
 
@@ -210,6 +214,9 @@ tasks.withType<Jar> {
     // Add LICENSE and NOTICE.
     from(rootDir.resolve("LICENSE"))
     from(rootDir.resolve("NOTICE"))
+
+    // Exclude compile-only code.
+    exclude("ru/vidtu/ias/platform/ICompile.class")
 
     // Remove package-info.class, unless package debug is on. (to save space)
     if (!"${findProperty("ru.vidtu.ias.debug.package")}".toBoolean()) {

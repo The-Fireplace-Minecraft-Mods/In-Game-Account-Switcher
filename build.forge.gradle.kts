@@ -34,8 +34,10 @@ import com.google.gson.Gson
 import com.google.gson.JsonElement
 import net.minecraftforge.renamer.gradle.RenameJar
 
-// Configure plugins.
+// Plugins.
 plugins {
+    id("java")
+    alias(libs.plugins.blossom)
     alias(libs.plugins.forgegradle)
     alias(libs.plugins.forgerenamer)
 }
@@ -51,7 +53,7 @@ else if (mcp >= "1.20.6") 21
 else if (mcp >= "1.18.2") 17
 else if (mcp >= "1.17.1") 16
 else 8
-val javaVersion = JavaVersion.toVersion(javaTarget)!!
+val javaVersion = JavaVersion.toVersion(javaTarget)
 java {
     sourceCompatibility = javaVersion
     targetCompatibility = javaVersion
@@ -77,7 +79,7 @@ sc {
     constants["forge"] = true
     constants["hacky_neoforge"] = false
     constants["neoforge"] = false
-    swaps["minecraft_version"] = "\"${mcv}\""
+    properties.tags(mcv, "forge")
 }
 
 // Migration helper.
@@ -150,8 +152,8 @@ dependencies {
     }
 
     // Minecraft and Forge.
-    val forge = "${property("sc.forge")}"
-    require(forge.isNotBlank() && forge != "[SC]") { "Forge version is not provided via 'sc.forge' in ${project}." }
+    val forge = "${property("loader")}"
+    require(forge.isNotBlank() && forge != "null") { "Forge version is not provided via 'loader' in ${project}." }
     val extractedMinecraft = forge.substringBefore('-')
     require(mcp eq extractedMinecraft) { "Forge version '${forge}' provides Minecraft ${extractedMinecraft} in ${project}, but we want ${mcv}." }
     implementation(minecraft.dependency("net.minecraftforge:forge:${forge}"))
@@ -171,26 +173,34 @@ tasks.withType<JavaCompile> {
     }
 }
 
+sourceSets.main {
+    blossom.javaSources {
+        // Point to root directory.
+        templates(rootDir.resolve("src/main/java-templates"))
+
+        // Expand compile-time variables.
+        val fallbackProvider = providers.gradleProperty("ru.vidtu.ias.debug")
+            .orElse(provider { "${gradle.taskGraph.allTasks.any { it.name == "runClient" }}" })
+        property("debugAsserts", providers.gradleProperty("ru.vidtu.ias.debug.asserts").orElse(fallbackProvider))
+        property("debugLogs", providers.gradleProperty("ru.vidtu.ias.debug.logs").orElse(fallbackProvider))
+        property("version", "${version}")
+    }
+}
+
 tasks.withType<ProcessResources> {
     // Filter with UTF-8.
     filteringCharset = "UTF-8"
 
     // Exclude not needed loader entrypoint files.
-    exclude("fabric.mod.json", "quilt.mod.json", "META-INF/neoforge.mods.toml")
+    exclude("fabric.mod.json", "META-INF/neoforge.mods.toml")
 
-    // Determine and replace the platform version range requirement.
-    val platformRequirement = "${project.property("sc.platform-requirement")}"
-    require(platformRequirement.isNotBlank() && platformRequirement != "[SC]") { "Platform requirement is not provided via 'sc.platform-requirement' in ${project}." }
-    inputs.property("platformRequirement", platformRequirement)
+    // Determine and replace the version range constraints.
+    val constraints = "${project.property("constraints")}"
+    require(constraints.isNotBlank() && constraints != "null") { "Constraints are not provided via 'constraints' in ${project}." }
+    inputs.property("constraints", constraints)
 
     // Expand the updater URL.
     inputs.property("forgeUpdaterUrl", "https://raw.githubusercontent.com/The-Fireplace-Minecraft-Mods/In-Game-Account-Switcher/main/updater-forge.json")
-
-    // Expand Minecraft requirement that can be manually overridden for reasons. (e.g., snapshots)
-    val minecraftRequirementProperty = findProperty("sc.minecraft-requirement")
-    require(minecraftRequirementProperty != mcv) { "Unneeded 'sc.minecraft-requirement' property set to ${minecraftRequirementProperty} in ${project}, it already uses this version." }
-    val minecraftRequirement = minecraftRequirementProperty ?: mcv
-    inputs.property("minecraft", minecraftRequirement)
 
     // Expand Mixin Java version. Forge is full of edge-cases covered here.
     val mixinJava = if (mcp >= "26.1.2") 21
@@ -199,6 +209,7 @@ tasks.withType<ProcessResources> {
     inputs.property("mixinJava", mixinJava)
 
     // Expand version and dependencies.
+    inputs.property("minecraft", mcv)
     inputs.property("version", version)
     inputs.property("platform", "forge")
     filesMatching(listOf("ias.mixins.json", "META-INF/mods.toml")) {
@@ -214,8 +225,8 @@ tasks.withType<ProcessResources> {
                 it.writeText(Gson().fromJson(it.readText(), JsonElement::class.java).toString())
             } else if (it.name.endsWith(".toml", ignoreCase = true)) {
                 it.writeText(it.readLines()
-                    .filter { s -> !s.startsWith('#') }
-                    .filter { s -> s.isNotBlank() }
+                    .filter { !it.startsWith('#') }
+                    .filter { it.isNotBlank() }
                     .joinToString("\n")
                     .replace(" = ", "="))
             }
@@ -227,6 +238,9 @@ tasks.withType<Jar> {
     // Add LICENSE and NOTICE.
     from(rootDir.resolve("LICENSE"))
     from(rootDir.resolve("NOTICE"))
+
+    // Exclude compile-only code.
+    exclude("ru/vidtu/ias/platform/ICompile.class")
 
     // Remove package-info.class, unless package debug is on. (to save space)
     if (!"${findProperty("ru.vidtu.ias.debug.package")}".toBoolean()) {

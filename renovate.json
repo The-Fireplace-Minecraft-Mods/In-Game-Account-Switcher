@@ -1,0 +1,21 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended"
+  ],
+  "labels": [
+    "type:bot"
+  ],
+  "packageRules": [
+    {
+      "matchPackageNames": [
+        "com.mojang:minecraft",
+        "net.fabricmc.fabric-api:fabric-api",
+        "com.terraformersmc:modmenu",
+        "net.minecraftforge:forge",
+        "net.neoforged:forge"
+      ],
+      "enabled": false
+    }
+  ]
+}

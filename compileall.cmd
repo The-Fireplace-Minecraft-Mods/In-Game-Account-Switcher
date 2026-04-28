@@ -17,20 +17,32 @@
 :: You should have received a copy of the GNU Lesser General Public License
 :: along with this program.  If not, see <https://www.gnu.org/licenses/>
 
+:: Disable echo.
+@echo off
+
 :: Set local variable scope.
 setlocal
 
-:: Check legacy state.
-for %%a in (%*) do (
-    if "%%~a"=="--legacy" set IAS_LEGACY=true
+:: Check args.
+if /I "%~1"=="legacy" (
+    :: Build in legacy mode.
+    echo SCRIPT: Building in legacy mode...
+    cmd.exe /C gradlew.bat -Dru.vidtu.ias.legacy=true assemble
+    echo SCRIPT: Building in legacy mode exited with code %ERRORLEVEL%.
+    goto :end
 )
-if "%IAS_LEGACY%"=="true" (
-    :: Build with legacy.
-    gradlew.bat -Dru.vidtu.ias.legacy=true assemble
-) else (
-    :: Build without legacy.
-    gradlew.bat assemble
+if /I "%~1"=="normal" (
+    :: Build in normal mode.
+    echo SCRIPT: Building in normal mode...
+    cmd.exe /C gradlew.bat assemble
+    echo SCRIPT: Building in normal mode exited with code %ERRORLEVEL%.
+    goto :end
 )
+echo ERROR: You must specify the mode of execution.
+echo Normal (Beta/Active): compileall.cmd normal
+echo Legacy (Beta/Active/Legacy): compileall.cmd legacy
+exit /B 2
 
+:end
 :: End local variable scope.
 endlocal

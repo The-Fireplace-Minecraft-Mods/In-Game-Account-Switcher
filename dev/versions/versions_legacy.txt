@@ -16,7 +16,17 @@
 #
 # You should have received a copy of the GNU Lesser General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>
-
-# Stonecutter
-sc.neoforge=21.8.53
-sc.platform-requirement=[21.8,21.9)
+#
+# List of "Legacy" versions. See README.md for more information.
+# Empty lines and lines starting with "#" are ignored.
+1.21.10
+1.21.8
+1.21.5
+1.21.4
+1.21.3
+1.20.6
+1.20.4
+1.20.2
+1.19.4
+1.19.2
+1.18.2

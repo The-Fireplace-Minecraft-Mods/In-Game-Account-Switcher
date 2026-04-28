@@ -17,5 +17,17 @@
 :: You should have received a copy of the GNU Lesser General Public License
 :: along with this program.  If not, see <https://www.gnu.org/licenses/>
 
+:: Disable echo.
+@echo off
+
+:: Check args.
+if "%~1"=="" (
+    echo SCRIPT: You must specify the version to switch.
+    echo Example: switch.cmd 1.20.1-fabric
+    exit /b 2
+)
+
 :: Switch.
-gradlew.bat "Set active project to %1"
+echo SCRIPT: Switching to '%1'...
+cmd.exe /C gradlew.bat "Set active project to %1"
+echo SCRIPT: Switch to '%1' exited with code %ERRORLEVEL%.

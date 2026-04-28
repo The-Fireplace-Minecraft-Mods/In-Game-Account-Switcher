@@ -16,8 +16,8 @@
 #
 # You should have received a copy of the GNU Lesser General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>
-
-# Stonecutter
-sc.forge=1.21.3-53.1.10
-# 53 is 1.21.3, 54 is 1.21.4.
-sc.platform-requirement=[53,54)
+#
+# List of "Beta" versions. See README.md for more information.
+# Empty lines and lines starting with "#" are ignored.
+#TODO(VidTu): Port.
+#26.2
