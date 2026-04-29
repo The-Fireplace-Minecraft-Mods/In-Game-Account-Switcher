@@ -1,0 +1,426 @@
+#!/bin/sh
+#
+# In-Game Account Switcher is a third-party mod for Minecraft Java Edition that
+# allows you to change your logged in account in-game, without restarting it.
+#
+# Copyright (C) 2015-2022 The_Fireplace
+# Copyright (C) 2021-2026 VidTu
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Lesser General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>
+
+# This script helps me publish IAS effortlessly onto GitHub,
+# Modrinth, CurseForge, and Discord. It does the following:
+#
+# 1.  Checks that all required (CLI) tools are installed.
+# 2.  Extracts the actual mod version from 'gradle.properties'.
+# 3.  Guesses the version flavor based on the version string:
+#     - "alpha" or "snapshot" versions will become Alpha
+#       on Modrinth/CurseForge and Pre-Release on GitHub.
+#     - "beta" or "rc" versions will become Beta on
+#       Modrinth/CurseForge and Pre-Release on GitHub.
+#     - Other versions will become Release on GitHub/Modrinth/CurseForge.
+# 4.  Locates and checks the JAR files in the 'build/libs' folder.
+# 5.  Sources the authentication tokens from the environment.
+#     - GitHub token is sourced from UPLOAD_GITHUB_TOKEN.
+#     - Modrinth token is sourced from UPLOAD_MODRINTH_TOKEN.
+#     - CurseForge token is sourced from UPLOAD_CURSEFORGE_TOKEN.
+#     - Discord webhook URL is sourced from UPLOAD_DISCORD_WEBHOOK.
+#     - Additional sourcing is done by executing 'dev/.env' file. It is
+#       an optional Git-ignored shell script, you can paste tokens
+#       as-is or do custom sourcing (like from a password manager).
+# 6.  If tokens aren't found, errors and stops.
+# 7.  Asks the user for the Markdown changelog in some $EDITOR. (vim/nano)
+# 8.  Does some hackery to make changelogs on Modrinth/CurseForge/Discord
+#     appear the same as they do on GitHub. (e.g., adds the issue/PR hyperlinks,
+#     "Full Changelog" Git tag comparisons on GitHub hyperlinks and more)
+# 9.  Shows the changelog and asks for the final confirmation.
+# 10. Publishes to GitHub. (In multiple steps to support Immutable Releases)
+#     - Creates a Draft release, attaches all metadata but files. (mutable)
+#     - Attaches the file assets to the release.
+#     - Publishes it, making it immutable.
+# 11. Uploads to Modrinth.
+# 12. Uploads to CurseForge.
+#     - Funny part: Uploading might fail, because CurseForge API(!) endpoint
+#       designed for CI/CD and programmatic access in general might show a
+#       Cloudflare Turnstile CAPTCHA page. If that happens, it will ask user
+#       if they wanna do a "shady tactic", that is, use a Chromium/Chrome
+#       browser to solve the antibot challenge and retrieve the "clearance"
+#       cookie to attempt a second upload pretending to be a human.
+#     - The process is fully automated (including navigating to the CAPTCHA
+#       page, extracting the cookies, closing the browser), except the CAPTCHA
+#       solving, although it might solve on it self via Cloudflare magic.
+# 13. Notifies via the webhook on Discord.
+#
+# This script is adapted from the GitHub:VidTu/Ksyxis repository.
+#
+# Required CLI tools:
+#  cat cut curl grep jq mktemp sed sh tr
+# Additional required CLI tools for shady CurseForge tactic:
+#  kill mkfifo websocat (+ ANY of the Chromium-alike browsers: chromium
+#  ungoogled-chromium chrome google-chrome brave-browser microsoft-edge)
+#
+# Any POSIX shell should work, no bash-isms used (intentionally). The script
+# should be system-agnostic, but was tested with MinGW (Windows) and Debian.
+
+# Fail on error, fail on unbound variable, pipefail mode.
+set -euo pipefail
+
+# This function downloads and opens the Chromium browser (yes, you read
+# that right), in case CurseForge's API(!!!) endpoint returns a Cloudflare
+# Turnstile anti-bot page. I have NO idea who put TURNSTILE ONTO AN API
+# ENDPOINT, but here we are. After challenge is passed, cookies from the
+# Chromium are extracted and used to obtain clearance from the Cloudflare.
+upload_curseforge_clearance() {
+    # :boar: :closed_lock_with_key:
+    echo '>>>>> SHADY MODE ENABLED <<<<<'
+
+    # Test the shady tools.
+    echo 'Checking shady tools...'
+    UPLOAD_CURSEFORGE_SHADY_TOOLS='kill mkfifo websocat'
+    UPLOAD_CURSEFORGE_SHADY_BROWSERS='chromium ungoogled-chromium chrome google-chrome brave-browser microsoft-edge'
+    for UPLOAD_CURSEFORGE_SHADY_TOOL in $UPLOAD_CURSEFORGE_SHADY_TOOLS; do
+        command -v "${UPLOAD_CURSEFORGE_SHADY_TOOL}" >/dev/null || { echo "ERROR: Missing command '${UPLOAD_CURSEFORGE_SHADY_TOOL}'. All needed shady tools: ${UPLOAD_CURSEFORGE_SHADY_TOOLS} (plus any Chromium-alike browser at your choice: ${UPLOAD_CURSEFORGE_SHADY_BROWSERS})"; exit 1; }
+    done
+    for UPLOAD_CURSEFORGE_SHADY_BROWSER in $UPLOAD_CURSEFORGE_SHADY_BROWSERS; do
+        command -v "${UPLOAD_CURSEFORGE_SHADY_BROWSER}" >/dev/null && UPLOAD_CURSEFORGE_SHADY_CHROME="${UPLOAD_CURSEFORGE_SHADY_BROWSER}" && echo "Will use '${UPLOAD_CURSEFORGE_SHADY_BROWSER}' as Chromium-alike browser." && break
+    done
+    if [ -z "${UPLOAD_CURSEFORGE_SHADY_CHROME:-}" ]; then
+        echo "ERROR: Missing some Chromium-alike browser. All needed shady tools: ${UPLOAD_CURSEFORGE_SHADY_TOOLS}. (plus any Chromium-alike browser at your choice: ${UPLOAD_CURSEFORGE_SHADY_BROWSERS})"
+        exit 1
+    fi
+    echo 'Found all needed shady tools.'
+
+    # Create a temporary working directory.
+    echo 'Creating a working directory...'
+    UPLOAD_CURSEFORGE_SHADY_DIR=$(mktemp -dt ias.upload-shady.XXXXXXX)
+    echo "Created a working directory: ${UPLOAD_CURSEFORGE_SHADY_DIR}"
+
+    # Launch Chromium.
+    echo 'Launching Chromium...'
+    "${UPLOAD_CURSEFORGE_SHADY_CHROME}" --app='http://0.0.0.0:0/' --window-size=854,480 --user-data-dir="${UPLOAD_CURSEFORGE_SHADY_DIR}/data" --remote-debugging-port=9222 --incognito --disable-gpu --no-first-run --password-store=basic &
+    UPLOAD_CURSEFORGE_SHADY_ID1="${!}"
+    echo "Launched Chromium: ${UPLOAD_CURSEFORGE_SHADY_ID1}"
+
+    # Extract the socket data.
+    echo 'Extracting the debug endpoint...'
+    UPLOAD_CURSEFORGE_SHADY_ENDPOINT=$(curl --fail-with-body --retry 5 --retry-all-errors --max-time 30 'http://localhost:9222/json' | jq --raw-output '.[] | select(.type == "page") | .webSocketDebuggerUrl')
+    echo "Extracted the debug endpoint: ${UPLOAD_CURSEFORGE_SHADY_ENDPOINT}"
+
+    # Create helper FIFOs.
+    echo 'Creating helper FIFOs...'
+    UPLOAD_CURSEFORGE_SHADY_FIFO1="${UPLOAD_CURSEFORGE_SHADY_DIR}/fifo1"
+    UPLOAD_CURSEFORGE_SHADY_FIFO2="${UPLOAD_CURSEFORGE_SHADY_DIR}/fifo2"
+    mkfifo "${UPLOAD_CURSEFORGE_SHADY_FIFO1}"
+    mkfifo "${UPLOAD_CURSEFORGE_SHADY_FIFO2}"
+    echo "Created helper FIFOs: ${UPLOAD_CURSEFORGE_SHADY_FIFO1} ${UPLOAD_CURSEFORGE_SHADY_FIFO2}"
+
+    # Open a websocket.
+    echo 'Opening a websocket...'
+    echo '{"id":1,"method":"Page.enable"}
+{"id":2,"method":"Network.enable"}
+{"id":3,"method":"Page.navigate","params":{"url":"https://minecraft.curseforge.com/api/"}}' | websocat --no-close "${UPLOAD_CURSEFORGE_SHADY_ENDPOINT}" > "${UPLOAD_CURSEFORGE_SHADY_FIFO1}" &
+    UPLOAD_CURSEFORGE_SHADY_ID2="${!}"
+    echo "Opened a websocket: ${UPLOAD_CURSEFORGE_SHADY_ID2}"
+
+    # Start the data extractor.
+    echo 'Starting the data extractor...'
+    cat "${UPLOAD_CURSEFORGE_SHADY_FIFO1}" | jq --unbuffered --compact-output 'select(.method == "Network.requestWillBeSentExtraInfo") | select(.params?.headers?.cookie) | select(.params?.headers?.cookie | test("cf_clearance=")) | select(.params.headers.":method" == "GET") | .params.headers | with_entries(select(.key | startswith(":") | not))' > "${UPLOAD_CURSEFORGE_SHADY_FIFO2}" &
+    UPLOAD_CURSEFORGE_SHADY_ID3="${!}"
+    echo "Started the data extractor: ${UPLOAD_CURSEFORGE_SHADY_ID3}"
+
+    # Wait.
+    echo 'Waiting for challenge solution...'
+    UPLOAD_CURSEFORGE_SHADY_HEADERS=$(head -n1 "${UPLOAD_CURSEFORGE_SHADY_FIFO2}")
+    echo "Challenge solved: ${UPLOAD_CURSEFORGE_SHADY_HEADERS}"
+
+    # Kill the websocket.
+    echo 'Killing the websocket...'
+    kill -9 "${UPLOAD_CURSEFORGE_SHADY_ID2}"
+    wait "${UPLOAD_CURSEFORGE_SHADY_ID2}" >/dev/null 2>&1 || true
+    kill -9 "${UPLOAD_CURSEFORGE_SHADY_ID3}"
+    wait "${UPLOAD_CURSEFORGE_SHADY_ID3}" >/dev/null 2>&1 || true
+    echo 'Killed the websocket.'
+
+    # Close Chromium.
+    echo 'Closing Chromium...'
+    echo '{"id":4,"method":"Browser.close"}' | websocat --one-message "${UPLOAD_CURSEFORGE_SHADY_ENDPOINT}"
+    wait "${UPLOAD_CURSEFORGE_SHADY_ID1}" >/dev/null 2>&1 || true
+    echo 'Closed Chromium.'
+
+    # Clean the directory.
+    echo 'Cleaning the working directory...'
+    rm -rf -- "${UPLOAD_CURSEFORGE_SHADY_DIR}"
+    echo 'Cleaned the working directory.'
+
+    # Extract the User-Agent and Cookies.
+    echo 'Extracting headers...'
+    UPLOAD_CURSEFORGE_SHADY_USER_AGENT=$(echo "${UPLOAD_CURSEFORGE_SHADY_HEADERS}" | jq --raw-output '."user-agent"')
+    UPLOAD_CURSEFORGE_SHADY_COOKIE=$(echo "${UPLOAD_CURSEFORGE_SHADY_HEADERS}" | jq --raw-output '.cookie')
+    echo "Shady user agent: ${UPLOAD_CURSEFORGE_SHADY_USER_AGENT}"
+    echo "Shady cookie(s): ${UPLOAD_CURSEFORGE_SHADY_COOKIE}"
+
+    # Done.
+    echo '<<<<< SHADY MODE DISABLED >>>>>'
+}
+
+# Begin.
+echo 'NOTE: Uploading IAS...'
+
+# Test the tools.
+echo 'Checking tools...'
+UPLOAD_TOOLS='cat cut curl grep jq mktemp sed tr'
+for UPLOAD_TOOL in $UPLOAD_TOOLS; do
+    command -v "${UPLOAD_TOOL}" >/dev/null || { echo "ERROR: Missing command '${UPLOAD_TOOL}'. All needed tools: ${UPLOAD_TOOLS}"; exit 1; }
+done
+command -v "${EDITOR:-vi}" >/dev/null || { echo "ERROR: Missing editor set via EDITOR: ${EDITOR:-vi}"; exit 1; }
+echo 'Found all needed tools.'
+
+# Source the version.
+echo "Extracting the version from 'gradle.properties'..."
+UPLOAD_VERSION=$(grep -F 'version=' '../gradle.properties' | sed 's/version=//g')
+UPLOAD_VERSION_JSON=$(echo "${UPLOAD_VERSION}" | jq --raw-input --compact-output)
+echo "NOTE: Version: ${UPLOAD_VERSION}"
+
+# Create a display name.
+UPLOAD_NAME="IAS ${UPLOAD_VERSION}"
+UPLOAD_NAME_JSON=$(echo "${UPLOAD_NAME}" | jq --raw-input --compact-output)
+echo "NOTE: Name: ${UPLOAD_VERSION}"
+
+# Guess version type.
+echo 'Guessing the version type...'
+UPLOAD_VERSION_PRE='false'
+UPLOAD_VERSION_TYPE='release'
+echo "${UPLOAD_VERSION}" | grep -Eiq -- '-(beta|rc)' && UPLOAD_VERSION_TYPE='beta'
+echo "${UPLOAD_VERSION}" | grep -Eiq -- '-(alpha|snapshot)' && UPLOAD_VERSION_TYPE='alpha'
+[ "${UPLOAD_VERSION_TYPE}" != 'release' ] && UPLOAD_VERSION_PRE='true'
+echo "NOTE: Version Pre-Release (GitHub): ${UPLOAD_VERSION_PRE}"
+echo "NOTE: Version Type (Modrinth/CurseForge): ${UPLOAD_VERSION_TYPE}"
+
+# Extract the versions into a temporary file.
+echo 'Extracting the versions into a temporary file...'
+UPLOAD_VERSIONS_TEMP=$(mktemp -t 'ias.upload-versions.XXXXXXX.txt')
+grep -Evh '^#|^$' 'versions/versions_active.txt' 'versions/versions_legacy.txt' > "${UPLOAD_VERSIONS_TEMP}"
+echo "Extracted the versions into: ${UPLOAD_VERSIONS_TEMP}"
+
+# Find the JARs.
+echo 'Checking all JAR files...'
+UPLOAD_VERSIONS_IGNORED=$(grep -Evh '^#|^$' 'versions/ignored.txt')
+UPLOAD_FILES=""
+while read -r UPLOAD_MC; do
+    for UPLOAD_TYPE in fabric forge neoforge; do
+        UPLOAD_ID="${UPLOAD_MC}-${UPLOAD_TYPE}"
+        # Check if ignored.
+        if ! echo "${UPLOAD_VERSIONS_IGNORED}" | grep -Fxq "${UPLOAD_ID}"; then
+            # Check if JAR exists.
+            UPLOAD_FILENAME="IAS-${UPLOAD_VERSION}+${UPLOAD_ID}.jar"
+            UPLOAD_FILE="../build/libs/${UPLOAD_FILENAME}"
+            [ ! -f "${UPLOAD_FILE}" ] && echo "ERROR: Missing '${UPLOAD_FILENAME}' JAR file." && rm -- "${UPLOAD_VERSIONS_TEMP}" && exit 1
+
+            # Add the JAR.
+            UPLOAD_FILES="${UPLOAD_FILES}${UPLOAD_FILE}
+"
+        fi
+    done
+done < "${UPLOAD_VERSIONS_TEMP}"
+rm -- "${UPLOAD_VERSIONS_TEMP}"
+UPLOAD_FILES="${UPLOAD_FILES%?}"
+UPLOAD_FILES=$(echo "${UPLOAD_FILES}" | sort -V)
+echo 'Found all needed JAR files.'
+
+# Source the '.env' file.
+if [ -f '.env' ]; then
+    echo "Sourcing '.env'..."
+    . ./.env
+    echo "Sourced '.env'."
+else
+    echo "Missing '.env', not sourced."
+fi
+
+# Verify the tokens.
+echo 'Checking the tokens...'
+[ -z "${UPLOAD_GITHUB_SKIP:-}" ] && [ -z "${UPLOAD_GITHUB_TOKEN:-}" ] && echo "ERROR: Missing UPLOAD_GITHUB_TOKEN. Use '.env' file in 'dev' or your shell's environment variables." && exit 1
+[ -z "${UPLOAD_MODRINTH_SKIP:-}" ] && [ -z "${UPLOAD_MODRINTH_TOKEN:-}" ] && echo "ERROR: Missing UPLOAD_MODRINTH_TOKEN. Use '.env' file in 'dev' or your shell's environment variables." && exit 1
+[ -z "${UPLOAD_CURSEFORGE_SKIP:-}" ] && [ -z "${UPLOAD_CURSEFORGE_TOKEN:-}" ] && echo "ERROR: Missing UPLOAD_CURSEFORGE_TOKEN. Use '.env' file in 'dev' or your shell's environment variables." && exit 1
+[ -z "${UPLOAD_DISCORD_SKIP:-}" ] && [ -z "${UPLOAD_DISCORD_WEBHOOK:-}" ] && echo "ERROR: Missing UPLOAD_DISCORD_WEBHOOK. Use '.env' file in 'dev' or your shell's environment variables." && exit 1
+echo 'All tokens found.'
+
+# Create a temporary file for the changelog.
+echo 'Preparing a changelog template...'
+UPLOAD_CHANGELOG_FILE=$(mktemp -t ias.upload-changelog.XXXXXXX.md)
+echo "Created a changelog template: ${UPLOAD_CHANGELOG_FILE}"
+
+# Write a hint for the changelog.
+echo 'Writing the changelog template...'
+echo "What's new:
+
+- [CHANGELOG]
+
+**Full Changelog**: https://github.com/The-Fireplace-Minecraft-Mods/In-Game-Account-Switcher/compare/[PREV]...${UPLOAD_VERSION}" > "${UPLOAD_CHANGELOG_FILE}"
+echo 'Written the changelog template.'
+
+# Edit the changelog with an editor. (fallback to an unquittable one)
+echo 'Opening the changelog file in the editor...'
+"${EDITOR:-vi}" -- "${UPLOAD_CHANGELOG_FILE}"
+echo 'Finished editing the changelog file.'
+
+# Check if the changelog is not empty.
+echo 'Checking the changelog...'
+grep -Eq '\S' -- "${UPLOAD_CHANGELOG_FILE}" || { echo 'ERROR: Empty changelog.' && rm -- "${UPLOAD_CHANGELOG_FILE}" && exit 1; }
+
+# Read and format the changelog.
+UPLOAD_CHANGELOG=$(cat -- "${UPLOAD_CHANGELOG_FILE}")
+rm -- "${UPLOAD_CHANGELOG_FILE}"
+UPLOAD_CHANGELOG_JSON=$(echo "${UPLOAD_CHANGELOG}" | jq --raw-input --slurp --compact-output)
+UPLOAD_CHANGELOG_MODIFIED=$(echo "${UPLOAD_CHANGELOG}" | sed -Ee 's/^\*\*Full Changelog\*\*: (https:\/\/github.com\/The-Fireplace-Minecraft-Mods\/In-Game-Account-Switcher\/compare\/(.*))$/**Full Changelog**: [\2](\1)/g' -e 's/(issue|PR): #([0-9]+)/\1: [#\2](https:\/\/github.com\/The-Fireplace-Minecraft-Mods\/In-Game-Account-Switcher\/issues\/\2)/g')
+UPLOAD_CHANGELOG_MODIFIED_JSON=$(echo "${UPLOAD_CHANGELOG_MODIFIED}" | jq --raw-input --slurp --compact-output)
+UPLOAD_CHANGELOG_DISCORD=$(echo "${UPLOAD_CHANGELOG_MODIFIED}" | tr '\n' '\r' | sed 's/\r\r/\r/g' | tr '\r' '\n')
+UPLOAD_CHANGELOG_DISCORD_JSON=$(echo "${UPLOAD_CHANGELOG_DISCORD}" | jq --raw-input --slurp --compact-output)
+
+# Print the changelog.
+echo '===== CHANGELOG START ====='
+echo "${UPLOAD_CHANGELOG}"
+echo '===== CHANGELOG END ====='
+
+# Final confirmation.
+echo 'Ready to upload. Press Enter to confirm, terminate (CTRL+C) to cancel.'
+read -r _
+
+# Skip GitHub, if desired.
+if [ -z "${UPLOAD_GITHUB_SKIP:-}" ]; then
+    # Create a GitHub release draft.
+    echo 'Creating a GitHub release draft...'
+    UPLOAD_GITHUB_DRAFT=$(curl --fail-with-body --max-time 30 --retry 3 --request POST --header 'Content-Type: application/json' --header "Authorization: Bearer ${UPLOAD_GITHUB_TOKEN}" --data-raw "{\"tag_name\":${UPLOAD_VERSION_JSON},\"name\":${UPLOAD_NAME_JSON},\"body\":${UPLOAD_CHANGELOG_JSON},\"draft\":true,\"prerelease\":${UPLOAD_VERSION_PRE}}" 'https://api.github.com/repos/The-Fireplace-Minecraft-Mods/In-Game-Account-Switcher/releases')
+    echo 'Created a GitHub release draft.'
+
+    # Extract the GitHub release ID.
+    echo 'Extracting the GitHub release draft ID...'
+    UPLOAD_GITHUB_ID=$(echo "${UPLOAD_GITHUB_DRAFT}" | jq --raw-output '.id')
+    echo "Extracted the GitHub release draft ID: ${UPLOAD_GITHUB_ID}"
+
+    # Upload the files to the GitHub release draft.
+    echo 'Uploading files to the GitHub release draft...'
+    echo "${UPLOAD_FILES}" | while read -r UPLOAD_FILE; do
+        UPLOAD_FILENAME=$(basename -- "${UPLOAD_FILE}")
+        echo "Uploading file '${UPLOAD_FILENAME}'..."
+        curl --fail-with-body --max-time 30 --retry 3 --request POST --header 'Content-Type: application/java-archive' --header "Authorization: Bearer ${UPLOAD_GITHUB_TOKEN}" --url-query "name=${UPLOAD_FILENAME}" --data-binary "@${UPLOAD_FILE}" "https://uploads.github.com/repos/The-Fireplace-Minecraft-Mods/In-Game-Account-Switcher/releases/${UPLOAD_GITHUB_ID}/assets"
+        echo 'Uploaded.'
+    done
+    echo 'Uploaded files to the GitHub release draft.'
+
+    # Publish a GitHub release from the draft.
+    echo 'Publishing a GitHub release from the draft...'
+    curl --fail-with-body --max-time 30 --retry 3 --request PATCH --header 'Content-Type: application/json' --header "Authorization: Bearer ${UPLOAD_GITHUB_TOKEN}" --data-raw '{"draft":false}' "https://api.github.com/repos/The-Fireplace-Minecraft-Mods/In-Game-Account-Switcher/releases/${UPLOAD_GITHUB_ID}"
+    echo 'Published a GitHub release from the draft.'
+fi
+
+# Skip Modrinth, if desired.
+if [ -z "${UPLOAD_MODRINTH_SKIP:-}" ]; then
+    # Create Modrinth releases.
+    echo 'Publishing Modrinth release...'
+    echo "${UPLOAD_FILES}" | while read -r UPLOAD_FILE; do
+        # Extract data.
+        UPLOAD_FILENAME=$(basename -- "${UPLOAD_FILE}")
+        echo "Extracting data for '${UPLOAD_FILENAME}'..."
+        UPLOAD_ID=$(echo "${UPLOAD_FILENAME}" | sed -E 's/^.*\+(.*)\..*$/\1/g')
+        UPLOAD_MC=$(echo "${UPLOAD_ID}" | cut -d- -f1)
+        UPLOAD_TYPE=$(echo "${UPLOAD_ID}" | cut -d- -f2)
+        UPLOAD_MODRINTH_GAME_VERSIONS_JSON="[$(echo "${UPLOAD_MC}" | jq --raw-input --compact-output)]"
+        if [ "${UPLOAD_TYPE}" == 'fabric' ]; then
+            UPLOAD_MODRINTH_LOADERS_JSON='["fabric","quilt"]'
+            UPLOAD_MODRINTH_DEPENDENCIES_JSON='[{"project_id":"P7dR8mSH","dependency_type":"required"},{"project_id":"mOgUt4GM","dependency_type":"optional"}]'
+        else
+            UPLOAD_MODRINTH_LOADERS_JSON="[$(echo "${UPLOAD_TYPE}" | jq --raw-input --compact-output)]"
+            UPLOAD_MODRINTH_DEPENDENCIES_JSON='[]'
+        fi
+        
+        # Upload.
+        echo "Uploading '${UPLOAD_FILENAME}'... (version: '${UPLOAD_MC}', loader: '${UPLOAD_TYPE}', supported versions: ${UPLOAD_MODRINTH_GAME_VERSIONS_JSON}, supported loaders: ${UPLOAD_MODRINTH_LOADERS_JSON}, dependencies: ${UPLOAD_MODRINTH_DEPENDENCIES_JSON})"
+        curl --fail-with-body --max-time 30 --retry 3 --request POST --header "Authorization: ${UPLOAD_MODRINTH_TOKEN}" --form-string "data={\"name\":${UPLOAD_NAME_JSON},\"version_number\":${UPLOAD_VERSION_JSON},\"changelog\":${UPLOAD_CHANGELOG_MODIFIED_JSON},\"dependencies\":${UPLOAD_MODRINTH_DEPENDENCIES_JSON},\"game_versions\":${UPLOAD_MODRINTH_GAME_VERSIONS_JSON},\"version_type\":\"${UPLOAD_VERSION_TYPE}\",\"loaders\":${UPLOAD_MODRINTH_LOADERS_JSON},\"featured\":false,\"status\":\"listed\",\"requested_status\":\"listed\",\"project_id\":\"cudtvDnd\",\"file_parts\":[\"${UPLOAD_FILENAME}\"],\"primary_file\":\"${UPLOAD_FILENAME}\"}" --form "${UPLOAD_FILENAME}=@${UPLOAD_FILE}" 'https://api.modrinth.com/v2/version'
+        echo 'Uploaded.'
+    done
+    echo 'Published Modrinth releases.'
+fi
+
+# Skip CurseForge, if desired.
+if [ -z "${UPLOAD_CURSEFORGE_SKIP:-}" ]; then
+    # Obtain CurseForge version IDs.
+    # Loader IDs (not obtained):
+    # - Fabric: 7499
+    # - Forge: 7498
+    # - NeoForge: 10150
+    # - Quilt: 9153
+    echo 'Obtaining CurseForge versions...'
+    UPLOAD_CURSEFORGE_VERSIONS=$(curl --fail-with-body --max-time 30 --retry 3 'https://api.curseforge.com/v1/minecraft/version' | jq '.data | map({key: .versionString, value: .gameVersionId}) | from_entries')
+    echo "Obtained CurseForge versions: ${UPLOAD_CURSEFORGE_VERSIONS_MAP}"
+
+    # Create CurseForge releases.
+    # Obtain versions:  | jq -r '.data.[] | .versionString + ": " + (.gameVersionId|tostring)'
+    echo 'Publishing CurseForge releases...'
+    echo "${UPLOAD_FILES}" | while read -r UPLOAD_FILE; do
+        # Extract data.
+        UPLOAD_FILENAME=$(basename -- "${UPLOAD_FILE}")
+        echo "Extracting data for '${UPLOAD_FILENAME}'..."
+        UPLOAD_ID=$(echo "${UPLOAD_FILENAME}" | sed -E 's/^.*\+(.*)\..*$/\1/g')
+        UPLOAD_MC=$(echo "${UPLOAD_ID}" | cut -d- -f1)
+        UPLOAD_TYPE=$(echo "${UPLOAD_ID}" | cut -d- -f2)
+        if [ "${UPLOAD_TYPE}" == 'fabric' ]; then
+            UPLOAD_CURSEFORGE_GAME_VERSIONS_JSON="[$(echo "${UPLOAD_CURSEFORGE_VERSIONS}" | jq ".\"${UPLOAD_MC}\""),7499,9153]"
+        elif [ "${UPLOAD_TYPE}" == 'forge' ]; then
+            UPLOAD_CURSEFORGE_GAME_VERSIONS_JSON="[$(echo "${UPLOAD_CURSEFORGE_VERSIONS}" | jq ".\"${UPLOAD_MC}\""),7498]"
+        elif [ "${UPLOAD_TYPE}" == 'neoforge' ]; then
+            UPLOAD_CURSEFORGE_GAME_VERSIONS_JSON="[$(echo "${UPLOAD_CURSEFORGE_VERSIONS}" | jq ".\"${UPLOAD_MC}\""),10150]"
+        else
+            echo "ERROR: Unknown upload type: ${UPLOAD_TYPE}"
+            exit 1
+        fi
+
+        # Upload.
+        echo "Uploading '${UPLOAD_FILENAME}'... (version: '${UPLOAD_MC}', loader: '${UPLOAD_TYPE}', supported magic numbers: ${UPLOAD_CURSEFORGE_GAME_VERSIONS_JSON})"
+        UPLOAD_CURSEFORGE_RESPONSE=$(curl --write-out '\n%{http_code}' --max-time 30 --retry 3 --request POST --header "X-Api-Token: ${UPLOAD_CURSEFORGE_TOKEN}" --form-string "metadata={\"changelog\":${UPLOAD_CHANGELOG_MODIFIED_JSON},\"changelogType\":\"markdown\",\"displayName\":${UPLOAD_NAME_JSON},\"gameVersions\":${UPLOAD_CURSEFORGE_GAME_VERSIONS_JSON},\"releaseType\":\"${UPLOAD_VERSION_TYPE}\"}" --form "file=@${UPLOAD_FILE}" 'https://minecraft.curseforge.com/api/projects/232676/upload-file')
+        UPLOAD_CURSEFORGE_RESPONSE_CODE=$(echo "${UPLOAD_CURSEFORGE_RESPONSE}" | tail -n1)
+        UPLOAD_CURSEFORGE_RESPONSE_BODY=$(echo "${UPLOAD_CURSEFORGE_RESPONSE}" | head -n-1)
+        if [ "${UPLOAD_CURSEFORGE_RESPONSE_CODE}" -eq 403 ] && echo "${UPLOAD_CURSEFORGE_RESPONSE_BODY}" | grep -Fq 'challenges.cloudflare.com'; then
+            # CurseForge CloudFlare Turnstile kicked in.
+            echo 'CurseForge requires passing the bot check (lol) on the API endpoint (lmao).'
+
+            # Shady confirmation.
+            echo 'Will need to use a Chromium browser to pass the CAPTCHA. This is a shady tactic, proceed at your own risk. Press Enter to confirm, terminate (CTRL+C) to cancel.'
+            read -r _
+
+            # Get the clearance headers.
+            echo 'Attempting to get CurseForge clearance...'
+            upload_curseforge_clearance
+            echo 'Got CurseForge clearance.'
+
+            # Upload.
+            curl --fail-with-body --max-time 30 --retry 3 --request POST --header "User-Agent: ${UPLOAD_CURSEFORGE_SHADY_USER_AGENT}" --header "Cookie: ${UPLOAD_CURSEFORGE_SHADY_COOKIE}" --header "X-Api-Token: ${UPLOAD_CURSEFORGE_TOKEN}" --form-string "metadata={\"changelog\":${UPLOAD_CHANGELOG_MODIFIED_JSON},\"changelogType\":\"markdown\",\"displayName\":${UPLOAD_NAME_JSON},\"gameVersions\":${UPLOAD_CURSEFORGE_GAME_VERSIONS_JSON},\"releaseType\":\"${UPLOAD_VERSION_TYPE}\"}" --form "file=@${UPLOAD_FILE}" 'https://minecraft.curseforge.com/api/projects/232676/upload-file'
+        elif [ "${UPLOAD_CURSEFORGE_RESPONSE_CODE}" -lt 200 ] || [ "${UPLOAD_CURSEFORGE_RESPONSE_CODE}" -ge 300 ]; then
+            echo "ERROR: Failed CurseForge upload: ${UPLOAD_CURSEFORGE_RESPONSE}"
+            exit 1
+        fi
+        echo 'Uploaded.'
+    done
+    echo 'Published CurseForge releases.'
+
+
+fi
+
+# Skip Discord, if desired.
+if [ -z "${UPLOAD_DISCORD_SKIP:-}" ]; then
+    # Notify via a Discord webhook notification.
+    echo 'Publishing a Discord webhook notification...'
+    UPLOAD_DISCORD_TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:00.000Z")
+    curl --fail-with-body --max-time 30 --retry 3 --request POST --header 'Content-Type: application/json' --data-raw "{\"embeds\":[{\"title\":${UPLOAD_NAME_JSON},\"description\":${UPLOAD_CHANGELOG_DISCORD_JSON},\"color\":16711680,\"fields\":[{\"name\":\"Download\",\"value\":\"<:modrinth:1495154733017595964> Modrinth: https://modrinth.com/mod/in-game-account-switcher\n<:curseforge:1495193223180718241> CurseForge: https://curseforge.com/minecraft/mc-mods/in-game-account-switcher\n<:github:1495153741412696216> GitHub: https://github.com/The-Fireplace-Minecraft-Mods/In-Game-Account-Switcher/releases\"}],\"author\":{\"name\":\"VidTu\",\"url\":\"https://github.com/VidTu\",\"icon_url\":\"https://cdn.discordapp.com/avatars/339357082602176513/f82f8e810b31903775ed304d07319b1f.png?size=2048\"},\"footer\":{\"text\":\"In-Game Account Switcher: Allows you to change your account in-game.\",\"icon_url\":\"https://cdn.discordapp.com/avatars/1498995160153854073/2ea4851d7a6ff385559d560b6a0d2adb.png?size=2048\"},\"timestamp\":\"${UPLOAD_DISCORD_TIMESTAMP}\"}],\"components\":[{\"type\":1,\"components\":[{\"type\":2,\"style\":5,\"label\":\"Modrinth\",\"url\":\"https://modrinth.com/mod/in-game-account-switcher\",\"emoji\":{\"name\":\"modrinth\",\"id\":1495154733017595964}},{\"type\":2,\"style\":5,\"label\":\"CurseForge\",\"url\":\"https://curseforge.com/minecraft/mc-mods/in-game-account-switcher\",\"emoji\":{\"name\":\"curseforge\",\"id\":1495193223180718241}},{\"type\":2,\"style\":5,\"url\":\"https://github.com/The-Fireplace-Minecraft-Mods/In-Game-Account-Switcher/releases\",\"label\":\"GitHub\",\"emoji\":{\"name\":\"github\",\"id\":1495153741412696216}}]}]}" "${UPLOAD_DISCORD_WEBHOOK}?with_components=true"
+    echo "Published a Discord webhook notification. !!! DON'T FORGET TO CLICK 'PUBLISH' ON IT. !!!"
+fi
