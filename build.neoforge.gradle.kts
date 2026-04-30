@@ -71,13 +71,14 @@ sc {
     properties.tags(mcv, "neoforge")
 }
 
-// Migration helper.
-sourceSets["main"].java.srcDir("src/_legacy/_shared")
+// Migration helper start.
+sourceSets["main"].java.srcDir(rootDir.resolve("src/_legacy/_shared"))
 if (mcp <= "1.21.5") {
-    sourceSets["main"].java.srcDir("src/_legacy/${mcv}/root")
-    sourceSets["main"].java.srcDir("src/_legacy/${mcv}/neoforge")
+    sourceSets["main"].java.srcDir(rootDir.resolve("src/_legacy/${mcv}/root"))
+    sourceSets["main"].java.srcDir(rootDir.resolve("src/_legacy/${mcv}/neoforge"))
     sourceSets["main"].java.setSrcDirs(sourceSets["main"].java.srcDirs.filter { !"${it}".contains("stonecutter") })
 }
+// Migration helper end.
 
 // Set up runs.
 runs {
@@ -120,7 +121,14 @@ dependencies {
 
 // Compile with UTF-8, compatible Java, and with all debug options.
 tasks.withType<JavaCompile> {
-    source(rootDir.resolve("src/_legacy/_shared")) // Migration helper.
+    // Migration helper start.
+    source(rootDir.resolve("src/_legacy/_shared"))
+    if (mcp <= "1.21.5") {
+        source(rootDir.resolve("src/_legacy/${mcv}/root"))
+        source(rootDir.resolve("src/_legacy/${mcv}/neoforge"))
+    }
+    // Migration helper end.
+
     options.encoding = "UTF-8"
     options.compilerArgs.addAll(listOf("-g", "-parameters"))
     options.release = javaTarget

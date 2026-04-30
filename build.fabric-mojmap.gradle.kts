@@ -70,8 +70,9 @@ sc {
     properties.tags(mcv, "fabric")
 }
 
-// Migration helper.
-sourceSets["main"].java.srcDir("src/_legacy/_shared")
+// Migration helper start.
+sourceSets["main"].java.srcDir(rootDir.resolve("src/_legacy/_shared"))
+// Migration helper end.
 
 loom {
     // Use debug logging config.
@@ -151,7 +152,10 @@ dependencies {
 
 // Compile with UTF-8, compatible Java, and with all debug options.
 tasks.withType<JavaCompile> {
-    source(rootDir.resolve("src/_legacy/_shared")) // Migration helper.
+    // Migration helper start.
+    source(rootDir.resolve("src/_legacy/_shared"))
+    // Migration helper end.
+
     options.encoding = "UTF-8"
     options.compilerArgs.addAll(listOf("-g", "-parameters"))
     options.release = javaTarget

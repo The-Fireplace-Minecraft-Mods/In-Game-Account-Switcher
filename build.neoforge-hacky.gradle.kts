@@ -68,9 +68,9 @@ sc {
 }
 
 // Migration helper.
-sourceSets["main"].java.srcDir("src/_legacy/_shared")
-sourceSets["main"].java.srcDir("src/_legacy/1.20.1/root")
-sourceSets["main"].java.srcDir("src/_legacy/1.20.1/neoforge")
+sourceSets["main"].java.srcDir(rootDir.resolve("src/_legacy/_shared"))
+sourceSets["main"].java.srcDir(rootDir.resolve("src/_legacy/1.20.1/root"))
+sourceSets["main"].java.srcDir(rootDir.resolve("src/_legacy/1.20.1/neoforge"))
 sourceSets["main"].java.setSrcDirs(sourceSets["main"].java.srcDirs.filter { !"${it}".contains("stonecutter") })
 
 legacyForge {
@@ -146,7 +146,12 @@ dependencies {
 
 // Compile with UTF-8, compatible Java, and with all debug options.
 tasks.withType<JavaCompile> {
-    source(rootDir.resolve("src/_legacy/_shared")) // Migration helper.
+    // Migration helper start.
+    source(rootDir.resolve("src/_legacy/_shared"))
+    source(rootDir.resolve("src/_legacy/1.20.1/root"))
+    source(rootDir.resolve("src/_legacy/1.20.1/neoforge"))
+    // Migration helper end.
+
     options.encoding = "UTF-8"
     options.compilerArgs.addAll(listOf("-g", "-parameters"))
     options.release = 17
