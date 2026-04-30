@@ -281,16 +281,29 @@ grep -Eq '\S' -- "${UPLOAD_CHANGELOG_FILE}" || { echo 'ERROR: Empty changelog.' 
 # Read and format the changelog.
 UPLOAD_CHANGELOG=$(cat -- "${UPLOAD_CHANGELOG_FILE}")
 rm -- "${UPLOAD_CHANGELOG_FILE}"
-UPLOAD_CHANGELOG_JSON=$(echo "${UPLOAD_CHANGELOG}" | jq --raw-input --slurp --compact-output)
+UPLOAD_CHANGELOG_GITHUB=$(echo "${UPLOAD_CHANGELOG}" && echo && echo "### Click [here](https://github.com/The-Fireplace-Minecraft-Mods/In-Game-Account-Switcher/releases/tag/${UPLOAD_VERSION}) to see all Minecraft versions.")
+UPLOAD_CHANGELOG_GITHUB_JSON=$(echo "${UPLOAD_CHANGELOG_GITHUB}" | jq --raw-input --slurp --compact-output)
 UPLOAD_CHANGELOG_MODIFIED=$(echo "${UPLOAD_CHANGELOG}" | sed -Ee 's/^\*\*Full Changelog\*\*: (https:\/\/github.com\/The-Fireplace-Minecraft-Mods\/In-Game-Account-Switcher\/compare\/(.*))$/**Full Changelog**: [\2](\1)/g' -e 's/(issue|PR): #([0-9]+)/\1: [#\2](https:\/\/github.com\/The-Fireplace-Minecraft-Mods\/In-Game-Account-Switcher\/issues\/\2)/g')
 UPLOAD_CHANGELOG_MODIFIED_JSON=$(echo "${UPLOAD_CHANGELOG_MODIFIED}" | jq --raw-input --slurp --compact-output)
 UPLOAD_CHANGELOG_DISCORD=$(echo "${UPLOAD_CHANGELOG_MODIFIED}" | tr '\n' '\r' | sed 's/\r\r/\r/g' | tr '\r' '\n')
 UPLOAD_CHANGELOG_DISCORD_JSON=$(echo "${UPLOAD_CHANGELOG_DISCORD}" | jq --raw-input --slurp --compact-output)
 
-# Print the changelog.
-echo '===== CHANGELOG START ====='
+# Print the changelogs.
+echo '===== DEFAULT CHANGELOG START ====='
 echo "${UPLOAD_CHANGELOG}"
-echo '===== CHANGELOG END ====='
+echo '===== DEFAULT CHANGELOG END ====='
+echo
+echo '===== GITHUB CHANGELOG START ====='
+echo "${UPLOAD_CHANGELOG_GITHUB}"
+echo '===== GITHUB CHANGELOG END ====='
+echo
+echo '===== MODIFIED CHANGELOG START ====='
+echo "${UPLOAD_CHANGELOG_MODIFIED}"
+echo '===== MODIFIED CHANGELOG END ====='
+echo
+echo '===== DISCORD CHANGELOG START ====='
+echo "${UPLOAD_CHANGELOG_DISCORD}"
+echo '===== DISCORD CHANGELOG END ====='
 
 # Final confirmation.
 echo 'Ready to upload. Press Enter to confirm, terminate (CTRL+C) to cancel.'
@@ -300,7 +313,7 @@ read -r _
 if [ -z "${UPLOAD_GITHUB_SKIP:-}" ]; then
     # Create a GitHub release draft.
     echo 'Creating a GitHub release draft...'
-    UPLOAD_GITHUB_DRAFT=$(curl --fail-with-body --max-time 30 --retry 3 --request POST --header 'Content-Type: application/json' --header "Authorization: Bearer ${UPLOAD_GITHUB_TOKEN}" --data-raw "{\"tag_name\":${UPLOAD_VERSION_JSON},\"name\":${UPLOAD_NAME_JSON},\"body\":${UPLOAD_CHANGELOG_JSON},\"draft\":true,\"prerelease\":${UPLOAD_VERSION_PRE}}" 'https://api.github.com/repos/The-Fireplace-Minecraft-Mods/In-Game-Account-Switcher/releases')
+    UPLOAD_GITHUB_DRAFT=$(curl --fail-with-body --max-time 30 --retry 3 --request POST --header 'Content-Type: application/json' --header "Authorization: Bearer ${UPLOAD_GITHUB_TOKEN}" --data-raw "{\"tag_name\":${UPLOAD_VERSION_JSON},\"name\":${UPLOAD_NAME_JSON},\"body\":${UPLOAD_CHANGELOG_GITHUB_JSON},\"draft\":true,\"prerelease\":${UPLOAD_VERSION_PRE}}" 'https://api.github.com/repos/The-Fireplace-Minecraft-Mods/In-Game-Account-Switcher/releases')
     echo 'Created a GitHub release draft.'
 
     # Extract the GitHub release ID.
