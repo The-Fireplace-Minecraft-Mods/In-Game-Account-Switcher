@@ -4,6 +4,7 @@ build/
 dev/.env
 out/
 run/
+versions/
 !/.idea/codeStyles
 !/.idea/codeStyles/**
 !/.idea/copyright
@@ -14,6 +15,3 @@ run/
 !/.idea/icon.png
 !/.idea/inspectionProfiles
 !/.idea/inspectionProfiles/**
-!/.idea/modules
-!/.idea/modules.xml
-!/.idea/modules/**
