@@ -139,9 +139,7 @@ dependencies {
     compileOnly(libs.jetbrains.annotations)
     compileOnly(libs.error.prone.annotations)
 
-    // TODO(VidTu): I don't know why it can't find GLFW on the classpath
-    //  with Forge 1.18.2 on the classpath. Maybe it's a Gradle cache issue.
-    //  This is quick and dirty fix for this abomination.
+    // TODO(VidTu): https://github.com/MinecraftForge/ForgeGradle/issues/1072
     if (mcp eq "1.18.2") {
         compileOnly("org.lwjgl:lwjgl-glfw:3.2.1")
     }

@@ -9,15 +9,15 @@
   },
   "26.1.2": {
     "fabric": {
-      "api": "0.147.0+26.1.2",
+      "api": "0.148.0+26.1.2",
       "modmenu": "18.0.0-alpha.8"
     },
     "forge": {
-      "loader": "26.1.2-64.0.6",
+      "loader": "26.1.2-64.0.8",
       "constraints": "[64,65)"
     },
     "neoforge": {
-      "loader": "26.1.2.31-beta",
+      "loader": "26.1.2.41-beta",
       "constraints": "[26.1.2,26.1.3)"
     }
   },
