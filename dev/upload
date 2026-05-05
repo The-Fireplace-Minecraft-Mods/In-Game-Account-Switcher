@@ -108,7 +108,7 @@ upload_curseforge_clearance() {
 
     # Launch Chromium.
     echo 'Launching Chromium...'
-    "${UPLOAD_CURSEFORGE_SHADY_CHROME}" --app='http://0.0.0.0:0/' --window-size=854,480 --user-data-dir="${UPLOAD_CURSEFORGE_SHADY_DIR}/data" --remote-debugging-port=9222 --incognito --disable-gpu --no-first-run --password-store=basic &
+    "${UPLOAD_CURSEFORGE_SHADY_CHROME}" --app='http://0.0.0.0:0/' --window-size=1280,720 --user-data-dir="${UPLOAD_CURSEFORGE_SHADY_DIR}/data" --remote-debugging-port=9222 --incognito --guest --force-app-mode --disable-gpu --no-first-run --password-store=basic &
     UPLOAD_CURSEFORGE_SHADY_ID1="${!}"
     echo "Launched Chromium: ${UPLOAD_CURSEFORGE_SHADY_ID1}"
 
@@ -146,10 +146,7 @@ upload_curseforge_clearance() {
 
     # Kill the websocket.
     echo 'Killing the websocket...'
-    kill -9 "${UPLOAD_CURSEFORGE_SHADY_ID2}"
-    wait "${UPLOAD_CURSEFORGE_SHADY_ID2}" >/dev/null 2>&1 || true
-    kill -9 "${UPLOAD_CURSEFORGE_SHADY_ID3}"
-    wait "${UPLOAD_CURSEFORGE_SHADY_ID3}" >/dev/null 2>&1 || true
+    kill -9 "${UPLOAD_CURSEFORGE_SHADY_ID2}" "${UPLOAD_CURSEFORGE_SHADY_ID3}" || true
     echo 'Killed the websocket.'
 
     # Close Chromium.
@@ -165,8 +162,8 @@ upload_curseforge_clearance() {
 
     # Extract the User-Agent and Cookies.
     echo 'Extracting headers...'
-    UPLOAD_CURSEFORGE_SHADY_USER_AGENT=$(echo "${UPLOAD_CURSEFORGE_SHADY_HEADERS}" | jq --raw-output '."user-agent"')
-    UPLOAD_CURSEFORGE_SHADY_COOKIE=$(echo "${UPLOAD_CURSEFORGE_SHADY_HEADERS}" | jq --raw-output '.cookie')
+    export UPLOAD_CURSEFORGE_SHADY_USER_AGENT=$(echo "${UPLOAD_CURSEFORGE_SHADY_HEADERS}" | jq --raw-output '."user-agent"')
+    export UPLOAD_CURSEFORGE_SHADY_COOKIE=$(echo "${UPLOAD_CURSEFORGE_SHADY_HEADERS}" | jq --raw-output '.cookie')
     echo "Shady user agent: ${UPLOAD_CURSEFORGE_SHADY_USER_AGENT}"
     echo "Shady cookie(s): ${UPLOAD_CURSEFORGE_SHADY_COOKIE}"
 
@@ -285,7 +282,7 @@ UPLOAD_CHANGELOG_GITHUB=$(echo "${UPLOAD_CHANGELOG}" && echo && echo "### Click 
 UPLOAD_CHANGELOG_GITHUB_JSON=$(echo "${UPLOAD_CHANGELOG_GITHUB}" | jq --raw-input --slurp --compact-output)
 UPLOAD_CHANGELOG_MODIFIED=$(echo "${UPLOAD_CHANGELOG}" | sed -Ee 's/^\*\*Full Changelog\*\*: (https:\/\/github.com\/The-Fireplace-Minecraft-Mods\/In-Game-Account-Switcher\/compare\/(.*))$/**Full Changelog**: [\2](\1)/g' -e 's/(issue|PR): #([0-9]+)/\1: [#\2](https:\/\/github.com\/The-Fireplace-Minecraft-Mods\/In-Game-Account-Switcher\/issues\/\2)/g' -e 's/thanks to: @([a-zA-Z0-9\-]+)/thanks to: [@\1](https:\/\/github.com\/\1)/g')
 UPLOAD_CHANGELOG_MODIFIED_JSON=$(echo "${UPLOAD_CHANGELOG_MODIFIED}" | jq --raw-input --slurp --compact-output)
-UPLOAD_CHANGELOG_DISCORD=$(echo "${UPLOAD_CHANGELOG_MODIFIED}" | tr '\n' '\r' | sed 's/\r\r/\r/g' | tr '\r' '\n')
+UPLOAD_CHANGELOG_DISCORD=$(echo "${UPLOAD_CHANGELOG_MODIFIED}" | tr '\n' '\r' | sed 's/\r\r/\r/g' | tr '\r' '\n' | sed -Ee 's/^###### /-# /g' -e 's/^#####? //g')
 UPLOAD_CHANGELOG_DISCORD_JSON=$(echo "${UPLOAD_CHANGELOG_DISCORD}" | jq --raw-input --slurp --compact-output)
 
 # Print the changelogs.
@@ -348,6 +345,10 @@ if [ -z "${UPLOAD_MODRINTH_SKIP:-}" ]; then
         UPLOAD_ID=$(echo "${UPLOAD_FILENAME}" | sed -E 's/^.*\+(.*)\..*$/\1/g')
         UPLOAD_MC=$(echo "${UPLOAD_ID}" | cut -d- -f1)
         UPLOAD_TYPE=$(echo "${UPLOAD_ID}" | cut -d- -f2)
+        UPLOAD_MODRINTH_VERSION="${UPLOAD_VERSION}+${UPLOAD_ID}"
+        UPLOAD_MODRINTH_VERSION_JSON=$(echo "${UPLOAD_MODRINTH_VERSION}" | jq --raw-input --compact-output)
+        UPLOAD_MODRINTH_NAME="IAS ${UPLOAD_MODRINTH_VERSION}"
+        UPLOAD_MODRINTH_NAME_JSON=$(echo "${UPLOAD_MODRINTH_NAME}" | jq --raw-input --compact-output)
         UPLOAD_MODRINTH_GAME_VERSIONS_JSON="[$(echo "${UPLOAD_MC}" | jq --raw-input --compact-output)]"
         if [ "${UPLOAD_TYPE}" == 'fabric' ]; then
             UPLOAD_MODRINTH_LOADERS_JSON='["fabric","quilt"]'
@@ -359,7 +360,7 @@ if [ -z "${UPLOAD_MODRINTH_SKIP:-}" ]; then
         
         # Upload.
         echo "Uploading '${UPLOAD_FILENAME}'... (version: '${UPLOAD_MC}', loader: '${UPLOAD_TYPE}', supported versions: ${UPLOAD_MODRINTH_GAME_VERSIONS_JSON}, supported loaders: ${UPLOAD_MODRINTH_LOADERS_JSON}, dependencies: ${UPLOAD_MODRINTH_DEPENDENCIES_JSON})"
-        curl --fail-with-body --max-time 30 --retry 3 --request POST --header "Authorization: ${UPLOAD_MODRINTH_TOKEN}" --form-string "data={\"name\":${UPLOAD_NAME_JSON},\"version_number\":${UPLOAD_VERSION_JSON},\"changelog\":${UPLOAD_CHANGELOG_MODIFIED_JSON},\"dependencies\":${UPLOAD_MODRINTH_DEPENDENCIES_JSON},\"game_versions\":${UPLOAD_MODRINTH_GAME_VERSIONS_JSON},\"version_type\":\"${UPLOAD_VERSION_TYPE}\",\"loaders\":${UPLOAD_MODRINTH_LOADERS_JSON},\"featured\":false,\"status\":\"listed\",\"requested_status\":\"listed\",\"project_id\":\"cudtvDnd\",\"file_parts\":[\"${UPLOAD_FILENAME}\"],\"primary_file\":\"${UPLOAD_FILENAME}\"}" --form "${UPLOAD_FILENAME}=@${UPLOAD_FILE}" 'https://api.modrinth.com/v2/version'
+        curl --fail-with-body --max-time 30 --retry 3 --request POST --header "Authorization: ${UPLOAD_MODRINTH_TOKEN}" --form-string "data={\"name\":${UPLOAD_MODRINTH_NAME_JSON},\"version_number\":${UPLOAD_MODRINTH_VERSION_JSON},\"changelog\":${UPLOAD_CHANGELOG_MODIFIED_JSON},\"dependencies\":${UPLOAD_MODRINTH_DEPENDENCIES_JSON},\"game_versions\":${UPLOAD_MODRINTH_GAME_VERSIONS_JSON},\"version_type\":\"${UPLOAD_VERSION_TYPE}\",\"loaders\":${UPLOAD_MODRINTH_LOADERS_JSON},\"featured\":false,\"status\":\"listed\",\"requested_status\":\"listed\",\"project_id\":\"cudtvDnd\",\"file_parts\":[\"${UPLOAD_FILENAME}\"],\"primary_file\":\"${UPLOAD_FILENAME}\"}" --form "${UPLOAD_FILENAME}=@${UPLOAD_FILE}" 'https://api.modrinth.com/v2/version'
         echo 'Uploaded.'
     done
     echo 'Published Modrinth releases.'
@@ -375,7 +376,7 @@ if [ -z "${UPLOAD_CURSEFORGE_SKIP:-}" ]; then
     # - Quilt: 9153
     echo 'Obtaining CurseForge versions...'
     UPLOAD_CURSEFORGE_VERSIONS=$(curl --fail-with-body --max-time 30 --retry 3 'https://api.curseforge.com/v1/minecraft/version' | jq '.data | map({key: .versionString, value: .gameVersionId}) | from_entries')
-    echo "Obtained CurseForge versions: ${UPLOAD_CURSEFORGE_VERSIONS_MAP}"
+    echo "Obtained CurseForge versions: ${UPLOAD_CURSEFORGE_VERSIONS}"
 
     # Create CurseForge releases.
     # Obtain versions:  | jq -r '.data.[] | .versionString + ": " + (.gameVersionId|tostring)'
@@ -387,6 +388,8 @@ if [ -z "${UPLOAD_CURSEFORGE_SKIP:-}" ]; then
         UPLOAD_ID=$(echo "${UPLOAD_FILENAME}" | sed -E 's/^.*\+(.*)\..*$/\1/g')
         UPLOAD_MC=$(echo "${UPLOAD_ID}" | cut -d- -f1)
         UPLOAD_TYPE=$(echo "${UPLOAD_ID}" | cut -d- -f2)
+        UPLOAD_CURSEFORGE_NAME="IAS ${UPLOAD_VERSION}+${UPLOAD_ID}"
+        UPLOAD_CURSEFORGE_NAME_JSON=$(echo "${UPLOAD_CURSEFORGE_NAME}" | jq --raw-input --compact-output)
         if [ "${UPLOAD_TYPE}" == 'fabric' ]; then
             UPLOAD_CURSEFORGE_GAME_VERSIONS_JSON="[$(echo "${UPLOAD_CURSEFORGE_VERSIONS}" | jq ".\"${UPLOAD_MC}\""),7499,9153]"
         elif [ "${UPLOAD_TYPE}" == 'forge' ]; then
@@ -400,7 +403,11 @@ if [ -z "${UPLOAD_CURSEFORGE_SKIP:-}" ]; then
 
         # Upload.
         echo "Uploading '${UPLOAD_FILENAME}'... (version: '${UPLOAD_MC}', loader: '${UPLOAD_TYPE}', supported magic numbers: ${UPLOAD_CURSEFORGE_GAME_VERSIONS_JSON})"
-        UPLOAD_CURSEFORGE_RESPONSE=$(curl --write-out '\n%{http_code}' --max-time 30 --retry 3 --request POST --header "X-Api-Token: ${UPLOAD_CURSEFORGE_TOKEN}" --form-string "metadata={\"changelog\":${UPLOAD_CHANGELOG_MODIFIED_JSON},\"changelogType\":\"markdown\",\"displayName\":${UPLOAD_NAME_JSON},\"gameVersions\":${UPLOAD_CURSEFORGE_GAME_VERSIONS_JSON},\"releaseType\":\"${UPLOAD_VERSION_TYPE}\"}" --form "file=@${UPLOAD_FILE}" 'https://minecraft.curseforge.com/api/projects/232676/upload-file')
+        if [ -n "${UPLOAD_CURSEFORGE_SHADY_USER_AGENT:-}" ] && [ -n "${UPLOAD_CURSEFORGE_SHADY_COOKIE:-}" ]; then
+            UPLOAD_CURSEFORGE_RESPONSE=$(curl --write-out '\n%{http_code}' --max-time 30 --retry 3 --request POST --header "User-Agent: ${UPLOAD_CURSEFORGE_SHADY_USER_AGENT}" --header "Cookie: ${UPLOAD_CURSEFORGE_SHADY_COOKIE}" --header "X-Api-Token: ${UPLOAD_CURSEFORGE_TOKEN}" --form-string "metadata={\"changelog\":${UPLOAD_CHANGELOG_MODIFIED_JSON},\"changelogType\":\"markdown\",\"displayName\":${UPLOAD_CURSEFORGE_NAME_JSON},\"gameVersions\":${UPLOAD_CURSEFORGE_GAME_VERSIONS_JSON},\"releaseType\":\"${UPLOAD_VERSION_TYPE}\"}" --form "file=@${UPLOAD_FILE}" 'https://minecraft.curseforge.com/api/projects/232676/upload-file')
+        else
+            UPLOAD_CURSEFORGE_RESPONSE=$(curl --write-out '\n%{http_code}' --max-time 30 --retry 3 --request POST --header "X-Api-Token: ${UPLOAD_CURSEFORGE_TOKEN}" --form-string "metadata={\"changelog\":${UPLOAD_CHANGELOG_MODIFIED_JSON},\"changelogType\":\"markdown\",\"displayName\":${UPLOAD_CURSEFORGE_NAME_JSON},\"gameVersions\":${UPLOAD_CURSEFORGE_GAME_VERSIONS_JSON},\"releaseType\":\"${UPLOAD_VERSION_TYPE}\"}" --form "file=@${UPLOAD_FILE}" 'https://minecraft.curseforge.com/api/projects/232676/upload-file')
+        fi
         UPLOAD_CURSEFORGE_RESPONSE_CODE=$(echo "${UPLOAD_CURSEFORGE_RESPONSE}" | tail -n1)
         UPLOAD_CURSEFORGE_RESPONSE_BODY=$(echo "${UPLOAD_CURSEFORGE_RESPONSE}" | head -n-1)
         if [ "${UPLOAD_CURSEFORGE_RESPONSE_CODE}" -eq 403 ] && echo "${UPLOAD_CURSEFORGE_RESPONSE_BODY}" | grep -Fq 'challenges.cloudflare.com'; then
@@ -409,7 +416,7 @@ if [ -z "${UPLOAD_CURSEFORGE_SKIP:-}" ]; then
 
             # Shady confirmation.
             echo 'Will need to use a Chromium browser to pass the CAPTCHA. This is a shady tactic, proceed at your own risk. Press Enter to confirm, terminate (CTRL+C) to cancel.'
-            read -r _
+            read -r _ < /dev/tty
 
             # Get the clearance headers.
             echo 'Attempting to get CurseForge clearance...'
@@ -417,7 +424,7 @@ if [ -z "${UPLOAD_CURSEFORGE_SKIP:-}" ]; then
             echo 'Got CurseForge clearance.'
 
             # Upload.
-            curl --fail-with-body --max-time 30 --retry 3 --request POST --header "User-Agent: ${UPLOAD_CURSEFORGE_SHADY_USER_AGENT}" --header "Cookie: ${UPLOAD_CURSEFORGE_SHADY_COOKIE}" --header "X-Api-Token: ${UPLOAD_CURSEFORGE_TOKEN}" --form-string "metadata={\"changelog\":${UPLOAD_CHANGELOG_MODIFIED_JSON},\"changelogType\":\"markdown\",\"displayName\":${UPLOAD_NAME_JSON},\"gameVersions\":${UPLOAD_CURSEFORGE_GAME_VERSIONS_JSON},\"releaseType\":\"${UPLOAD_VERSION_TYPE}\"}" --form "file=@${UPLOAD_FILE}" 'https://minecraft.curseforge.com/api/projects/232676/upload-file'
+            curl --fail-with-body --max-time 30 --retry 3 --request POST --header "User-Agent: ${UPLOAD_CURSEFORGE_SHADY_USER_AGENT}" --header "Cookie: ${UPLOAD_CURSEFORGE_SHADY_COOKIE}" --header "X-Api-Token: ${UPLOAD_CURSEFORGE_TOKEN}" --form-string "metadata={\"changelog\":${UPLOAD_CHANGELOG_MODIFIED_JSON},\"changelogType\":\"markdown\",\"displayName\":${UPLOAD_CURSEFORGE_NAME_JSON},\"gameVersions\":${UPLOAD_CURSEFORGE_GAME_VERSIONS_JSON},\"releaseType\":\"${UPLOAD_VERSION_TYPE}\"}" --form "file=@${UPLOAD_FILE}" 'https://minecraft.curseforge.com/api/projects/232676/upload-file'
         elif [ "${UPLOAD_CURSEFORGE_RESPONSE_CODE}" -lt 200 ] || [ "${UPLOAD_CURSEFORGE_RESPONSE_CODE}" -ge 300 ]; then
             echo "ERROR: Failed CurseForge upload: ${UPLOAD_CURSEFORGE_RESPONSE}"
             exit 1
