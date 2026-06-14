@@ -96,14 +96,12 @@ legacyForge {
             client()
 
             // Set up debug VM args.
-            jvmArguments.addAll(rootDir.resolve("dev/args.vm.txt")
-                    .readLines()
-                    .filter { "line.separator" !in it }
-                    .filter { it.isNotBlank() })
+            jvmArguments.addAll(rootDir.resolve("dev/args.vm.txt").readLines()
+                    .filter { it.isNotEmpty() && !it.startsWith('#') && ("line.separator" !in it) })
             loggingConfigFile = rootDir.resolve("dev/log4j2.xml")
 
             // Set the run dir.
-            gameDirectory = file("../../run")
+            gameDirectory = rootDir.resolve("run")
         }
     }
 
@@ -120,12 +118,14 @@ mixin {
     config("ias.mixins.json")
 }
 
+// Repositories for dependencies.
 repositories {
     mavenCentral()
     maven("https://maven.neoforged.net/releases/") // NeoForge.
     maven("https://maven.minecraftforge.net/") // Forge.
 }
 
+// Dependencies.
 dependencies {
     // Annotations.
     compileOnly(libs.jspecify)
@@ -144,7 +144,6 @@ dependencies {
     }
 }
 
-// Compile with UTF-8, compatible Java, and with all debug options.
 tasks.withType<JavaCompile> {
     // Migration helper start.
     source(rootDir.resolve("src/_legacy/_shared"))
@@ -152,12 +151,26 @@ tasks.withType<JavaCompile> {
     source(rootDir.resolve("src/_legacy/1.20.1/neoforge"))
     // Migration helper end.
 
+    // Compile with UTF-8.
     options.encoding = "UTF-8"
-    options.compilerArgs.addAll(listOf("-g", "-parameters"))
+
+    // Set the compiler debug options.
+    if ("${findProperty("ru.vidtu.ias.debug.javac") ?: findProperty("ru.vidtu.ias.debug")}".toBoolean()) {
+        options.compilerArgs.addAll(listOf("-g", "-parameters"))
+    } else if ("${findProperty("ru.vidtu.ias.slim")}".toBoolean()) {
+        options.compilerArgs.add("-g:none")
+    } else {
+        options.compilerArgs.add("-g")
+    }
+
+    // Set the Java 17 target.
     options.release = 17
 }
 
 sourceSets.main {
+    // Add compile-time stub classes.
+    java.srcDir("src/main/java-compile")
+
     blossom.javaSources {
         // Point to root directory.
         templates(rootDir.resolve("src/main/java-templates"))
@@ -168,6 +181,7 @@ sourceSets.main {
         property("debugAsserts", providers.gradleProperty("ru.vidtu.ias.debug.asserts").orElse(fallbackProvider))
         property("debugLogs", providers.gradleProperty("ru.vidtu.ias.debug.logs").orElse(fallbackProvider))
         property("version", "${version}")
+        property("minecraft", "1.20.1")
     }
 }
 
@@ -195,19 +209,20 @@ tasks.withType<ProcessResources> {
         expand(inputs.properties)
     }
 
-    // Minify JSON (including ".mcmeta") and TOML files.
-    val files = fileTree(outputs.files.asPath)
-    doLast {
-        val jsonAlike = Regex("^.*\\.(?:json|mcmeta)$", RegexOption.IGNORE_CASE)
-        files.forEach {
-            if (it.name.matches(jsonAlike)) {
-                it.writeText(Gson().fromJson(it.readText(), JsonElement::class.java).toString())
-            } else if (it.name.endsWith(".toml", ignoreCase = true)) {
-                it.writeText(it.readLines()
-                    .filter { !it.startsWith('#') }
-                    .filter { it.isNotBlank() }
-                    .joinToString("\n")
-                    .replace(" = ", "="))
+    // Minify JSON-alike (including ".mcmeta") and TOML files.
+    if (!"${findProperty("ru.vidtu.ias.debug.resources") ?: findProperty("ru.vidtu.ias.debug")}".toBoolean()) {
+        val files = fileTree(outputs.files.asPath)
+        doLast {
+            val jsonAlike = Regex("^.*\\.(?:json|mcmeta)$", RegexOption.IGNORE_CASE)
+            files.forEach {
+                if (it.name.matches(jsonAlike)) {
+                    it.writeText(Gson().fromJson(it.readText(), JsonElement::class.java).toString())
+                } else if (it.name.endsWith(".toml", ignoreCase = true)) {
+                    it.writeText(it.readLines()
+                        .filter { it.isNotEmpty() && !it.startsWith('#') }
+                        .joinToString("\n")
+                        .replace(" = ", "="))
+                }
             }
         }
     }
@@ -222,7 +237,7 @@ tasks.withType<Jar> {
     exclude("ru/vidtu/ias/platform/ICompile.class")
 
     // Remove package-info.class, unless package debug is on. (to save space)
-    if (!"${findProperty("ru.vidtu.ias.debug.package")}".toBoolean()) {
+    if (!"${findProperty("ru.vidtu.ias.debug.package") ?: findProperty("ru.vidtu.ias.debug")}".toBoolean()) {
         exclude("**/package-info.class")
     }
 

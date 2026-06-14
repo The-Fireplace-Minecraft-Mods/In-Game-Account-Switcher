@@ -13,7 +13,8 @@
         "net.fabricmc.fabric-api:fabric-api",
         "com.terraformersmc:modmenu",
         "net.minecraftforge:forge",
-        "net.neoforged:forge"
+        "net.neoforged:forge",
+        "net.neoforged:neoforge"
       ],
       "enabled": false
     }

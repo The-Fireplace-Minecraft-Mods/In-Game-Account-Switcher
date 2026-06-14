@@ -41,7 +41,7 @@ pluginManagement {
 
 plugins {
     id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
-    id("dev.kikugie.stonecutter") version "0.9.3"
+    id("dev.kikugie.stonecutter") version "0.9.5"
 }
 
 // Project.
@@ -52,15 +52,12 @@ val types = listOf("fabric", "forge", "neoforge")
 val versions = (file("dev/versions/versions_beta.txt").readLines()
         + file("dev/versions/versions_active.txt").readLines()
         + file("dev/versions/versions_legacy.txt").readLines())
-    .filter { it.isNotEmpty() }
-    .filter { !it.startsWith('#') }
+    .filter { it.isNotEmpty() && !it.startsWith('#') }
     .toSet()
 
 // Ignored version IDs. See that file for reasoning on such ignorance.
-val ignoredIds = file("dev/versions/ignored.txt")
-    .readLines()
-    .filter { it.isNotEmpty() }
-    .filter { !it.startsWith('#') }
+val ignoredIds = file("dev/versions/ignored.txt").readLines()
+    .filter { it.isNotEmpty() && !it.startsWith('#') }
     .toSet()
 
 // Actively supported version system. See README.md for the support policy.
@@ -70,8 +67,7 @@ val ignoredIds = file("dev/versions/ignored.txt")
 // If "only" version feature is used, this is ignored.
 val supportedVersions = (file("dev/versions/versions_beta.txt").readLines()
         + file("dev/versions/versions_active.txt").readLines())
-    .filter { it.isNotEmpty() }
-    .filter { !it.startsWith('#') }
+    .filter { it.isNotEmpty() && !it.startsWith('#') }
     .toSet()
 require(versions.containsAll(supportedVersions)) { "Not all actively supported versions '${supportedVersions}' are listed in all supported versions '${versions}'." }
 val includeLegacyVersions = System.getProperty("ru.vidtu.ias.legacy").toBoolean()

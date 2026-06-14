@@ -1,29 +1,41 @@
+# Run with 2 GB of RAM, large enough for testing, small enough to not require a beefy PC.
 -Xmx2G
 
+# Unlock various debug options and ignore ones not recognized by the VM.
 -XX:+UnlockExperimentalVMOptions
 -XX:+UnlockDiagnosticVMOptions
 -XX:+IgnoreUnrecognizedVMOptions
 
+# Disable various attachment/dynloading techniques.
 -XX:+PerfDisableSharedMem
 -XX:-EnableDynamicAgentLoading
 -XX:+DisableAttachMechanism
 
+# Crash on OOM.
 -XX:+ExitOnOutOfMemoryError
 -XX:+CrashOnOutOfMemoryError
 
+# Ensure consistent testing environment. (en_US locale, UTF-8
+# encoding, UTC timezone, IPv4 networking, headless Java)
 -Dfile.encoding=UTF-8
 -Dline.separator="\n"
 -Djava.awt.headless=true
 -Djava.net.preferIPv4Stack=true
 -Duser.language=en
 -Duser.country=US
+-Duser.variant
 -Duser.timezone=UTC
 
+# Optimize Netty and ensure leak testing is enabled. (even tho we don't use networking)
 -Djdk.nio.maxCachedBufferSize=262144
 -Dio.netty.tryReflectionSetAccessible=true
 -Dio.netty.leakDetection.level=PARANOID
 
+# Enable ANSI (true-)coloring in terminal, disable JLine (it doesn't work nicely with both
+# IDEs or Gradle tasks), increase general verbosity to DEBUG, provide custom Log4j2 config
+# (see the file), harden against Log4Shell in case our dependency bump doesn't help.
 -Dterminal.ansi=true
+-Dnet.kyori.ansi.colorLevel=truecolor
 -Dterminal.jline=false
 -Dslf4j.internal.verbosity=DEBUG
 -Dlog4j2.configurationFile=../dev/log4j2.xml
@@ -32,16 +44,39 @@
 -Dlog4j2.enableJndiContextSelector=false
 -Dlog4j2.enableJndiJdbc=false
 -Dlog4j2.enableJndiJms=false
--Dnet.kyori.ansi.colorLevel=truecolor
 -Dcom.sun.jndi.rmi.object.trustURLCodebase=false
 -Dcom.sun.jndi.cosnaming.object.trustURLCodebase=false
 
+# Configure Forge logging to be the same as in our config, Forge overwrites it with
+# its own. Unfortunately, it's not apples to apples, but it's still close enough.
+-Dforge.logging.console.level=TRACE
+-Dforge.logging.classtransformer.level=INFO
+-Dforge.logging.mojang.level=TRACE
+-Dforge.logging.debugFile.level=INFO
+-Dforge.logging.file.level=INFO
+-Dforge.logging.marker.classdump=ACCEPT
+-Dforge.logging.marker.classloading=ACCEPT
+-Dforge.logging.marker.forgemod=ACCEPT
+-Dforge.logging.marker.splash=ACCEPT
+-Dforge.logging.marker.axform=DENY
+-Dforge.logging.marker.distxform=DENY
+-Dforge.logging.marker.eventbus=DENY
+-Dforge.logging.marker.launchplugin=DENY
+-Dforge.logging.marker.loading=DENY
+-Dforge.logging.marker.networking=DENY
+-Dforge.logging.marker.registries=DENY
+-Dforge.logging.marker.registrydump=DENY
+-Dforge.logging.marker.scan=DENY
+
+# Disable using a lot of threads for background tasks. (namely, DataFixerUpper prior to 1.19.4)
 -Dmax.bg.threads=1
 
+# Enable Java assertions (+stdlib ones), enable Mixin debugging and strict(er) Mixin checks, enable various
+# debug properties to test the mod, increase fake ping to ~150ms to test the crystal removing.
 -enableassertions
 -enablesystemassertions
 -Dmixin.debug=true
--Dmixin.debug.strict.unique=true
+-Dmixin.debug.strict=true
 -Dmixin.checks=true
 -DMC_DEBUG_ENABLED
 -DMC_DEBUG_ALLOW_LOW_SIM_DISTANCE
@@ -49,10 +84,14 @@
 -DMC_DEBUG_VALIDATE_RESOURCE_PATH_CASE
 -DMC_DEBUG_CURSOR_POS
 
+# Allow enhanced redefinition, (aka Hotswap Agent)
+# fixup Fabric for that.
 -XX:+AllowEnhancedClassRedefinition
 -XX:+AllowRedefinitionToAddDeleteMethods
 -XX:HotswapAgent=fatjar
 -Dfabric.debug.disableClassPathIsolation=true
 
+# Open-up some internals for Netty performance and silence in the logs.
+--add-opens java.base/java.lang.invoke=ALL-UNNAMED
 --add-opens java.base/java.nio=ALL-UNNAMED
 --add-opens java.base/jdk.internal.misc=ALL-UNNAMED

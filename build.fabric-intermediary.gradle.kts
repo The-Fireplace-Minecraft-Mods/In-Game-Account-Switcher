@@ -48,15 +48,18 @@ val mcv = mc.version // Literal version. (toString)
 val mcp = mc.parsed // Comparable version. (operator overloading)
 
 // Language.
-val javaTarget = if (mcp >= "1.20.6") 21
-else if (mcp >= "1.18.2") 17
-else if (mcp >= "1.17.1") 16
-else 8
+val javaTarget = when {
+    (mcp >= "1.20.6") -> 21
+    (mcp >= "1.18.2") -> 17
+    (mcp >= "1.17.1") -> 16
+    else -> 8
+}
 val javaVersion = JavaVersion.toVersion(javaTarget)
 java {
     sourceCompatibility = javaVersion
     targetCompatibility = javaVersion
-    toolchain.languageVersion = JavaLanguageVersion.of(javaTarget)
+    val javaToolchain = if (javaTarget == 16) 17 else javaTarget
+    toolchain.languageVersion = JavaLanguageVersion.of(javaToolchain)
 }
 
 // Metadata.
@@ -93,27 +96,14 @@ loom {
         named("client") {
             // Set up debug VM args.
             if (javaVersion.isJava9Compatible) {
-                vmArgs("@../dev/args.vm.txt")
+                jvmArguments.add("@../dev/args.vm.txt")
             } else {
-                vmArgs(rootDir.resolve("dev/args.vm.txt")
-                    .readLines()
-                    .filter { "line.separator" !in it }
-                    .filter { it.isNotBlank() })
+                jvmArguments.addAll(rootDir.resolve("dev/args.vm.txt").readLines()
+                    .filter { it.isNotEmpty() && !it.startsWith('#') && ("line.separator" !in it) })
             }
 
             // Set the run dir.
-            runDir = "../../run"
-
-            // AuthLib for 1.16.5 is bugged, disable Mojang API
-            // to fix issues with multiplayer testing.
-            if (mcp eq "1.16.5") {
-                vmArgs(
-                    "-Dminecraft.api.account.host=http://0.0.0.0:0/",
-                    "-Dminecraft.api.auth.host=http://0.0.0.0:0/",
-                    "-Dminecraft.api.services.host=http://0.0.0.0:0/",
-                    "-Dminecraft.api.session.host=http://0.0.0.0:0/"
-                )
-            }
+            runDirectory = rootDir.resolve("run")
         }
 
         // Remove server run, the mod is client-only.
@@ -126,6 +116,7 @@ tasks.withType<RunGameTask> {
     javaLauncher = javaToolchains.launcherFor(java.toolchain)
 }
 
+// Repositories for dependencies.
 repositories {
     mavenCentral()
     maven("https://maven.fabricmc.net/") // Fabric.
@@ -135,6 +126,7 @@ repositories {
     }
 }
 
+// Dependencies.
 dependencies {
     // Annotations.
     compileOnly(libs.jspecify)
@@ -176,7 +168,6 @@ dependencies {
     }
 }
 
-// Compile with UTF-8, compatible Java, and with all debug options.
 tasks.withType<JavaCompile> {
     // Migration helper start.
     source(rootDir.resolve("src/_legacy/_shared"))
@@ -186,8 +177,19 @@ tasks.withType<JavaCompile> {
     }
     // Migration helper end.
 
+    // Compile with UTF-8.
     options.encoding = "UTF-8"
-    options.compilerArgs.addAll(listOf("-g", "-parameters"))
+
+    // Set the compiler debug options.
+    if ("${findProperty("ru.vidtu.ias.debug.javac") ?: findProperty("ru.vidtu.ias.debug")}".toBoolean()) {
+        options.compilerArgs.addAll(listOf("-g", "-parameters"))
+    } else if ("${findProperty("ru.vidtu.ias.slim")}".toBoolean()) {
+        options.compilerArgs.add("-g:none")
+    } else {
+        options.compilerArgs.add("-g")
+    }
+
+    // Set the compatible Java target.
     // JDK 8 (used by 1.16.x) doesn't support the "-release" flag and
     // uses "-source" and "-target" ones (see the top of the file),
     // so we must NOT specify it, or the "javac" will fail.
@@ -198,6 +200,9 @@ tasks.withType<JavaCompile> {
 }
 
 sourceSets.main {
+    // Add compile-time stub classes.
+    java.srcDir("src/main/java-compile")
+
     blossom.javaSources {
         // Point to root directory.
         templates(rootDir.resolve("src/main/java-templates"))
@@ -208,6 +213,7 @@ sourceSets.main {
         property("debugAsserts", providers.gradleProperty("ru.vidtu.ias.debug.asserts").orElse(fallbackProvider))
         property("debugLogs", providers.gradleProperty("ru.vidtu.ias.debug.logs").orElse(fallbackProvider))
         property("version", "${version}")
+        property("minecraft", "${mcv}")
     }
 }
 
@@ -235,11 +241,13 @@ tasks.withType<ProcessResources> {
     }
 
     // Minify JSON files.
-    val files = fileTree(outputs.files.asPath)
-    doLast {
-        files.forEach {
-            if (it.name.endsWith(".json", ignoreCase = true)) {
-                it.writeText(Gson().fromJson(it.readText(), JsonElement::class.java).toString())
+    if (!"${findProperty("ru.vidtu.ias.debug.resources") ?: findProperty("ru.vidtu.ias.debug")}".toBoolean()) {
+        val files = fileTree(outputs.files.asPath)
+        doLast {
+            files.forEach {
+                if (it.name.endsWith(".json", ignoreCase = true)) {
+                    it.writeText(Gson().fromJson(it.readText(), JsonElement::class.java).toString())
+                }
             }
         }
     }
@@ -254,7 +262,7 @@ tasks.withType<Jar> {
     exclude("ru/vidtu/ias/platform/ICompile.class")
 
     // Remove package-info.class, unless package debug is on. (to save space)
-    if (!"${findProperty("ru.vidtu.ias.debug.package")}".toBoolean()) {
+    if (!"${findProperty("ru.vidtu.ias.debug.package") ?: findProperty("ru.vidtu.ias.debug")}}".toBoolean()) {
         exclude("**/package-info.class")
     }
 }

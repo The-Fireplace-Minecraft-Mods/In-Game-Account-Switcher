@@ -46,9 +46,11 @@ val mcv = mc.version // Literal version. (toString)
 val mcp = mc.parsed // Comparable version. (operator overloading)
 
 // Language.
-val javaTarget = if (mcp >= "26.1.2") 25
-else if (mcp >= "1.20.6") 21
-else 17
+val javaTarget = when {
+    (mcp >= "26.1.2") -> 25
+    (mcp >= "1.20.6") -> 21
+    else -> 17
+}
 val javaVersion = JavaVersion.toVersion(javaTarget)
 java {
     sourceCompatibility = javaVersion
@@ -88,15 +90,17 @@ runs {
         jvmArguments("@../dev/args.vm.txt")
 
         // Set the run dir.
-        workingDirectory = file("../../run")
+        workingDirectory = rootDir.resolve("run")
     }
 }
 
+// Repositories for dependencies.
 repositories {
     mavenCentral()
     maven("https://maven.neoforged.net/releases/") // NeoForge.
 }
 
+// Dependencies.
 dependencies {
     // Annotations.
     compileOnly(libs.jspecify)
@@ -119,7 +123,6 @@ dependencies {
     implementation("net.neoforged:neoforge:${neoforge}")
 }
 
-// Compile with UTF-8, compatible Java, and with all debug options.
 tasks.withType<JavaCompile> {
     // Migration helper start.
     source(rootDir.resolve("src/_legacy/_shared"))
@@ -129,12 +132,26 @@ tasks.withType<JavaCompile> {
     }
     // Migration helper end.
 
+    // Compile with UTF-8.
     options.encoding = "UTF-8"
-    options.compilerArgs.addAll(listOf("-g", "-parameters"))
+
+    // Set the compiler debug options.
+    if ("${findProperty("ru.vidtu.ias.debug.javac") ?: findProperty("ru.vidtu.ias.debug")}".toBoolean()) {
+        options.compilerArgs.addAll(listOf("-g", "-parameters"))
+    } else if ("${findProperty("ru.vidtu.ias.slim")}".toBoolean()) {
+        options.compilerArgs.add("-g:none")
+    } else {
+        options.compilerArgs.add("-g")
+    }
+
+    // Set the compatible Java target.
     options.release = javaTarget
 }
 
 sourceSets.main {
+    // Add compile-time stub classes.
+    java.srcDir("src/main/java-compile")
+
     blossom.javaSources {
         // Point to root directory.
         templates(rootDir.resolve("src/main/java-templates"))
@@ -145,6 +162,7 @@ sourceSets.main {
         property("debugAsserts", providers.gradleProperty("ru.vidtu.ias.debug.asserts").orElse(fallbackProvider))
         property("debugLogs", providers.gradleProperty("ru.vidtu.ias.debug.logs").orElse(fallbackProvider))
         property("version", "${version}")
+        property("minecraft", "${mcv}")
     }
 }
 
@@ -176,19 +194,20 @@ tasks.withType<ProcessResources> {
         expand(inputs.properties)
     }
 
-    // Minify JSON (including ".mcmeta") and TOML files.
-    val files = fileTree(outputs.files.asPath)
-    doLast {
-        val jsonAlike = Regex("^.*\\.(?:json|mcmeta)$", RegexOption.IGNORE_CASE)
-        files.forEach {
-            if (it.name.matches(jsonAlike)) {
-                it.writeText(Gson().fromJson(it.readText(), JsonElement::class.java).toString())
-            } else if (it.name.endsWith(".toml", ignoreCase = true)) {
-                it.writeText(it.readLines()
-                    .filter { !it.startsWith('#') }
-                    .filter { it.isNotBlank() }
-                    .joinToString("\n")
-                    .replace(" = ", "="))
+    // Minify JSON-alike (including ".mcmeta") and TOML files.
+    if (!"${findProperty("ru.vidtu.ias.debug.resources") ?: findProperty("ru.vidtu.ias.debug")}".toBoolean()) {
+        val files = fileTree(outputs.files.asPath)
+        doLast {
+            val jsonAlike = Regex("^.*\\.(?:json|mcmeta)$", RegexOption.IGNORE_CASE)
+            files.forEach {
+                if (it.name.matches(jsonAlike)) {
+                    it.writeText(Gson().fromJson(it.readText(), JsonElement::class.java).toString())
+                } else if (it.name.endsWith(".toml", ignoreCase = true)) {
+                    it.writeText(it.readLines()
+                        .filter { it.isNotEmpty() && !it.startsWith('#') }
+                        .joinToString("\n")
+                        .replace(" = ", "="))
+                }
             }
         }
     }
@@ -203,7 +222,7 @@ tasks.withType<Jar> {
     exclude("ru/vidtu/ias/platform/ICompile.class")
 
     // Remove package-info.class, unless package debug is on. (to save space)
-    if (!"${findProperty("ru.vidtu.ias.debug.package")}".toBoolean()) {
+    if (!"${findProperty("ru.vidtu.ias.debug.package") ?: findProperty("ru.vidtu.ias.debug")}".toBoolean()) {
         exclude("**/package-info.class")
     }
 

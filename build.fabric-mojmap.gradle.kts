@@ -83,10 +83,10 @@ loom {
         // Customize the client run.
         named("client") {
             // Set up debug VM args.
-            vmArgs("@../dev/args.vm.txt")
+            jvmArguments.add("@../dev/args.vm.txt")
 
             // Set the run dir.
-            runDir = "../../run"
+            runDirectory = rootDir.resolve("run")
         }
 
         // Remove server run, the mod is client-only.
@@ -99,12 +99,14 @@ tasks.withType<RunGameTask> {
     javaLauncher = javaToolchains.launcherFor(java.toolchain)
 }
 
+// Repositories for dependencies.
 repositories {
     mavenCentral()
     maven("https://maven.fabricmc.net/") // Fabric.
     maven("https://maven.terraformersmc.com/releases/") // ModMenu.
 }
 
+// Dependencies.
 dependencies {
     // Annotations.
     compileOnly(libs.jspecify)
@@ -150,18 +152,31 @@ dependencies {
     }
 }
 
-// Compile with UTF-8, compatible Java, and with all debug options.
 tasks.withType<JavaCompile> {
     // Migration helper start.
     source(rootDir.resolve("src/_legacy/_shared"))
     // Migration helper end.
 
+    // Compile with UTF-8.
     options.encoding = "UTF-8"
-    options.compilerArgs.addAll(listOf("-g", "-parameters"))
+
+    // Set the compiler debug options.
+    if ("${findProperty("ru.vidtu.ias.debug.javac") ?: findProperty("ru.vidtu.ias.debug")}".toBoolean()) {
+        options.compilerArgs.addAll(listOf("-g", "-parameters"))
+    } else if ("${findProperty("ru.vidtu.ias.slim")}".toBoolean()) {
+        options.compilerArgs.add("-g:none")
+    } else {
+        options.compilerArgs.add("-g")
+    }
+
+    // Set the compatible Java target.
     options.release = javaTarget
 }
 
 sourceSets.main {
+    // Add compile-time stub classes.
+    java.srcDir("src/main/java-compile")
+
     blossom.javaSources {
         // Point to root directory.
         templates(rootDir.resolve("src/main/java-templates"))
@@ -172,6 +187,7 @@ sourceSets.main {
         property("debugAsserts", providers.gradleProperty("ru.vidtu.ias.debug.asserts").orElse(fallbackProvider))
         property("debugLogs", providers.gradleProperty("ru.vidtu.ias.debug.logs").orElse(fallbackProvider))
         property("version", "${version}")
+        property("minecraft", "${mcv}")
     }
 }
 
@@ -204,11 +220,13 @@ tasks.withType<ProcessResources> {
     }
 
     // Minify JSON files.
-    val files = fileTree(outputs.files.asPath)
-    doLast {
-        files.forEach {
-            if (it.name.endsWith(".json", ignoreCase = true)) {
-                it.writeText(Gson().fromJson(it.readText(), JsonElement::class.java).toString())
+    if (!"${findProperty("ru.vidtu.ias.debug.resources") ?: findProperty("ru.vidtu.ias.debug")}".toBoolean()) {
+        val files = fileTree(outputs.files.asPath)
+        doLast {
+            files.forEach {
+                if (it.name.endsWith(".json", ignoreCase = true)) {
+                    it.writeText(Gson().fromJson(it.readText(), JsonElement::class.java).toString())
+                }
             }
         }
     }
@@ -223,7 +241,7 @@ tasks.withType<Jar> {
     exclude("ru/vidtu/ias/platform/ICompile.class")
 
     // Remove package-info.class, unless package debug is on. (to save space)
-    if (!"${findProperty("ru.vidtu.ias.debug.package")}".toBoolean()) {
+    if (!"${findProperty("ru.vidtu.ias.debug.package") ?: findProperty("ru.vidtu.ias.debug")}}".toBoolean()) {
         exclude("**/package-info.class")
     }
 }

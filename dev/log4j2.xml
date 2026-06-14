@@ -17,49 +17,74 @@
 
 <!-- You should have received a copy of the GNU Lesser General Public License -->
 <!-- along with this program.  If not, see <https://www.gnu.org/licenses/> -->
-<Configuration status="INFO">
-  <Appenders>
-    <Console name="Console" target="SYSTEM_OUT">
-      <PatternLayout pattern="%style{[%d{HH:mm:ss}]}{blue} %highlight{[%t/%level]}{FATAL=bright_red, ERROR=red, WARN=yellow, INFO=green, DEBUG=bright_white, TRACE=white}: %style{(%logger{0})}{cyan} %style{&lt;%marker&gt;}{magenta} %msg{nolookups}%n%xEx{full}" disableAnsi="false"/>
-    </Console>
-    <RollingRandomAccessFile name="File" fileName="logs/latest.log" filePattern="logs/%d{yyyy-MM-dd}-%i.log.gz" immediateFlush="false">
-      <PatternLayout pattern="[%d{HH:mm:ss}] [%t/%level]: (%logger{0}) &lt;%marker&gt; %msg{nolookups}%n%xEx{full}"/>
-      <Policies>
-        <TimeBasedTriggeringPolicy/>
-        <OnStartupTriggeringPolicy/>
-      </Policies>
-      <DefaultRolloverStrategy compressionLevel="9" max="100"/>
-    </RollingRandomAccessFile>
-    <Async name="Async">
-      <AppenderRef ref="Console"/>
-      <AppenderRef ref="File" level="INFO"/>
-    </Async>
-  </Appenders>
-  <Loggers>
-    <Root level="TRACE">
-      <Filters>
-        <MarkerFilter marker="NETWORK_PACKETS" onMatch="DENY" onMismatch="NEUTRAL"/>
-        <MarkerFilter marker="SOUNDS" onMatch="DENY" onMismatch="NEUTRAL"/>
-        <MarkerFilter marker="SCAN" onMatch="DENY" onMismatch="NEUTRAL"/>
-        <MarkerFilter marker="REGISTRIES" onMatch="DENY" onMismatch="NEUTRAL"/>
-        <MarkerFilter marker="REGISTRYDUMP" onMatch="DENY" onMismatch="NEUTRAL"/>
-        <MarkerFilter marker="REGISTRY_DUMP" onMatch="DENY" onMismatch="NEUTRAL"/>
-        <MarkerFilter marker="MODLAUNCHER" onMatch="DENY" onMismatch="NEUTRAL"/>
-        <MarkerFilter marker="CORE" onMatch="DENY" onMismatch="NEUTRAL"/>
-        <MarkerFilter marker="DISTXFORM" onMatch="DENY" onMismatch="NEUTRAL"/>
-        <MarkerFilter marker="AXFORM" onMatch="DENY" onMismatch="NEUTRAL"/>
-        <MarkerFilter marker="LOADING" onMatch="DENY" onMismatch="NEUTRAL"/>
-        <MarkerFilter marker="EVENTBUS" onMatch="DENY" onMismatch="NEUTRAL"/>
-        <RegexFilter regex="^Adding .* to classpath\.$" useRawMsg="true" onMatch="DENY" onMismatch="NEUTRAL"/>
-        <RegexFilter regex="^Added class metadata for .* to metadata cache$" useRawMsg="true" onMatch="DENY" onMismatch="NEUTRAL"/>
-        <RegexFilter regex="^Failed to verify authentication$" useRawMsg="true" onMatch="DENY" onMismatch="NEUTRAL"/>
-        <RegexFilter regex="^Failed to retrieve profile key pair$" useRawMsg="true" onMatch="DENY" onMismatch="NEUTRAL"/>
-        <RegexFilter regex="^Failed to fetch user properties$" useRawMsg="true" onMatch="DENY" onMismatch="NEUTRAL"/>
-        <RegexFilter regex="^Failed to fetch Realms feature flags$" useRawMsg="true" onMatch="DENY" onMismatch="NEUTRAL"/>
-        <RegexFilter regex="^Couldn't connect to realms$" useRawMsg="true" onMatch="DENY" onMismatch="NEUTRAL"/>
-        <RegexFilter regex="^Could not authorize you against Realms server: .*$" useRawMsg="true" onMatch="DENY" onMismatch="NEUTRAL"/>
-      </Filters>
-      <AppenderRef ref="Async"/>
-    </Root>
-  </Loggers>
+<Configuration xmlns="https://logging.apache.org/xml/ns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://logging.apache.org/xml/ns https://logging.apache.org/xml/ns/log4j-config-2.xsd" status="INFO">
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%style{[%d{HH:mm:ss.SSS}]}{blue} %highlight{[%t/%level]}{FATAL=bright_red, ERROR=red, WARN=yellow, INFO=green, DEBUG=bright_white, TRACE=white}: %style{(%logger{0})}{cyan} %style{&lt;%marker&gt;}{magenta} %msg{nolookups}%n%xEx{full}" disableAnsi="false"/>
+        </Console>
+        <RollingRandomAccessFile name="File" fileName="logs/latest.log" filePattern="logs/%d{yyyy-MM-dd}-%i.log.gz" immediateFlush="false">
+            <PatternLayout pattern="[%d{HH:mm:ss.SSS}] [%t/%level]: (%logger{0}) &lt;%marker&gt; %msg{nolookups}%n%xEx{full}"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+                <OnStartupTriggeringPolicy/>
+            </Policies>
+            <DefaultRolloverStrategy compressionLevel="9" max="100"/>
+        </RollingRandomAccessFile>
+        <Async name="Async">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="File" level="INFO"/>
+        </Async>
+    </Appenders>
+    <Loggers>
+        <Root level="TRACE">
+            <Filters>
+                <!-- Session service (Mojang API) errors with stack-traces or otherwise false alarms. -->
+                <!-- We don't use online accounts in development. -->
+                <!-- Above ThresholdFilter: Almost all are errors. -->
+                <!-- <RegexFilter regex="^Could not authorize you against Realms server: .*$" useRawMsg="true" onMatch="DENY" onMismatch="NEUTRAL"/> -->
+                <RegexFilter regex="^Couldn't connect to realms$" useRawMsg="true" onMatch="DENY" onMismatch="NEUTRAL"/>
+                <!-- <RegexFilter regex="^Couldn't look up profile properties for .*$" useRawMsg="true" onMatch="DENY" onMismatch="NEUTRAL"/> -->
+                <RegexFilter regex="^Failed to fetch Realms feature flags$" useRawMsg="true" onMatch="DENY" onMismatch="NEUTRAL"/>
+                <RegexFilter regex="^Failed to fetch user properties$" useRawMsg="true" onMatch="DENY" onMismatch="NEUTRAL"/>
+                <!-- <RegexFilter regex="^Failed to retrieve profile key pair$" useRawMsg="true" onMatch="DENY" onMismatch="NEUTRAL"/> -->
+                <!-- <RegexFilter regex="^Failed to verify authentication$" useRawMsg="true" onMatch="DENY" onMismatch="NEUTRAL"/> -->
+
+                <!-- Mixin. (non-debug level; above ThresholdFilter) -->
+                <RegexFilter regex="^.*:.* from mod .*: Class version \d+ required is higher than the class version supported by the current version of Mixin \(JAVA_\d+ supports class version \d+\)$" onMatch="DENY" onMismatch="NEUTRAL"/>
+                <RegexFilter regex="^Mixing .* from .* into .*$" onMatch="DENY" onMismatch="NEUTRAL"/>
+
+                <!-- Accept all non-debug logs. -->
+                <ThresholdFilter level="INFO" onMatch="ACCEPT" onMismatch="NEUTRAL"/>
+
+                <!-- Vanilla spammy logs. (all packets sent/recv; all sounds played) -->
+                <MarkerFilter marker="NETWORK_PACKETS" onMatch="DENY" onMismatch="NEUTRAL"/>
+                <MarkerFilter marker="SOUNDS" onMatch="DENY" onMismatch="NEUTRAL"/>
+
+                <!-- Forge/FML verbose logging. -->
+                <MarkerFilter marker="AXFORM" onMatch="DENY" onMismatch="NEUTRAL"/>
+                <MarkerFilter marker="DISTXFORM" onMatch="DENY" onMismatch="NEUTRAL"/>
+                <MarkerFilter marker="EVENTBUS" onMatch="DENY" onMismatch="NEUTRAL"/>
+                <MarkerFilter marker="LAUNCHPLUGIN" onMatch="DENY" onMismatch="NEUTRAL"/>
+                <MarkerFilter marker="LOADING" onMatch="DENY" onMismatch="NEUTRAL"/>
+                <MarkerFilter marker="REGISTRIES" onMatch="DENY" onMismatch="NEUTRAL"/>
+                <MarkerFilter marker="REGISTRYDUMP" onMatch="DENY" onMismatch="NEUTRAL"/>
+                <MarkerFilter marker="REGISTRY_DUMP" onMatch="DENY" onMismatch="NEUTRAL"/>
+                <MarkerFilter marker="SCAN" onMatch="DENY" onMismatch="NEUTRAL"/>
+
+                <!-- Fabric's classpath scanning logs for every class/JAR. -->
+                <RegexFilter regex="^Added class metadata for .* to metadata cache$" useRawMsg="true" onMatch="DENY" onMismatch="NEUTRAL"/>
+                <RegexFilter regex="^Adding .* to classpath\.$" useRawMsg="true" onMatch="DENY" onMismatch="NEUTRAL"/>
+
+                <!-- Mixin. -->
+                <RegexFilter regex="^.*:.* from mod .* does(?:n't)? use it's CallbackInfo(?:Returnable)?$" onMatch="DENY" onMismatch="NEUTRAL"/>
+                <RegexFilter regex="^.*:.* from mod .* has .* override\(s\) in child classes$" onMatch="DENY" onMismatch="NEUTRAL"/>
+                <RegexFilter regex="^.*:.* from mod .* won't be passed a CallbackInfo(?:Returnable)? as a result$" onMatch="DENY" onMismatch="NEUTRAL"/>
+
+                <!-- Netty Java 9 module errors. (on Forge) -->
+                <RegexFilter regex="^direct buffer constructor: unavailable$" useRawMsg="true" onMatch="DENY" onMismatch="NEUTRAL"/>
+                <RegexFilter regex="^jdk\.internal\.misc\.Unsafe\.allocateUninitializedArray\(int\): unavailable$" useRawMsg="true" onMatch="DENY" onMismatch="NEUTRAL"/>
+            </Filters>
+            <AppenderRef ref="Async"/>
+        </Root>
+    </Loggers>
 </Configuration>
