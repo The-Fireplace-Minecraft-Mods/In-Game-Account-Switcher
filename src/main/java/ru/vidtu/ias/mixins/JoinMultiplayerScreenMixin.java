@@ -122,7 +122,10 @@ public final class JoinMultiplayerScreenMixin extends Screen {
             this.ias_button.setX(x);
             this.ias_button.setY(y);
         } else {
-            Button button = this.ias_button = new ImageButton(x, y, 20, 20, IASMinecraft.BUTTON, btn -> this.minecraft.setScreen(new AccountScreen(this)), Component.literal("In-Game Account Switcher"));
+            Button button = this.ias_button = new ImageButton(x, y, 20, 20, IASMinecraft.BUTTON, btn -> {
+                //$ set_screen minecraft 'new AccountScreen(this)'
+                minecraft.gui.setScreen(new AccountScreen(this));
+            }, Component.literal("In-Game Account Switcher"));
             button.setTooltip(Tooltip.create(button.getMessage()));
             button.setTooltipDelay(Duration.ofMillis(250L));
             this.addRenderableWidget(button);

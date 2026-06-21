@@ -148,7 +148,7 @@ final class MicrosoftPopupScreen extends Screen implements CreateHandler {
         assert this.minecraft != null;
 
         // Cancelled if no longer displayed.
-        return this != this.minecraft.screen;
+        return this != this.currentScreen();
     }
 
     @Override
@@ -318,7 +318,8 @@ final class MicrosoftPopupScreen extends Screen implements CreateHandler {
         assert this.minecraft != null;
 
         // Close to parent.
-        this.minecraft.setScreen(this.parent);
+        //$set_screen 'this.minecraft' 'this.parent'
+        this.minecraft.gui.setScreen(this.parent);
     }
 
     @Override
@@ -491,7 +492,7 @@ final class MicrosoftPopupScreen extends Screen implements CreateHandler {
         assert this.minecraft != null;
 
         // Skip if not current screen.
-        if (this != this.minecraft.screen) return;
+        if (this != this.currentScreen()) return;
 
         // Try to focus.
         if (MicrosoftAccount.PROCESSING.equals(stage)) {
@@ -524,7 +525,7 @@ final class MicrosoftPopupScreen extends Screen implements CreateHandler {
         assert this.minecraft != null;
 
         // Skip if not current screen.
-        if (this != this.minecraft.screen) return;
+        if (this != this.currentScreen()) return;
 
         // Write disclaimers.
         this.stage(MicrosoftAccount.FINALIZING);
@@ -532,7 +533,7 @@ final class MicrosoftPopupScreen extends Screen implements CreateHandler {
         // Schedule on main.
         this.minecraft.execute(() -> {
             // Skip if not current screen.
-            if (this != this.minecraft.screen) return;
+            if (this != this.currentScreen()) return;
 
             // Call the callback.
             this.handler.accept(account);
@@ -548,7 +549,7 @@ final class MicrosoftPopupScreen extends Screen implements CreateHandler {
         LOGGER.error("IAS: Create error.", error);
 
         // Skip if not current screen.
-        if (this != this.minecraft.screen) return;
+        if (this != this.currentScreen()) return;
 
         // Flush the stage.
         FriendlyException probable = FriendlyException.friendlyInChain(error);
@@ -570,5 +571,13 @@ final class MicrosoftPopupScreen extends Screen implements CreateHandler {
                 ", stage=" + this.stage +
                 ", label=" + this.label +
                 '}';
+    }
+
+    private Screen currentScreen() {
+        //? if >=26.2 {
+        return this.minecraft.gui.screen();
+        //?} else {
+        /*return this.minecraft.screen;
+        *///?}
     }
 }

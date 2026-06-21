@@ -22,6 +22,7 @@ package ru.vidtu.ias.mixins;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.User;
 import net.minecraft.client.resources.language.I18n;
+import net.minecraft.locale.Language;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -52,7 +53,7 @@ public final class MinecraftMixin {
     @Inject(method = "createTitle", at = @At("RETURN"), cancellable = true)
     private void ias$createTitle$return(CallbackInfoReturnable<String> cir) {
         // Skip if not enabled or not fully loaded.
-        if (!IASConfig.barNick || !I18n.exists("ias.bar") || this.user == null) return;
+        if (!IASConfig.barNick || !Language.getInstance().has("ias.bar") || this.user == null) return;
 
         // Modify otherwise.
         String original = cir.getReturnValue();

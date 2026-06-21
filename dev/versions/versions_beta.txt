@@ -19,5 +19,4 @@
 #
 # List of "Beta" versions. See README.md for more information.
 # Empty lines and lines starting with "#" are ignored.
-#TODO(VidTu): Port.
-#26.2
+26.2

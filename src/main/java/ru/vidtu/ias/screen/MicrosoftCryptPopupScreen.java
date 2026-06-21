@@ -85,24 +85,30 @@ final class MicrosoftCryptPopupScreen extends Screen {
         }
 
         // Add password button.
-        PopupButton button = new PopupButton(this.width / 2 - 75, this.height / 2 - 24 - 12, 150, 20,
-                Component.translatable("ias.microsoft.password"), btn -> this.minecraft.setScreen(new MicrosoftPopupScreen(this.parent, this.handler, null)), Supplier::get);
+        PopupButton button = new PopupButton(this.width / 2 - 75, this.height / 2 - 24 - 12, 150, 20, Component.translatable("ias.microsoft.password"), btn -> {
+            //$set_screen 'this.minecraft' 'new MicrosoftPopupScreen(this.parent, this.handler, null)'
+            this.minecraft.gui.setScreen(new MicrosoftPopupScreen(this.parent, this.handler, null));
+        }, Supplier::get);
         button.setTooltip(Tooltip.create(Component.translatable("ias.microsoft.password.tip")));
         button.setTooltipDelay(Duration.ofMillis(250L));
         button.color(0.5F, 1.0F, 0.5F, true);
         this.addRenderableWidget(button);
 
         // Add hardware button.
-        button = new PopupButton(this.width / 2 - 75, this.height / 2 - 12, 150, 20,
-                Component.translatable("ias.microsoft.hardware"), btn -> this.minecraft.setScreen(new MicrosoftPopupScreen(this.parent, this.handler, HardwareCrypt.INSTANCE_V2)), Supplier::get);
+        button = new PopupButton(this.width / 2 - 75, this.height / 2 - 12, 150, 20, Component.translatable("ias.microsoft.hardware"), btn -> {
+            //$set_screen 'this.minecraft' 'new MicrosoftPopupScreen(this.parent, this.handler, HardwareCrypt.INSTANCE_V2)'
+            this.minecraft.gui.setScreen(new MicrosoftPopupScreen(this.parent, this.handler, HardwareCrypt.INSTANCE_V2));
+        }, Supplier::get);
         button.setTooltip(Tooltip.create(Component.translatable("ias.microsoft.hardware.tip")));
         button.setTooltipDelay(Duration.ofMillis(250L));
         button.color(1.0F, 1.0F, 0.5F, true);
         this.addRenderableWidget(button);
 
         // Add plain button.
-        this.plain = new PopupButton(this.width / 2 - 75, this.height / 2 + 12, 150, 20,
-                Component.translatable("ias.microsoft.plain"), btn -> this.minecraft.setScreen(new MicrosoftPopupScreen(this.parent, this.handler, DummyCrypt.INSTANCE)), Supplier::get);
+        this.plain = new PopupButton(this.width / 2 - 75, this.height / 2 + 12, 150, 20, Component.translatable("ias.microsoft.plain"), btn -> {
+            //$set_screen 'this.minecraft' 'new MicrosoftPopupScreen(this.parent, this.handler, DummyCrypt.INSTANCE)'
+            this.minecraft.gui.setScreen(new MicrosoftPopupScreen(this.parent, this.handler, DummyCrypt.INSTANCE));
+        }, Supplier::get);
         if (IASConfig.allowNoCrypt) {
             this.plain.setTooltip(Tooltip.create(Component.translatable("ias.microsoft.plain.tip.off", Component.translatable("key.keyboard.left.alt"), GLFW.glfwGetKeyName(GLFW.GLFW_KEY_Y, GLFW.GLFW_KEY_UNKNOWN))));
         } else {
@@ -183,7 +189,8 @@ final class MicrosoftCryptPopupScreen extends Screen {
         assert this.minecraft != null;
 
         // Close to parent.
-        this.minecraft.setScreen(this.parent);
+        //$set_screen 'this.minecraft' 'this.parent'
+        this.minecraft.gui.setScreen(this.parent);
     }
 
     @Override

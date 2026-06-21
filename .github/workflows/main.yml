@@ -19,6 +19,8 @@
 
 name: 'Build (Main)'
 permissions: { }
+concurrency:
+  group: 'main'
 on:
   push:
     branches: [ 'main' ]

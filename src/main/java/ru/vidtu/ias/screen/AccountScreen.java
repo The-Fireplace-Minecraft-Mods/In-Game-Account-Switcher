@@ -107,14 +107,16 @@ public final class AccountScreen extends Screen {
 
         // Disabled check.
         if (IAS.disabled()) {
-            this.minecraft.setScreen(new AlertScreen(this::onClose, Component.translatable("ias.disabled.title").withStyle(ChatFormatting.RED),
-                    Component.translatable("ias.disabled.text"), CommonComponents.GUI_BACK, true));
+            final Screen alert = new AlertScreen(this::onClose, Component.translatable("ias.disabled.title").withStyle(ChatFormatting.RED),
+                    Component.translatable("ias.disabled.text"), CommonComponents.GUI_BACK, true);
+            //$ set_screen 'this.minecraft' 'alert'
+            this.minecraft.gui.setScreen(alert);
             return;
         }
 
         // Disclaimer.
         if (!IASStorage.gameDisclaimerShown) {
-            this.minecraft.setScreen(new AlertScreen(() -> {
+            final Screen alert = new AlertScreen(() -> {
                 // Save disclaimer.
                 try {
                     IAS.gameDisclaimerShownStorage();
@@ -123,9 +125,12 @@ public final class AccountScreen extends Screen {
                 }
 
                 // Set screen.
-                this.minecraft.setScreen(this);
+                //$ set_screen 'this.minecraft' this
+                this.minecraft.gui.setScreen(this);
             }, Component.translatable("ias.disclaimer.title").withStyle(ChatFormatting.YELLOW),
-                    Component.translatable("ias.disclaimer.text"), CommonComponents.GUI_CONTINUE, false));
+                    Component.translatable("ias.disclaimer.text"), CommonComponents.GUI_CONTINUE, false);
+            //$ set_screen 'this.minecraft' 'alert'
+            this.minecraft.gui.setScreen(alert);
             return;
         }
 
@@ -153,14 +158,20 @@ public final class AccountScreen extends Screen {
 
         // Add login button.
         this.login = Button.builder(Component.translatable("ias.accounts.login"), btn -> {
-            this.list.login(true, IASConfig.closeOnLogin ? () -> this.minecraft.setScreen(this.parent) : null);
+            this.list.login(true, IASConfig.closeOnLogin ? () -> {
+                //$ set_screen 'this.minecraft' 'this.parent'
+                this.minecraft.gui.setScreen(this.parent);
+            } : null);
         })
             .bounds(this.width / 2 - 50 - 100 - 4, this.height - 24 - 24, 100, 20).build();
         this.addRenderableWidget(this.login);
 
         // Add offline login button.
         this.offlineLogin = Button.builder(Component.translatable("ias.accounts.offlineLogin"), btn -> {
-            this.list.login(false, IASConfig.closeOnLogin ? () -> this.minecraft.setScreen(this.parent) : null);
+            this.list.login(false, IASConfig.closeOnLogin ? () -> {
+                //$ set_screen 'this.minecraft' 'this.parent'
+                this.minecraft.gui.setScreen(this.parent);
+            } : null);
         })
             .bounds(this.width / 2 - 50 - 100 - 4, this.height - 24, 100, 20)
             .build();
@@ -187,7 +198,10 @@ public final class AccountScreen extends Screen {
                 .build());
 
         // Add delete button.
-        this.addRenderableWidget(Button.builder(CommonComponents.GUI_BACK, btn -> this.minecraft.setScreen(this.parent))
+        this.addRenderableWidget(Button.builder(CommonComponents.GUI_BACK, btn -> {
+            //$ set_screen 'this.minecraft' 'this.parent'
+            this.minecraft.gui.setScreen(this.parent);
+        })
                 .bounds(this.width / 2 + 50 + 4, this.height - 24, 100, 20)
                 .build());
 
@@ -211,7 +225,8 @@ public final class AccountScreen extends Screen {
         assert this.minecraft != null;
 
         // Close to parent.
-        this.minecraft.setScreen(this.parent);
+        //$ set_screen 'this.minecraft' 'this.parent'
+        this.minecraft.gui.setScreen(this.parent);
     }
 
     @Override
@@ -328,7 +343,10 @@ public final class AccountScreen extends Screen {
 
         // Enter or Numpad Enter to log in.
         if (select) {
-            this.list.login(!shift, IASConfig.closeOnLogin ? () -> this.minecraft.setScreen(this.parent) : null);
+            this.list.login(!shift, IASConfig.closeOnLogin ? () -> {
+                //$set_screen 'this.minecraft' 'this.parent'
+                this.minecraft.gui.setScreen(this.parent);
+            } : null);
             return true;
         }
 

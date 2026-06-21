@@ -65,6 +65,11 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
+//? if >=26.2 {
+import com.mojang.authlib.yggdrasil.FriendsService;
+import net.minecraft.client.gui.screens.social.RemoteFriendListUpdateHandler;
+//}
+
 /**
  * Main IAS class for Minecraft.
  *
@@ -169,7 +174,10 @@ public final class IASMinecraft {
             }
 
             // Add the button.
-            ImageButton button = new ImageButton(x, y, 20, 20, BUTTON, btn -> minecraft.setScreen(new AccountScreen(screen)), Component.literal("In-Game Account Switcher"));
+            ImageButton button = new ImageButton(x, y, 20, 20, BUTTON, btn -> {
+                //$ set_screen minecraft 'new AccountScreen(screen)'
+                minecraft.gui.setScreen(new AccountScreen(screen));
+            }, Component.literal("In-Game Account Switcher"));
             button.setTooltip(Tooltip.create(button.getMessage()));
             button.setTooltipDelay(Duration.ofMillis(250L));
             buttonAdder.accept(button);
@@ -258,7 +266,12 @@ public final class IASMinecraft {
         }
 
         // Warn about invalid names.
-        if (!IASConfig.nickWarns || !(screen instanceof ConnectScreen) || minecraft.getToastManager().getToast(SystemToast.class, NICK_WARN) != null) return;
+        //? if >=26.2 {
+        ToastManager manager = minecraft.gui.toastManager();
+        //?} else {
+        /*ToastManager manager = minecraft.getToastManager();
+        *///?}
+        if (!IASConfig.nickWarns || !(screen instanceof ConnectScreen) || manager.getToast(SystemToast.class, NICK_WARN) != null) return;
         User user = minecraft.getUser();
         // Mods break non-nullness.
         //noinspection ConstantValue
@@ -267,8 +280,12 @@ public final class IASMinecraft {
         if (key == null) return;
 
         // Display the toast.
-        ToastManager manager = minecraft.getToastManager();
-        manager.addToast(SystemToast.multiline(minecraft, NICK_WARN, Component.literal("In-Game Account Switcher"), Component.translatable(key, name)));
+        //? if >=26.2 {
+        final SystemToast toast = new SystemToast(NICK_WARN, Component.literal("In-Game Account Switcher"), Component.translatable(key, name));
+        //?} else {
+        /*final SystemToast toast = SystemToast.multiline(minecraft, NICK_WARN, Component.literal("In-Game Account Switcher"), Component.translatable(key, name));
+        *///?}
+        manager.addToast(toast);
     }
 
     /**
@@ -309,7 +326,7 @@ public final class IASMinecraft {
         // Check if not in-game.
         LOGGER.info("IAS: Received login request: {}", data);
         if (minecraft.player != null || minecraft.level != null || minecraft.getConnection() != null ||
-                minecraft.getCameraEntity() != null || minecraft.gameMode != null || minecraft.isSingleplayer()) {
+                minecraft.getCameraEntity() != null || minecraft.gameMode != null || minecraft.getSingleplayerServer() != null) {
             return CompletableFuture.failedFuture(new FriendlyException("Changing accounts in world.", "ias.error.world"));
         }
 
@@ -348,7 +365,13 @@ public final class IASMinecraft {
                 properties = UserApiService.OFFLINE_PROPERTIES;
             }
             CompletableFuture<UserApiService.UserProperties> propertiesFuture = CompletableFuture.completedFuture(properties);
-            PlayerSocialManager social = new PlayerSocialManager(minecraft, apiService);
+            //? if >= 26.2 {
+            FriendsService friends = service.createFriendsService(data.token());
+            RemoteFriendListUpdateHandler friendList = new RemoteFriendListUpdateHandler(friends, minecraft);
+            PlayerSocialManager social = new PlayerSocialManager(minecraft, apiService, friends, friendList);
+            //?} else {
+            /*PlayerSocialManager social = new PlayerSocialManager(minecraft, apiService);
+            *///?}
             ClientTelemetryManager telemetry = new ClientTelemetryManager(minecraft, apiService, user);
             ProfileKeyPairManager keyPair = ProfileKeyPairManager.create(apiService, user, minecraft.gameDirectory.toPath());
             ReportingContext reporting = ReportingContext.create(ReportEnvironment.local(), apiService);
@@ -357,13 +380,21 @@ public final class IASMinecraft {
             minecraft.execute(() -> {
                 // Flush everything.
                 LOGGER.info("IAS: Flushing user...");
-                //? if >=1.21.10
+                //? if >=1.21.10 {
                 accessor.ias$services(services);
+                //?}
                 accessor.ias$user(user);
                 accessor.ias$profileFuture(profile);
                 accessor.ias$userApiService(apiService);
                 accessor.ias$userPropertiesFuture(propertiesFuture);
                 accessor.ias$playerSocialManager(social);
+                //? if >=26.2 {
+                accessor.ias$remoteFriendListUpdateHandler().close();
+                accessor.ias$remoteFriendListUpdateHandler(friendList);
+                if (social.isFriendListEnabled()) {
+                    friendList.start();
+                }
+                //?}
                 accessor.ias$telemetryManager(telemetry);
                 accessor.ias$profileKeyPairManager(keyPair);
                 accessor.ias$reportingContext(reporting);

@@ -76,13 +76,18 @@ buildscript {
     }
 }
 
-// Define Stonecutter preprocessor variables/constants.
 sc {
+    // Stonecutter constants.
     constants["fabric"] = false
     constants["forge"] = true
     constants["hacky_neoforge"] = false
     constants["neoforge"] = false
+
+    // Stonecutter property path.
     properties.tags(mcv, "forge")
+
+    // Stonecutter swaps.
+    swaps["set_screen"] = if (mcp >= "26.2") "$1.gui.setScreen($2);" else "$1.setScreen($2);"
 }
 
 // Migration helper start.

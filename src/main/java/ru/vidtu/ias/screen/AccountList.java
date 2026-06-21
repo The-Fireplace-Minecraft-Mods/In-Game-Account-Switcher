@@ -22,6 +22,7 @@ package ru.vidtu.ias.screen;
 import com.mojang.authlib.yggdrasil.ProfileResult;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.ObjectSelectionList;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.DefaultPlayerSkin;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -151,7 +152,8 @@ final class AccountList extends ObjectSelectionList<AccountEntry> {
         if (online && account.canLogin()) {
             // Initialize and set the login screen.
             LoginPopupScreen login = new LoginPopupScreen(this.screen);
-            this.minecraft.setScreen(login);
+            //$ set_screen 'this.minecraft' 'login'
+            this.minecraft.gui.setScreen(login);
 
             // Start login.
             IAS.executor().execute(() -> {
@@ -163,7 +165,8 @@ final class AccountList extends ObjectSelectionList<AccountEntry> {
 
         // Initialize and set the login screen.
         LoginPopupScreen login = new LoginPopupScreen(this.screen);
-        this.minecraft.setScreen(login);
+        //$ set_screen 'this.minecraft' 'login'
+        this.minecraft.gui.setScreen(login);
 
         // Login offline.
         String name = account.name();
@@ -180,9 +183,9 @@ final class AccountList extends ObjectSelectionList<AccountEntry> {
         if (index < 0 || index >= IASStorage.ACCOUNTS.size()) return;
 
         // Replace in storage.
-        this.minecraft.setScreen(new AddPopupScreen(this.screen, true, account -> {
-            // Set to this.
-            this.minecraft.setScreen(this.screen);
+        final Screen add = new AddPopupScreen(this.screen, true, account -> {
+            //$ set_screen 'this.minecraft' 'this.screen'
+            this.minecraft.gui.setScreen(this.screen);
 
             // Add the account and save it.
             IASStorage.ACCOUNTS.removeIf(Predicate.isEqual(account));
@@ -202,7 +205,9 @@ final class AccountList extends ObjectSelectionList<AccountEntry> {
 
             // Update the list.
             this.update(this.screen.search().getValue());
-        }));
+        });
+        //$ set_screen 'this.minecraft' add
+        this.minecraft.gui.setScreen(add);
     }
 
     /**
@@ -236,7 +241,7 @@ final class AccountList extends ObjectSelectionList<AccountEntry> {
         }
 
         // Display confirmation screen.
-        this.minecraft.setScreen(new DeletePopupScreen(this.screen, account, () -> {
+        final Screen delete = new DeletePopupScreen(this.screen, account, () -> {
             // Delete if confirmed.
             IASStorage.ACCOUNTS.removeIf(Predicate.isEqual(account));
 
@@ -250,16 +255,19 @@ final class AccountList extends ObjectSelectionList<AccountEntry> {
 
             // Update.
             this.update(this.screen.search().getValue());
-        }));
+        });
+        //$ set_screen 'this.minecraft' delete
+        this.minecraft.gui.setScreen(delete);
     }
 
     /**
      * Opens the account adding screen.
      */
     void add() {
-        this.minecraft.setScreen(new AddPopupScreen(this.screen, false, account -> {
+        final Screen add = new AddPopupScreen(this.screen, false, account -> {
             // Set to this.
-            this.minecraft.setScreen(this.screen);
+            //$ set_screen 'this.minecraft' 'this.screen'
+            this.minecraft.gui.setScreen(this.screen);
 
             // Add the account.
             IASStorage.ACCOUNTS.removeIf(Predicate.isEqual(account));
@@ -275,7 +283,9 @@ final class AccountList extends ObjectSelectionList<AccountEntry> {
 
             // Update the list.
             this.update(this.screen.search().getValue());
-        }));
+        });
+        //$ set_screen 'this.minecraft' 'add'
+        this.minecraft.gui.setScreen(add);
     }
 
     /**

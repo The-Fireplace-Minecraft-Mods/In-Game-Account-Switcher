@@ -34,6 +34,11 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 
 import java.util.concurrent.CompletableFuture;
 
+//? if >=26.2 {
+import com.mojang.authlib.yggdrasil.FriendsService;
+import net.minecraft.client.gui.screens.social.RemoteFriendListUpdateHandler;
+//}
+
 /**
  * Mixin accessor for changing session-related data in {@link Minecraft}.
  *
@@ -101,6 +106,25 @@ public interface MinecraftAccessor {
     @Accessor("userPropertiesFuture")
     @Mutable
     void ias$userPropertiesFuture(CompletableFuture<UserApiService.UserProperties> future);
+
+    //? if >=26.2 {
+    /**
+     * Gets the remote friend list update handler.
+     *
+     * @return Current remote friend list update handler
+     */
+    @Accessor("remoteFriendListUpdateHandler")
+    RemoteFriendListUpdateHandler ias$remoteFriendListUpdateHandler();
+
+    /**
+     * Gets the remote friend list update handler.
+     *
+     * @param friendList Current remote friend list update handler
+     */
+    @Accessor("remoteFriendListUpdateHandler")
+    @Mutable
+    void ias$remoteFriendListUpdateHandler(RemoteFriendListUpdateHandler friendList);
+    //?}
 
     /**
      * Sets the player social manager.

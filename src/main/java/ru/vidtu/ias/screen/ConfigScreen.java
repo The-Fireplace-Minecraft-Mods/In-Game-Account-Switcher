@@ -128,8 +128,8 @@ public final class ConfigScreen extends Screen {
 
         // Disabled check.
         if (IAS.disabled()) {
-            this.minecraft.setScreen(new AlertScreen(this::onClose, Component.translatable("ias.disabled.title").withStyle(ChatFormatting.RED),
-                    Component.translatable("ias.disabled.text"), CommonComponents.GUI_BACK, true));
+            //$set_screen 'this.minecraft' 'new AlertScreen(this::onClose, Component.translatable("ias.disabled.title").withStyle(ChatFormatting.RED),Component.translatable("ias.disabled.text"), CommonComponents.GUI_BACK, true)'
+            this.minecraft.gui.setScreen(new AlertScreen(this::onClose, Component.translatable("ias.disabled.title").withStyle(ChatFormatting.RED),Component.translatable("ias.disabled.text"), CommonComponents.GUI_BACK, true));
             return;
         }
 
@@ -465,7 +465,8 @@ public final class ConfigScreen extends Screen {
         }
 
         // Close to parent.
-        this.minecraft.setScreen(this.parent);
+        //$ set_screen 'this.minecraft' 'this.parent'
+        this.minecraft.gui.setScreen(this.parent);
     }
 
     @Override

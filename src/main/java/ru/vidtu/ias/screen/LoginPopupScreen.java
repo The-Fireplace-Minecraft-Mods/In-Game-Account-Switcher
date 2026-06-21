@@ -120,7 +120,7 @@ final class LoginPopupScreen extends Screen implements LoginHandler {
         assert this.minecraft != null;
 
         // Cancelled if no longer displayed.
-        return this != this.minecraft.screen;
+        return this != this.currentScreen();
     }
 
     @Override
@@ -196,7 +196,8 @@ final class LoginPopupScreen extends Screen implements LoginHandler {
         }
 
         // Close to parent.
-        this.minecraft.setScreen(this.parent);
+        //$set_screen 'this.minecraft' 'this.parent'
+        this.minecraft.gui.setScreen(this.parent);
     }
 
     @SuppressWarnings("NonPrivateFieldAccessedInSynchronizedContext") // <- Supertype.
@@ -338,7 +339,7 @@ final class LoginPopupScreen extends Screen implements LoginHandler {
         assert this.minecraft != null;
 
         // Skip if not current screen.
-        if (this != this.minecraft.screen) return;
+        if (this != this.currentScreen()) return;
 
         // Flush the stage.
         Component component = Component.translatable(stage, args).withStyle(ChatFormatting.YELLOW);
@@ -391,17 +392,18 @@ final class LoginPopupScreen extends Screen implements LoginHandler {
         assert this.minecraft != null;
 
         // Skip if not current screen.
-        if (this != this.minecraft.screen) return;
+        if (this != this.currentScreen()) return;
 
         // User cancelled.
         if (data == null) {
             // Schedule on main.
             this.minecraft.execute(() -> {
                 // Skip if not current screen.
-                if (this != this.minecraft.screen) return;
+                if (this != this.currentScreen()) return;
 
                 // Back to parent screen.
-                this.minecraft.setScreen(this.parent);
+                //$set_screen 'this.minecraft' 'this.parent'
+                this.minecraft.gui.setScreen(this.parent);
             });
 
             // Don't log in.
@@ -423,10 +425,11 @@ final class LoginPopupScreen extends Screen implements LoginHandler {
 
         IASMinecraft.account(this.minecraft, data).thenRunAsync(() -> {
             // Skip if not current screen.
-            if (this != this.minecraft.screen) return;
+            if (this != this.currentScreen()) return;
 
             // Back to parent screen.
-            this.minecraft.setScreen(this.parent);
+            //$set_screen 'this.minecraft' 'this.parent'
+            this.minecraft.gui.setScreen(this.parent);
         }, this.minecraft).exceptionally(ex -> {
             // Handle error on error.
             this.error(new RuntimeException("Unable to change account.", ex));
@@ -445,7 +448,7 @@ final class LoginPopupScreen extends Screen implements LoginHandler {
         LOGGER.error("IAS: Login error.", error);
 
         // Skip if not current screen.
-        if (this != this.minecraft.screen) return;
+        if (this != this.currentScreen()) return;
 
         // Flush the stage.
         FriendlyException probable = FriendlyException.friendlyInChain(error);
@@ -464,5 +467,13 @@ final class LoginPopupScreen extends Screen implements LoginHandler {
                 "stage=" + this.stage +
                 ", label=" + this.label +
                 '}';
+    }
+
+    private Screen currentScreen() {
+        //? if >=26.2 {
+        return this.minecraft.gui.screen();
+        //?} else {
+        /*return this.minecraft.screen;
+        *///?}
     }
 }

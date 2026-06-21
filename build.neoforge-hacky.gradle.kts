@@ -58,13 +58,18 @@ base.archivesName = "IAS"
 version = "${version}+${name}"
 description = "Allows you to change which account you are signed in to in-game without restarting Minecraft."
 
-// Define Stonecutter preprocessor variables/constants.
 sc {
+    // Stonecutter constants.
     constants["fabric"] = false
     constants["forge"] = true // Yes, that's correct for NeoForge 1.20.1.
     constants["hacky_neoforge"] = true // And that's extremely correct.
     constants["neoforge"] = false // Yes, that's also correct.
+
+    // Stonecutter property path.
     properties.tags("1.20.1", "neoforge")
+
+    // Stonecutter swaps.
+    swaps["set_screen"] = "$1.setScreen($2);"
 }
 
 // Migration helper.

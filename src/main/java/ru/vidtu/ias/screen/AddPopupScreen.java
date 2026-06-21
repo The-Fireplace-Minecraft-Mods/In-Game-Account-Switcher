@@ -77,16 +77,20 @@ final class AddPopupScreen extends Screen {
         }
 
         // Add offline button.
-        PopupButton button = new PopupButton(this.width / 2 - 75, this.height / 2 - 24, 150, 20,
-                Component.translatable("ias.add.microsoft"), btn -> this.minecraft.setScreen(new MicrosoftCryptPopupScreen(this.parent, this.handler)), Supplier::get);
+        PopupButton button = new PopupButton(this.width / 2 - 75, this.height / 2 - 24, 150, 20, Component.translatable("ias.add.microsoft"), btn -> {
+            //$set_screen 'this.minecraft' 'new MicrosoftCryptPopupScreen(this.parent, this.handler)'
+            this.minecraft.gui.setScreen(new MicrosoftCryptPopupScreen(this.parent, this.handler));
+        }, Supplier::get);
         button.setTooltip(Tooltip.create(Component.translatable("ias.add.microsoft.tip")));
         button.setTooltipDelay(Duration.ofMillis(250L));
         button.color(0.5F, 1.0F, 0.5F, true);
         this.addRenderableWidget(button);
 
         // Add offline button.
-        button = new PopupButton(this.width / 2 - 75, this.height / 2, 150, 20,
-                Component.translatable("ias.add.offline"), btn -> this.minecraft.setScreen(new OfflinePopupScreen(this.parent, this.handler)), Supplier::get);
+        button = new PopupButton(this.width / 2 - 75, this.height / 2, 150, 20, Component.translatable("ias.add.offline"), btn -> {
+            //$set_screen 'this.minecraft' 'new OfflinePopupScreen(this.parent, this.handler)'
+            this.minecraft.gui.setScreen(new OfflinePopupScreen(this.parent, this.handler));
+        }, Supplier::get);
         button.setTooltip(Tooltip.create(Component.translatable("ias.add.offline.tip")));
         button.setTooltipDelay(Duration.ofMillis(250L));
         button.color(1.0F, 0.5F, 0.5F, true);
@@ -162,7 +166,8 @@ final class AddPopupScreen extends Screen {
         assert this.minecraft != null;
 
         // Close to parent.
-        this.minecraft.setScreen(this.parent);
+        //$set_screen 'this.minecraft' 'this.parent'
+        this.minecraft.gui.setScreen(this.parent);
     }
 
     @Override
