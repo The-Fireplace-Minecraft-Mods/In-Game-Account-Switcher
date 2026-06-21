@@ -37,7 +37,7 @@ import java.util.concurrent.CompletableFuture;
 //? if >=26.2 {
 import com.mojang.authlib.yggdrasil.FriendsService;
 import net.minecraft.client.gui.screens.social.RemoteFriendListUpdateHandler;
-//}
+//?}
 
 /**
  * Mixin accessor for changing session-related data in {@link Minecraft}.

@@ -68,7 +68,7 @@ import java.util.function.Consumer;
 //? if >=26.2 {
 import com.mojang.authlib.yggdrasil.FriendsService;
 import net.minecraft.client.gui.screens.social.RemoteFriendListUpdateHandler;
-//}
+//?}
 
 /**
  * Main IAS class for Minecraft.
