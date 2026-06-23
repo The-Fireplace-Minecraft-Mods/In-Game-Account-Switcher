@@ -43,6 +43,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.TitleScreen;
 import net.minecraft.client.gui.screens.multiplayer.JoinMultiplayerScreen;
 import net.minecraft.client.gui.screens.social.PlayerSocialManager;
+import net.minecraft.client.main.GameConfig;
 import net.minecraft.client.multiplayer.ProfileKeyPairManager;
 import net.minecraft.client.multiplayer.chat.report.ReportEnvironment;
 import net.minecraft.client.multiplayer.chat.report.ReportingContext;
@@ -53,6 +54,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.vidtu.ias.auth.LoginData;
 import ru.vidtu.ias.config.IASConfig;
+import ru.vidtu.ias.extension.MinecraftExtension;
 import ru.vidtu.ias.mixins.MinecraftAccessor;
 import ru.vidtu.ias.platform.IStonecutter;
 import ru.vidtu.ias.screen.AccountScreen;
@@ -350,14 +352,20 @@ public final class IASMinecraft {
             YggdrasilAuthenticationService service = online ? new YggdrasilAuthenticationService(minecraft.getProxy()) : YggdrasilAuthenticationService.createOffline(minecraft.getProxy());
             Services services = Services.create(service, minecraft.gameDirectory);
             CompletableFuture<ProfileResult> profile = CompletableFuture.completedFuture(online ? services.sessionService().fetchProfile(data.uuid(), true) : null);
-            //?} else
-            /*CompletableFuture<ProfileResult> profile = CompletableFuture.completedFuture(online ? minecraft.getMinecraftSessionService().fetchProfile(data.uuid(), true) : null);*/
+            //?} else {
+            /*YggdrasilAuthenticationService service = new YggdrasilAuthenticationService(minecraft.getProxy());
+            CompletableFuture<ProfileResult> profile = CompletableFuture.completedFuture(online ? minecraft.getMinecraftSessionService().fetchProfile(data.uuid(), true) : null);*/
+            //?}
             @SuppressWarnings("CastToIncompatibleInterface") // <- Mixin Accessor.
             MinecraftAccessor accessor = (MinecraftAccessor) minecraft;
+            final GameConfig originalConfig = ((MinecraftExtension) minecraft).ias_gameConfig();
             //? if >=1.21.10 {
-            UserApiService apiService = online ? service.createUserApiService(data.token()) : UserApiService.OFFLINE;
-            //?} else
-            /*UserApiService apiService = online ? accessor.ias$authenticationService().createUserApiService(data.token()) : UserApiService.OFFLINE;*/
+            final GameConfig config = new GameConfig(new GameConfig.UserData(user, minecraft.getProxy()), originalConfig.display, originalConfig.location, originalConfig.game, originalConfig.quickPlay);
+            UserApiService apiService = online ? MinecraftAccessor.ias$createUserApiService(service, config) : UserApiService.OFFLINE;
+            //?} else {
+            /*final GameConfig config = new GameConfig(new GameConfig.UserData(user, originalConfig.user.userProperties, originalConfig.user.profileProperties, minecraft.getProxy()), originalConfig.display, originalConfig.location, originalConfig.game, originalConfig.quickPlay);
+            UserApiService apiService = online ? accessor.ias$createUserApiService(service, config) : UserApiService.OFFLINE;
+            *///?}
             UserApiService.UserProperties properties;
             try {
                 properties = apiService.fetchProperties();

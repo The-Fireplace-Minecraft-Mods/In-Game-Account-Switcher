@@ -21,15 +21,19 @@ package ru.vidtu.ias.mixins;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.User;
+import net.minecraft.client.main.GameConfig;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.locale.Language;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import ru.vidtu.ias.config.IASConfig;
+import ru.vidtu.ias.extension.MinecraftExtension;
 
 /**
  * Mixin for {@link IASConfig#barNick}.
@@ -38,8 +42,11 @@ import ru.vidtu.ias.config.IASConfig;
  */
 @SuppressWarnings("DollarSignInName") // <- Mixin.
 @Mixin(Minecraft.class)
-public final class MinecraftMixin {
+public final class MinecraftMixin implements MinecraftExtension {
     @Shadow @Final private User user;
+
+    @Unique
+    private GameConfig ias_gameConfig;
 
     /**
      * An instance of this class cannot be created.
@@ -50,6 +57,12 @@ public final class MinecraftMixin {
         throw new AssertionError("No instances.");
     }
 
+    @Inject(method = "<init>", at = @At("RETURN"))
+    private void ias_init_return(GameConfig config, CallbackInfo ci) {
+        // Capture the config.
+        this.ias_gameConfig = config;
+    }
+
     @Inject(method = "createTitle", at = @At("RETURN"), cancellable = true)
     private void ias$createTitle$return(CallbackInfoReturnable<String> cir) {
         // Skip if not enabled or not fully loaded.
@@ -58,5 +71,15 @@ public final class MinecraftMixin {
         // Modify otherwise.
         String original = cir.getReturnValue();
         cir.setReturnValue(I18n.get("ias.bar", original, this.user.getName()));
+    }
+
+    /**
+     * Gets the captured game config.
+     *
+     * @return Game config at launch
+     */
+    @Override
+    public GameConfig ias_gameConfig() {
+        return this.ias_gameConfig;
     }
 }

@@ -22,6 +22,7 @@ package ru.vidtu.ias;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.minecraft.UserApiService;
 import com.mojang.authlib.properties.PropertyMap;
+import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.SharedConstants;
 import net.minecraft.client.Minecraft;
@@ -40,6 +41,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.TitleScreen;
 import net.minecraft.client.gui.screens.multiplayer.JoinMultiplayerScreen;
 import net.minecraft.client.gui.screens.social.PlayerSocialManager;
+import net.minecraft.client.main.GameConfig;
 import net.minecraft.client.multiplayer.ProfileKeyPairManager;
 import net.minecraft.client.multiplayer.chat.report.ReportEnvironment;
 import net.minecraft.client.multiplayer.chat.report.ReportingContext;
@@ -50,6 +52,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.vidtu.ias.auth.LoginData;
 import ru.vidtu.ias.config.IASConfig;
+import ru.vidtu.ias.extension.MinecraftExtension;
 import ru.vidtu.ias.mixins.MinecraftAccessor;
 import ru.vidtu.ias.screen.AccountScreen;
 import ru.vidtu.ias.utils.Expression;
@@ -318,16 +321,14 @@ public final class IASMinecraft {
             User user = new User(data.name(), data.uuid().toString(), data.token(), Optional.empty(), Optional.empty(), type);
 
             // Create various services.
+            YggdrasilAuthenticationService service = new YggdrasilAuthenticationService(minecraft.getProxy());
             @SuppressWarnings("CastToIncompatibleInterface") // <- Mixin Accessor.
             MinecraftAccessor accessor = (MinecraftAccessor) minecraft;
             UserApiService apiService;
             if (online) {
-                try {
-                    apiService = accessor.ias$authenticationService().createUserApiService(data.token());
-                } catch (Throwable t) {
-                    // Rethrow.
-                    throw new RuntimeException("Unable to create user API service.", t);
-                }
+                final GameConfig originalConfig = ((MinecraftExtension) minecraft).ias_gameConfig();
+                final GameConfig config = new GameConfig(new GameConfig.UserData(user, originalConfig.user.userProperties, originalConfig.user.profileProperties, minecraft.getProxy()), originalConfig.display, originalConfig.location, originalConfig.game, originalConfig.server);
+                apiService = accessor.ias$createUserApiService(service, config);
             } else {
                 apiService = UserApiService.OFFLINE;
             }

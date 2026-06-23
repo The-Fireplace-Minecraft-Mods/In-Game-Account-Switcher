@@ -21,6 +21,7 @@ package ru.vidtu.ias;
 
 import com.mojang.authlib.minecraft.UserApiService;
 import com.mojang.authlib.yggdrasil.ProfileResult;
+import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
 import net.minecraft.SharedConstants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.User;
@@ -40,6 +41,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.TitleScreen;
 import net.minecraft.client.gui.screens.multiplayer.JoinMultiplayerScreen;
 import net.minecraft.client.gui.screens.social.PlayerSocialManager;
+import net.minecraft.client.main.GameConfig;
 import net.minecraft.client.multiplayer.ProfileKeyPairManager;
 import net.minecraft.client.multiplayer.chat.report.ReportEnvironment;
 import net.minecraft.client.multiplayer.chat.report.ReportingContext;
@@ -50,6 +52,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.vidtu.ias.auth.LoginData;
 import ru.vidtu.ias.config.IASConfig;
+import ru.vidtu.ias.extension.MinecraftExtension;
 import ru.vidtu.ias.mixins.MinecraftAccessor;
 import ru.vidtu.ias.screen.AccountScreen;
 import ru.vidtu.ias.utils.Expression;
@@ -322,10 +325,13 @@ public final class IASMinecraft {
             User user = new User(data.name(), data.uuid(), data.token(), Optional.empty(), Optional.empty(), type);
 
             // Create various services.
+            YggdrasilAuthenticationService service = new YggdrasilAuthenticationService(minecraft.getProxy());
             CompletableFuture<ProfileResult> profile = CompletableFuture.completedFuture(online ? minecraft.getMinecraftSessionService().fetchProfile(data.uuid(), true) : null);
             @SuppressWarnings("CastToIncompatibleInterface") // <- Mixin Accessor.
             MinecraftAccessor accessor = (MinecraftAccessor) minecraft;
-            UserApiService apiService = online ? accessor.ias$authenticationService().createUserApiService(data.token()) : UserApiService.OFFLINE;
+            final GameConfig originalConfig = ((MinecraftExtension) minecraft).ias_gameConfig();
+            final GameConfig config = new GameConfig(new GameConfig.UserData(user, originalConfig.user.userProperties, originalConfig.user.profileProperties, minecraft.getProxy()), originalConfig.display, originalConfig.location, originalConfig.game, originalConfig.quickPlay);
+            UserApiService apiService = online ? accessor.ias$createUserApiService(service, config) : UserApiService.OFFLINE;
             UserApiService.UserProperties properties;
             try {
                 properties = apiService.fetchProperties();

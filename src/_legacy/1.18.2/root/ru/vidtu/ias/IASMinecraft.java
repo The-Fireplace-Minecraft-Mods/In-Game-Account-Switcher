@@ -40,6 +40,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.TitleScreen;
 import net.minecraft.client.gui.screens.multiplayer.JoinMultiplayerScreen;
 import net.minecraft.client.gui.screens.social.PlayerSocialManager;
+import net.minecraft.client.main.GameConfig;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
@@ -48,6 +49,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.vidtu.ias.auth.LoginData;
 import ru.vidtu.ias.config.IASConfig;
+import ru.vidtu.ias.extension.MinecraftExtension;
 import ru.vidtu.ias.legacy.LegacyTooltip;
 import ru.vidtu.ias.mixins.MinecraftAccessor;
 import ru.vidtu.ias.screen.AccountScreen;
@@ -331,7 +333,9 @@ public final class IASMinecraft {
             if (online) {
                 try {
                     Objects.requireNonNull(service, "Authentication service is not captured.");
-                    apiService = service.createUserApiService(data.token());
+                    final GameConfig originalConfig = ((MinecraftExtension) minecraft).ias_gameConfig();
+                    final GameConfig config = new GameConfig(new GameConfig.UserData(user, originalConfig.user.userProperties, originalConfig.user.profileProperties, minecraft.getProxy()), originalConfig.display, originalConfig.location, originalConfig.game, originalConfig.server);
+                    apiService = accessor.ias$createUserApiService(service, config);
                 } catch (Throwable t) {
                     // Rethrow.
                     throw new RuntimeException("Unable to create user API service.", t);

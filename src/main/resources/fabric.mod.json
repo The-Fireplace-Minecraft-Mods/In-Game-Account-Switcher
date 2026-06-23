@@ -27,14 +27,14 @@
   "environment": "client",
   "entrypoints": {
     "client": [
-      //? if >=1.21.5 {
+      //? if >=1.21.8 {
       "ru.vidtu.ias.platform.IFabric"
       //?} else {
       /*"ru.vidtu.ias.IASFabric"
       *///?}
     ],
     "modmenu": [
-      //? if >=1.21.5 {
+      //? if >=1.21.8 {
       "ru.vidtu.ias.platform.IModMenu"
       //?} else {
       /*"ru.vidtu.ias.IASModMenu"

@@ -21,12 +21,15 @@ package ru.vidtu.ias.mixins;
 
 import com.mojang.authlib.minecraft.UserApiService;
 import com.mojang.authlib.properties.PropertyMap;
+import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.User;
+import net.minecraft.client.main.GameConfig;
 import net.minecraft.client.gui.screens.social.PlayerSocialManager;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Mutable;
 import org.spongepowered.asm.mixin.gen.Accessor;
+import org.spongepowered.asm.mixin.gen.Invoker;
 
 /**
  * Mixin accessor for changing session-related data in {@link Minecraft}.
@@ -73,4 +76,14 @@ public interface MinecraftAccessor {
     @Accessor("playerSocialManager")
     @Mutable
     void ias$playerSocialManager(PlayerSocialManager manager);
+
+    /**
+     * Creates a new user API service.
+     *
+     * @param service Authentication service
+     * @param config  Game configuration
+     * @return A newly created user API service
+     */
+    @Invoker("createUserApiService")
+    UserApiService ias$createUserApiService(YggdrasilAuthenticationService service, GameConfig config);
 }
