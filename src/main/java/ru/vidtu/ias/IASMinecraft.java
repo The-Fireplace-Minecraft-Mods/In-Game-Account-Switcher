@@ -361,10 +361,13 @@ public final class IASMinecraft {
             final GameConfig originalConfig = ((MinecraftExtension) minecraft).ias_gameConfig();
             //? if >=1.21.10 {
             final GameConfig config = new GameConfig(new GameConfig.UserData(user, minecraft.getProxy()), originalConfig.display, originalConfig.location, originalConfig.game, originalConfig.quickPlay);
-            UserApiService apiService = online ? MinecraftAccessor.ias$createUserApiService(service, config) : UserApiService.OFFLINE;
             //?} else {
             /*final GameConfig config = new GameConfig(new GameConfig.UserData(user, originalConfig.user.userProperties, originalConfig.user.profileProperties, minecraft.getProxy()), originalConfig.display, originalConfig.location, originalConfig.game, originalConfig.quickPlay);
-            UserApiService apiService = online ? accessor.ias$createUserApiService(service, config) : UserApiService.OFFLINE;
+            *///?}
+            //? if >=26.2 {
+            UserApiService apiService = online ? MinecraftAccessor.ias$createUserApiService(service, config) : UserApiService.OFFLINE;
+            //?} else {
+            /*UserApiService apiService = online ? accessor.ias$createUserApiService(service, config) : UserApiService.OFFLINE;
             *///?}
             UserApiService.UserProperties properties;
             try {

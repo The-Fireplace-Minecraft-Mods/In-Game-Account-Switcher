@@ -167,7 +167,7 @@ public interface MinecraftAccessor {
      * @return A newly created user API service
      */
     @Invoker("createUserApiService")
-    //? if >=1.21.10 {
+    //? if >=26.2 {
     static UserApiService ias$createUserApiService(YggdrasilAuthenticationService service, GameConfig config) {
         throw null;
     }
