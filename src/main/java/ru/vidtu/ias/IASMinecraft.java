@@ -246,7 +246,11 @@ public final class IASMinecraft {
                 case CENTER -> cx - font.width(text) / 2;
                 case RIGHT -> cx - font.width(text);
             };
-            textY = cx == null || cy == null ? height / 4 + 164 : cy;
+            //? >=26.2 {
+            textY = cx == null || cy == null ? height / 4 + 178 : cy;
+            //?} else {
+            /*textY = cx == null || cy == null ? height / 4 + 164 : cy;
+            *///?}
         }
 
         // Add servers text.
