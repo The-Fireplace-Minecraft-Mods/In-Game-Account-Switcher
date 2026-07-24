@@ -4,7 +4,7 @@
   "ias.disclaimer.text": "W folderze twojej gry został utworzony podfolder o nazwie '_IAS_ACCOUNTS_DO_NOT_SEND_TO_ANYONE'. NIE WYSYŁAJ TEGO PODFOLDERU NIKOMU, NAWET JEŚLI TWIERDZI, ŻE JEST TWÓRCĄ TEGO MODA. Jeśli jednak go komuś wysłałeś, postępuj zgodnie z instrukcjami zawartymi w pliku 'READ_ME_IMPORTANT.txt' znajdującym się w tym podfolderze lub zapoznaj się z wytycznymi na stronie moda. Możesz też spojrzeć na stronę moda, aby zrozumieć czym jest Krypta, dlaczego jest potrzebna i jak zapewnić bezpieczeństwo swojego konta lub tokena.",
   "ias.disabled.title": "In-Game Account Switcher: Wyłączony",
   "ias.disabled.text": "Ta wersja moda została wyłączona z powodu luk w zabezpieczeniach lub innych krytycznych problemów. Zajrzyj na stronę moda, aby uzyskać więcej informacji. Nie będziesz mógł korzystać z obecnej wersji moda.",
-  "ias.accounts": "Konta IG Account Switchera",
+  "ias.accounts": "Konta In-Game Account Switcher",
   "ias.accounts.search": "Szukaj...",
   "ias.accounts.login": "Zaloguj",
   "ias.accounts.login.offline": "Wybrane konto nie obsługuje uwierzytelniania w trybie online. Użyj przycisku 'Zaloguj Offline', aby zalogować się w trybie offline.",
