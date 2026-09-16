@@ -357,7 +357,7 @@ if [ -z "${UPLOAD_MODRINTH_SKIP:-}" ]; then
             UPLOAD_MODRINTH_LOADERS_JSON="[$(echo "${UPLOAD_TYPE}" | jq --raw-input --compact-output)]"
             UPLOAD_MODRINTH_DEPENDENCIES_JSON='[]'
         fi
-        
+
         # Upload.
         echo "Uploading '${UPLOAD_FILENAME}'... (version: '${UPLOAD_MC}', loader: '${UPLOAD_TYPE}', supported versions: ${UPLOAD_MODRINTH_GAME_VERSIONS_JSON}, supported loaders: ${UPLOAD_MODRINTH_LOADERS_JSON}, dependencies: ${UPLOAD_MODRINTH_DEPENDENCIES_JSON})"
         curl --fail-with-body --max-time 30 --retry 3 --request POST --header "Authorization: ${UPLOAD_MODRINTH_TOKEN}" --form-string "data={\"name\":${UPLOAD_MODRINTH_NAME_JSON},\"version_number\":${UPLOAD_MODRINTH_VERSION_JSON},\"changelog\":${UPLOAD_CHANGELOG_MODIFIED_JSON},\"dependencies\":${UPLOAD_MODRINTH_DEPENDENCIES_JSON},\"game_versions\":${UPLOAD_MODRINTH_GAME_VERSIONS_JSON},\"version_type\":\"${UPLOAD_VERSION_TYPE}\",\"loaders\":${UPLOAD_MODRINTH_LOADERS_JSON},\"featured\":false,\"status\":\"listed\",\"requested_status\":\"listed\",\"project_id\":\"cudtvDnd\",\"file_parts\":[\"${UPLOAD_FILENAME}\"],\"primary_file\":\"${UPLOAD_FILENAME}\"}" --form "${UPLOAD_FILENAME}=@${UPLOAD_FILE}" 'https://api.modrinth.com/v2/version'
@@ -386,8 +386,8 @@ if [ -z "${UPLOAD_CURSEFORGE_SKIP:-}" ]; then
         UPLOAD_FILENAME=$(basename -- "${UPLOAD_FILE}")
         echo "Extracting data for '${UPLOAD_FILENAME}'..."
         UPLOAD_ID=$(echo "${UPLOAD_FILENAME}" | sed -E 's/^.*\+(.*)\..*$/\1/g')
-        UPLOAD_MC=$(echo "${UPLOAD_ID}" | cut -d- -f1)
-        UPLOAD_TYPE=$(echo "${UPLOAD_ID}" | cut -d- -f2)
+        UPLOAD_MC=$(echo "${UPLOAD_ID}" | cut -d '-' -f 1)
+        UPLOAD_TYPE=$(echo "${UPLOAD_ID}" | cut -d '-' -f 2)
         UPLOAD_CURSEFORGE_NAME="IAS ${UPLOAD_VERSION}+${UPLOAD_ID}"
         UPLOAD_CURSEFORGE_NAME_JSON=$(echo "${UPLOAD_CURSEFORGE_NAME}" | jq --raw-input --compact-output)
         if [ "${UPLOAD_TYPE}" == 'fabric' ]; then
@@ -432,8 +432,6 @@ if [ -z "${UPLOAD_CURSEFORGE_SKIP:-}" ]; then
         echo 'Uploaded.'
     done
     echo 'Published CurseForge releases.'
-
-
 fi
 
 # Skip Discord, if desired.
