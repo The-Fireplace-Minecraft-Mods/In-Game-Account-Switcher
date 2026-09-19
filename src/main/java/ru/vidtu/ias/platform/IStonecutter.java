@@ -133,9 +133,11 @@ public final class IStonecutter {
     }
 
     public static void openUrl(String url) {
-        //? if >=1.21.11 {
-        net.minecraft.util.Util.getPlatform().openUri(url);
-        //?} else
+        //? if >=26.3 {
+        com.mojang.blaze3d.Blaze3D.openUri(java.net.URI.create(url));
+        //?} elif >=1.21.11 {
+        /*net.minecraft.util.Util.getPlatform().openUri(url);
+        *///?} else
         /*net.minecraft.Util.getPlatform().openUri(url);*/
     }
 }

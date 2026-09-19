@@ -33,7 +33,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.DefaultPlayerSkin;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
-import org.lwjgl.glfw.GLFW;
+import ru.vidtu.ias.platform.IInput;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.vidtu.ias.IAS;
@@ -312,19 +312,19 @@ public final class AccountScreen extends Screen {
         assert this.minecraft != null;
 
         // Shift+Down or Page Down to swap down.
-        if ((key == GLFW.GLFW_KEY_DOWN && shift) || key == GLFW.GLFW_KEY_PAGE_DOWN) {
+        if ((key == IInput.DOWN && shift) || key == IInput.PAGE_DOWN) {
             this.list.swapDown(this.list.getSelected());
             return true;
         }
 
         // Shift+Up or Page Up to swap up.
-        if ((key == GLFW.GLFW_KEY_UP && shift) || key == GLFW.GLFW_KEY_PAGE_UP) {
+        if ((key == IInput.UP && shift) || key == IInput.PAGE_UP) {
             this.list.swapUp(this.list.getSelected());
             return true;
         }
 
         // Ctrl+C to copy name. (Ctrl+Shift+C to copy UUID) {
-        if (key == GLFW.GLFW_KEY_C && control) {
+        if (key == IInput.C && control) {
             AccountEntry selected = this.list.getSelected();
             if (selected != null) {
                 Account account = selected.account();
@@ -351,19 +351,19 @@ public final class AccountScreen extends Screen {
         }
 
         // Delete or Numpad Minus to delete.
-        if (key == GLFW.GLFW_KEY_DELETE || key == GLFW.GLFW_KEY_KP_SUBTRACT) {
+        if (key == IInput.DELETE || key == IInput.SUBTRACT) {
             this.list.delete(!shift);
             return true;
         }
 
         // CTRL+N or Numpad Plus to add.
-        if ((key == GLFW.GLFW_KEY_N && control) || key == GLFW.GLFW_KEY_KP_ADD) {
+        if ((key == IInput.N && control) || key == IInput.ADD) {
             this.list.add();
             return true;
         }
 
         // CTRL+R or Numpad Asterisk to edit.
-        if ((key == GLFW.GLFW_KEY_R && control) || key == GLFW.GLFW_KEY_KP_MULTIPLY) {
+        if ((key == IInput.R && control) || key == IInput.MULTIPLY) {
             this.list.edit();
             return true;
         }

@@ -28,7 +28,7 @@ import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import org.jetbrains.annotations.NotNull;
-import org.lwjgl.glfw.GLFW;
+import ru.vidtu.ias.platform.IInput;
 
 /**
  * Styled button with popup design.
@@ -95,7 +95,7 @@ final class PopupBox extends EditBox {
     //?} else
     /*public boolean keyPressed(int key, int scan, int mods) {*/
         // Enter.
-        if (this.enterAction != null && this.isActive() && this.isFocused() && (key == GLFW.GLFW_KEY_ENTER || key == GLFW.GLFW_KEY_KP_ENTER)) {
+        if (this.enterAction != null && this.isActive() && this.isFocused() && (key == IInput.ENTER || key == IInput.NUMPAD_ENTER)) {
             // Run enter action.
             this.enterAction.run();
 

@@ -29,7 +29,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import org.joml.Matrix3x2fStack;
-import org.lwjgl.glfw.GLFW;
+import ru.vidtu.ias.platform.IInput;
 import ru.vidtu.ias.account.Account;
 import ru.vidtu.ias.account.OfflineAccount;
 import ru.vidtu.ias.auth.microsoft.MSAuth;
@@ -310,7 +310,7 @@ public final class OfflinePopupScreen extends Screen {
     /*public boolean keyPressed(int key, int scan, int mods) {
         boolean res = super.keyPressed(key, scan, mods);
     *///?}
-        if (key == GLFW.GLFW_KEY_LEFT_ALT || key == GLFW.GLFW_KEY_RIGHT_ALT) {
+        if (key == IInput.LEFT_ALT || key == IInput.RIGHT_ALT) {
             this.type(false);
         }
         return res;
@@ -325,7 +325,7 @@ public final class OfflinePopupScreen extends Screen {
     /*public boolean keyReleased(int key, int scan, int mods) {
         boolean res = super.keyReleased(key, scan, mods);
     *///?}
-        if (key == GLFW.GLFW_KEY_LEFT_ALT || key == GLFW.GLFW_KEY_RIGHT_ALT) {
+        if (key == IInput.LEFT_ALT || key == IInput.RIGHT_ALT) {
             this.type(false);
         }
         return res;
