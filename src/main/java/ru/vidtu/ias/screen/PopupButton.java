@@ -21,7 +21,10 @@ package ru.vidtu.ias.screen;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+//? if >=26.1 {
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+//?} else
+/*import net.minecraft.client.gui.GuiGraphics;*/
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
@@ -101,9 +104,11 @@ final class PopupButton extends Button {
     }
 
     @Override
-    //? if >=1.21.11 {
-    protected void renderContents(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
-    //?} else
+    //? if >=26.1 {
+    protected void extractContents(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) {
+    //?} elif >=1.21.11 {
+    /*protected void renderContents(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
+    *///?} else
     /*protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float delta) {*/
         // Get values.
         Minecraft minecraft = Minecraft.getInstance();
@@ -134,7 +139,10 @@ final class PopupButton extends Button {
         graphics.fill(x + 1, y + height - 1, x + width - 1, y + height, color);
 
         // Render string.
-        graphics.drawString(font, message, x + (width - font.width(message)) / 2, y + height / 2 - 4, 0xFF_00_00_00, false);
+        //? if >=26.1 {
+        graphics.text(font, message, x + (width - font.width(message)) / 2, y + height / 2 - 4, 0xFF_00_00_00, false);
+        //?} else
+        /*graphics.drawString(font, message, x + (width - font.width(message)) / 2, y + height / 2 - 4, 0xFF_00_00_00, false);*/
 
         //? if 1.21.10 {
         /*// Change cursor.

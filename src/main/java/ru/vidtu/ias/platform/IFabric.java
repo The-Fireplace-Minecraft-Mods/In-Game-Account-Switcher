@@ -83,10 +83,16 @@ public final class IFabric implements ClientModInitializer {
 
         // Register screen handlers.
         ScreenEvents.AFTER_INIT.register((client, screen, width, height) -> {
-            IASMinecraft.onInit(client, screen, Screens.getButtons(screen)::add);
+            //? if >=26.1 {
+            IASMinecraft.onInit(client, screen, Screens.getWidgets(screen)::add);
+            //?} else
+            /*IASMinecraft.onInit(client, screen, Screens.getButtons(screen)::add);*/
             if (screen instanceof TitleScreen || screen instanceof JoinMultiplayerScreen) {
                 Font font = client.font;
-                ScreenEvents.afterRender(screen).register((scr, graphics, mouseX, mouseY, delta) -> IASMinecraft.onDraw(scr, font, graphics));
+                //? if >=26.1 {
+                ScreenEvents.afterExtract(screen).register((scr, graphics, mouseX, mouseY, delta) -> IASMinecraft.onDraw(scr, font, graphics));
+                //?} else
+                /*ScreenEvents.afterRender(screen).register((scr, graphics, mouseX, mouseY, delta) -> IASMinecraft.onDraw(scr, font, graphics));*/
             }
         });
 

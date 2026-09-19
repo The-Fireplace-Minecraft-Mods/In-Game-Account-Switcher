@@ -19,7 +19,10 @@
 
 package ru.vidtu.ias.screen;
 
-import net.minecraft.client.gui.GuiGraphics;
+//? if >=26.1 {
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+//?} else
+/*import net.minecraft.client.gui.GuiGraphics;*/
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
@@ -82,24 +85,30 @@ final class MicrosoftCryptPopupScreen extends Screen {
         }
 
         // Add password button.
-        PopupButton button = new PopupButton(this.width / 2 - 75, this.height / 2 - 24 - 12, 150, 20,
-                Component.translatable("ias.microsoft.password"), btn -> this.minecraft.setScreen(new MicrosoftPopupScreen(this.parent, this.handler, null)), Supplier::get);
+        PopupButton button = new PopupButton(this.width / 2 - 75, this.height / 2 - 24 - 12, 150, 20, Component.translatable("ias.microsoft.password"), btn -> {
+            //$set_screen 'this.minecraft' 'new MicrosoftPopupScreen(this.parent, this.handler, null)'
+            this.minecraft.gui.setScreen(new MicrosoftPopupScreen(this.parent, this.handler, null));
+        }, Supplier::get);
         button.setTooltip(Tooltip.create(Component.translatable("ias.microsoft.password.tip")));
         button.setTooltipDelay(Duration.ofMillis(250L));
         button.color(0.5F, 1.0F, 0.5F, true);
         this.addRenderableWidget(button);
 
         // Add hardware button.
-        button = new PopupButton(this.width / 2 - 75, this.height / 2 - 12, 150, 20,
-                Component.translatable("ias.microsoft.hardware"), btn -> this.minecraft.setScreen(new MicrosoftPopupScreen(this.parent, this.handler, HardwareCrypt.INSTANCE_V2)), Supplier::get);
+        button = new PopupButton(this.width / 2 - 75, this.height / 2 - 12, 150, 20, Component.translatable("ias.microsoft.hardware"), btn -> {
+            //$set_screen 'this.minecraft' 'new MicrosoftPopupScreen(this.parent, this.handler, HardwareCrypt.INSTANCE_V2)'
+            this.minecraft.gui.setScreen(new MicrosoftPopupScreen(this.parent, this.handler, HardwareCrypt.INSTANCE_V2));
+        }, Supplier::get);
         button.setTooltip(Tooltip.create(Component.translatable("ias.microsoft.hardware.tip")));
         button.setTooltipDelay(Duration.ofMillis(250L));
         button.color(1.0F, 1.0F, 0.5F, true);
         this.addRenderableWidget(button);
 
         // Add plain button.
-        this.plain = new PopupButton(this.width / 2 - 75, this.height / 2 + 12, 150, 20,
-                Component.translatable("ias.microsoft.plain"), btn -> this.minecraft.setScreen(new MicrosoftPopupScreen(this.parent, this.handler, DummyCrypt.INSTANCE)), Supplier::get);
+        this.plain = new PopupButton(this.width / 2 - 75, this.height / 2 + 12, 150, 20, Component.translatable("ias.microsoft.plain"), btn -> {
+            //$set_screen 'this.minecraft' 'new MicrosoftPopupScreen(this.parent, this.handler, DummyCrypt.INSTANCE)'
+            this.minecraft.gui.setScreen(new MicrosoftPopupScreen(this.parent, this.handler, DummyCrypt.INSTANCE));
+        }, Supplier::get);
         if (IASConfig.allowNoCrypt) {
             this.plain.setTooltip(Tooltip.create(Component.translatable("ias.microsoft.plain.tip.off", Component.translatable("key.keyboard.left.alt"), GLFW.glfwGetKeyName(GLFW.GLFW_KEY_Y, GLFW.GLFW_KEY_UNKNOWN))));
         } else {
@@ -116,37 +125,54 @@ final class MicrosoftCryptPopupScreen extends Screen {
     }
 
     @Override
-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
+    //? if >=26.1 {
+    public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) {
+    //?} else
+    /*public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {*/
         // Bruh.
         assert this.minecraft != null;
         Matrix3x2fStack pose = graphics.pose();
 
         // Render background and widgets.
-        super.render(graphics, mouseX, mouseY, delta);
+        //? if >=26.1 {
+        super.extractRenderState(graphics, mouseX, mouseY, delta);
+        //?} else
+        /*super.render(graphics, mouseX, mouseY, delta);*/
 
         // Render the title.
         pose.pushMatrix();
         pose.scale(2.0F, 2.0F);
-        graphics.drawCenteredString(this.font, this.title, this.width / 4, this.height / 4 - 79 / 2, 0xFF_FF_FF_FF);
+        //? if >=26.1 {
+        graphics.centeredText(this.font, this.title, this.width / 4, this.height / 4 - 79 / 2, 0xFF_FF_FF_FF);
+        //?} else
+        /*graphics.drawCenteredString(this.font, this.title, this.width / 4, this.height / 4 - 79 / 2, 0xFF_FF_FF_FF);*/
         pose.popMatrix();
     }
 
     @Override
-    public void renderBackground(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
+    //? if >=26.1 {
+    public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) {
+    //?} else
+    /*public void renderBackground(GuiGraphics graphics, int mouseX, int mouseY, float delta) {*/
         // Bruh.
         assert this.minecraft != null;
 
         // Render transparent background if parent exists.
         if (this.parent != null) {
             // Render gradient.
-            //? if >= 1.21.10 {
-            this.parent.renderWithTooltipAndSubtitles(graphics, 0, 0, delta);
-            //?} else
+            //? if >=26.1 {
+            this.parent.extractRenderStateWithTooltipAndSubtitles(graphics, 0, 0, delta);
+            //?} elif >= 1.21.10 {
+            /*this.parent.renderWithTooltipAndSubtitles(graphics, 0, 0, delta);
+            *///?} else
             /*this.parent.renderWithTooltip(graphics, 0, 0, delta);*/
             graphics.nextStratum();
             graphics.fill(0, 0, this.width, this.height, 0x80_00_00_00);
         } else {
-            super.renderBackground(graphics, mouseX, mouseY, delta);
+            //? if >=26.1 {
+            super.extractBackground(graphics, mouseX, mouseY, delta);
+            //?} else
+            /*super.renderBackground(graphics, mouseX, mouseY, delta);*/
         }
 
         // Render "form".
@@ -163,7 +189,8 @@ final class MicrosoftCryptPopupScreen extends Screen {
         assert this.minecraft != null;
 
         // Close to parent.
-        this.minecraft.setScreen(this.parent);
+        //$set_screen 'this.minecraft' 'this.parent'
+        this.minecraft.gui.setScreen(this.parent);
     }
 
     @Override

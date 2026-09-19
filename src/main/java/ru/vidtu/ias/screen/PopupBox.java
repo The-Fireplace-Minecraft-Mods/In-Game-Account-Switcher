@@ -20,7 +20,10 @@
 package ru.vidtu.ias.screen;
 
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+//? if >=26.1 {
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+//?} else
+/*import net.minecraft.client.gui.GuiGraphics;*/
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -63,7 +66,10 @@ final class PopupBox extends EditBox {
     }
 
     @Override
-    public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
+    //? if >=26.1 {
+    public void extractWidgetRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) {
+    //?} else
+    /*public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float delta) {*/
         // Render background.
         int x = this.getX();
         int y = this.getY();
@@ -76,7 +82,10 @@ final class PopupBox extends EditBox {
         graphics.fill(x + width - 1, y + 1, x + width, y + height - 1, 0xFF_FF_FF_FF);
 
         // Render other.
-        super.renderWidget(graphics, mouseX, mouseY, delta);
+        //? if >=26.1 {
+        super.extractWidgetRenderState(graphics, mouseX, mouseY, delta);
+        //?} else
+        /*super.renderWidget(graphics, mouseX, mouseY, delta);*/
     }
 
     @Override

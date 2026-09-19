@@ -21,7 +21,10 @@ package ru.vidtu.ias.screen;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.KeyboardHandler;
-import net.minecraft.client.gui.GuiGraphics;
+//? if >=26.1 {
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+//?} else
+/*import net.minecraft.client.gui.GuiGraphics;*/
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.MultiLineLabel;
 import net.minecraft.client.gui.screens.Screen;
@@ -145,7 +148,7 @@ final class MicrosoftPopupScreen extends Screen implements CreateHandler {
         assert this.minecraft != null;
 
         // Cancelled if no longer displayed.
-        return this != this.minecraft.screen;
+        return this != this.currentScreen();
     }
 
     @Override
@@ -315,7 +318,8 @@ final class MicrosoftPopupScreen extends Screen implements CreateHandler {
         assert this.minecraft != null;
 
         // Close to parent.
-        this.minecraft.setScreen(this.parent);
+        //$set_screen 'this.minecraft' 'this.parent'
+        this.minecraft.gui.setScreen(this.parent);
     }
 
     @Override
@@ -350,23 +354,35 @@ final class MicrosoftPopupScreen extends Screen implements CreateHandler {
 
     @SuppressWarnings("NonPrivateFieldAccessedInSynchronizedContext") // <- Supertype.
     @Override
-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
+    //? if >=26.1 {
+    public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) {
+    //?} else
+    /*public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {*/
         // Bruh.
         assert this.minecraft != null;
         Matrix3x2fStack pose = graphics.pose();
 
         // Render background and widgets.
-        super.render(graphics, mouseX, mouseY, delta);
+        //? if >=26.1 {
+        super.extractRenderState(graphics, mouseX, mouseY, delta);
+        //?} else
+        /*super.render(graphics, mouseX, mouseY, delta);*/
 
         // Render the title.
         pose.pushMatrix();
         pose.scale(2.0F, 2.0F);
-        graphics.drawCenteredString(this.font, this.title, this.width / 4, this.height / 4 - 74 / 2, 0xFF_FF_FF_FF);
+        //? if >=26.1 {
+        graphics.centeredText(this.font, this.title, this.width / 4, this.height / 4 - 74 / 2, 0xFF_FF_FF_FF);
+        //?} else
+        /*graphics.drawCenteredString(this.font, this.title, this.width / 4, this.height / 4 - 74 / 2, 0xFF_FF_FF_FF);*/
         pose.popMatrix();
 
         // Render password OR label.
         if (this.crypt == null && this.password != null && this.cryptPasswordTip != null) {
-            graphics.drawCenteredString(this.font, this.password.getMessage(), this.width / 2, this.height / 2 - 10 - 5, 0xFF_FF_FF_FF);
+            //? if >=26.1 {
+            graphics.centeredText(this.font, this.password.getMessage(), this.width / 2, this.height / 2 - 10 - 5, 0xFF_FF_FF_FF);
+            //?} else
+            /*graphics.drawCenteredString(this.font, this.password.getMessage(), this.width / 2, this.height / 2 - 10 - 5, 0xFF_FF_FF_FF);*/
             pose.pushMatrix();
             pose.scale(0.5F, 0.5F);
             IStonecutter.renderMultilineLabelCentered(this.cryptPasswordTip, graphics, this.width, this.height + 40);
@@ -437,21 +453,29 @@ final class MicrosoftPopupScreen extends Screen implements CreateHandler {
     }
 
     @Override
-    public void renderBackground(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
+    //? if >=26.1 {
+    public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) {
+    //?} else
+    /*public void renderBackground(GuiGraphics graphics, int mouseX, int mouseY, float delta) {*/
         // Bruh.
         assert this.minecraft != null;
 
         // Render transparent background if parent exists.
         if (this.parent != null) {
             // Render gradient.
-            //? if >=1.21.10 {
-            this.parent.renderWithTooltipAndSubtitles(graphics, 0, 0, delta);
-            //?} else
+            //? if >=26.1 {
+            this.parent.extractRenderStateWithTooltipAndSubtitles(graphics, 0, 0, delta);
+            //?} elif >=1.21.10 {
+            /*this.parent.renderWithTooltipAndSubtitles(graphics, 0, 0, delta);
+            *///?} else
             /*this.parent.renderWithTooltip(graphics, 0, 0, delta);*/
             graphics.nextStratum();
             graphics.fill(0, 0, this.width, this.height, 0x80_00_00_00);
         } else {
-            super.renderBackground(graphics, mouseX, mouseY, delta);
+            //? if >=26.1 {
+            super.extractBackground(graphics, mouseX, mouseY, delta);
+            //?} else
+            /*super.renderBackground(graphics, mouseX, mouseY, delta);*/
         }
 
         // Render "form".
@@ -468,7 +492,7 @@ final class MicrosoftPopupScreen extends Screen implements CreateHandler {
         assert this.minecraft != null;
 
         // Skip if not current screen.
-        if (this != this.minecraft.screen) return;
+        if (this != this.currentScreen()) return;
 
         // Try to focus.
         if (MicrosoftAccount.PROCESSING.equals(stage)) {
@@ -501,7 +525,7 @@ final class MicrosoftPopupScreen extends Screen implements CreateHandler {
         assert this.minecraft != null;
 
         // Skip if not current screen.
-        if (this != this.minecraft.screen) return;
+        if (this != this.currentScreen()) return;
 
         // Write disclaimers.
         this.stage(MicrosoftAccount.FINALIZING);
@@ -509,7 +533,7 @@ final class MicrosoftPopupScreen extends Screen implements CreateHandler {
         // Schedule on main.
         this.minecraft.execute(() -> {
             // Skip if not current screen.
-            if (this != this.minecraft.screen) return;
+            if (this != this.currentScreen()) return;
 
             // Call the callback.
             this.handler.accept(account);
@@ -525,7 +549,7 @@ final class MicrosoftPopupScreen extends Screen implements CreateHandler {
         LOGGER.error("IAS: Create error.", error);
 
         // Skip if not current screen.
-        if (this != this.minecraft.screen) return;
+        if (this != this.currentScreen()) return;
 
         // Flush the stage.
         FriendlyException probable = FriendlyException.friendlyInChain(error);
@@ -547,5 +571,13 @@ final class MicrosoftPopupScreen extends Screen implements CreateHandler {
                 ", stage=" + this.stage +
                 ", label=" + this.label +
                 '}';
+    }
+
+    private Screen currentScreen() {
+        //? if >=26.2 {
+        return this.minecraft.gui.screen();
+        //?} else {
+        /*return this.minecraft.screen;
+        *///?}
     }
 }

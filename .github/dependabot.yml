@@ -23,10 +23,14 @@ updates:
     directory: '/'
     schedule:
       interval: daily
+    labels:
+      - 'type:bot'
   - package-ecosystem: gradle
     directory: '/'
     schedule:
       interval: daily
+    labels:
+      - 'type:bot'
     ignore:
       - dependency-name: "com.mojang:minecraft"
       - dependency-name: "net.fabricmc.fabric-api:fabric-api"

@@ -17,8 +17,25 @@
 :: You should have received a copy of the GNU Lesser General Public License
 :: along with this program.  If not, see <https://www.gnu.org/licenses/>
 
-for /D %%f in (versions\*) do (
-    if not exist %%f\.ignored (
-        gradlew.bat "%%~nxf:runClient"
+:: Disable echo.
+@echo off
+
+:: Set local variable scope. (enable delayed expansions)
+setlocal enabledelayedexpansion
+
+:: Iterate.
+echo SCRIPT: Launching all versions...
+for /D %%F in (versions\*) do (
+    :: Launch.
+    echo SCRIPT: Launching '%%~nxF'...
+    cmd.exe /c gradlew.bat "-Dru.vidtu.ias.only=%%~nxF" "%%~nxF:runClient"
+    echo SCRIPT: Launch for '%%~nxF' exited with code !ERRORLEVEL!.
+    if not !ERRORLEVEL!==0 (
+        echo SCRIPT: Non-zero exit code. Press any key to continue, terminate ^(CTRL+C^) to cancel.
+        pause >nul
     )
 )
+echo SCRIPT: Done launching all versions.
+
+:: End local variable scope.
+endlocal
