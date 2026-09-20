@@ -4,8 +4,12 @@
       "api": "0.161.0+26.3",
       "modmenu": "$21.0.0-beta.1"
     },
+    "forge": {
+      "loader": "26.3-66.0.2",
+      "constraints": "[66,67)"
+    },
     "neoforge": {
-      "loader": "26.3.0.6-beta",
+      "loader": "26.3.0.7-beta",
       "constraints": "[26.3.0,26.3.1)"
     }
   },
