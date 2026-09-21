@@ -145,6 +145,10 @@ dependencies {
     compileOnly(libs.jetbrains.annotations)
     compileOnly(libs.error.prone.annotations)
 
+    if (mcp >= "1.21.8") {
+        annotationProcessor("net.minecraftforge:eventbus-validator:7.0.5")
+    }
+
     // TODO(VidTu): https://github.com/MinecraftForge/ForgeGradle/issues/1072
     if (mcp eq "1.18.2") {
         compileOnly("org.lwjgl:lwjgl-glfw:3.2.1")

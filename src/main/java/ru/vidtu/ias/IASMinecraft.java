@@ -20,8 +20,13 @@
 package ru.vidtu.ias;
 
 import com.mojang.authlib.minecraft.UserApiService;
-import com.mojang.authlib.yggdrasil.ProfileResult;
-import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
+//? if >=26.3 {
+import com.mojang.authlib.services.MinecraftServicesDiscoveryService;
+import com.mojang.authlib.services.ProfileResult;
+//?} else {
+/*import com.mojang.authlib.yggdrasil.ProfileResult;
+import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;*/
+//?}
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.User;
 import net.minecraft.client.gui.Font;
@@ -68,7 +73,11 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 //? if >=26.2 {
-import com.mojang.authlib.yggdrasil.FriendsService;
+//? if >=26.3 {
+import com.mojang.authlib.services.FriendsService;
+//?} else {
+/*import com.mojang.authlib.yggdrasil.FriendsService;*/
+//?}
 import net.minecraft.client.gui.screens.social.RemoteFriendListUpdateHandler;
 //?}
 
@@ -353,7 +362,10 @@ public final class IASMinecraft {
 
             // Create various services.
             //? if >=1.21.10 {
-            YggdrasilAuthenticationService service = online ? new YggdrasilAuthenticationService(minecraft.getProxy()) : YggdrasilAuthenticationService.createOffline(minecraft.getProxy());
+            //? if >=26.3 {
+            MinecraftServicesDiscoveryService service = MinecraftServicesDiscoveryService.create(minecraft.getProxy(), online);
+            //?} else
+            /*YggdrasilAuthenticationService service = online ? new YggdrasilAuthenticationService(minecraft.getProxy()) : YggdrasilAuthenticationService.createOffline(minecraft.getProxy());*/
             Services services = Services.create(service, minecraft.gameDirectory);
             CompletableFuture<ProfileResult> profile = CompletableFuture.completedFuture(online ? services.sessionService().fetchProfile(data.uuid(), true) : null);
             //?} else {

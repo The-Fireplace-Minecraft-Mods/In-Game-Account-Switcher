@@ -19,7 +19,11 @@
 
 package ru.vidtu.ias.screen;
 
-import com.mojang.authlib.yggdrasil.ProfileResult;
+//? if >=26.3 {
+import com.mojang.authlib.services.ProfileResult;
+//?} else {
+/*import com.mojang.authlib.yggdrasil.ProfileResult;*/
+//?}
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.ObjectSelectionList;
 import net.minecraft.client.gui.screens.Screen;

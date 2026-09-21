@@ -20,8 +20,13 @@
 package ru.vidtu.ias.mixins;
 
 import com.mojang.authlib.minecraft.UserApiService;
-import com.mojang.authlib.yggdrasil.ProfileResult;
-import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
+//? if >=26.3 {
+import com.mojang.authlib.services.MinecraftServicesDiscoveryService;
+import com.mojang.authlib.services.ProfileResult;
+//?} else {
+/*import com.mojang.authlib.yggdrasil.ProfileResult;
+import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;*/
+//?}
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.User;
 import net.minecraft.client.gui.screens.social.PlayerSocialManager;
@@ -38,7 +43,11 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 import java.util.concurrent.CompletableFuture;
 
 //? if >=26.2 {
-import com.mojang.authlib.yggdrasil.FriendsService;
+//? if >=26.3 {
+import com.mojang.authlib.services.FriendsService;
+//?} else {
+/*import com.mojang.authlib.yggdrasil.FriendsService;*/
+//?}
 import net.minecraft.client.gui.screens.social.RemoteFriendListUpdateHandler;
 //?}
 
@@ -168,9 +177,15 @@ public interface MinecraftAccessor {
      */
     @Invoker("createUserApiService")
     //? if >=26.2 {
-    static UserApiService ias$createUserApiService(YggdrasilAuthenticationService service, GameConfig config) {
+    //? if >=26.3 {
+    static UserApiService ias$createUserApiService(MinecraftServicesDiscoveryService service, GameConfig config) {
         throw null;
     }
+    //?} else {
+    /*static UserApiService ias$createUserApiService(YggdrasilAuthenticationService service, GameConfig config) {
+        throw null;
+    }*/
+    //?}
     //?} else {
     /*UserApiService ias$createUserApiService(YggdrasilAuthenticationService service, GameConfig config);
     *///?}

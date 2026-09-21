@@ -34,7 +34,11 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.util.FormattedCharSequence;
 import org.joml.Matrix3x2fStack;
-import org.lwjgl.glfw.GLFW;
+//? if >=26.3 {
+import org.lwjgl.sdl.SDLVideo;
+//?} else {
+/*import org.lwjgl.glfw.GLFW;*/
+//?}
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.vidtu.ias.IAS;
@@ -502,9 +506,14 @@ final class MicrosoftPopupScreen extends Screen implements CreateHandler {
                     long ptr = this.minecraft.getWindow().handle();
                     //?} else
                     /*long ptr = this.minecraft.getWindow().getWindow();*/
-                    GLFW.glfwRequestWindowAttention(ptr);
+                    //? if >=26.3 {
+                    SDLVideo.SDL_FlashWindow(ptr, SDLVideo.SDL_FLASH_BRIEFLY);
+                    SDLVideo.SDL_RaiseWindow(ptr);
+                    //?} else {
+                    /*GLFW.glfwRequestWindowAttention(ptr);
                     GLFW.glfwFocusWindow(ptr);
-                    GLFW.glfwRequestWindowAttention(ptr);
+                    GLFW.glfwRequestWindowAttention(ptr);*/
+                    //?}
                 } catch (Throwable ignored) {
                     // NO-OP
                 }
