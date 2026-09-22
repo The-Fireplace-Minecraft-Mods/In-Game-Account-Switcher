@@ -54,19 +54,21 @@
 -Dforge.logging.mojang.level=TRACE
 -Dforge.logging.debugFile.level=INFO
 -Dforge.logging.file.level=INFO
--Dforge.logging.marker.classdump=ACCEPT
--Dforge.logging.marker.classloading=ACCEPT
--Dforge.logging.marker.forgemod=ACCEPT
--Dforge.logging.marker.splash=ACCEPT
 -Dforge.logging.marker.axform=DENY
+-Dforge.logging.marker.core=DENY
+-Dforge.logging.marker.classdump=DENY
+-Dforge.logging.marker.classloading=DENY
 -Dforge.logging.marker.distxform=DENY
 -Dforge.logging.marker.eventbus=DENY
+-Dforge.logging.marker.forgemod=ACCEPT
 -Dforge.logging.marker.launchplugin=DENY
 -Dforge.logging.marker.loading=DENY
 -Dforge.logging.marker.networking=DENY
 -Dforge.logging.marker.registries=DENY
 -Dforge.logging.marker.registrydump=DENY
+-Dforge.logging.marker.resource.cache=NEUTRAL
 -Dforge.logging.marker.scan=DENY
+-Dforge.logging.marker.splash=NEUTRAL
 
 # Disable using a lot of threads for background tasks. (namely, DataFixerUpper prior to 1.19.4)
 -Dmax.bg.threads=1
