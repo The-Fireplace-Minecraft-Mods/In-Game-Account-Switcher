@@ -199,11 +199,14 @@ tasks.withType<JavaCompile> {
 
     // Set the compiler debug options.
     if ("${findProperty("ru.vidtu.ias.debug.javac") ?: findProperty("ru.vidtu.ias.debug")}".toBoolean()) {
-        options.compilerArgs.addAll(listOf("-g", "-parameters"))
+        // Enable local variable names, source file names, line numbers, method parameters, and all compiler warnings.
+        options.compilerArgs.addAll(listOf("-g", "-parameters", "-Xlint:all"))
     } else if ("${findProperty("ru.vidtu.ias.slim")}".toBoolean()) {
-        options.compilerArgs.add("-g:none")
+        // Enable all compiler warnings.
+        options.compilerArgs.addAll(listOf("-g:none", "-Xlint:all"))
     } else {
-        options.compilerArgs.add("-g")
+        // Enable local variable names, source file names, line numbers, and all compiler warnings.
+        options.compilerArgs.addAll(listOf("-g", "-Xlint:all"))
     }
 
     // Set the compatible Java target.
