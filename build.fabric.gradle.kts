@@ -19,11 +19,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
 
-// This is the Mojmap Fabric loader buildscript. It is processed by the
-// Stonecutter multiple times, for each non-remapped version. (compiled once)
+// This is the Fabric loader buildscript. It is processed by the
+// Stonecutter multiple times, for each version. (compiled once)
 // Based on Loom and processes the preparation/complation/building
 // of the most of the mod that is not covered by the Stonecutter or Blossom.
-// See "build.fabric-intermediary.gradle.kts" for legacy Intermediary Fabric.
 // See "build.forge.gradle.kts" for Forge.
 // See "build.neoforge.gradle.kts" for NeoForge.
 // See "build.neoforge-hacky.gradle.kts" for NeoForge ugly hack for 1.20.1.
@@ -38,7 +37,7 @@ import net.fabricmc.loom.task.RunGameTask
 plugins {
     id("java")
     alias(libs.plugins.blossom)
-    alias(libs.plugins.fabric.loom)
+    id("dev.kikugie.loom-back-compat")
 }
 
 // Extract versions.
@@ -47,12 +46,19 @@ val mcv = mc.version // Literal version. (toString)
 val mcp = mc.parsed // Comparable version. (operator overloading)
 
 // Language.
-val javaTarget = 25
+val javaTarget = when {
+    (mcp >= "26.1.2") -> 25
+    (mcp >= "1.20.6") -> 21
+    (mcp >= "1.18.2") -> 17
+    (mcp >= "1.17.1") -> 16
+    else -> 8
+}
 val javaVersion = JavaVersion.toVersion(javaTarget)
 java {
     sourceCompatibility = javaVersion
     targetCompatibility = javaVersion
-    toolchain.languageVersion = JavaLanguageVersion.of(javaTarget)
+    val javaToolchain = if (javaTarget == 16) 17 else javaTarget
+    toolchain.languageVersion = JavaLanguageVersion.of(javaToolchain)
 }
 
 // Metadata.
@@ -77,6 +83,11 @@ sc {
 
 // Migration helper start.
 sourceSets["main"].java.srcDir(rootDir.resolve("src/_legacy/_shared"))
+if (mcp <= "1.21.5") {
+    sourceSets["main"].java.srcDir(rootDir.resolve("src/_legacy/${mcv}/root"))
+    sourceSets["main"].java.srcDir(rootDir.resolve("src/_legacy/${mcv}/fabric"))
+    sourceSets["main"].java.setSrcDirs(sourceSets["main"].java.srcDirs.filter { !"${it}".contains("stonecutter") })
+}
 // Migration helper end.
 
 loom {
@@ -88,7 +99,12 @@ loom {
         // Customize the client run.
         named("client") {
             // Set up debug VM args.
-            jvmArguments.add("@../dev/args.vm.txt")
+            if (javaVersion.isJava9Compatible) {
+                jvmArguments.add("@../dev/args.vm.txt")
+            } else {
+                jvmArguments.addAll(rootDir.resolve("dev/args.vm.txt").readLines()
+                    .filter { it.isNotEmpty() && !it.startsWith('#') && ("line.separator" !in it) })
+            }
 
             // Set the run dir.
             runDirectory = rootDir.resolve("run")
@@ -109,6 +125,9 @@ repositories {
     mavenCentral()
     maven("https://maven.fabricmc.net/") // Fabric.
     maven("https://maven.terraformersmc.com/releases/") // ModMenu.
+    if (mcp eq "1.20.4") { // Fix for ModMenu not providing Text Placeholder API.
+        maven("https://maven.nucleoid.xyz/") // ModMenu. (Text Placeholder API)
+    }
 }
 
 // Dependencies.
@@ -124,6 +143,9 @@ dependencies {
     val minecraft = minecraftProperty ?: mcv
     minecraft("com.mojang:minecraft:${minecraft}")
 
+    // Mappings.
+    loomx.applyMojangMappings()
+
     // Force non-vulnerable Log4J, so that vulnerability scanners don't scream loud.
     // It's also cool for our logging config. (see the "dev/log4j2.xml" file)
     implementation(libs.log4j) {
@@ -133,14 +155,15 @@ dependencies {
     }
 
     // Fabric Loader.
-    implementation(libs.fabric.loader)
+    modImplementation(libs.fabric.loader)
 
     // Modular Fabric API.
     val fapi = "${property("api")}"
     require(fapi.isNotBlank() && fapi != "null") { "Fabric API version is not provided via 'api' in ${project}." }
-    implementation(fabricApi.module("fabric-lifecycle-events-v1", fapi)) // Handles game ticks.
-    implementation(fabricApi.module("fabric-resource-loader-v1", fapi)) // Loads textures and languages.
-    implementation(fabricApi.module("fabric-screen-api-v1", fapi)) // Handles title and multiplayer screen management.
+    val fabricResourceLoaderRevision = if (mcp >= "1.21.10") "v1" else "v0"
+    modImplementation(fabricApi.module("fabric-lifecycle-events-v1", fapi)) // Handles game ticks.
+    modImplementation(fabricApi.module("fabric-resource-loader-${fabricResourceLoaderRevision}", fapi)) // Loads textures and languages.
+    modImplementation(fabricApi.module("fabric-screen-api-v1", fapi)) // Handles title and multiplayer screen management.
 
     // ModMenu.
     val modmenu = "${property("modmenu")}"
@@ -150,16 +173,25 @@ dependencies {
     // compilation of an optional ModMenu compatibility class (HModMenu.java) and launching the game.
     // Just prefix the ModMenu version with '$' to make it compile-only.
     if (modmenu.startsWith('$')) {
-        compileOnly("com.terraformersmc:modmenu:${modmenu.substring(1)}")
+        modCompileOnly("com.terraformersmc:modmenu:${modmenu.substring(1)}")
     } else {
-        implementation("com.terraformersmc:modmenu:${modmenu}")
-        implementation(fabricApi.module("fabric-key-mapping-api-v1", fapi)) // ModMenu dependency. (NOTE: <=1.21.11 script uses "binding", not "mapping")
+        val fabricKeyApiName = if (mcp >= "26.1.2") "mapping" else "binding"
+        modImplementation("com.terraformersmc:modmenu:${modmenu}")
+        modImplementation(fabricApi.module("fabric-key-${fabricKeyApiName}-api-v1", fapi)) // ModMenu dependency. (NOTE: <=1.21.11 script uses "binding", not "mapping")
+        if (mcp eq "1.21.10") {
+            modImplementation(fabricApi.module("fabric-resource-loader-v0", fapi)) // ModMenu dependency.
+        }
     }
+
 }
 
 tasks.withType<JavaCompile> {
     // Migration helper start.
     source(rootDir.resolve("src/_legacy/_shared"))
+    if (mcp <= "1.21.5") {
+        source(rootDir.resolve("src/_legacy/${mcv}/root"))
+        source(rootDir.resolve("src/_legacy/${mcv}/fabric"))
+    }
     // Migration helper end.
 
     // Compile with UTF-8.
@@ -175,7 +207,13 @@ tasks.withType<JavaCompile> {
     }
 
     // Set the compatible Java target.
-    options.release = javaTarget
+    // JDK 8 (used by 1.16.x) doesn't support the "-release" flag and
+    // uses "-source" and "-target" ones (see the top of the file),
+    // so we must NOT specify it, or the "javac" will fail.
+    // JDK 9+ does listen to this option.
+    if (javaVersion.isJava9Compatible) {
+        options.release = javaTarget
+    }
 }
 
 sourceSets.main {
@@ -203,13 +241,13 @@ tasks.withType<ProcessResources> {
     // Exclude not needed loader entrypoint files.
     exclude("META-INF/mods.toml", "META-INF/neoforge.mods.toml", "pack.mcmeta")
 
-    // Replace the Fabric Resource Loader version.
-    // >=26.1.2 has consistent v1, this is used by Intermediary.
-    inputs.property("fabricResourceLoaderRevision", "v1")
+    // Determine and replace the Fabric Resource Loader version.
+    val fabricResourceLoaderRevision = if (mcp >= "1.21.10") "v1" else "v0"
+    inputs.property("fabricResourceLoaderRevision", fabricResourceLoaderRevision)
 
-    // Replace the Fabric API module name.
-    // >=26.1.2 has consistent fabric-api, this is used by Intermediary.
-    inputs.property("fabricApiName", "fabric-api")
+    // Determine and replace the Fabric API module name.
+    val fabricApiName = if (mcp >= "1.18.2") "fabric-api" else "fabric"
+    inputs.property("fabricApiName", fabricApiName)
 
     // Expand Minecraft constraints that can be manually overridden for reasons. (e.g., snapshots)
     val constraintsProperty = findProperty("constraints")
@@ -246,12 +284,12 @@ tasks.withType<Jar> {
     exclude("ru/vidtu/ias/platform/ICompile.class")
 
     // Remove package-info.class, unless package debug is on. (to save space)
-    if (!"${findProperty("ru.vidtu.ias.debug.package") ?: findProperty("ru.vidtu.ias.debug")}}".toBoolean()) {
+    if (!"${findProperty("ru.vidtu.ias.debug.package") ?: findProperty("ru.vidtu.ias.debug")}".toBoolean()) {
         exclude("**/package-info.class")
     }
 }
 
 // Output into "build/libs" instead of "versions/<ver>/build/libs".
-tasks.withType<Jar> {
+loomx.modJar {
     destinationDirectory = rootProject.layout.buildDirectory.file("libs").get().asFile
 }

@@ -21,8 +21,7 @@
 
 // This is the root Stonecutter entrypoint. It configures some
 // version-independent aspects of the Stonecutter preprocessor.
-// See "build.fabric-intermediary.gradle.kts" for legacy Intermediary Fabric.
-// See "build.fabric-mojmap.gradle.kts" for modern Mojmap Fabric.
+// See "build.fabric.gradle.kts" for Fabric.
 // See "build.forge.gradle.kts" for Forge.
 // See "build.neoforge.gradle.kts" for NeoForge.
 // See "build.neoforge-hacky.gradle.kts" for NeoForge ugly hack for 1.20.1.

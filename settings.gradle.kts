@@ -22,8 +22,7 @@
 // This is the root Gradle entrypoint. It installs the Stonecutter preprocessor,
 // and various root Gradle things, as well as includes and generates every
 // virtual subproject by the Stonecutter. Also includes compile-time project.
-// See "build.fabric-intermediary.gradle.kts" for legacy Intermediary Fabric.
-// See "build.fabric-mojmap.gradle.kts" for modern Mojmap Fabric.
+// See "build.fabric.gradle.kts" for Fabric.
 // See "build.forge.gradle.kts" for Forge.
 // See "build.neoforge.gradle.kts" for NeoForge.
 // See "build.neoforge-hacky.gradle.kts" for NeoForge ugly hack for 1.20.1.
@@ -36,12 +35,14 @@ pluginManagement {
         maven("https://maven.fabricmc.net/") // Fabric.
         maven("https://maven.minecraftforge.net/") // Forge.
         maven("https://maven.neoforged.net/releases/") // NeoForge.
+        maven("https://maven.kikugie.dev/releases") // LoomX.
     }
 }
 
 plugins {
     id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
-    id("dev.kikugie.stonecutter") version "0.9.7"
+    id("dev.kikugie.stonecutter") version "0.9.8"
+    id("dev.kikugie.loom-back-compat") version "0.4.2"
 }
 
 // Project.
@@ -117,14 +118,7 @@ stonecutter {
 
                 // Set up the project.
                 val project = version(id, version)
-                if (type == "fabric") {
-                    // Fabric builds require "special care",
-                    // because they use different plugin systems:
-                    // - "intermediary" (remapped) for older (<=1.21.11) versions.
-                    // - "mojmap" (non-remapped) for newer (>=26.1) versions.
-                    val flavor = if (version.startsWith("1.")) "intermediary" else "mojmap"
-                    project.buildscript = "build.fabric-${flavor}.gradle.kts"
-                } else if (id == "1.20.1-neoforge") {
+                if (id == "1.20.1-neoforge") {
                     // NeoForge 1.20.1 is a piece of hacky mess that's basically
                     // Forge 1.20.1 with a "95% OFF" discount. It is loosely
                     // Forge, but not Forge. It uses Forge packages, but

@@ -21,7 +21,6 @@
 blossom = "2.2.0"
 error_prone_annotations = "2.50.0"
 fabric-loader = "0.19.5"
-fabric-loom = "1.18.2"
 forgegradle = "7.0.40"
 forgerenamer = "1.1.7"
 gson = "2.14.0"
@@ -35,8 +34,6 @@ neogradle = "7.1.39"
 
 [plugins]
 blossom = { id = "net.kyori.blossom", version.ref = "blossom" }
-fabric-loom = { id = "net.fabricmc.fabric-loom", version.ref = "fabric-loom" }
-fabric-loom-remap = { id = "net.fabricmc.fabric-loom-remap", version.ref = "fabric-loom" }
 forgegradle = { id = "net.minecraftforge.gradle", version.ref = "forgegradle" }
 forgerenamer = { id = "net.minecraftforge.renamer", version.ref = "forgerenamer" }
 idea-ext = { id = "org.jetbrains.gradle.plugin.idea-ext", version.ref = "idea-ext" }
