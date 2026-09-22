@@ -128,31 +128,34 @@ dependencies {
 }
 
 tasks.withType<JavaCompile> {
-    // Migration helper start.
-    source(rootDir.resolve("src/_legacy/_shared"))
-    if (mcp <= "1.21.5") {
-        source(rootDir.resolve("src/_legacy/${mcv}/root"))
-        source(rootDir.resolve("src/_legacy/${mcv}/neoforge"))
+    // Don't process NeoForge internal tasks. (which are exposed?)
+    if (name != "neoFormRecompile") {
+        // Migration helper start.
+        source(rootDir.resolve("src/_legacy/_shared"))
+        if (mcp <= "1.21.5") {
+            source(rootDir.resolve("src/_legacy/${mcv}/root"))
+            source(rootDir.resolve("src/_legacy/${mcv}/neoforge"))
+        }
+        // Migration helper end.
+
+        // Compile with UTF-8.
+        options.encoding = "UTF-8"
+
+        // Set the compiler debug options.
+        if ("${findProperty("ru.vidtu.ias.debug.javac") ?: findProperty("ru.vidtu.ias.debug")}".toBoolean()) {
+            // Enable local variable names, source file names, line numbers, method parameters, and all compiler warnings.
+            options.compilerArgs.addAll(listOf("-g", "-parameters", "-Xlint:all"))
+        } else if ("${findProperty("ru.vidtu.ias.slim")}".toBoolean()) {
+            // Enable all compiler warnings.
+            options.compilerArgs.addAll(listOf("-g:none", "-Xlint:all"))
+        } else {
+            // Enable local variable names, source file names, line numbers, and all compiler warnings.
+            options.compilerArgs.addAll(listOf("-g", "-Xlint:all"))
+        }
+
+        // Set the compatible Java target.
+        options.release = javaTarget
     }
-    // Migration helper end.
-
-    // Compile with UTF-8.
-    options.encoding = "UTF-8"
-
-    // Set the compiler debug options.
-    if ("${findProperty("ru.vidtu.ias.debug.javac") ?: findProperty("ru.vidtu.ias.debug")}".toBoolean()) {
-        // Enable local variable names, source file names, line numbers, method parameters, and all compiler warnings.
-        options.compilerArgs.addAll(listOf("-g", "-parameters", "-Xlint:all"))
-    } else if ("${findProperty("ru.vidtu.ias.slim")}".toBoolean()) {
-        // Enable all compiler warnings.
-        options.compilerArgs.addAll(listOf("-g:none", "-Xlint:all"))
-    } else {
-        // Enable local variable names, source file names, line numbers, and all compiler warnings.
-        options.compilerArgs.addAll(listOf("-g", "-Xlint:all"))
-    }
-
-    // Set the compatible Java target.
-    options.release = javaTarget
 }
 
 sourceSets.main {
