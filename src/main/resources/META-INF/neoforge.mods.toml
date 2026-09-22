@@ -20,8 +20,8 @@
 modLoader = "javafml"
 loaderVersion = "*"
 license = "LGPL-3.0-or-later"
+licenseURL = "https://github.com/The-Fireplace-Minecraft-Mods/In-Game-Account-Switcher/raw/main/LICENSE"
 issueTrackerURL = "https://github.com/The-Fireplace-Minecraft-Mods/In-Game-Account-Switcher/issues"
-clientSideOnly = true
 
 [[mods]]
 modId = "ias"
@@ -30,13 +30,12 @@ displayName = "In-Game Account Switcher"
 updateJSONURL = "${forgeUpdaterUrl}"
 displayURL = "https://modrinth.com/mod/in-game-account-switcher"
 issueTrackerURL = "https://github.com/The-Fireplace-Minecraft-Mods/In-Game-Account-Switcher/issues"
-catalogueImageIcon = "ias.png"
-catalogueItemIcon = "player_head"
 itemIcon = "player_head"
 logoFile = "ias.png"
-credits = "The_Fireplace, The_BrainStone, 2xsaiko, Elvm, Fhilips613, WyattMarks, Visivel, iFair1"
+logoBlur = true
+iconFile = "ias.png"
+credits = "The_Fireplace, The_BrainStone, 2xsaiko, Elvm, Fhilips613, WyattMarks, Visivel, iFair1, groszus"
 authors = "VidTu"
-displayTest = "IGNORE_ALL_VERSION"
 description = "Allows you to change which account you are signed in to in-game without restarting Minecraft."
 
 [[mixins]]
@@ -46,7 +45,6 @@ config = "ias.mixins.json"
 modId = "minecraft"
 type = "required"
 reason = "In-Game Account Switcher works only with Minecraft ${minecraft}."
-mandatory = true
 versionRange = "[${minecraft}]"
 ordering = "NONE"
 side = "CLIENT"
@@ -55,7 +53,6 @@ side = "CLIENT"
 modId = "${platform}"
 type = "required"
 reason = "In-Game Account Switcher requires an up-to-date '${platform}' to properly implement its functionality."
-mandatory = true
 versionRange = "${constraints}"
 ordering = "NONE"
 side = "CLIENT"
@@ -63,5 +60,3 @@ side = "CLIENT"
 [modproperties.ias]
 catalogueImageIcon = "ias.png"
 catalogueItemIcon = "player_head"
-itemIcon = "player_head"
-logoFile = "ias.png"
