@@ -185,7 +185,7 @@ echo 'Found all needed tools.'
 
 # Source the version.
 echo "Extracting the version from 'gradle.properties'..."
-UPLOAD_VERSION=$(grep -F 'version=' '../gradle.properties' | sed 's/version=//g')
+UPLOAD_VERSION=$(grep -E '^version=' '../gradle.properties' | sed 's/version=//g')
 UPLOAD_VERSION_JSON=$(echo "${UPLOAD_VERSION}" | jq --raw-input --compact-output)
 echo "NOTE: Version: ${UPLOAD_VERSION}"
 
