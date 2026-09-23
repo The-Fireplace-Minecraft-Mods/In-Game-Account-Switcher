@@ -132,5 +132,7 @@
   "ias.help.errors": "Common Authuntikashun Errurz",
   "ias.help.stolen": "How 2 combat account stealin?",
   "modmenu.descriptionTranslation.ias": "Allowz u 2 change which account ur sign'd in 2 in-gaem wifout restartin Minecraft.",
-  "modmenu.summaryTranslation.ias": "Allowz u 2 change ur account in-gaem."
+  "modmenu.summaryTranslation.ias": "Allowz u 2 change ur account in-gaem.",
+  "fml.menu.mods.info.description.ias": "Allowz u 2 change which account ur sign'd in 2 in-gaem wifout restartin Minecraft.",
+  "neoforge.screen.mods.info.description.ias": "Allowz u 2 change which account ur sign'd in 2 in-gaem wifout restartin Minecraft."
 }

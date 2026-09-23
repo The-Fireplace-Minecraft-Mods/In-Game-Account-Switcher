@@ -131,5 +131,7 @@
   "ias.help.errors": "常见的验证错误",
   "ias.help.stolen": "如何防止账号被盗？",
   "modmenu.descriptionTranslation.ias": "允许您在游戏中更改登入的帐号，而无需重新启动 Minecraft。",
-  "modmenu.summaryTranslation.ias": "允许您在游戏中更改帐号。"
+  "modmenu.summaryTranslation.ias": "允许您在游戏中更改帐号。",
+  "fml.menu.mods.info.description.ias": "允许您在游戏中更改登入的帐号，而无需重新启动 Minecraft。",
+  "neoforge.screen.mods.info.description.ias": "允许您在游戏中更改登入的帐号，而无需重新启动 Minecraft。"
 }

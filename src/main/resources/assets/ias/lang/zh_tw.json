@@ -130,5 +130,7 @@
   "ias.help.errors": "常見的驗證錯誤",
   "ias.help.stolen": "如何防止帳號被盜？",
   "modmenu.descriptionTranslation.ias": "允許您在遊戲中更改登入的帳號，而無需重新啟動 Minecraft。",
-  "modmenu.summaryTranslation.ias": "允許您在遊戲中更改帳號。"
+  "modmenu.summaryTranslation.ias": "允許您在遊戲中更改帳號。",
+  "fml.menu.mods.info.description.ias": "允許您在遊戲中更改登入的帳號，而無需重新啟動 Minecraft。",
+  "neoforge.screen.mods.info.description.ias": "允許您在遊戲中更改登入的帳號，而無需重新啟動 Minecraft。"
 }

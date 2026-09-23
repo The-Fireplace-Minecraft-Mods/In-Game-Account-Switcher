@@ -125,5 +125,7 @@
   "ias.help.errors": "Erros Comuns de Autenticação",
   "ias.help.stolen": "Como combater o roubo de contas?",
   "modmenu.descriptionTranslation.ias": "Permite trocar a conta conectada durante o jogo sem reiniciar o Minecraft.",
-  "modmenu.summaryTranslation.ias": "Permite trocar sua conta durante o jogo."
+  "modmenu.summaryTranslation.ias": "Permite trocar sua conta durante o jogo.",
+  "fml.menu.mods.info.description.ias": "Permite trocar a conta conectada durante o jogo sem reiniciar o Minecraft.",
+  "neoforge.screen.mods.info.description.ias": "Permite trocar a conta conectada durante o jogo sem reiniciar o Minecraft."
 }

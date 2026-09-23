@@ -132,5 +132,7 @@
   "ias.help.errors": "Common Authentication Errors",
   "ias.help.stolen": "How to combat account stealing?",
   "modmenu.descriptionTranslation.ias": "Allows you to change which account you are signed in to in-game without restarting Minecraft.",
-  "modmenu.summaryTranslation.ias": "Allows you to change your account in-game."
+  "modmenu.summaryTranslation.ias": "Allows you to change your account in-game.",
+  "fml.menu.mods.info.description.ias": "Allows you to change which account you are signed in to in-game without restarting Minecraft.",
+  "neoforge.screen.mods.info.description.ias": "Allows you to change which account you are signed in to in-game without restarting Minecraft."
 }

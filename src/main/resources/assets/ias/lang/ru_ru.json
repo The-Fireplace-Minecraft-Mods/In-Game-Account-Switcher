@@ -130,5 +130,7 @@
   "ias.help.errors": "Частые ошибки авторизации (англ.)",
   "ias.help.stolen": "Как защититься от кражи аккаунта? (англ.)",
   "modmenu.descriptionTranslation.ias": "Позволяет менять используемый аккаунт в игре без перезапуска Minecraft.",
-  "modmenu.summaryTranslation.ias": "Позволяет менять аккаунт в игре."
+  "modmenu.summaryTranslation.ias": "Позволяет менять аккаунт в игре.",
+  "fml.menu.mods.info.description.ias": "Позволяет менять используемый аккаунт в игре без перезапуска Minecraft.",
+  "neoforge.screen.mods.info.description.ias": "Позволяет менять используемый аккаунт в игре без перезапуска Minecraft."
 }

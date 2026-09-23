@@ -132,5 +132,7 @@
   "ias.help.errors": "Yaygın Kimlik Doğrulama Hataları",
   "ias.help.stolen": "Hesap çalınmasına karşı nasıl önlem alınır?",
   "modmenu.descriptionTranslation.ias": "Oyun içinde Minecraft'ı yeniden başlatmadan hangi hesaba oturum açtığını değiştirmeni sağlar.",
-  "modmenu.summaryTranslation.ias": "Oyun içinde hesabını değiştirmeni sağlar."
+  "modmenu.summaryTranslation.ias": "Oyun içinde hesabını değiştirmeni sağlar.",
+  "fml.menu.mods.info.description.ias": "Oyun içinde Minecraft'ı yeniden başlatmadan hangi hesaba oturum açtığını değiştirmeni sağlar.",
+  "neoforge.screen.mods.info.description.ias": "Oyun içinde Minecraft'ı yeniden başlatmadan hangi hesaba oturum açtığını değiştirmeni sağlar."
 }
