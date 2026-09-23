@@ -77,10 +77,10 @@
 # debug properties to test the mod, increase fake ping to ~150ms to test the crystal removing.
 -enableassertions
 -enablesystemassertions
--Deventbus.api.strictRuntimeChecks=true
 -Dmixin.debug=true
 -Dmixin.debug.strict=true
 -Dmixin.checks=true
+-Deventbus.api.strictRuntimeChecks=true
 -DMC_DEBUG_ENABLED
 -DMC_DEBUG_ALLOW_LOW_SIM_DISTANCE
 -DMC_DEBUG_NAMED_RUNNABLES

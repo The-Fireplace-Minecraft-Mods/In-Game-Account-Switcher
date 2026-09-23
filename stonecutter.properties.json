@@ -5,11 +5,11 @@
       "modmenu": "21.0.0-beta.1"
     },
     "forge": {
-      "loader": "26.3-66.0.2",
+      "loader": "26.3-66.0.3",
       "constraints": "[66,67)"
     },
     "neoforge": {
-      "loader": "26.3.0.8-beta",
+      "loader": "26.3.0.16-beta",
       "constraints": "[26.3.0,26.3.1)"
     }
   },
