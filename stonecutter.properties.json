@@ -2,7 +2,7 @@
   "26.3": {
     "fabric": {
       "api": "0.161.0+26.3",
-      "modmenu": "21.0.0-beta.1"
+      "modmenu": "21.0.0"
     },
     "forge": {
       "loader": "26.3-66.0.3",
@@ -89,7 +89,7 @@
       "modmenu": "14.0.2"
     },
     "forge": {
-      "loader": "1.21.5-55.1.13",
+      "loader": "1.21.5-55.1.14",
       "constraints": "[55,56)"
     },
     "neoforge": {
