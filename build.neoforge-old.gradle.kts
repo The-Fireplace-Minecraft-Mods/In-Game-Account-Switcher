@@ -213,6 +213,13 @@ tasks.withType<ProcessResources> {
     inputs.property("version", version)
     inputs.property("platform", "forge") // Yes, that's correct for NeoForge 1.20.1.
 
+    // Expand contributors.
+    val contributors = "${findProperty("contributors")}"
+        .split(',')
+        .map { it.trim() }
+        .joinToString(", ")
+    inputs.property("contributors", contributors)
+
     // Replace properties.
     filesMatching(listOf("ias.mixins.json", "META-INF/mods.toml")) {
         expand(inputs.properties)

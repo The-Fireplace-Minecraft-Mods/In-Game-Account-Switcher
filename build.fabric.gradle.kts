@@ -263,6 +263,13 @@ tasks.withType<ProcessResources> {
     inputs.property("mixinJava", javaTarget)
     inputs.property("version", version)
 
+    // Expand contributors.
+    val contributors = "${findProperty("contributors")}"
+        .split(',')
+        .map { it.trim() }
+        .joinToString("\", \"")
+    inputs.property("contributors", contributors)
+
     // Replace properties.
     filesMatching(listOf("fabric.mod.json", "ias.mixins.json")) {
         expand(inputs.properties)

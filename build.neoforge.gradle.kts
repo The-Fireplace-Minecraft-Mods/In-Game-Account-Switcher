@@ -201,6 +201,13 @@ tasks.withType<ProcessResources> {
     inputs.property("version", version)
     inputs.property("platform", "neoforge")
 
+    // Expand contributors.
+    val contributors = "${findProperty("contributors")}"
+        .split(',')
+        .map { it.trim() }
+        .joinToString(", ")
+    inputs.property("contributors", contributors)
+
     // Replace properties.
     filesMatching(listOf("ias.mixins.json", "META-INF/mods.toml", "META-INF/neoforge.mods.toml")) {
         expand(inputs.properties)

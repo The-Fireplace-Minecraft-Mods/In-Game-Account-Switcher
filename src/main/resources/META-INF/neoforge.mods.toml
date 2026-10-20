@@ -34,7 +34,7 @@ itemIcon = "player_head"
 logoFile = "ias.png"
 logoBlur = true
 iconFile = "ias.png"
-credits = "The_Fireplace, The_BrainStone, 2xsaiko, Elvm, Fhilips613, WyattMarks, Visivel, iFair1, groszus"
+credits = "${contributors}"
 authors = "VidTu"
 description = "Allows you to change which account you are signed in to in-game without restarting Minecraft."
 
