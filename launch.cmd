@@ -22,12 +22,12 @@
 
 :: Check args.
 if "%~1"=="" (
-    echo SCRIPT: You must specify the version to launch.
-    echo Example: launch.cmd 1.20.1-fabric
+    :: Fail.
+    echo SCRIPT: You must specify the version to launch. ^(e.g., "launch.cmd 1.20.1-fabric"^)
     exit /B 2
 )
 
 :: Launch.
 echo SCRIPT: Launching '%1'...
 cmd.exe /C gradlew.bat "-Dru.vidtu.ias.only=%1" "%1:runClient"
-echo SCRIPT: Launch for '%1' exited with code %ERRORLEVEL%.
+echo SCRIPT: Launching '%1' exited with code %ERRORLEVEL%.
