@@ -22,12 +22,30 @@
 
 :: Check args.
 if "%~1"=="" (
-    echo SCRIPT: You must specify the version to build.
-    echo Example: compileone.cmd 1.20.1-fabric
+    :: Fail.
+    echo SCRIPT: You must specify the mode of execution or the version to build.
+    echo SCRIPT: Normal ^(Beta/Active^): compile.cmd normal
+    echo SCRIPT: Legacy ^(Beta/Active/Legacy^): compile.cmd legacy
+    echo SCRIPT: Single: compile.cmd ^<version^> ^(e.g., "compile.cmd 1.20.1-fabric"^)
     exit /B 2
 )
 
-:: Build.
-echo SCRIPT: Building '%1'...
+:: Select execution mode.
+if /I "%~1"=="legacy" (
+    :: Build in legacy mode.
+    echo SCRIPT: Building in legacy mode...
+    cmd.exe /C gradlew.bat -Dru.vidtu.ias.legacy=true assemble
+    echo SCRIPT: Building in legacy mode exited with code %ERRORLEVEL%.
+    exit /B 0
+)
+if /I "%~1"=="normal" (
+    :: Build in normal mode.
+    echo SCRIPT: Building in normal mode...
+    cmd.exe /C gradlew.bat assemble
+    echo SCRIPT: Building in normal mode exited with code %ERRORLEVEL%.
+    exit /B 0
+)
+:: Build in single mode.
+echo SCRIPT: Building in single ^('%1'^) mode...
 cmd.exe /C gradlew.bat "-Dru.vidtu.ias.only=%1" "%1:assemble"
-echo SCRIPT: Build for '%1' exited with code %ERRORLEVEL%.
+echo SCRIPT: Building in single ^('%1'^) mode exited with code %ERRORLEVEL%.

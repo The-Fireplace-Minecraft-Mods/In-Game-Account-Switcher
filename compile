@@ -24,12 +24,28 @@ set -euo pipefail
 
 # Check args.
 if [ "${#}" -eq 0 ]; then
-    echo 'SCRIPT: You must specify the version to build.'
-    echo 'Example: ./compileone 1.20.1-fabric'
+    # Fail.
+    echo 'SCRIPT: You must specify the mode of execution or the version to build.'
+    echo 'SCRIPT: Normal (Beta/Active): ./compile normal'
+    echo 'SCRIPT: Legacy (Beta/Active/Legacy): ./compile legacy'
+    echo 'SCRIPT: Single: ./compile <version> (e.g., "./compile 1.20.1-fabric")'
     exit 2
 fi
 
-# Build.
-echo "SCRIPT: Building '${1}'..."
-./gradlew "-Dru.vidtu.ias.only=${1}" "${1}:assemble" && true
-echo "SCRIPT: Build for '${1}' exited with code ${?}."
+# Select execution mode.
+if [ "${1}" = 'legacy' ]; then
+    # Build in legacy mode.
+    echo 'SCRIPT: Building in legacy mode...'
+    ./gradlew -Dru.vidtu.ias.legacy=true assemble && true
+    echo "SCRIPT: Building in legacy mode exited with code ${?}."
+elif [ "${1}" = 'normal' ]; then
+    # Build in normal mode.
+    echo 'SCRIPT: Building in normal mode...'
+    ./gradlew assemble && true
+    echo "SCRIPT: Building in normal mode exited with code ${?}."
+else
+    # Build in single mode.
+    echo "SCRIPT: Building in single ('${1}') mode..."
+    ./gradlew "-Dru.vidtu.ias.only=${1}" "${1}:assemble" && true
+    echo "SCRIPT: Building in single ('${1}') mode exited with code ${?}."
+fi
