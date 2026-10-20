@@ -21,7 +21,5 @@
 # Empty lines and lines starting with "#" are ignored.
 26.3
 26.2
-26.1.2
 1.21.11
 1.21.1
-1.20.1

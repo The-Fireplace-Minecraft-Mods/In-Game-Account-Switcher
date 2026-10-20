@@ -19,6 +19,7 @@
 #
 # List of "Legacy" versions. See README.md for more information.
 # Empty lines and lines starting with "#" are ignored.
+26.1.2
 1.21.10
 1.21.8
 1.21.5
@@ -27,6 +28,7 @@
 1.20.6
 1.20.4
 1.20.2
+1.20.1
 1.19.4
 1.19.2
 1.18.2
