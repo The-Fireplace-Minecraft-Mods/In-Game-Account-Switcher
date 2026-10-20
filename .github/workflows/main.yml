@@ -31,7 +31,7 @@ jobs:
     runs-on: 'ubuntu-26.04'
     timeout-minutes: 60
     permissions:
-      contents: 'write'
+      contents: 'read'
     env:
       GRADLE_OPTS: '-Dorg.gradle.java.installations.auto-download=false'
     steps:
@@ -67,7 +67,7 @@ jobs:
           # 2. Linux/macOS/Unix: cat /dev/random | head -c32 | base64
           # 3. Windows (PowerShell): $bytes=New-Object byte[] 32;[Security.Cryptography.RandomNumberGenerator]::Create().GetBytes($bytes);[Convert]::ToBase64String($bytes)
           cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
-          dependency-graph: 'generate-and-submit'
+          dependency-graph: 'generate'
       - name: 'Build (Main)'
         timeout-minutes: 60
         run: './gradlew assemble'
