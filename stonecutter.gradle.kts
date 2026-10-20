@@ -23,9 +23,9 @@
 // version-independent aspects of the Stonecutter preprocessor.
 // See "build.fabric.gradle.kts" for Fabric.
 // See "build.forge.gradle.kts" for Forge.
-// See "build.neoforge.gradle.kts" for NeoForge.
-// See "build.neoforge-hacky.gradle.kts" for NeoForge ugly hack for 1.20.1.
-// See "settings.gradle.kts" for the Gradle configuration.
+// See "build.neoforge.gradle.kts" for NeoForge 1.20.2+.
+// See "build.neoforge-old.gradle.kts" for NeoForge 1.20.1.
+// See "settings.gradle.kts" for Gradle.
 
 // Plugins.
 plugins {

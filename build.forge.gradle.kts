@@ -21,13 +21,13 @@
 
 // This is the Forge loader buildscript. It is processed by the
 // Stonecutter multiple times, for each version. (compiled once)
-// Based on ForgeGradle and processes the preparation/complation/building
+// Based on ForgeGradle, it processes the preparation/complation/building
 // of the most of the mod that is not covered by the Stonecutter or Blossom.
 // See "build.fabric.gradle.kts" for Fabric.
-// See "build.neoforge.gradle.kts" for NeoForge.
-// See "build.neoforge-hacky.gradle.kts" for NeoForge ugly hack for 1.20.1.
-// See "stonecutter.gradle.kts" for the Stonecutter configuration.
-// See "settings.gradle.kts" for the Gradle configuration.
+// See "build.neoforge.gradle.kts" for NeoForge 1.20.2+.
+// See "build.neoforge-old.gradle.kts" for NeoForge 1.20.1.
+// See "stonecutter.gradle.kts" for Stonecutter.
+// See "settings.gradle.kts" for Gradle.
 
 import com.google.gson.Gson
 import com.google.gson.JsonElement
@@ -58,6 +58,7 @@ val javaVersion = JavaVersion.toVersion(javaTarget)
 java {
     sourceCompatibility = javaVersion
     targetCompatibility = javaVersion
+    // Don't require Java 16 on the system. (we will still compile for it, see below for the "-release" target)
     val javaToolchain = if (javaTarget == 16) 17 else javaTarget
     toolchain.languageVersion = JavaLanguageVersion.of(javaToolchain)
 }
@@ -144,7 +145,7 @@ dependencies {
     compileOnly(libs.jetbrains.annotations)
     compileOnly(libs.error.prone.annotations)
 
-    // TODO(VidTu): https://github.com/MinecraftForge/ForgeGradle/issues/1072
+    // TODO(VidTu): https://github.com/MinecraftForge/MinecraftMavenizer/issues/30
     if (mcp eq "1.18.2") {
         compileOnly("org.lwjgl:lwjgl-glfw:3.2.1")
     }
@@ -229,7 +230,7 @@ tasks.withType<ProcessResources> {
     // Exclude not needed loader entrypoint files.
     exclude("fabric.mod.json", "META-INF/neoforge.mods.toml")
 
-    // Determine and replace the version range constraints.
+    // Determine and expand the loader version constraints.
     val constraints = "${project.property("constraints")}"
     require(constraints.isNotBlank() && constraints != "null") { "Constraints are not provided via 'constraints' in ${project}." }
     inputs.property("constraints", constraints)
@@ -237,16 +238,20 @@ tasks.withType<ProcessResources> {
     // Expand the updater URL.
     inputs.property("forgeUpdaterUrl", "https://raw.githubusercontent.com/The-Fireplace-Minecraft-Mods/In-Game-Account-Switcher/main/updater-forge.json")
 
-    // Expand Mixin Java version. Forge is full of edge-cases covered here.
-    val mixinJava = if (mcp >= "26.1.2") 21
-    else if (mcp eq "1.20.6") 18
-    else javaTarget
+    // Expand Mixin Java target. Forge is full of edge-cases covered here.
+    val mixinJava = when {
+        (mcp >= "26.1.2") -> 21 // Non-Fabric Mixin 0.8.7 included in Forge doesn't have JAVA_25 as its target.
+        (mcp eq "1.20.6") -> 18 // Non-Fabric Mixin 0.8.5 included in Forge 1.20.6 doesn't have JAVA_21 as its target.
+        else -> javaTarget
+    }
     inputs.property("mixinJava", mixinJava)
 
-    // Expand version and dependencies.
+    // Expand Minecraft version constraints, version, and platform.
     inputs.property("minecraft", mcv)
     inputs.property("version", version)
     inputs.property("platform", "forge")
+
+    // Replace properties.
     filesMatching(listOf("ias.mixins.json", "META-INF/mods.toml")) {
         expand(inputs.properties)
     }
@@ -290,7 +295,7 @@ tasks.withType<Jar> {
 }
 
 if (mcp >= "1.20.6") {
-    // Output into "build/libs" instead of "versions/<ver>/build/libs".
+    // Output into "build/libs" instead of "versions/<version>/build/libs".
     tasks.withType<Jar> {
         destinationDirectory = rootProject.layout.buildDirectory.file("libs").get().asFile
     }
@@ -316,7 +321,7 @@ if (mcp >= "1.20.6") {
         }
     }
 
-    // Output remapped JAR into "build/libs" instead of "versions/<ver>/build/libs".
+    // Output remapped JAR into "build/libs" instead of "versions/<version>/build/libs".
     tasks.withType<RenameJar> {
         output = rootProject.layout.buildDirectory.file("libs").get().asFile.resolve("IAS-${version}.jar")
     }

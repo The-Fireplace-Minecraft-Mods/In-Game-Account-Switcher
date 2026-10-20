@@ -21,13 +21,13 @@
 
 // This is the Fabric loader buildscript. It is processed by the
 // Stonecutter multiple times, for each version. (compiled once)
-// Based on Loom and processes the preparation/complation/building
+// Based on Loom and LoomX, it processes the preparation/complation/building
 // of the most of the mod that is not covered by the Stonecutter or Blossom.
 // See "build.forge.gradle.kts" for Forge.
-// See "build.neoforge.gradle.kts" for NeoForge.
-// See "build.neoforge-hacky.gradle.kts" for NeoForge ugly hack for 1.20.1.
-// See "stonecutter.gradle.kts" for the Stonecutter configuration.
-// See "settings.gradle.kts" for the Gradle configuration.
+// See "build.neoforge.gradle.kts" for NeoForge 1.20.2+.
+// See "build.neoforge-old.gradle.kts" for NeoForge 1.20.1.
+// See "stonecutter.gradle.kts" for Stonecutter.
+// See "settings.gradle.kts" for Gradle.
 
 import com.google.gson.Gson
 import com.google.gson.JsonElement
@@ -57,6 +57,7 @@ val javaVersion = JavaVersion.toVersion(javaTarget)
 java {
     sourceCompatibility = javaVersion
     targetCompatibility = javaVersion
+    // Don't require Java 16 on the system. (we will still compile for it, see below for the "-release" target)
     val javaToolchain = if (javaTarget == 16) 17 else javaTarget
     toolchain.languageVersion = JavaLanguageVersion.of(javaToolchain)
 }
@@ -244,23 +245,25 @@ tasks.withType<ProcessResources> {
     // Exclude not needed loader entrypoint files.
     exclude("META-INF/mods.toml", "META-INF/neoforge.mods.toml", "pack.mcmeta")
 
-    // Determine and replace the Fabric Resource Loader version.
+    // Determine and expand the Fabric Resource Loader version.
     val fabricResourceLoaderRevision = if (mcp >= "1.21.10") "v1" else "v0"
     inputs.property("fabricResourceLoaderRevision", fabricResourceLoaderRevision)
 
-    // Determine and replace the Fabric API module name.
+    // Determine and expand the Fabric API module name.
     val fabricApiName = if (mcp >= "1.18.2") "fabric-api" else "fabric"
     inputs.property("fabricApiName", fabricApiName)
 
-    // Expand Minecraft constraints that can be manually overridden for reasons. (e.g., snapshots)
+    // Expand Minecraft version constraints that can be manually overridden for reasons. (e.g., snapshots)
     val constraintsProperty = findProperty("constraints")
     require(constraintsProperty != mcv) { "Unneeded 'constraints' property set to ${constraintsProperty} in ${project}, it already uses this version." }
     val constraints = constraintsProperty ?: mcv
     inputs.property("minecraft", constraints)
 
-    // Expand version and dependencies.
+    // Expand Mixin Java target and version.
     inputs.property("mixinJava", javaTarget)
     inputs.property("version", version)
+
+    // Replace properties.
     filesMatching(listOf("fabric.mod.json", "ias.mixins.json")) {
         expand(inputs.properties)
     }
@@ -292,7 +295,7 @@ tasks.withType<Jar> {
     }
 }
 
-// Output into "build/libs" instead of "versions/<ver>/build/libs".
+// Output into "build/libs" instead of "versions/<version>/build/libs".
 loomx.modJar {
     destinationDirectory = rootProject.layout.buildDirectory.file("libs").get().asFile
 }

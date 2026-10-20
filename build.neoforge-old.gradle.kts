@@ -19,15 +19,15 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
 
-// This is the NeoForge loader buildscript. It is processed by the
-// Stonecutter multiple times, for each version and each loader. (compiled once)
-// Based on ModDevGradle and processes the preparation/complation/building
+// This is the NeoForge (1.20.1) loader buildscript. It is processed
+// by the Stonecutter multiple times, for each version. (compiled once)
+// Based on Legacy ModDevGradle, it processes the preparation/complation/building
 // of the most of the mod that is not covered by the Stonecutter or Blossom.
 // See "build.fabric.gradle.kts" for Fabric.
 // See "build.forge.gradle.kts" for Forge.
-// See "build.neoforge.gradle.kts" for NeoForge.
-// See "stonecutter.gradle.kts" for the Stonecutter configuration.
-// See "settings.gradle.kts" for the Gradle configuration.
+// See "build.neoforge.gradle.kts" for NeoForge 1.20.2+.
+// See "stonecutter.gradle.kts" for Stonecutter.
+// See "settings.gradle.kts" for Gradle.
 
 // NeoForge 1.20.1 is a piece of hacky mess that's basically Forge 1.20.1 with
 // a "95% OFF" discount. It is loosely Forge, but not Forge. It uses Forge
@@ -80,9 +80,9 @@ sourceSets["main"].java.setSrcDirs(sourceSets["main"].java.srcDirs.filter { !"${
 legacyForge {
     // Minecraft and NeoForge.
     val neoforge = "${property("loader")}"
-    require(neoforge.isNotBlank() && neoforge != "null") { "NeoForge (Hacky) version is not provided via 'loader' in ${project}." }
+    require(neoforge.isNotBlank() && neoforge != "null") { "Old NeoForge version is not provided via 'loader' in ${project}." }
     val extractedMinecraft = neoforge.substringBefore('-')
-    require(extractedMinecraft == "1.20.1") { "NeoForge (Hacky) version '${neoforge}' provides Minecraft ${extractedMinecraft} in ${project}, but we want 1.20.1." }
+    require(extractedMinecraft == "1.20.1") { "Old NeoForge version '${neoforge}' provides Minecraft ${extractedMinecraft} in ${project}, but we want 1.20.1." }
     enable {
         // Set the version.
         neoForgeVersion = neoforge
@@ -199,7 +199,7 @@ tasks.withType<ProcessResources> {
     // Exclude not needed loader entrypoint files.
     exclude("fabric.mod.json", "META-INF/neoforge.mods.toml")
 
-    // Determine and replace the version range constraints.
+    // Determine and replace the loader version constraints.
     val constraints = "${project.property("constraints")}"
     require(constraints.isNotBlank() && constraints != "null") { "Constraints are not provided via 'constraints' in ${project}." }
     inputs.property("constraints", constraints)
@@ -207,11 +207,13 @@ tasks.withType<ProcessResources> {
     // Expand the updater URL.
     inputs.property("forgeUpdaterUrl", "https://raw.githubusercontent.com/The-Fireplace-Minecraft-Mods/In-Game-Account-Switcher/main/updater-neoforge.json")
 
-    // Expand version and dependencies.
-    inputs.property("minecraft", "1.20.1")
+    // Expand Mixin Java target, Minecraft version constraints, version, and platform.
     inputs.property("mixinJava", 17)
+    inputs.property("minecraft", "1.20.1")
     inputs.property("version", version)
     inputs.property("platform", "forge") // Yes, that's correct for NeoForge 1.20.1.
+
+    // Replace properties.
     filesMatching(listOf("ias.mixins.json", "META-INF/mods.toml")) {
         expand(inputs.properties)
     }
@@ -254,7 +256,7 @@ tasks.withType<Jar> {
     }
 }
 
-// Output into "build/libs" instead of "versions/<ver>/build/libs".
+// Output into "build/libs" instead of "versions/<version>/build/libs".
 tasks.withType<Jar> {
     destinationDirectory = rootProject.layout.buildDirectory.file("libs").get().asFile
 }

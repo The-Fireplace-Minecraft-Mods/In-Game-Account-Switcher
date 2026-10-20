@@ -24,9 +24,9 @@
 // virtual subproject by the Stonecutter. Also includes compile-time project.
 // See "build.fabric.gradle.kts" for Fabric.
 // See "build.forge.gradle.kts" for Forge.
-// See "build.neoforge.gradle.kts" for NeoForge.
-// See "build.neoforge-hacky.gradle.kts" for NeoForge ugly hack for 1.20.1.
-// See "stonecutter.gradle.kts" for the Stonecutter configuration.
+// See "build.neoforge.gradle.kts" for NeoForge 1.20.2+.
+// See "build.neoforge-old.gradle.kts" for NeoForge 1.20.1.
+// See "stonecutter.gradle.kts" for Stonecutter.
 
 // Plugins.
 pluginManagement {
@@ -125,7 +125,7 @@ stonecutter {
                     // diverges from (can't keep up with) the (Lex) MCForge
                     // 1.20.1. I don't know why support this edge case
                     // for approximately 6 or 7 users total.
-                    project.buildscript = "build.neoforge-hacky.gradle.kts"
+                    project.buildscript = "build.neoforge-old.gradle.kts"
                 } else {
                     project.buildscript = "build.${type}.gradle.kts"
                 }
