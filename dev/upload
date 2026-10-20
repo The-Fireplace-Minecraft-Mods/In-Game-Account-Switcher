@@ -343,8 +343,8 @@ if [ -z "${UPLOAD_MODRINTH_SKIP:-}" ]; then
         UPLOAD_FILENAME=$(basename -- "${UPLOAD_FILE}")
         echo "Extracting data for '${UPLOAD_FILENAME}'..."
         UPLOAD_ID=$(echo "${UPLOAD_FILENAME}" | sed -E 's/^.*\+(.*)\..*$/\1/g')
-        UPLOAD_MC=$(echo "${UPLOAD_ID}" | cut -d- -f1)
-        UPLOAD_TYPE=$(echo "${UPLOAD_ID}" | cut -d- -f2)
+        UPLOAD_MC=$(echo "${UPLOAD_ID}" | cut -d '-' -f 1)
+        UPLOAD_TYPE=$(echo "${UPLOAD_ID}" | cut -d '-' -f 2)
         UPLOAD_MODRINTH_VERSION="${UPLOAD_VERSION}+${UPLOAD_ID}"
         UPLOAD_MODRINTH_VERSION_JSON=$(echo "${UPLOAD_MODRINTH_VERSION}" | jq --raw-input --compact-output)
         UPLOAD_MODRINTH_NAME="IAS ${UPLOAD_MODRINTH_VERSION}"
