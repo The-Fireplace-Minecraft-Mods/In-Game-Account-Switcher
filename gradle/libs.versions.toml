@@ -20,7 +20,7 @@
 [versions]
 blossom = "2.2.0"
 error_prone_annotations = "2.50.0"
-fabric-loader = "0.20.0"
+fabric-loader = "0.20.1"
 forgegradle = "7.0.40"
 forgerenamer = "1.1.8"
 gson = "2.14.0"
