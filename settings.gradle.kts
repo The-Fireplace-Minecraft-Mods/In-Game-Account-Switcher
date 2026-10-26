@@ -65,31 +65,31 @@ val ignoredIds = file("dev/versions/ignored.txt").readLines()
 // Depends on the "ru.vidtu.ias.legacy" boolean system property:
 // - "false" (default): Compile only versions listed in "supportedVersions".
 // - "true": Compile all versions listed in "versions".
-// If "only" version feature is used, this is ignored.
+// If the "single version" feature is used, this is ignored.
 val supportedVersions = (file("dev/versions/versions_beta.txt").readLines()
         + file("dev/versions/versions_active.txt").readLines())
     .filter { it.isNotEmpty() && !it.startsWith('#') }
     .toSet()
 require(versions.containsAll(supportedVersions)) { "Not all actively supported versions '${supportedVersions}' are listed in all supported versions '${versions}'." }
-val includeLegacyVersions = System.getProperty("ru.vidtu.ias.legacy").toBoolean()
+val legacyMode = System.getProperty("ru.vidtu.hcscr.legacy").toBoolean()
 
-// Process the "only" version feature.
-// Pass the "ru.vidtu.ias.only" system property with "<version>-<type>"
+// Process the "single" version feature.
+// Pass the "ru.vidtu.ias.single" system property with "<version>-<type>"
 // to the Gradle daemon, and it will compile only* the required version,
 // which may reduce the build time if you don't need other versions.
 // (* Sometimes, the latest version will also be compiled due to how this works)
-val onlyId: String? = System.getProperty("ru.vidtu.ias.only")
+val singleId: String? = System.getProperty("ru.vidtu.ias.single")
 val latestId = "${versions.first()}-${types.first()}"
 
-// Check the "only" version validity.
-if (onlyId != null) {
-    logger.warn("Processing only version '${onlyId}' via 'ru.vidtu.ias.only'.")
-    val idx = onlyId.indexOf('-')
-    require(idx != -1) { "Invalid only version '${onlyId}', no '-' delimiter extracted from 'ru.vidtu.ias.only'." }
-    val onlyVersion = onlyId.take(idx)
-    val onlyType = onlyId.substring(idx + 1)
-    require(onlyVersion in versions) { "Invalid only version '${onlyId}', version number '${onlyVersion}' extracted from 'ru.vidtu.ias.only' not found in ${versions.joinToString()}." }
-    require(onlyType in types) { "Invalid only version '${onlyId}', type '${onlyType}' extracted from 'ru.vidtu.ias.only' not found in ${types.joinToString()}." }
+// Check the "single version" feature validity.
+if (singleId != null) {
+    logger.warn("Processing single version '${singleId}' via 'ru.vidtu.ias.single'.")
+    val idx = singleId.indexOf('-')
+    require(idx != -1) { "Invalid single version '${singleId}', no '-' delimiter extracted from 'ru.vidtu.ias.single'." }
+    val singleVersion = singleId.take(idx)
+    val singleType = singleId.substring(idx + 1)
+    require(singleVersion in versions) { "Invalid single version '${singleId}', version number '${singleVersion}' extracted from 'ru.vidtu.ias.single' not found in ${versions.joinToString()}." }
+    require(singleType in types) { "Invalid single version '${singleId}', type '${singleType}' extracted from 'ru.vidtu.ias.single' not found in ${types.joinToString()}." }
 }
 
 // Setup stonecutter.
@@ -103,15 +103,15 @@ stonecutter {
         for (version in versions) {
             // Process the "supported" versions.
             // Note: There's no concept of "supported" loaders.
-            if ((onlyId == null) && !includeLegacyVersions && (version !in supportedVersions)) continue
+            if ((singleId == null) && !legacyMode && (version !in supportedVersions)) continue
 
             // Iterate types.
             for (type in types) {
                 // Extract the ID.
                 val id = "${version}-${type}"
 
-                // Process the "only" version ID.
-                if ((onlyId != null) && (id != onlyId) && (id != latestId)) continue
+                // Process the "single version" ID.
+                if ((singleId != null) && (id != singleId) && (id != latestId)) continue
 
                 // Check if version ID is ignored.
                 if (id in ignoredIds) continue
@@ -138,7 +138,9 @@ stonecutter {
 }
 
 // Log about mode.
-val mode = if (onlyId != null) "Only:${onlyId}"
-else if (includeLegacyVersions) "Legacy"
-else "Normal"
+val mode = when {
+    (singleId != null) -> "Single:${singleId}"
+    (legacyMode) -> "Legacy"
+    else -> "Normal"
+}
 logger.lifecycle("Mode: '${mode}'.")

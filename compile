@@ -19,8 +19,8 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>
 
-# Fail on error, fail on unbound variable, pipefail mode.
-set -euo pipefail
+# Fail on error, fail on unbound variable.
+set -eu
 
 # Check args.
 if [ "${#}" -eq 0 ]; then
@@ -46,6 +46,6 @@ elif [ "${1}" = 'normal' ]; then
 else
     # Build in single mode.
     echo "SCRIPT: Building in single ('${1}') mode..."
-    ./gradlew "-Dru.vidtu.ias.only=${1}" "${1}:assemble" && true
+    ./gradlew "-Dru.vidtu.ias.single=${1}" "${1}:assemble" && true
     echo "SCRIPT: Building in single ('${1}') mode exited with code ${?}."
 fi

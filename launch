@@ -19,8 +19,8 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>
 
-# Fail on error, fail on unbound variable, pipefail mode.
-set -euo pipefail
+# Fail on error, fail on unbound variable.
+set -eu
 
 # Check args.
 if [ "${#}" -eq 0 ]; then
@@ -31,5 +31,5 @@ fi
 
 # Launch.
 echo "SCRIPT: Launching '${1}'..."
-./gradlew "-Dru.vidtu.ias.only=${1}" "${1}:runClient" && true
+./gradlew "-Dru.vidtu.ias.single=${1}" "${1}:runClient" && true
 echo "SCRIPT: Launching '${1}' exited with code ${?}."
