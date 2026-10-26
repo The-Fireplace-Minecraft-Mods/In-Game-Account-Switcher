@@ -1,15 +1,15 @@
 {
   "26.3": {
     "fabric": {
-      "api": "0.164.0+26.3",
+      "api": "0.165.0+26.3",
       "modmenu": "21.0.0"
     },
     "forge": {
-      "loader": "26.3-66.0.13",
+      "loader": "26.3-66.1.0",
       "constraints": "[66,67)"
     },
     "neoforge": {
-      "loader": "26.3.0.95",
+      "loader": "26.3.0.99",
       "constraints": "[26.3.0,26.3.1)"
     }
   },
@@ -37,7 +37,7 @@
       "constraints": "[64,65)"
     },
     "neoforge": {
-      "loader": "26.1.2.122",
+      "loader": "26.1.2.124",
       "constraints": "[26.1.2,26.1.3)"
     }
   },
@@ -135,7 +135,7 @@
       "constraints": "[52.0.9,53)"
     },
     "neoforge": {
-      "loader": "21.1.264",
+      "loader": "21.1.265",
       "constraints": "[21.1,21.2)"
     }
   },
