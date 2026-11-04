@@ -10,8 +10,8 @@
     {
       "matchPackageNames": [
         "com.mojang:minecraft",
-        "net.fabricmc.fabric-api:fabric-api",
         "com.terraformersmc:modmenu",
+        "net.fabricmc.fabric-api:fabric-api",
         "net.minecraftforge:forge",
         "net.neoforged:forge",
         "net.neoforged:neoforge"
