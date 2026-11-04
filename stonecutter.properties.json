@@ -1,15 +1,15 @@
 {
   "26.3": {
     "fabric": {
-      "api": "0.165.0+26.3",
+      "api": "0.165.2+26.3",
       "modmenu": "21.0.0"
     },
     "forge": {
-      "loader": "26.3-66.1.0",
+      "loader": "26.3-66.1.5",
       "constraints": "[66,67)"
     },
     "neoforge": {
-      "loader": "26.3.0.99",
+      "loader": "26.3.0.101",
       "constraints": "[26.3.0,26.3.1)"
     }
   },
@@ -19,7 +19,7 @@
       "modmenu": "20.0.3"
     },
     "forge": {
-      "loader": "26.2-65.1.5",
+      "loader": "26.2-65.1.6",
       "constraints": "[65,66)"
     },
     "neoforge": {
@@ -33,11 +33,11 @@
       "modmenu": "18.0.2"
     },
     "forge": {
-      "loader": "26.1.2-64.1.5",
+      "loader": "26.1.2-64.1.6",
       "constraints": "[64,65)"
     },
     "neoforge": {
-      "loader": "26.1.2.124",
+      "loader": "26.1.2.126",
       "constraints": "[26.1.2,26.1.3)"
     }
   },
@@ -47,7 +47,7 @@
       "modmenu": "17.0.1"
     },
     "forge": {
-      "loader": "1.21.11-61.2.4",
+      "loader": "1.21.11-61.2.5",
       "constraints": "[61,62)"
     },
     "neoforge": {
@@ -131,7 +131,7 @@
       "modmenu": "11.0.5"
     },
     "forge": {
-      "loader": "1.21.1-52.1.20",
+      "loader": "1.21.1-52.1.21",
       "constraints": "[52.0.9,53)"
     },
     "neoforge": {
@@ -145,7 +145,7 @@
       "modmenu": "10.0.0"
     },
     "forge": {
-      "loader": "1.20.6-50.2.14",
+      "loader": "1.20.6-50.2.15",
       "constraints": "[50.1.18,51)"
     },
     "neoforge": {
