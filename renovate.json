@@ -11,6 +11,7 @@
       "matchPackageNames": [
         "com.mojang:minecraft",
         "com.terraformersmc:modmenu",
+        "java-jdk",
         "net.fabricmc.fabric-api:fabric-api",
         "net.minecraftforge:forge",
         "net.neoforged:forge",
